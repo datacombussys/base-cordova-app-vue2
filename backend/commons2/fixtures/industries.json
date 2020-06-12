@@ -1,0 +1,1020 @@
+[
+  {
+    "model": "commons.Industry",
+    "pk": 1,
+    "fields": {
+      "name": "Accounting"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 2,
+    "fields": {
+      "name": "Airlines/Aviation"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk":3,
+    "fields": {
+      "name": "Alternative Dispute Resolution"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 4,
+    "fields": {
+      "name": "Alternative Medicine"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 5,
+    "fields": {
+      "name": "Animation"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 6,
+    "fields": {
+    "name": "Apparel/Fashion"    
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 7,
+    "fields": {
+      "name": "Architecture/Planning"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 8,
+    "fields": {
+      "name": "Arts/Crafts"    
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 9,
+    "fields": {
+      "name": "Automotive"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 10,
+    "fields": {
+      "name": "Aviation/Aerospace"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 11,
+    "fields": {
+      "name": "Banking/Mortgage"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 12,
+    "fields": {
+      "name": "Biotechnology/Greentech"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 13,
+    "fields": {
+      "name": "Broadcast Media"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 14,
+    "fields": {
+      "name": "Building Materials"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 15,
+    "fields": {
+      "name": "Business Supplies/Equipment"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 16,
+    "fields": {
+      "name": "Capital Markets/Hedge Fund/Private Equity"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 17,
+    "fields": {
+      "name": "Chemicals"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 18,
+    "fields": {
+      "name": "Civic/Social Organization"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 19,
+    "fields": {
+      "name": "Civil Engineering"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 20,
+    "fields": {
+      "name": "Commercial Real Estate"
+    }
+  },{
+    "model": "commons.Industry",
+    "pk": 21,
+    "fields": {
+      "name": "Computer Games"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 22,
+    "fields": {
+      "name": "Computer Hardware"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 23,
+    "fields": {
+      "name": "Computer Networking"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 24,
+    "fields": {
+      "name": "Computer Software/Engineering"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 25,
+    "fields": {
+      "name": "Computer/Network Security"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 26,
+    "fields": {
+      "name": "Construction"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 27,
+    "fields": {
+      "name": "Consumer Electronics"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 28,
+    "fields": {
+      "name": "Consumer Goods"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 29,
+    "fields": {
+      "name": "Consumer Services"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 30,
+    "fields": {
+      "name": "Cosmetics"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 31,
+    "fields": {
+      "name": "Dairy"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 32,
+    "fields": {
+      "name": "Defense/Space"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 33,
+    "fields": {
+      "name": "Design"
+    }
+  },{
+    "model": "commons.Industry",
+    "pk": 34,
+    "fields": {
+      "name": "E-Learning"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 35,
+    "fields": {
+      "name": "Education Management"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 36,
+    "fields": {
+      "name": "Electrical/Electronic Manufacturing"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 37,
+    "fields": {
+      "name": "Entertainment/Movie Production"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 38,
+    "fields": {
+      "name": "Environmental Services"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 39,
+    "fields": {
+      "name": "Events Services"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 40,
+    "fields": {
+      "name": "Executive Office"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 41,
+    "fields": {
+      "name": "Facilities Services"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 42,
+    "fields": {
+      "name": "Farming"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 43,
+    "fields": {
+      "name": "Financial Services"
+    }
+  },{
+    "model": "commons.Industry",
+    "pk": 44,
+    "fields": {
+      "name": "Fine Art"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 45,
+    "fields": {
+      "name": "Fishery"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 46,
+    "fields": {
+      "name": "Food Production"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 47,
+    "fields": {
+      "name": "Food/Beverages"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 48,
+    "fields": {
+      "name": "Fundraising"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 49,
+    "fields": {
+      "name": "Furniture"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 50,
+    "fields": {
+      "name": "Gambling/Casinos"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 51,
+    "fields": {
+      "name": "Glass/Ceramics/Concrete"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 52,
+    "fields": {
+      "name": "Government Administration"
+    }
+  },
+
+  {
+    "model": "commons.Industry",
+    "pk": 53,
+    "fields": {
+      "name": "Government Relations"
+    }
+  },{
+    "model": "commons.Industry",
+    "pk": 54,
+    "fields": {
+      "name": "Graphic Design/Web Design"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 55,
+    "fields": {
+      "name": "Health/Fitness"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 56,
+    "fields": {
+      "name": "Higher Education/Acadamia"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 57,
+    "fields": {
+      "name": "Hospital/Health Care"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 58,
+    "fields": {
+      "name": "Hospitality"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 59,
+    "fields": {
+      "name": "Human Resources/HR"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 60,
+    "fields": {
+      "name": "Import/Export"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 61,
+    "fields": {
+      "name": "Individual/Family Services"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 62,
+    "fields": {
+      "name": "Industrial Automation"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 63,
+    "fields": {
+      "name": "Information Services"
+    }
+  },{
+    "model": "commons.Industry",
+    "pk": 64,
+    "fields": {
+      "name": "Information Technology/IT"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 65,
+    "fields": {
+      "name": "Insurance"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 66,
+    "fields": {
+      "name": "International Affairs"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 67,
+    "fields": {
+      "name": "International Trade/Development"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 68,
+    "fields": {
+      "name": "Internet"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 69,
+    "fields": {
+      "name": "Investment Banking/Venture"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 70,
+    "fields": {
+      "name": "Investment Management/Hedge Fund/Private Equity"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 71,
+    "fields": {
+      "name": "Judiciary"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 72,
+    "fields": {
+      "name": "Law Enforcement"
+    }
+  },
+
+  {
+    "model": "commons.Industry",
+    "pk": 73,
+    "fields": {
+      "name": "Law Practice/Law Firms"
+    }
+  },{
+    "model": "commons.Industry",
+    "pk": 74,
+    "fields": {
+      "name": "Legal Services"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 75,
+    "fields": {
+      "name": "Legislative Office"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 76,
+    "fields": {
+      "name": "Leisure/Travel"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 77,
+    "fields": {
+      "name": "Library"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 78,
+    "fields": {
+      "name": "Logistics/Procurement"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 79,
+    "fields": {
+      "name": "Luxury Goods/Jewelry"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 80,
+    "fields": {
+      "name": "Machinery"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 81,
+    "fields": {
+      "name": "Management Consulting"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 82,
+    "fields": {
+      "name": "Maritime"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 83,
+    "fields": {
+      "name": "Market Research"
+    }
+  },{
+    "model": "commons.Industry",
+    "pk": 84,
+    "fields": {
+      "name": "Marketing/Advertising/Sales"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 85,
+    "fields": {
+      "name": "Mechanical or Industrial Engineering"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 86,
+    "fields": {
+      "name": "Media Production"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 87,
+    "fields": {
+      "name": "Medical Equipment"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 88,
+    "fields": {
+      "name": "Medical Practice"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 89,
+    "fields": {
+      "name": "Mental Health Care"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 90,
+    "fields": {
+      "name": "Military Industry"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 91,
+    "fields": {
+      "name": "Mining/Metals"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 92,
+    "fields": {
+      "name": "Motion Pictures/Film"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 93,
+    "fields": {
+      "name": "Museums/Institutions"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 94,
+    "fields": {
+      "name": "Music"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 95,
+    "fields": {
+      "name": "Nanotechnology"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 96,
+    "fields": {
+      "name": "Newspapers/Journalism"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 97,
+    "fields": {
+      "name": "Non-Profit/Volunteering"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 98,
+    "fields": {
+      "name": "Oil/Energy/Solar/Greentech"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 99,
+    "fields": {
+      "name": "Online Publishing"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 100,
+    "fields": {
+      "name": "Other Industry"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 101,
+    "fields": {
+      "name": "Outsourcing/Offshoring"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 102,
+    "fields": {
+      "name": "Package/Freight Delivery"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 103,
+    "fields": {
+      "name": "Packaging/Containers"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 104,
+    "fields": {
+      "name": "Paper/Forest Products"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 105,
+    "fields": {
+      "name": "Performing Arts"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 106,
+    "fields": {
+      "name": "Pharmaceuticals"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 107,
+    "fields": {
+      "name": "Philanthropy"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 108,
+    "fields": {
+      "name": "Photography"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 109,
+    "fields": {
+      "name": "Plastics"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 110,
+    "fields": {
+      "name": "Political Organization"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 111,
+    "fields": {
+      "name": "Primary/Secondary Education"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 112,
+    "fields": {
+      "name": "Printing"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 113,
+    "fields": {
+      "name": "Professional Training"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 114,
+    "fields": {
+      "name": "Program Development"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 115,
+    "fields": {
+      "name": "Public Relations/PR"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 116,
+    "fields": {
+      "name": "Public Safety"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 117,
+    "fields": {
+      "name": "Publishing Industry"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 118,
+    "fields": {
+      "name": "Railroad Manufacture"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 119,
+    "fields": {
+      "name": "Ranching"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 120,
+    "fields": {
+      "name": "Real Estate/Mortgage"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 121,
+    "fields": {
+      "name": "Recreational Facilities/Services"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 122,
+    "fields": {
+      "name": "Religious Institutions"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 123,
+    "fields": {
+      "name": "Renewables/Environment"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 124,
+    "fields": {
+      "name": "Research Industry"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 125,
+    "fields": {
+      "name": "Restaurants"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 126,
+    "fields": {
+      "name": "Retail Industry"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 127,
+    "fields": {
+      "name": "Security/Investigations"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 128,
+    "fields": {
+      "name": "Semiconductors"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 129,
+    "fields": {
+      "name": "Shipbuilding"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 130,
+    "fields": {
+      "name": "Sporting Goods"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 131,
+    "fields": {
+      "name": "Sports"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 132,
+    "fields": {
+      "name": "Staffing/Recruiting"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 133,
+    "fields": {
+      "name": "Supermarkets"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 134,
+    "fields": {
+      "name": "Telecommunications"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 135,
+    "fields": {
+      "name": "Textiles"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 136,
+    "fields": {
+      "name": "Tobacco"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 137,
+    "fields": {
+      "name": "Translation/Localization"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 138,
+    "fields": {
+      "name": "Transportation"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 139,
+    "fields": {
+      "name": "Utilities"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 140,
+    "fields": {
+      "name": "Venture Capital/VC"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 141,
+    "fields": {
+      "name": "Veterinary"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 142,
+    "fields": {
+      "name": "Warehousing"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 142,
+    "fields": {
+      "name": "Wholesale"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 144,
+    "fields": {
+      "name": "Wine/Spirits"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 145,
+    "fields": {
+      "name": "Wireless"
+    }
+  },
+  {
+    "model": "commons.Industry",
+    "pk": 146,
+    "fields": {
+      "name": "Writing/Editing"
+    }
+  }
+
+]

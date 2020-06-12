@@ -1,0 +1,497 @@
+[
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 1,
+    "fields": {
+      "code": "A01",
+      "description": "APPROVED",
+      "comments": "Transaction approved/completed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 2,
+    "fields": {
+      "code": "A03",
+      "description": "PARTIAL AUTHORIZATION",
+      "comments": "Transaction approved for a partial authorization (CC only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 3,
+    "fields": {
+      "code": "U02",
+      "description": "TRN NOT APPROVED",
+      "comments": "Routing number passes checksum test but not valid for ACH"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 4,
+    "fields": {
+      "code": "U03",
+      "description": "DAILY TRANS LIMIT",
+      "comments": "Merchant daily limit exceeded (EFT only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 5,
+    "fields": {
+      "code": "U04",
+      "description": "MONTHLY TRANS LIMIT",
+      "comments": "Merchant monthly limit exceeded (EFT only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 6,
+    "fields": {
+      "code": "U05",
+      "description": "AVS FAILURE ZIPCODE",
+      "comments": "AVS state/zip code check failed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 7,
+    "fields": {
+      "code": "U06",
+      "description": "AVS FAILURE AREACODE",
+      "comments": "AVS state/area code check failed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 8,
+    "fields": {
+      "code": "U07",
+      "description": "AVS FAILURE EMAIL",
+      "comments": "AVS anonymous email check failed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 9,
+    "fields": {
+      "code": "U08",
+      "description": "DAILY VELOCITY",
+      "comments": "Merchant has exceeded the maximum number of transactions per hour, which may indicate a security problem. This error rarely occurs, but if you receive it, contact Forte immediately."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 10,
+    "fields": {
+      "code": "U09",
+      "description": "WINDOW VELOCITY",
+      "comments": "Merchant has exceeded the maximum number of transactions per hour, which may indicate a security problem. This error rarely occurs, but if you receive it, contact Forte immediately."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 11,
+    "fields": {
+      "code": "U10",
+      "description": "DUPLICATE TRANSACTION",
+      "comments": "Transaction has the same attributes as another transaction within the time set by the merchant"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 12,
+    "fields": {
+      "code": "U11",
+      "description": "RECUR TRANS NOT FOUND",
+      "comments": "Transaction types 40-42 only"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 13,
+    "fields": {
+      "code": "U12",
+      "description": "UPDATE NOT ALLOWED",
+      "comments": "Original transaction not voidable or captureable"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 14,
+    "fields": {
+      "code": "U13",
+      "description": "ORIG TRANS NOT FOUND",
+      "comments": "Transaction to be voided or captured not found"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 15,
+    "fields": {
+      "code": "U14",
+      "description": "BAD TYPE FOR ORIG TRANS",
+      "comments": "Void/capture and original transaction types do not agree (CC/EFT)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 16,
+    "fields": {
+      "code": "U15",
+      "description": "ALREADY VOIDED ALREADY CAPTURED",
+      "comments": "Transaction was previously voided or captured"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 17,
+    "fields": {
+      "code": "U18",
+      "description": "UPDATE FAILED",
+      "comments": "Void or Capture failed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 18,
+    "fields": {
+      "code": "U19",
+      "description": "INVALID TRN",
+      "comments": "Account ABA number is invalid"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 19,
+    "fields": {
+      "code": "U20",
+      "description": "INVALID CREDIT CARD NUMBER",
+      "comments": "Credit card number is invalid"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 20,
+    "fields": {
+      "code": "U21",
+      "description": "BAD START DATE",
+      "comments": "Date is malformed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 21,
+    "fields": {
+      "code": "U22",
+      "description": "SWIPE DATA FAILURE",
+      "comments": "Swipe data is malformed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 22,
+    "fields": {
+      "code": "U23",
+      "description": "INVALID EXPIRATION DATE",
+      "comments": "Malformed expiration date"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 23,
+    "fields": {
+      "code": "U25",
+      "description": "INVALID AMOUNT",
+      "comments": "Negative amount"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 24,
+    "fields": {
+      "code": "U26",
+      "description": "INVALID DATA",
+      "comments": "Invalid data present in transaction"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 25,
+    "fields": {
+      "code": "U27",
+      "description": "CONV FEE NOT ALLOWED",
+      "comments": "Merchant sent a convenience fee but is not configured to accept one"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 26,
+    "fields": {
+      "code": "U28",
+      "description": "CONV FEE INCORRECT",
+      "comments": "Merchant configured for convenience fee but did not send one"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 27,
+    "fields": {
+      "code": "U29",
+      "description": "CONV FEE DECLINED",
+      "comments": "Convenience fee transaction failed - SplitCharge model only"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 28,
+    "fields": {
+      "code": "U30",
+      "description": "PRINCIPAL DECLINED",
+      "comments": "Principal transaction failed - SplitCharge model only"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 29,
+    "fields": {
+      "code": "U51",
+      "description": "MERCHANT STATUS",
+      "comments": "Merchant is not \"live\""
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 30,
+    "fields": {
+      "code": "U52",
+      "description": "TYPE NOT ALLOWED",
+      "comments": "Merchant not approved for transaction type (CC or EFT)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 31,
+    "fields": {
+      "code": "U53",
+      "description": "PER TRANS LIMIT",
+      "comments": "Transaction amount exceeds merchant's per transaction limit (EFTs only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 32,
+    "fields": {
+      "code": "U54",
+      "description": "INVALID MERCHANT CONFIG",
+      "comments": "Merchant's configuration requires updating - call Customer Support"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 33,
+    "fields": {
+      "code": "U78",
+      "description": "DISALLOWED ACH SEC CODE",
+      "comments": "Indicates that the SEC code passed in with the ACH transaction is not allowed for the merchant account"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 34,
+    "fields": {
+      "code": "U80",
+      "description": "PREAUTH DECLINE",
+      "comments": "Transaction was declined due to preauthorization (Forte Verify) result"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 35,
+    "fields": {
+      "code": "U81",
+      "description": "PREAUTH TIMEOUT",
+      "comments": "Preauthorizer not responding (verify transactions only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 36,
+    "fields": {
+      "code": "U82",
+      "description": "PREAUTH ERROR",
+      "comments": "Preauthorizer error (verify transactions only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 37,
+    "fields": {
+      "code": "U83",
+      "description": "AUTH DECLINE",
+      "comments": "Transaction was declined due to authorizer declination"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 38,
+    "fields": {
+      "code": "U84",
+      "description": "AUTH TIMEOUT",
+      "comments": "Authorizer not responding"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 39,
+    "fields": {
+      "code": "U85",
+      "description": "AUTH ERROR",
+      "comments": "Authorizer error"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 40,
+    "fields": {
+      "code": "U86",
+      "description": "AVS FAILURE AUTH",
+      "comments": "Authorizer AVS check failed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 41,
+    "fields": {
+      "code": "U87",
+      "description": "AUTH BUSY",
+      "comments": "Authorizing vendor busy, may be resubmitted (CC only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 42,
+    "fields": {
+      "code": "U88",
+      "description": "PREAUTH BUSY",
+      "comments": "Verification vendor busy, may be resubmitted (type 26 only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 43,
+    "fields": {
+      "code": "U89",
+      "description": "AUTH UNAVAIL",
+      "comments": "Vendor service unavailable (CC only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 44,
+    "fields": {
+      "code": "U90",
+      "description": "PREAUTH UNAVAIL",
+      "comments": "Verification service unavailable (type 26 only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 45,
+    "fields": {
+      "code": "X02",
+      "description": "VOIDED",
+      "comments": "A batch transaction was voided"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 46,
+    "fields": {
+      "code": "F01",
+      "description": "MANDATORY FIELD IS MISSING",
+      "comments": "Required field is missing"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 47,
+    "fields": {
+      "code": "F03",
+      "description": "INVALID FIELD NAME",
+      "comments": "Value is not allowed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 48,
+    "fields": {
+      "code": "F04",
+      "description": "INVALID FIELD VALUE",
+      "comments": "Value is not allowed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 49,
+    "fields": {
+      "code": "F05",
+      "description": "DUPLICATE FIELD",
+      "comments": "Field is repeated in message"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 50,
+    "fields": {
+      "code": "F07",
+      "description": "CONFLICTING FIELD",
+      "comments": "Fields cannot both be present"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 51,
+    "fields": {
+      "code": "E10",
+      "description": "INVALID MERCH OR PASSWD",
+      "comments": "Merchant ID or processing password is incorrect"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 52,
+    "fields": {
+      "code": "E20",
+      "description": "MERCHANT TIMEOUT",
+      "comments": "Transaction message not received (I/O flush required?)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 53,
+    "fields": {
+      "code": "E55",
+      "description": "INVALID TOKEN",
+      "comments": "Specified token was invalid, could not be located or may have been deleted"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 54,
+    "fields": {
+      "code": "E90",
+      "description": "BAD MERCH IP ADDR",
+      "comments": "Origination IP is not on merchant's approved IP list"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHResponseCode",
+    "pk": 55,
+    "fields": {
+      "code": "E99",
+      "description": "INTERNAL ERROR",
+      "comments": "An unspecified error has occurred"
+    }
+  }
+]

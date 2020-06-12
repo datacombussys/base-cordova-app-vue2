@@ -1,0 +1,82 @@
+[
+  {
+    "model": "commons.Holiday",
+    "pk": 1,
+    "fields": {
+      "name": "New Years Eve",
+      "type": "Federal",
+      "duration_days": 1,
+      "date": "1577750400"
+    }
+  },
+  {
+    "model": "commons.Holiday",
+    "pk": 2,
+    "fields": {
+      "name": "New Years Day",
+      "type": "Federal",
+      "duration_days": 1,
+      "date": "1577836800"
+    }
+  },
+  {
+    "model": "commons.Holiday",
+    "pk": 3,
+    "fields": {
+      "name": "Martin Luther King Jr. Day",
+      "type": "Federal",
+      "duration_days": 1,
+      "date": "1579478400"
+    }
+  },
+  {
+    "model": "commons.Holiday",
+    "pk": 4,
+    "fields": {
+      "name": "Independence Day",
+      "type": "Federal",
+      "duration_days": 1,
+      "date": "1593820800"
+    }
+  },
+  {
+    "model": "commons.Holiday",
+    "pk": 5,
+    "fields": {
+      "name": "Labor Day",
+      "type": "Federal",
+      "duration_days": 1,
+      "date": "1599436800"
+    }
+  },
+  {
+    "model": "commons.Holiday",
+    "pk": 6,
+    "fields": {
+      "name": "Veterans Day",
+      "type": "Federal",
+      "duration_days": 1,
+      "date": "1573430400"
+    }
+  },
+  {
+    "model": "commons.Holiday",
+    "pk": 7,
+    "fields": {
+      "name": "Thanksgiving Day",
+      "type": "Federal",
+      "duration_days": 1,
+      "date": "1606348800"
+    }
+  },
+  {
+    "model": "commons.Holiday",
+    "pk": 8,
+    "fields": {
+      "name": "Christmas Day",
+      "type": "Federal",
+      "duration_days": 1,
+      "date": "1608854400"
+    }
+  }
+]

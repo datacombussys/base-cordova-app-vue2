@@ -1,0 +1,713 @@
+[
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 1,
+    "fields": {
+      "code": "R01",
+      "description": "INSUFFICIENT FUNDS",
+      "details": "The balance is not sufficient to cover the value of the transaction"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 2,
+    "fields": {
+      "code": "R02",
+      "description": "ACCOUNT CLOSED",
+      "details": "A previously open account has been closed"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 3,
+    "fields": {
+      "code": "R03",
+      "description": "NO ACCOUNT",
+      "details": "The account is closed or doesn't match the name submitted"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 4,
+    "fields": {
+      "code": "R04",
+      "description": "INVALID ACCOUNT NUMBER",
+      "details": "The account number structure is invalid"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 5,
+    "fields": {
+      "code": "R05",
+      "description": "PRENOTE NOT RECEIVED",
+      "details": "Pre-notification was not received"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 6,
+    "fields": {
+      "code": "R06",
+      "description": "RETURNED PER ODFI",
+      "details": "ODFI has requested RDFI to return this item"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 7,
+    "fields": {
+      "code": "R07",
+      "description": "AUTHORIZATION REVOKED",
+      "details": "Account holder has revoked the company's authorization"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 8,
+    "fields": {
+      "code": "R08",
+      "description": "PAYMENT STOPPED",
+      "details": "Account holder has stopped payment on this single transaction"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 9,
+    "fields": {
+      "code": "R09",
+      "description": "UNCOLLECTED FUNDS",
+      "details": "Balance is sufficient, but can't be released until uncollected items are collected"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 10,
+    "fields": {
+      "code": "R10",
+      "description": "NO AUTHORIZATION",
+      "details": "Account holder advises that the transaction is not authorized"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 11,
+    "fields": {
+      "code": "R11",
+      "description": "CHECK SAFEKEEPING RETURN",
+      "details": "Return of a check safekeeping entry return"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 12,
+    "fields": {
+      "code": "R12",
+      "description": "BRANCH SOLD",
+      "details": "The account is at a branch that was sold to another financial institution"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 13,
+    "fields": {
+      "code": "R13",
+      "description": "RDFI NOT QUALIFIED",
+      "details": "RDFI not qualified to participate"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 14,
+    "fields": {
+      "code": "R14",
+      "description": "DECEASED",
+      "details": "The account holder is deceased"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 15,
+    "fields": {
+      "code": "R15",
+      "description": "BENEFICIARY DECEASED",
+      "details": "The beneficiary entitled to benefits is deceased"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 16,
+    "fields": {
+      "code": "R16",
+      "description": "ACCOUNT FROZEN",
+      "details": "Funds are unavailable due to action by RDFI or other legal action"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 17,
+    "fields": {
+      "code": "R17",
+      "description": "FILE RECORD EDIT CRITERIA (SPECIFY)",
+      "details": "Some fields in the request are edited by the RDFI. If the entry cannot be processed by the RDFI, the field(s) causing the processing error must be identified in the addenda record information field of the return."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 18,
+    "fields": {
+      "code": "R18",
+      "description": "IMPROPER EFFECTIVE ENTRY DATE",
+      "details": "Entries have been presented prior to the first available processing window for the effective date."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 19,
+    "fields": {
+      "code": "R19",
+      "description": "AMOUNT FIELD ERROR",
+      "details": "The Amount field was improperly formatted in the request."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 20,
+    "fields": {
+      "code": "R20",
+      "description": "NON-TRANSACTION ACCOUNT",
+      "details": "Policies/regulations restrict activity to this account"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 21,
+    "fields": {
+      "code": "R21",
+      "description": "INVALID COMPANY ID NUMBER",
+      "details": "The company ID information is not valid. This code normally returns for a customer-initiated entries (CIE)."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 22,
+    "fields": {
+      "code": "R22",
+      "description": "INVALID INDIVIDUAL ID NUMBER",
+      "details": "The individual ID used by receiver is incorrect. This code normally returns for customer-initiated entries (CIE)."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 23,
+    "fields": {
+      "code": "R23",
+      "description": "PAYMENT REFUSED",
+      "details": "The account holder refuses the transaction because the amount is inaccurate for another legal reason"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 24,
+    "fields": {
+      "code": "R24",
+      "description": "DUPLICATE ENTRY",
+      "details": "The transaction appears to be a duplicate item"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 25,
+    "fields": {
+      "code": "R25",
+      "description": "ADDENDA ERROR",
+      "details": "The addenda record information was improperly formatted in the request."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 26,
+    "fields": {
+      "code": "R26",
+      "description": "MANDATORY ERROR",
+      "details": "The transaction is missing data from a mandatory field"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 27,
+    "fields": {
+      "code": "R27",
+      "description": "TRACE NUMBER ERROR",
+      "details": "The Trace Number in the original entry is not valid for the return entry or the Addenda Trace Numbers do not correspond with entry detail record."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 28,
+    "fields": {
+      "code": "R28",
+      "description": "INVALID TRN",
+      "details": "The Transit Routing Number is invalid"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 29,
+    "fields": {
+      "code": "R29",
+      "description": "CORPORATE NOT AUTHORIZED",
+      "details": "The corporate receiver has notified RDFI that the Corp entry is not authorized"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 30,
+    "fields": {
+      "code": "R30",
+      "description": "RDFI NOT PARTICIPANT IN CHECK TRUNCATION PROGRAM",
+      "details": "The receiving financial institution does not participate in the automated check safekeeping application."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 31,
+    "fields": {
+      "code": "R31",
+      "description": "ODFI PERMITS LATE RETURN",
+      "details": "RDFI rejected an entry that the ODFI had accepted (applies to CCD and CTX only)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 32,
+    "fields": {
+      "code": "R32",
+      "description": "RDFI NON-SETTLEMENT",
+      "details": "The RDFI cannot settle the entry."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 33,
+    "fields": {
+      "code": "R33",
+      "description": "RETURN OF XCK ENTRY",
+      "details": "The RDFI had decided to return a Destroyed Check Entry (XCK). An XCK return can be initiated by midnight of the 60th day following the settlement date of the entry."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 34,
+    "fields": {
+      "code": "R34",
+      "description": "LIMITED PARTICIPATION RDFI",
+      "details": "A federal or state ACH Network Supervisor has limited the RDFI's participation."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 35,
+    "fields": {
+      "code": "R35",
+      "description": "RETRUN OF IMPROPER DEBIT ENTRY",
+      "details": "A user or customer attempted to initiate an ACH debit for a customer-initiated entry (CIE), which is not permitted (except for reversals)."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 36,
+    "fields": {
+      "code": "R36",
+      "description": "RETURN OF IMPROPER CREDIT ENTRY",
+      "details": "ACH refund entries (with the exception of reversals) are not permitted for use with the WEB code."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 37,
+    "fields": {
+      "code": "R37",
+      "description": "SOURCE DOCUMENT PRESENTED FOR PAYMENT",
+      "details": "The source document to which an ACH entry relates has been presented for payment."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 38,
+    "fields": {
+      "code": "R38",
+      "description": "STOP PAYMENT ON SOURCE DOCUMENT",
+      "details": "The RDFI has determined a Stop Payment Order has been placed on the source document to which the ARC or BOC entry relates."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 39,
+    "fields": {
+      "code": "R39",
+      "description": "IMPROPER SOURCE DOCUMENT",
+      "details": "The RDFI has determined that the source document (share draft or check) used for an ARC, BOC or POP entry is not eligible for conversion, OR the share draft has already been paid as a normal check posting."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 40,
+    "fields": {
+      "code": "R40",
+      "description": "Return of ENR Entry by Federal Government Agency (ENR only)",
+      "details": "The Federal Government Agency has decided to return an Automated Enrollment entry (ENR). This return reason code only applies to ENR entries."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 41,
+    "fields": {
+      "code": "R41",
+      "description": "INVALID TRANSACTION CODE (ENR ONLY)",
+      "details": "Either the Transaction Code included in Field 3 of the Addenda Record does not conform to the ACH Record Format Specifications, or the transaction code is not appropriate for Automated Enrollment entries."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 42,
+    "fields": {
+      "code": "R42",
+      "description": "ROUTING NUMBER/CHECK DIGIT ERROR (ENR ONLY)",
+      "details": "The Routing Number and Check Digit included in Field 3 of the Addenda Record is either not a valid number or does not conform to the Modulus 10 formula."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 43,
+    "fields": {
+      "code": "R43",
+      "description": "INVALID DFI ACCOUNT NUMBER (ENR ONLY)",
+      "details": "The customer's account number included in Field 3 of the Addenda Record must include at least one alphanumeric character."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 44,
+    "fields": {
+      "code": "R44",
+      "description": "INVALID INDIVIDUAL ID NUMBER (ENR ONLY)",
+      "details": "The Individual ID Number/provided in Field 3 of the Addenda Record does not match a corresponding ID number in the Federal Government Agency's records."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 45,
+    "fields": {
+      "code": "R45",
+      "description": "INVALID INDIVIDUAL NAME (ENR ONLY)",
+      "details": "The customer name provided in Field 3 of the Addenda Record either does not match a corresponding name in the Federal Government Agency's records or does not include at least one alphanumeric character."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 46,
+    "fields": {
+      "code": "R46",
+      "description": "INVALID REPRESENTATIVE PAYEE INDICATOR (ENR ONLY)",
+      "details": "The Representative Payee Indicator Code included in Field 3 of the Addenda Record has been omitted or is not consistent with the Federal Government Agency's records."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 47,
+    "fields": {
+      "code": "R47",
+      "description": "DUPLICATE ENROLLMENT (ENR ONLY)",
+      "details": "The entry is a duplicate of an Automated Enrollment entry (ENR) previously initiated by a participant in the automated enrollment program."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 48,
+    "fields": {
+      "code": "R50",
+      "description": "STATE LAW AFFECTING RCK ACCEPTANCE",
+      "details": "This code is only for Re-Presented Check Entries (RCK). The RDFI is located in a state that has not accepted and adopted the Uniform Commercial Code and has not revised its consumer agreements to allow for electronic presentment, OR the RDFI is in a state that requires all canceled checks to be returned in the consumer statement."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 49,
+    "fields": {
+      "code": "R51",
+      "description": "NOTICE NOT PROVIDED/SIGNATURE NOT AUTHENTIC/ITEM ALTERED/INELIGIBLE FOR CONVERSION (ADJUSTMENT ENTRIES)",
+      "details": "This code is primarily for Re-Presented Check Entries (RCK). The item is ineligible, OR the Originator did not provide notice, OR all signatures on the item are not authentic or authorized or the item has been altered."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 50,
+    "fields": {
+      "code": "R52",
+      "description": "STOP PAY ON ITEM (ADJUSTMENT ENTRIES",
+      "details": "This code is primarily for Re-Presented Check Entries (RCK). The RDFI has determined that a Stop Payment Order has been placed on the item."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 51,
+    "fields": {
+      "code": "R53",
+      "description": "ITEM AND ACH ENTRY PRESENTED FOR PAYMENT",
+      "details": "This code is primarily for Re-Presented Check Entries (RCK). In addition to an RCK entry, the item to which the RCK entry relates has also been presented for payment."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 52,
+    "fields": {
+      "code": "R56",
+      "description": "INVALID TRANSACTION DATE",
+      "details": "The date specified is invalid"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 53,
+    "fields": {
+      "code": "R57",
+      "description": "STALE DATE",
+      "details": "The transaction is too old for processing"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 54,
+    "fields": {
+      "code": "R61",
+      "description": "MISROUTED RETURN",
+      "details": "The financial institution preparing the return entry (the RDFI of the original entry) has placed the incorrect Routing Number in the Receiving DFI Identification field (positions 04-12 including Check Digit of the Entry Detail Record)."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 55,
+    "fields": {
+      "code": "R62",
+      "description": "INCORRECT TRACE NUMBER",
+      "details": "The Trace Number found in positions 07-21 in the Addenda Record of the return entry is different from the trace number of the original entry."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 56,
+    "fields": {
+      "code": "R63",
+      "description": "INCORRECT DOLLAR AMOUNT",
+      "details": "The dollar amount in the Entry Detail Record of the return entry is different from the dollar amount of the original entry."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 57,
+    "fields": {
+      "code": "R64",
+      "description": "INCORRECT INDIVIDUAL IDENTIFICATION",
+      "details": "The Individual Identification Number reflected in the Entry Detail Record of the return entry is different from the Individual Identification Number/Identification Number used in the original entry."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 58,
+    "fields": {
+      "code": "R65",
+      "description": "INCORRECT TRANSACTION CODE",
+      "details": "The Transaction Code in the Entry Detail Record of the return entry is not the return equivalent of the Transaction Code in the original entry. All entries must be returned as received: e.g., credit as credit, debit as debit, demand as demand, savings as savings.)"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 59,
+    "fields": {
+      "code": "R66",
+      "description": "INCORRECT COMPANY IDENTIFICATION",
+      "details": "The Company Identification number used in the Company/Batch Header Record of the return entry is different from the Company Identification number used in the original entry."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 60,
+    "fields": {
+      "code": "R67",
+      "description": "DUPLICATE RETURN",
+      "details": "The ODFI has received more than one return for the same entry."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 61,
+    "fields": {
+      "code": "R68",
+      "description": "UNTIMELY RETURN",
+      "details": "The return entry has not been sent within the timeframe established by these rules."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 62,
+    "fields": {
+      "code": "R69",
+      "description": "FIELD ERRORS",
+      "details": "Two or more of the following fields Original Entry Trace Number, Amount, Individual Identification Number/Identification Number, Company Identification, and/or Transaction Codes are incorrect."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 63,
+    "fields": {
+      "code": "R70",
+      "description": "PERMISSIBLE RETURN ENTRY NOT ACCEPTED",
+      "details": "The ODFI has received a CCD or CTX return entry identified by the RDFI as being returned with the permission of the ODFI, but the ODFI has not agreed to accept the entry. This code may be used only to dishonor a return containing and R31 return reason code."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 64,
+    "fields": {
+      "code": "R71",
+      "description": "MISROUTED DISHONOR RETURN",
+      "details": "The ODFI misrouted the Dishonored Return entry to the wrong RDFI using an incorrect routing/transit number."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 65,
+    "fields": {
+      "code": "R72",
+      "description": "UNTIMELY DISHONOR RETURN",
+      "details": "The ODFI did not submit the Dishonored Return entry within the five-day deadline."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 66,
+    "fields": {
+      "code": "R73",
+      "description": "TIMELY ORIGINAL RETURN",
+      "details": "The RDFI certifies that the original return entry was submitted by the applicable deadline."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 67,
+    "fields": {
+      "code": "R74",
+      "description": "CORRECTED RETURN",
+      "details": "The RDFI is correcting a previous return entry that was dishonored using return code R69, because it contained incomplete or incorrect information."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 68,
+    "fields": {
+      "code": "R75",
+      "description": "ORIGINAL RETURN NOT A DUPLICATE",
+      "details": "The original return entry was not a duplicate of an entry previously returned by the ODFI. This code may be used by the RDFI to contest an entry dishonored by the ODFI using return code R67 (duplicate return)."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 69,
+    "fields": {
+      "code": "R76",
+      "description": "NO ERRORS FOUND",
+      "details": "The original return entry did not contain the errors indicated by the ODFI in the dishonored return entry bearing return code R69 (field errors)."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 70,
+    "fields": {
+      "code": "R80",
+      "description": "CROSS-BORDER PAYMENT CODING ERROR",
+      "details": "The cross-border entry is being returned due to one or more of the following conditions:"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 71,
+    "fields": {
+      "code": "R81",
+      "description": "NON-PARTICIPANT IN CROSS-BORDER PROGRAM",
+      "details": "The cross-border entry is being returned because the Originating Gateway Operator does not have an agreement with the ODFI to process cross-border entries."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 72,
+    "fields": {
+      "code": "R82",
+      "description": "INVALID FOREIGN RECEIVING DFI IDENTIFICATION",
+      "details": "The reference used to identify the Foreign Receiving DFI of an outbound cross-border entry is invalid."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 73,
+    "fields": {
+      "code": "R83",
+      "description": "FOREIGN RECEIVING DFI UNABLE TO SETTLE",
+      "details": "The cross-border entry is being returned due to settlement problems in the foreign payment system."
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 74,
+    "fields": {
+      "code": "R84",
+      "description": "ENTRY NOT PROCESSED BY GATEWAY",
+      "details": "For outbound International ACH Transaction (IAT) entries, the entry has not been processed and is being returned at the gateway s discretion because either:"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 75,
+    "fields": {
+      "code": "R95",
+      "description": "OVER LIMIT",
+      "details": "This transaction is over your authorized limit"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 76,
+    "fields": {
+      "code": "R96",
+      "description": "ACCOUNT ON HOLD",
+      "details": "This company account is on hold"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 77,
+    "fields": {
+      "code": "R97",
+      "description": "RDFI DOES NOT PARTICIPATE",
+      "details": "RDFI does not allow this type of transaction"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 78,
+    "fields": {
+      "code": "R98",
+      "description": "INVALID PASSWORD",
+      "details": "The password supplied was invalid"
+    }
+  },
+  {
+    "model": "vthpp.ForteACHReturnCode",
+    "pk": 79,
+    "fields": {
+      "code": "R99",
+      "description": "DECLINED UNPAID ITEMS",
+      "details": "This account or ID has been declined due to unpaid items"
+    }
+  }
+]
