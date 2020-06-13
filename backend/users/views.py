@@ -47,6 +47,7 @@ class UserLoginAPIView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         print('Login request', request)
         print('Login kwargs', kwargs)
+        
         #Need to find the User associated Company and concat the Company ID to the email address
         # print('User.objects.last()', User.objects.last())
         serializer = self.serializer_class(data=request.data,
@@ -54,11 +55,23 @@ class UserLoginAPIView(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'id': user.pk,
-            'email': user.email,
-        })
+
+        print('user.__dict__', user.__dict__)
+
+        if user.employee:
+            return Response({
+                'token': token.key,
+                'id': user.pk,
+                'email': user.email,
+                'employee': user.employee.id
+            })
+        elif user.customer:
+            return Response({
+                'token': token.key,
+                'id': user.pk,
+                'email': user.email,
+                'customer': user.customer.id
+            })
 
 class AlternativeLoginAPIView(APIView):
     """Handles creating user auth tokens for Alternative Login"""

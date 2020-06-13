@@ -1,3 +1,4 @@
+asgiref==3.2.7
 Babel==2.8.0
 backcall==0.1.0
 boto3==1.11.13
@@ -8,7 +9,7 @@ click==6.7
 coreapi==2.3.3
 coreschema==0.0.4
 decorator==4.4.1
-Django==2.1.12
+Django==3.0.7
 django-autoslug-iplweb==1.9.4.dev0
 django-cities==0.6
 django-cities-light==3.6.0

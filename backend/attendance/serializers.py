@@ -57,7 +57,7 @@ class AttendanceSettingsSerializer(serializers.ModelSerializer):
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
-    operating_hours = serializers.PrimaryKeyRelatedField(queryset=OperatingHours.objects.all(), required=False, allow_null=True)
+    operating_hours= serializers.PrimaryKeyRelatedField(queryset=BusinessOperatingHours.objects.all(), many=True, required=False, allow_null=True)
     shift = serializers.PrimaryKeyRelatedField(queryset=Shift.objects.all(), many=True, required=False, allow_null=True)
 
     class Meta:

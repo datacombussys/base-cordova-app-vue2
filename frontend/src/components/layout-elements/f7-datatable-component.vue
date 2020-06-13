@@ -18,7 +18,7 @@
 						<f7-list-button @click="deleteItem">Delete</f7-list-button>
 					</f7-list> -->
 					<div class="data-table-links">
-						<f7-list-button class="link" popup-open=".new-holiday">New</f7-list-button>
+						<f7-list-button class="link" :popup-open="tableSettings.popupLink">New</f7-list-button>
 						<a class="link" @click="deactivate">Deactivate</a>
 						<a class="link" @click="deleteItem">Delete</a>
 						<!-- <a class="link" @click="uncheckAllCells">Unselect All</a> -->

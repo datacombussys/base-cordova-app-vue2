@@ -10,12 +10,15 @@
 								<f7-col width="50">
 									<p class="field-title">Name:<span style="color: red;"> *</span></p>
 									<f7-list-input
-									label="Of Rule"
+									label="of rule"
 										type="text"
+										aria-required="true"
+										validate
 										placeholder="General Attendacne Settings"
 										:value="settingsForm.name"
 										@input="settingsForm.name = $event.target.value"
 									></f7-list-input>
+									<span class="error-msg" id="firstNameErr"></span>
 								</f7-col>
 
 								<f7-col width="50">
@@ -298,10 +301,10 @@
 										</f7-col>
 										<f7-col width="30">
 											<f7-list-input 
-											:disabled="!noClockOut" 
-											type="select"
-											:value="settingsForm.no_clock_out_is"
-											@change="settingsForm.no_clock_out_is = $event.target.value">
+												:disabled="!noClockOut" 
+												type="select"
+												:value="settingsForm.no_clock_out_is"
+												@change="settingsForm.no_clock_out_is = $event.target.value">
 												<option value="Leave Early">Leave Early</option>
 												<option value="Absent">Absent</option>
 											</f7-list-input>
@@ -361,7 +364,7 @@
 				</f7-list>
 				<f7-row class="display-flex justify-content-center">
 					<f7-col width="50">
-						<f7-button fill @click="saveAttendanceSettings">Save Settings</f7-button>
+						<f7-button fill aria-disabled="true" aria-describedby="firstNameErr" @click="saveAttendanceSettings">Save Settings</f7-button>
 						<f7-button fill @click="testingMethod">Test</f7-button>
 					</f7-col>
 				</f7-row>
@@ -373,7 +376,6 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import TimePicker from "tui-time-picker";
 
 //Mixins
 import { UniversalMixins } from "../../../mixins/universal-mixins";
@@ -398,7 +400,7 @@ export default {
 				company: null,
 				partner: null,
 				datacom: null,
-				operating_hours: null,
+				operating_hours: [],
 				shift: [],
 				workday_hours: 8,
 				name: null,
@@ -437,78 +439,82 @@ export default {
 	},
 	methods: {
 		async testingMethod(e) {
-			console.log('this.Attendance.attendanceSettingsObj', this.Attendance.attendanceSettingsObj);
-			console.log('this.Attendance.operatingHoursObj', this.Attendance.operatingHoursObj);
-			console.log('this.settingsForm', this.settingsForm);
-			var plat = this.Auth.platformInfo;
-			console.log('plat', plat);
+			console.log('this.Attendance.operatingHoursList', this.Attendance.operatingHoursList);
 
 		},
 		async saveAttendanceSettings() {
-			if(!this.settingsForm.operating_hours) {
-				this.$f7.dialog.create({
-					title: "Create Error",
-					text: "You must first complete your operating hours",
-					closeByBackdropClick: true,
-					buttons: [
-						{
-						close: true,
-						text: "Ok",
-						color: "red"
-					}
-					]
-				}).open();
-			}
-
-			//I need to Only keep ONE Database record per company and only update that record
-			//Save initially POST then PATCH to update if changes occur
-
-			console.log("saveAttendanceSettings, this.settingsForm", this.settingsForm);
 			var attendanceFormCopy = JSON.parse(JSON.stringify(this.settingsForm));
+			console.log("attendanceFormCopy", attendanceFormCopy);
 
-			let platformForm = await this.setUserPlatformPOST(this.settingsForm);
-			console.log("platformForm", platformForm);
+			//Check to see if User has operatingHours and Holidays Completed First
+			if(!this.HAS_HOLIDAYS) {
+				this.$f7.dialog.alert("You must first create company observed holidays");
+				if(!this.HAS_OPERATING_HOURS) {
+					this.$f7.dialog.alert("You must first establish operating hours");
+				}
+			} else {
+				//I need to Only keep ONE Database record per company and only update that record
+				if(!this.HAS_ATTENDANCE_SETTINGS) {
+					//POST method
+					let platformForm = await this.setUserPlatformPOST(attendanceFormCopy);
+					console.log("platformForm", platformForm);
+					console.log("this.Attendance.operatingHoursList", this.Attendance.operatingHoursList);
+					//Set Variables
+					const list = this.Attendance.operatingHoursList;
+					for(let key in list) {
+						console.log("key", key);
+						console.log("list", list);
+						console.log("list[key]", list[key]);
+						platformForm.operating_hours.push(list[key].id);
+					}
+					console.log("platformForm", platformForm);
+					this.$store.dispatch("POSTAttendanceSettings", platformForm);
+				} if(this.HAS_ATTENDANCE_SETTINGS) {
+					//PATCH method
+					let platformForm = await this.setUserPlatformPOST(attendanceFormCopy);
+					console.log("platformForm", platformForm);
+					//Set Variables
+					const list = this.Attendance.operatingHoursList
+					for(let key in list) {
+						console.log("list", list);
+						platformForm.operating_hours.push(list[key].id);
 
-			this.$store.dispatch("addAttendanceSettings", platformForm);
+					this.$store.dispatch("PATCHAttendanceSettings", platformForm);
+					}
+				}
+			}
+			
+
+			
+
+			
 		},
 		retrieveAndMountSettings() {
 			console.log('retrieveAndMountSettings');
 			console.log('this.settingsForm1', this.settingsForm);
-			console.log('retrieveAndMountSettings this.Attendance.settingsProfile1', this.Attendance.settingsProfile);
+			console.log('retrieveAndMountSettings this.Attendance.attendanceSettingsObj1', this.Attendance.attendanceSettingsObj);
 
 			this.has_current_settings = true;
-			this.settingsForm.id = this.Attendance.settingsProfile.id;
-			this.settingsForm.datacom = this.Attendance.settingsProfile.datacom;
-			this.settingsForm.partner = this.Attendance.settingsProfile.partner;
-			this.settingsForm.company = this.Attendance.settingsProfile.company;
+			this.settingsForm.id = this.Attendance.attendanceSettingsObj.id;
+			this.settingsForm.datacom = this.Attendance.attendanceSettingsObj.datacom;
+			this.settingsForm.partner = this.Attendance.attendanceSettingsObj.partner;
+			this.settingsForm.company = this.Attendance.attendanceSettingsObj.company;
 			for(let key in this.settingsForm) {
-				this.settingsForm[key] = this.Attendance.settingsProfile[key];
+				this.settingsForm[key] = this.Attendance.attendanceSettingsObj[key];
 			}
 			console.log('this.settingsForm2', this.settingsForm);
 		},
-		getHoursFromStore() {
-			if(this.isValidOperatingHours) {
-				console.log("Settings Page hours2", this.Attendance.operatingHoursObj);
-				this.settingsForm.operating_hours = this.Attendance.operatingHoursObj.id;
-			}
 
-		},
-		getSettings() {
-			if(this.isValidSettingsObj) {
-				console.log("getSettings this.Attendance.settingsProfile", this.Attendance.settingsProfile);
-				this.retrieveAndMountSettings();
-			}
-		}
 	},
 	computed: {
 		...mapState(["Auth", "Users", "Attendance"]),
-		...mapGetters(["isValidOperatingHours", "isValidSettingsObj"])
+		...mapGetters(["HAS_OPERATING_HOURS", "HAS_HOLIDAYS", "HAS_ATTENDANCE_SETTINGS"])
 
 	},
 	created() {},
 	async mounted() {
 		console.log("Settings Page hours0", this.hours);
-		this.getHoursFromStore();
+
 		
 	}
 };

@@ -26,14 +26,16 @@ class Holiday(models.Model):
   duration_days   = models.IntegerField(default=1)
   open_time       = models.CharField(max_length=10, blank=True, null=True)
   close_time      = models.CharField(max_length=10, blank=True, null=True)
+  open_time2      = models.CharField(max_length=10, blank=True, null=True)
+  close_time2     = models.CharField(max_length=10, blank=True, null=True)
   is_open         = models.BooleanField(default=False)
 
-  # class Meta:
-  #   constraints = [
-  #     models.UniqueConstraint(fields= ['name','datacom']),
-  #     models.UniqueConstraint(fields= ['name','partner']),
-  #     models.UniqueConstraint(fields= ['name','company']),
-  #     ]
+  class Meta:
+    constraints = [
+      models.UniqueConstraint(fields= ['name','datacom'], name='datacom_holiday'),
+      models.UniqueConstraint(fields= ['name','partner'], name='partner_holiday'),
+      models.UniqueConstraint(fields= ['name','company'], name='company_holiday'),
+      ]
 
 
 class Shipping(models.Model):

@@ -45,12 +45,15 @@ class BusinessOperatingHours(models.Model):
   isOpen          = models.BooleanField(default=False)
   open            = models.CharField(max_length=10, blank=True, null=True)
   close           = models.CharField(max_length=10, blank=True, null=True)
+  open2           = models.CharField(max_length=10, blank=True, null=True)
+  close2          = models.CharField(max_length=10, blank=True, null=True)
+  
 
 class AttendanceSettings(models.Model):
   company                     = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
   partner                     = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
   datacom                     = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
-  operating_hours             = models.ForeignKey(OperatingHours, on_delete=models.DO_NOTHING)
+  operating_hours             = models.ManyToManyField(BusinessOperatingHours, blank=True)
   shift                       = models.ManyToManyField(Shift, related_name='attendance_shift', blank=True)
   is_company                  = models.BooleanField(default=False)
   is_location                 = models.BooleanField(default=False)

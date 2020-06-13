@@ -139,6 +139,7 @@ export default {
 		return {
 			//Component Data
 			tableSettings: {
+				popupLink: '.new-holiday',
 				showCreateButton: false,
 				title: "Holiday List",
 				createButton: "Create Holidays",

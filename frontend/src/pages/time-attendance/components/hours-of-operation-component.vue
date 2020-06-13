@@ -45,7 +45,7 @@
 				</f7-list>
 				<f7-row class="display-flex justify-content-center">
 					<f7-col width="50">
-						<f7-button fill @click="saveHours">Save Hours</f7-button>
+						<f7-button fill @click="saveAll">Save Hours</f7-button>
 						<f7-button fill @click="testingMethod">Test</f7-button>
 					</f7-col>
 				</f7-row>
@@ -176,13 +176,6 @@ export default {
 
 			const open = evt[evtName][0].open;
 			console.log('open', open);
-			var formattedOpenTime = "";
-			if(open.length != 0) {
-				const formatOpenHours = open.substring(0,2);
-				const formatOpenMinutes = open.substring(2,4);
-				formattedOpenTime = formatOpenHours + ":" + formatOpenMinutes;
-			} 
-
 			const close = evt[evtName][0].close;
 			console.log('close', close);	
 			const isOpen = evt[evtName][0].isOpen;
@@ -207,8 +200,42 @@ export default {
 			console.log('Local Repository After Set Values', this.dayObjectsToSet);
 			
 		},
-		updatedHolidayHours(e) {
-			console.log('updatedHolidayHours e', e);
+		updatedHolidayHours(evt) {
+			console.log('updatedHolidayHours evt', evt);
+			var holidayDay = _.cloneDeep(this.vuexHolidayObjects);	
+			console.log("holidayDay 1", holidayDay);
+			console.log("Holiday Day Object", this.vuexHolidayObjects);
+			console.log("this.Attendance.holidayProfile", this.Attendance.holidayProfile);
+			console.log("this.Attendance.holidayProfileOriginal", this.Attendance.holidayProfileOriginal);
+
+			const evtName = Object.keys(evt)[0];
+			console.log('evtName', evtName);
+
+			const open = evt[evtName][0].open;
+			console.log('open', open);
+			const close = evt[evtName][0].close;
+			console.log('close', close);	
+			const isOpen = evt[evtName][0].isOpen;
+			console.log('isOpen', isOpen);
+			const id = evt[evtName][0].id;
+			console.log('id', id);
+
+			//Make new Object and place in a list
+			let holidayObject = [{
+				name: evtName,
+				id: id,
+				is_open: isOpen,
+				open_time: open,
+				close_time: close,
+			}];
+			console.log('holidayObject', holidayObject);
+
+			holidayDay[evtName] = holidayObject;
+			console.log('holidayDay Full New Object', holidayDay);
+
+			this.holidayObjectsToSet = holidayDay;
+			console.log('Local Repository After Set Values', this.holidayObjectsToSet);
+
 		},
 		//Not Used But shows how to pass data back from component to parent
 		sendOpenToParent() {
@@ -233,56 +260,95 @@ export default {
 			} else {
 				console.log('array of keys dayNames', dayNames);
 				for(let key in dayNames) {
-					const djangoDayObj = {};
 					console.log('dayNames[key]', dayNames[key]);
 					const dayName = dayNames[key];
 					const dayObj = daysOriginal[dayName].slice(0,1)[0];
 					const dayToSendObj = daysToSend[dayName].slice(0,1)[0];
+					
+					//If additional Hours added, I need to format the object to include the open2 and clode2 fields.
 					console.log('dayObj', dayObj);
 					console.log('dayToSendObj', dayToSendObj);
-					if(dayObj.isOpen) {
-						if(dayToSendObj.isOpen) {
-							console.log("daysToSend: true, dayObj: true");
-							//Make a PATCH Request
-							var newObj = dayToSendObj;
-							newObj.day_of_week = dayNames[key];
-							let POSTresponse = await this.setUserPlatformPOST(newObj);
-							console.log('POSTresponse', POSTresponse);
-							this.$store.dispatch('PATCHBusinessHours', POSTresponse);
-							delete this.dayObjectsToSet[dayName];
-							console.log("this.dayObjectsToSet", this.dayObjectsToSet);
+					if(JSON.stringify(daysToSend[dayName]) != JSON.stringify(daysOriginal[dayName])) {
+						if(dayObj.isOpen) {
+							if(dayToSendObj.isOpen) {
+								console.log("daysToSend: true, dayObj: true");
+								//Make a PATCH Request
+								var newObj = dayToSendObj;
+								newObj.day_of_week = dayNames[key];
+								let POSTresponse = await this.setUserPlatformPOST(newObj);
+								console.log('POSTresponse', POSTresponse);
+								this.$store.dispatch('PATCHBusinessHours', POSTresponse);
+								delete this.dayObjectsToSet[dayName];
+								console.log("this.dayObjectsToSet", this.dayObjectsToSet);
 
-						} else if(!dayToSendObj.isOpen) {
-							console.log("daysToSend: false, dayObj: true");
-							// Delete Request
-							this.$store.dispatch('DELETEBusinessHours', dayToSendObj);
-							delete this.dayObjectsToSet[dayName];
-							console.log("this.dayObjectsToSet", this.dayObjectsToSet);
-						}
-					} 
-					if(!dayObj.isOpen) {
-						if(dayToSendObj.isOpen) {
-							console.log("daysToSend: true, dayObj: false");
-							//POST New Request
-							var newObj = dayToSendObj;
-							newObj.day_of_week = dayNames[key];
-							let POSTresponse = await this.setUserPlatformPOST(newObj);
-							console.log('POSTresponse', POSTresponse);
-							this.$store.dispatch('POSTBusinessHours', POSTresponse);
-							delete this.dayObjectsToSet[dayName];
-							console.log("this.dayObjectsToSet", this.dayObjectsToSet);
+							} else if(!dayToSendObj.isOpen) {
+								console.log("daysToSend: false, dayObj: true");
+								// Delete Request
+								this.$store.dispatch('DELETEBusinessHours', dayToSendObj);
+								delete this.dayObjectsToSet[dayName];
+								console.log("this.dayObjectsToSet", this.dayObjectsToSet);
+							}
 						} 
-						// else if(!dayToSendObj.isOpen) {
-						// 	console.log("daysToSend: false, dayObj: false");
-						// 	//Do Nothing, No Changes
+						if(!dayObj.isOpen) {
+							if(dayToSendObj.isOpen) {
+								console.log("daysToSend: true, dayObj: false");
+								//POST New Request
+								var newObj = dayToSendObj;
+								newObj.day_of_week = dayNames[key];
+								let POSTresponse = await this.setUserPlatformPOST(newObj);
+								console.log('POSTresponse', POSTresponse);
+								this.$store.dispatch('POSTBusinessHours', POSTresponse);
+								delete this.dayObjectsToSet[dayName];
+								console.log("this.dayObjectsToSet", this.dayObjectsToSet);
+							} 
 						}
-
 					}
-				};
+					
+				}
+			};
+		},
+		async saveHolidayHours() {
+			//1) Process Days 
+			const holidaysOriginal = JSON.parse(JSON.stringify(this.Attendance.holidayProfileOriginal));
+			console.log("holidaysOriginal", holidaysOriginal);
+			var holidaysToSend = JSON.parse(JSON.stringify(this.holidayObjectsToSet));
+			console.log("holidaysToSend", holidaysToSend);
+			
+			//Compare new Array with Original in store and ony make changes to the changed Objects
+			const holidayNames = Object.keys(this.holidayObjectsToSet);
+			console.log('holidayNames', holidayNames);
+			if(holidayNames.length === 0) {
+				this.$f7.dialog.alert("You must change a time to submit the form");
+			} else {
+				for(let key in holidayNames) {
+					var holidayNameKey = holidayNames[key];
+					console.log('holidayNameKey', holidayNameKey);
+					if(JSON.stringify(holidaysToSend[holidayNameKey]) != JSON.stringify(holidaysOriginal[holidayNameKey])) {
+						console.log('holidaysToSend[holidayNameKey]', holidaysToSend[holidayNameKey]);
+						let POSTresponse = await this.setUserPlatformPOST(holidaysToSend[holidayNameKey][0]);
+						console.log('holidaysToSend[holidayNameKey]', holidaysToSend[holidayNameKey]);
+
+						//Convert Format for Django Models
+						//If additional Hours added, I need to format the object to include the open2 and clode2 fields.
+						var newName = holidayNameKey.replace(/([a-zA-Z])(?=[A-Z])/g, '$1 ');
+						POSTresponse.name = newName;
+						//Send to Database
+						console.log('POSTresponse', POSTresponse);
+												
+						this.$store.dispatch('PATCHHolidays', POSTresponse);
+					
+						console.log('holidaysToSend[holidayNameKey]', holidaysToSend[holidayNameKey]);
+					}
+				}
 			}
+			
 
-			//2) Process Holidays
-
+		
+		},
+		saveAll() {
+			this.saveHours();
+			this.saveHolidayHours();
+		}
 
 	},
 	computed: {

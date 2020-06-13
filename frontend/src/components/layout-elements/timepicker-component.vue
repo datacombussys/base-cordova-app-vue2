@@ -29,7 +29,6 @@ export default {
 	},
 	methods: {
 		async testingMethod(e) {
-			console.log('this.Attendance.operatingHoursObj', this.Attendance.operatingHoursObj);
 			console.log('this.hoursForm', this.hoursForm);
 
 		},

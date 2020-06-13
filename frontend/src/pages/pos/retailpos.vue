@@ -317,7 +317,7 @@
 															<f7-row>
 																<f7-col width="50">
 																	<f7-button fill popup-open=".trans-popup" class="calc-button">Popup</f7-button>
-																	<popup-component>
+																	<popup-component :popupSettings="popupSettings">
 																		<span slot="title">Transaction Response</span>
 																		<f7-block-title class="classy text-align-center" slot="errorTitle">DECLINED</f7-block-title>
 																		<span slot="errorMsg">
@@ -1889,6 +1889,12 @@ export default {
 	},
 	data() {
 		return {
+			//Componets Data
+			popupSettings: {
+				link: '.trans-popup',
+				name: "POS",
+				type: "POS"
+			},
 			moduleInfo: {
 				name: "Retail POS",
 				type: "POS"

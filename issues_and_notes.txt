@@ -29,7 +29,10 @@ How to submit custom queries to PayCycleRecurrence?
 
 I cant seem tom get CronJobs to work.
 
-lets install keditor in a new VUE instance.
+The Unique_together variable in Django only makes the fields unique e.g: company and HolidayName. That means that All cannot have the same holidayName. But Partners can.
+How do I create a stack for the notifications?
+
+When a User logs in. I need to immediately identlfy if they are customer or employee. How do I do this?
 
 I need to change to uplaod path to Amazon AWS for employees to /employee/name.
 I need to figure out how to delete the files from Amazon AWS using a CRON job. What script do I need to write

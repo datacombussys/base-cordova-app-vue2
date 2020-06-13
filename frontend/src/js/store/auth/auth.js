@@ -279,9 +279,9 @@ export const Auth = {
 				dispatch("getEmployeePositions", state.platformInfo);
 				dispatch("getCompanyDepartments", state.platformInfo);
 				dispatch("GETBusinessHours", state.platformInfo);
-				dispatch("getAttendanceSettings", state.platformInfo);
+				dispatch("GETAttendanceSettings", state.platformInfo);
 				dispatch("getHolidays", state.platformInfo);
-
+				f7.dialog.close();
 			},
 			async loadUserSpecificData({ commit, dispatch, state, rootState }) {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
@@ -292,9 +292,7 @@ export const Auth = {
 				dispatch("getCreditCardList", state.platformInfo);
 				dispatch("getACHAccountList", state.platformInfo);
 				dispatch("getNewShippingList", state.platformInfo);
-				f7.dialog.close();
-
-
+				
 			},
 			async loadAllData({ commit, dispatch, state, rootState }) {
 				//Get a list of all Hierarchy data: Datacom, Partner, Merchant, Vendors

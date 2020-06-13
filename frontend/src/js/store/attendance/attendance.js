@@ -13,12 +13,14 @@ export const Attendance = {
 		payrollCycleList: [],
 		attendanceTypeList: ['Normal', 'Normal Overtime', 'Weekend', 'Weekend Overtime', 'Holiday Overtime'],
 		shiftList: [],
-		operatingHoursObj: {},
 		attendanceSettingsObj: {},
+		operatingHoursList: [],
+		holidaysList: [],
+		holidayProfileOriginal: {},
+		holidayProfile: {},
 		dayHours: {},
 		dayHoursOriginal: {},
 		// hoursOfOperation: {},
-		hoursOfOperationOriginal: null,
 		hoursOfOperation: {
 			switchOpen: 'Open',
 			switchClosed: 'Closed',
@@ -49,9 +51,7 @@ export const Attendance = {
         sunday: 'Sunday',
 			}
 		},
-		holidays: Holidays,
-		holidaysList: [],
-		holidayProfile: {},
+
 
 	},
 	mutations: {
@@ -65,12 +65,13 @@ export const Attendance = {
 			state.shiftList = payload;
 		},
 		SET_HOURS_OPERATION_PROFILE(state, payload) {
-			console.log('payload', payload);
+			state.operatingHoursList = payload;
+			// console.log('payload', payload);
 			//Set StoreHours Holiday Object
 			var day = JSON.parse(JSON.stringify(Days));
 			if(payload != null || payload.length != 0) {
 				for(let key in payload) {
-					console.log('payload[key]', payload[key]);
+					// console.log('payload[key]', payload[key]);
 					var dayList = [];
 
 					var obj = {
@@ -84,12 +85,12 @@ export const Attendance = {
 					var dayName = payload[key].day_of_week;
 					day[dayName] = dayList;
 				}
-				console.log('day', day);
-				console.log('dayList', dayList);
+				// console.log('day', day);
+				// console.log('dayList', dayList);
 				state.dayHours = JSON.parse(JSON.stringify(day));
-				console.log('state.dayHours', state.dayHours);
+				// console.log('state.dayHours', state.dayHours);
 				state.dayHoursOriginal = JSON.parse(JSON.stringify(day));
-				console.log('state.dayHoursOriginal', state.dayHoursOriginal);
+				// console.log('state.dayHoursOriginal', state.dayHoursOriginal);
 			}
 
 		},
@@ -160,10 +161,12 @@ export const Attendance = {
 				const camelName = holidayName.split(" ").join("");
 				console.log('camelName', camelName);
 
-				holiday[camelName].days = holidayList;
+				//Complete holidayProfile Dataset
+				holiday[camelName] = holidayList;
 				console.log('holiday', holiday);
 
-				hoursOperation[camelName] = holidayName;
+				//complete the holiday Localization Settings
+				hoursOperation.days[camelName] = holidayName;
 
 				// Object.defineProperty(hoursOperation.days, camelName, {
 				// 	value: holidayName,
@@ -174,16 +177,17 @@ export const Attendance = {
 			console.log('holidayList', holidayList);
 			console.log('holiday', holiday);
 			state.holidayProfile = holiday;
+			state.holidayProfileOriginal = JSON.parse(JSON.stringify(holiday));
 			console.log('state.holidayProfile', state.holidayProfile);
+			console.log('state.holidayProfileOriginal', state.holidayProfileOriginal);
+
 			state.hoursOfOperation = JSON.parse(JSON.stringify(hoursOperation));
-			state.hoursOfOperationOriginal = JSON.parse(JSON.stringify(hoursOperation));
 			console.log('state.hoursOfOperation', state.hoursOfOperation);
-			console.log('state.hoursOfOperationOriginal', state.hoursOfOperationOriginal);
 		}
 	},
 	actions: {
-		addAttendanceSettings({ commit, dispatch, rootState }, form) {
-			console.log('addAttendanceSettings form', form);
+		POSTAttendanceSettings({ commit, dispatch, rootState }, form) {
+			console.log('POSTAttendanceSettings form', form);
 			return new Promise((resolve, reject) => {
 				if (!rootState.Auth.isAuthenticated) {
 					let error = {};
@@ -351,28 +355,38 @@ export const Attendance = {
 					}
 				}).catch(error => {
 					f7.preloader.hide();
-					error.type = "Add Holiday";
-					dispatch('updateNotification', error);
-
+					console.log('error', error);
+					console.log('error', error.response);
+					if(error) {
+						error.response.type = "Add Holiday";
+						dispatch('updateNotification', error);
+						if(error.response.status === 500) {
+							if(error.response.data.slice(0,200).includes("value violates unique constraint")) {
+								f7.dialog.alert("Name is already taken").open();
+							}
+						}
+					}
 					return resolve(error);
 				});
 			}).catch(error => {
+				console.log('error', error);
 				return error;
 			});
 		},
 		//GET Methods
-		getAttendanceSettings({ dispatch, commit, rootState }, payload) {
+		GETAttendanceSettings({ dispatch, commit, rootState }, payload) {
+			var platForm = rootState.Auth.platformInfo;
 			return new Promise((resolve, reject) => {
 				if (!rootState.Auth.isAuthenticated) {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
 					dispatch('updateNotification', error);
-					console.log("getAttendanceSettings error", error);
+					console.log("GETAttendanceSettings error", error);
 					return reject(error);
 				}
-				console.log("getAttendanceSettings", payload);
-				var url = "";
+				console.log("GETAttendanceSettings", payload);
+				var url = platForm.url;
 				if (payload != undefined) {
 					url = payload.url;
 				}
@@ -392,6 +406,7 @@ export const Attendance = {
 			});
 		},
 		getCompanyShifts({ dispatch, commit, rootState }, payload) {
+			var platForm = rootState.Auth.platformInfo;
 			return new Promise((resolve, reject) => {
 				if (!rootState.Auth.isAuthenticated) {
 					let error = {};
@@ -402,7 +417,7 @@ export const Attendance = {
 					return reject(error);
 				}
 				console.log("getCompanyShifts", payload);
-				var url = "";
+				var url = platForm.url;
 				if (payload != undefined) {
 					url = payload.url;
 				}
@@ -452,6 +467,7 @@ export const Attendance = {
 			});
 		},
 		getHolidays({ dispatch, commit, rootState }, payload) {
+			var platForm = rootState.Auth.platformInfo;
 			return new Promise((resolve, reject) => {
 				if (!rootState.Auth.isAuthenticated) {
 					let error = {};
@@ -462,7 +478,7 @@ export const Attendance = {
 					return reject(error);
 				}
 				console.log("getHolidays", payload);
-				var url = "";
+				var url = platForm.url;
 				if (payload != undefined) {
 					url = payload.url;
 				}
@@ -481,6 +497,36 @@ export const Attendance = {
 			});
 		},
 		//Updating Models
+		PATCHAttendanceSettings({ dispatch, commit, rootState }, form) {
+			return new Promise((resolve, reject) => {
+				console.log("PATCH Attendance Settings", form);
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("PATCHAttendanceSettings error", error);
+					return reject(error);
+				}
+				axios.patch("/django/attendance-settings/" + form.id + "/", form).then(response => {
+					console.log("PATCH Attendance Settings", response);
+					if (response.status === 200) {
+						response.type = "Update Attendance Settings";
+						dispatch('updateNotification', response);
+						dispatch('GETAttendanceSettings');
+
+						return resolve(response.data);
+					}
+				}).catch(error => {
+					error.type = "Update Attendance Settings";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			}).catch(error => {
+				return error;
+			});
+		},
 		PATCHBusinessHours({ dispatch, commit, rootState }, form) {
 			return new Promise((resolve, reject) => {
 				console.log("PATCH Hours Of Operation", form);
@@ -503,6 +549,36 @@ export const Attendance = {
 					}
 				}).catch(error => {
 					error.type = "Update Hours of Operation";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			}).catch(error => {
+				return error;
+			});
+		},
+		PATCHHolidays({ dispatch, commit, rootState }, form) {
+			return new Promise((resolve, reject) => {
+				console.log("PATCH Hours Of Operation", form);
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("PATCHHolidays error", error);
+					return reject(error);
+				}
+				axios.patch("/django/holidays/" + form.id + "/", form).then(response => {
+					console.log("PATCH Holidays", response);
+					if (response.status === 200) {
+						response.type = "Update Holidays";
+						dispatch('updateNotification', response);
+						getHolidays
+
+						return resolve(response.data);
+					}
+				}).catch(error => {
+					error.type = "Update Holidays";
 					dispatch('updateNotification', error);
 
 					return resolve(error);
@@ -559,13 +635,19 @@ export const Attendance = {
 
 	},
 	getters: {
-		isValidOperatingHours(state) {
-			if(Object.keys(state.operatingHoursObj).length != 0) {
+		HAS_OPERATING_HOURS(state) {
+			if(Object.keys(state.dayHours).length != 0) {
 				return true
 			}
 			return false
 		},
-		isValidSettingsObj(state) {
+		HAS_HOLIDAYS(state) {
+			if(Object.keys(state.holidayProfile).length != 0) {
+				return true
+			}
+			return false
+		},
+		HAS_ATTENDANCE_SETTINGS(state) {
 			if(Object.keys(state.attendanceSettingsObj).length != 0) {
 				return true
 			}
