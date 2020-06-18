@@ -611,7 +611,21 @@ body {
 .safe-areas .view .view-main {
 	height: calc(100% - var(--f7-appbar-app-offset, 0px));
 }
+//Popup content scrollbar
+.popup {
+	.page {
+		.page-content {
+			scrollbar-width: none;
+		}
+	}
+}
 
+//Popup Options
+.popup-header {
+	background: rgb(2, 41, 51);
+}
+
+//Icons
 i.icon.icon-back {
 	color: rgb(255, 255, 255);
 }
@@ -1087,6 +1101,16 @@ div.list {
 		}
 	}
 }
+//f7-table
+.data-table thead th {
+	height: 5px;
+}
+.filter-input {
+	max-width: 100%;
+	min-width: 50px;
+	min-height: 40px;
+	padding: 5px 5px 5px 10px;
+}
 //F7 List Items
 .item-content {
 	box-shadow: none;
@@ -1194,15 +1218,16 @@ div.list {
 }
 
 .error-text {
+	display: flex;
+	text-align: center;
 	padding-top: 30px;
 	font-size: 1.5em;
-	text-align: center;
+ 	justify-content: center;
 	font-weight: 600;
 	color: #440606;
 	width: 100%;
 	height: 100px;
 	border: 1px solid rgb(82, 82, 82);
-	margin-bottom: 30px;
 	background: rgba(209, 240, 245, 0.5);
 }
 

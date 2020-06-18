@@ -17,6 +17,7 @@ from users.views import (UserProfileViewset,
 from companies.views import CompanyViewset
 from customers.views import CustomerViewset
 from employees.views import EmployeeViewset, PositionsViewset
+from financial.views import SalesTaxViewset
 from inventory.views import (InventoryViewset, 
                             InvBarcodesViewset, 
                             InvGalleryViewset, 
@@ -34,7 +35,8 @@ from commons2.views import (CountryViewset,
                             UserPermissionsViewSet, 
                             BasePermissionsViewSet, 
                             ShippingViewSet, 
-                            DepartmentViewset, )
+                            DepartmentViewset, 
+                            GeneralSettingsViewset, )
 from commons.views import IndustryViewset
 from attendance.views import (ShiftViewset, 
                             BusinessOperatingHoursViewset, 
@@ -71,6 +73,7 @@ router.register(r'django/customers', CustomerViewset)
 router.register(r'django/datacom', DatacomViewset)
 router.register(r'django/departments', DepartmentViewset)
 router.register(r'django/employees', EmployeeViewset)
+router.register(r'django/general-settings', GeneralSettingsViewset)
 router.register(r'django/groups', UserGroupViewSet)
 router.register(r'django/holidays', HolidayViewset)
 router.register(r'django/industries', IndustryViewset)
@@ -93,6 +96,7 @@ router.register(r'django/postal-code', PostalCodeViewset)
 router.register(r'django/region', RegionViewset)
 router.register(r'django/shipping', ShippingViewSet)
 router.register(r'django/sales-offices', SalesOfficeViewset)
+router.register(r'django/sales-tax', SalesTaxViewset)
 router.register(r'django/shifts', ShiftViewset)
 router.register(r'django/timezones', TimezonesViewset)
 router.register(r'django/time-cards', TimeCardViewset)

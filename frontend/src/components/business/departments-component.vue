@@ -125,7 +125,7 @@ export default {
   },
   computed: {
     ...mapState(["Common", "Locale", "Companies", "Auth"]),
-    ...mapGetters([]),
+    // ...mapGetters([]),
   },
   created() {
 

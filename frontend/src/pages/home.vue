@@ -371,58 +371,50 @@ export default {
 		this.$store.dispatch('getSharedStates', 6252001);
 
 		//*****************************Finished Loading Databases***************************** */
-		const dbName = "NotesDB";
-		const dbVersion = 1;
+		// const dbName = "NotesDB";
+		// const dbVersion = 1;
 
-		const indexDB = indexedDB.open(dbName, dbVersion);
+		// const indexDB = indexedDB.open(dbName, dbVersion);
 
-		indexDB.onupgradeneeded = (e) => {
-			console.log("Upgrade was called");
-			console.log("this", this);
-			// this.$f7.dialog.create({
-			//   text: "Upgrade was called",
-			//   buttonOk: 'Ok',
-			//   closeByBackdropClick: true,
-			// }).open();
+		// indexDB.onupgradeneeded = (e) => {
+		// 	console.log("Upgrade was called");
+		// 	console.log("this", this);
+		// 	f7.dialog.alert("Database Upgrade was called.").open();
 
-			const db = e.target.result;
-			console.log("Success db", db);
+		// 	const db = e.target.result;
+		// 	console.log("Success db", db);
 
-			//Can Only create on Upgrade
-			const pNotes = db.createObjectStore("PersonalNotes", {
-				keyPath: "title"
-			});
-			const myNotes = db.createObjectStore("MyNotes", { keyPath: "title" });
-			const singleQuote = "Yes";
-		};
-		//On Success
-		indexDB.onsuccess = (e) => {
-			console.log("Success was called");
-			// this.$f7.dialog.create({
-			//   text: "Success was called",
-			//   buttonOk: 'Ok',
-			//   closeByBackdropClick: true,
-			// }).open();
+		// 	//Can Only create on Upgrade
+		// 	const pNotes = db.createObjectStore("PersonalNotes", {
+		// 		keyPath: "title"
+		// 	});
+		// 	const myNotes = db.createObjectStore("MyNotes", { keyPath: "title" });
+		// 	const singleQuote = "Yes";
+		// };
+		// //On Success
+		// indexDB.onsuccess = (e) => {
+		// 	console.log("Success was called");
+		// 	f7.dialog.alert("Success was called.").open();
 
-			const db = e.target.result;
+		// 	const db = e.target.result;
 
-			//Add Notes to DB
-			const note = {
-				title: "Database Title",
-				text: "Text Goes Here"
-			};
-			const tx = db.transaction("PersonalNotes", "readwrite");
-			const newNotes = tx.objectStore("PersonalNotes");
-			newNotes.add(note);
+		// 	//Add Notes to DB
+		// 	const note = {
+		// 		title: "Database Title",
+		// 		text: "Text Goes Here"
+		// 	};
+		// 	const tx = db.transaction("PersonalNotes", "readwrite");
+		// 	const newNotes = tx.objectStore("PersonalNotes");
+		// 	newNotes.add(note);
 
-			//View Notes
-			this.viewDBNotes(db);
-		};
+		// 	//View Notes
+		// 	this.viewDBNotes(db);
+		// };
 		//On Error
-		indexDB.onerror = (e) => {
-			console.log("Error was called");
-			console.log(`Error: ${e.target.error} was found`);
-		};
+		// indexDB.onerror = (e) => {
+		// 	console.log("Error was called");
+		// 	console.log(`Error: ${e.target.error} was found`);
+		// };
 	}
 };
 </script>

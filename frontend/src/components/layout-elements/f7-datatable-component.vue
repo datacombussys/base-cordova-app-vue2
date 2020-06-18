@@ -3,9 +3,9 @@
 	<f7-row class="full-width no-margin">
 		<f7-block class="full-width no-margin-top">
 			<!-- Shifts -->
-			<f7-card v-if="Attendance.holidaysList.length === 0">
+			<f7-card v-if="Attendance.holidayList.length === 0">
 				<f7-card-content>
-					<div class="error-text">
+					<div v-if="Attendance.holidayList.length === 0" class="error-text">
 						No records to display
 					</div>
 					<slot name="button"></slot>
@@ -46,10 +46,10 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="(tdata, $tdataIndex) in returnStoreModule(tableData.module).holidaysList" :key="$tdataIndex">
+									<tr v-for="(tdata, $tdataIndex) in returnStoreModule(tableData.module).holidayList" :key="$tdataIndex">
 										<td class="checkbox-cell">
 											<label class="checkbox">
-												<input type="checkbox" @change="checkedItem"/>
+												<input type="checkbox" :id="tdata.id" @change="checkedItem($event, returnStoreModule(tableData.module).holidayList)"/>
 												<i class="icon-checkbox"></i>
 											</label>
 										</td>
@@ -119,73 +119,9 @@ export default {
 		deactivate(e) {
 			console.log('e', e);
 		},
-		toggleAllChecks(e) {
-			console.log('e', e);
-			console.log('toggleAllChecks e', e);
-			if(!e.target.checked) {
-				var table = document.getElementById(this.tableData.tableId);
-				console.log('table', table);
-				var rows = table.rows;
-				console.log('rows', rows);
-				for(let index = 1; index < rows.length; index++) {
-					rows[index].childNodes[0].childNodes[0].childNodes[0].checked = false;
-				}
-				// for(let key in rows) {
-				// 	rows[key].childNodes[0].childNodes[0].childNodes[0].checked = false;
-				// }
-			} else {
-				var table = document.getElementById(this.tableData.tableId);
-				console.log('table', table);
-				var rows = table.rows;
-				console.log('rows', rows);
-				for(let index = 1; index < rows.length; index++) {
-					rows[index].childNodes[0].childNodes[0].childNodes[0].checked = true;
-				}
-				// for(let key in rows) {
-				// 	rows[key].childNodes[0].childNodes[0].childNodes[0].checked = true;
-				// }
-				this.isAllChecked = true;
-			}
-			
-		},
-		checkedItem(e) {
-			console.log('e', e);
-			//Find out if cehcked or unchecked
-			if(e.target.checked) {
-				var rowObj = {};
-				var row = e.target.parentNode.parentNode.parentNode.children;
-				// console.log('row', row);
-				var rowHeader = e.target.parentNode.parentNode.parentNode.parentNode.previousElementSibling.childNodes[0].cells;
-				// console.log('rowHeader', rowHeader);
-				for(let key in row) {
-					var objKey = rowHeader[key].innerText;
-					var objValue = row[key].innerText;
-					if(objKey != null) {
-						rowObj[objKey] = objValue;
-						// console.log('objKey', objKey);
-						// console.log('objValue', objValue);
-					}
-				}
-				// console.log('rowObj', rowObj);
-				delete rowObj[""];
-				// console.log('rowObj', rowObj);
-				this.checkedItemData = rowObj;
-			} else {
-				// remove the Object from store
-				this.checkedItemData = null;
-			}
-			this.uncheckAllOthers(e);
-		},
-		uncheckAllOthers(e) {
-			console.log('uncheckAllOthers e', e);
-			var tableBody = e.target.parentNode.parentNode.parentNode.parentNode.childNodes;
-			console.log('tableBody array', tableBody);
-			for(let index = 0; index < tableBody.length; index++) {
-				console.log('tableBody', tableBody[index]);
-				tableBody[index].childNodes[0].childNodes[0].childNodes[0].checked = false;
 
-			}
-		},
+		
+		
 		//Not Used
 		uncheckAllCells(e) {
 			console.log('uncheckAllCells e', e);

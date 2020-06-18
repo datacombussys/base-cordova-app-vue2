@@ -157,7 +157,7 @@ export default {
   },
   computed: {
     ...mapState(["Common", "Locale"]),
-    ...mapGetters([]),
+    // ...mapGetters([]),
   },
   created() {
 

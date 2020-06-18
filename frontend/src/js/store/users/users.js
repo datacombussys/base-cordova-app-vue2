@@ -160,6 +160,7 @@ export const Users = {
 					console.log("getEmployeeProfileByUserID response", response);
 					if (response.status === 200) {
 						commit('SET_EMPLOYEE_PROFILE', response.data);
+						commit('SET_PLATFORM_INFO', response.data[0]);
 						response.type = "Retrieve Employee Profile by UserID";
 						// dispatch('updateNotification', response);
 						return resolve(response.data)

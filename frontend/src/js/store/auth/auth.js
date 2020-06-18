@@ -17,6 +17,11 @@ export const Auth = {
 		domain: '',
 	},
 	mutations: {
+		SET_INDEXEDDB_USER(state, payload) {
+			console.log("SET_INDEXEDDB_USER", payload);
+			state.user = payload;
+			state.isAuthenticated = true;
+		},
 		SET_LOGIN_PROFILE(state, payload) {
 				console.log("SET_LOGIN_PROFILE", payload);
 				state.userLoginProfile = payload;
@@ -37,19 +42,11 @@ export const Auth = {
 			console.log("REMOVE_TOKEN Payload");
 			localStorage.removeItem("expiration");
 			localStorage.removeItem("user");
-			location.reload();
+			// location.reload();
 
 			axios.defaults.headers.common['Authorization'] = "";
 		},
-		CHECK_LOGGED_IN(state) {
-			const user = JSON.parse(localStorage.getItem('user'));
-			if (user) {
-				state.isAuthenticated = true;
-				console.log("state.isAuthenticated", state.isAuthenticated);
-			} else {
-				state.isAuthenticated = null;
-			}
-		},
+
 		SET_DOMAIN(state, payload) {
 			console.log('SET_DOMAIN payload', payload);
 			state.domain = payload;
@@ -58,40 +55,40 @@ export const Auth = {
 		SET_PLATFORM_INFO(state, payload) {
 			console.log('SET_PLATFORM_INFO payload', payload);
 			return new Promise(async (resolve, reject) => {
-				console.log('SET_PLATFORM_INFO payload.employeeProfile', payload.Users.employeeProfile);
-        if(payload.Users.employeeProfile.datacom != null) {
-					let platform = {id: payload.Users.employeeProfile.datacom.id, platform: "datacom", url: "?datacom__id=" + payload.Users.employeeProfile.datacom.id, domain: state.domain};
+				console.log('SET_PLATFORM_INFO payload.employeeProfile', payload);
+        if(payload.datacom != null) {
+					let platform = {id: payload.datacom.id, platform: "datacom", url: "?datacom__id=" + payload.datacom.id, domain: state.domain};
 					state.platformInfo = platform;
 					state.authLevel = 1;
-					state.userCompanyParent = payload.Users.employeeProfile.datacom.dba_name;
-					state.userCompanyName = payload.Users.employeeProfile.datacom.dba_name;
+					state.userCompanyParent = payload.datacom.dba_name;
+					state.userCompanyName = payload.datacom.dba_name;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         }
-        else if(payload.Users.employeeProfile.partner != null) {
-					let platform = {id: payload.Users.employeeProfile.partner.id, platform: "partner", url: "?partner__id=" + payload.Users.employeeProfile.partner.id, domain: state.domain};
+        else if(payload.partner != null) {
+					let platform = {id: payload.partner.id, platform: "partner", url: "?partner__id=" + payload.partner.id, domain: state.domain};
 					state.platformInfo = platform;
 					state.authLevel = 2;
-					state.userCompanyParent = payload.Users.employeeProfile.partner.datacom.dba_name;
-					state.userCompanyName = payload.Users.employeeProfile.partner.dba_name;
+					state.userCompanyParent = payload.partner.datacom.dba_name;
+					state.userCompanyName = payload.partner.dba_name;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         }
-        else if(payload.Users.employeeProfile.company != null) {
-					let platform = {id: payload.Users.employeeProfile.company.id, platform: "company", url: "?company__id=" + payload.Users.employeeProfile.company.id, domain: state.domain};
+        else if(payload.company != null) {
+					let platform = {id: payload.company.id, platform: "company", url: "?company__id=" + payload.company.id, domain: state.domain};
 					state.platformInfo = platform;
 					state.authLevel = 3;
-					state.userCompanyParent = payload.Users.employeeProfile.company.partner.dba_name;
-					state.userCompanyName = payload.Users.employeeProfile.company.dba_name;
+					state.userCompanyParent = payload.company.partner.dba_name;
+					state.userCompanyName = payload.company.dba_name;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         }
-        else if(payload.Users.employeeProfile.vendor != null) {
-					let platform = {id: payload.Users.employeeProfile.vendor.id, platform: "vendor", url: "?vendor__id=" + payload.Users.employeeProfile.vendor.id, domain: state.domain};
+        else if(payload.vendor != null) {
+					let platform = {id: payload.vendor.id, platform: "vendor", url: "?vendor__id=" + payload.vendor.id, domain: state.domain};
 					state.platformInfo = platform;
 					state.authLevel = 4;
-					state.userCompanyParent = payload.Users.employeeProfile.vendor.company.dba_name;
-					state.userCompanyName = payload.Users.employeeProfile.vendor.dba_name;
+					state.userCompanyParent = payload.vendor.company.dba_name;
+					state.userCompanyName = payload.vendor.dba_name;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         } else {
@@ -100,7 +97,8 @@ export const Auth = {
       }).catch(error => {
         return error;
       });
-		}
+		},
+		
 		
 	},
 	actions: {
@@ -115,24 +113,25 @@ export const Auth = {
 		},
 		async preFetchProfile({ dispatch, commit, state }) {
 			console.log("preFetchProfile request");
-			const user = JSON.parse(localStorage.getItem("user"));
-			console.log("preFetchProfile user", user);
-			dispatch('loadAllData');
+			f7.dialog.progress("Please wait while we load your data").open();
+			const user = await dispatch('getIndexedDb');
+			console.log('preFetchProfile from IndexedDb user', user);
+			await dispatch('loadAllData');
 			if(user) {
-				f7.dialog.progress("Please wait while we load your data").open();
 				let EEUSerID = await dispatch('getEmployeeProfileByUserID', user.id);
 				console.log("EEUSerID", EEUSerID);
-				commit("SET_LOGIN_PROFILE", EEUSerID.data);
-				dispatch('loadAllData');
-				dispatch('loadCompanySpecificData');
-				dispatch('loadUserSpecificData');
-				commit('CHECK_LOGGED_IN');
+				await dispatch('loadCompanySpecificData');
+				await dispatch('loadUserSpecificData');
+				f7.dialog.close();
+			}
+			else {
+				f7.dialog.close();
 			}
 			return
 		},
 		//Create a Customer Signin Method
 		//Employee Signin Method
-		signIn({ dispatch, commit, state }, credentials) {
+		async signIn({ dispatch, commit, state }, credentials) {
 			console.log("credentials", credentials);
 			axios.post("/django/login/", credentials)
 				.then(async response => {
@@ -141,15 +140,17 @@ export const Auth = {
 						// f7.dialog.alert("Login was Successful").open();
 						f7.dialog.progress("Please wait while we load your data").open();
 						console.log("Login response.data", response.data);
-						commit("SET_LOGIN_DETAILS", response.data);						
-
+						// commit("SET_LOGIN_DETAILS", response.data);	
+						response.data['signin'] = true;					
+						dispatch('setIndexedDb', response.data);
 						let EEUSerID = await dispatch('getEmployeeProfileByUserID', response.data.id);
 						console.log("EEUSerID", EEUSerID);
 						commit("SET_LOGIN_PROFILE", EEUSerID.data);
 
-						dispatch('loadAllData');
-						dispatch('loadCompanySpecificData');
-						dispatch('loadUserSpecificData');
+						await dispatch('loadAllData');
+						await dispatch('loadCompanySpecificData');
+						await dispatch('loadUserSpecificData');
+						f7.dialog.close();
 						//Set Notification
 						response.type = "User Logged In";
 						dispatch('updateNotification', response);
@@ -189,7 +190,7 @@ export const Auth = {
 					.then(response => {
 						console.log("posted login request", response.data);
 						commit("SET_LOGIN_PROFILE", response[0].user);
-						commit("SET_LOGIN_DETAILS", response.data);
+						// commit("SET_LOGIN_DETAILS", response.data);
 						console.log("Login response.data", response.data);
 						dispatch('getEmployeeProfileByUserID', response.data.user_id);
 						//Set Notification
@@ -241,26 +242,203 @@ export const Auth = {
 			passwordReset({ dispatch, commit, state }, credentials) {
 				console.log("credentials", credentials);
 				axios.put("django/pw-reset/", credentials).then(response => {
-						console.log("Django password Reset response", response.data);
-						// dispatch('signIn', credentials);
-						response.type = "Password Reset";
-						dispatch('updateNotification', response);
-						f7.views.main.router.navigate('/login/');
-						// if(state.preLoginPagePath === null) {
-						// 	f7.views.main.router.navigate('/');
-						// } else {
-						// 	f7.views.main.router.navigate('/secured/', {reloadCurrent : true});
-						// }
-					})
-					.catch(error => {
-						error.type = "Password Reset";
-						dispatch("updateNotification", error);
-					});
+					console.log("Django password Reset response", response.data);
+					// dispatch('signIn', credentials);
+					response.type = "Password Reset";
+					dispatch('updateNotification', response);
+					f7.views.main.router.navigate('/login/');
+					// if(state.preLoginPagePath === null) {
+					// 	f7.views.main.router.navigate('/');
+					// } else {
+					// 	f7.views.main.router.navigate('/secured/', {reloadCurrent : true});
+					// }
+				})
+				.catch(error => {
+					error.type = "Password Reset";
+					dispatch("updateNotification", error);
+				});
 			},
-			signOut({ commit, dispatch }) {
+			//************************************************  Set IndexedDB Storage   *********************************************************/
+			setIndexedDb({state, commit}, payload) {
+				console.log("setIndexedDb payload", payload);
+				//Global Variabes
+				const dbName = "UserDB";
+				const dbVersion = 2;
+				const indexDB = indexedDB.open(dbName, dbVersion);
+				const tableName = "UsersData";
+	
+				//onUpgradeNeeded
+				indexDB.onupgradeneeded = (e) => {
+					console.log("Upgrade was called");
+					console.log("this", this);
+					f7.dialog.alert("Database Upgrade was called.").open();
+		
+					const db = e.target.result;
+					console.log("Success db", db);
+		
+					//Can Only create on Upgrade
+					var objectStore = db.createObjectStore(tableName, {
+						keyPath: "id"
+					});
+					objectStore.createIndex("id", "id", { unique: true });
+	
+					objectStore.transaction.oncomplete = (event) => {
+						console.log("objectStore.transaction.oncomplete, event", event);
+					}
+				};
+	
+				//On Success
+				indexDB.onsuccess = (e) => {
+					console.log("Success was called setIndexedDb");
+					// f7.dialog.alert("Success was called.").open();
+					const db = e.target.result;
+		
+					//Add info to DB User
+					console.log("payload", payload);
+					var token = null;
+					var id = null;
+					var email = null;
+					var employee = null;
+	
+					if(payload.signin) {
+						id = payload.id;
+						email = payload.email;
+						employee = payload.employee;
+						token = payload.token;
+					} else {
+						token = payload.user.token;
+						id = payload.user.id;
+						email = payload.user.email;
+						employee = payload.id;
+					}
+					const user = {
+						token: token,
+						id: id,
+						email: email,
+						employee: employee,
+					};
+					console.log("user", user);
+					const tx = db.transaction(tableName, "readwrite");
+					console.log("tx", tx);
+					//Transaction Success
+					tx.oncomplete = (event) => {
+						console.log("TX All done!", event);
+						commit('SET_INDEXEDDB_USER', user);
+					};
+					//Transaciton Error
+					tx.onerror = (event)  =>{
+						// Don't forget to handle errors!
+						console.log("TX had an error", event);
+					};
+
+					//Actually Store the User Object Here
+					var newUserRequest = tx.objectStore(tableName);
+					console.log("newUserRequest",newUserRequest);
+					var request = newUserRequest.put(user);
+					request.onsuccess = evt => {
+						console.log('evt', evt);
+						console.log('evt.target.result', evt.target.result);
+					}
+		
+				};
+				//On Error
+				indexDB.onerror = (e) => {
+					f7.dialog.alert("Error was called.").open();
+					console.log("Error was called");
+					console.log(`Error: ${e.target.error} was found`);
+				};
+			},
+			//************************************************  Get IndexedDb   *********************************************************/
+			async getIndexedDb({state, commit}) {
+				return new Promise((resolve, reject) => {
+					//Global Variabes
+					const dbName = "UserDB";
+					const indexDB = indexedDB.open(dbName);
+					const tableName = "UsersData";				
+		
+					//On Success
+					indexDB.onsuccess = async (e) => {
+						console.log("Success was called getIndexedDb");
+						// f7.dialog.alert("Success was called.").open();
+						const db = e.target.result;
+						console.log("db.version", db.version);
+						if(db.version === 1) {
+							return resolve();
+						}
+						if(db.version === 2) {
+							try {
+								// store = db.transaction("UsersData", "readonly").objectStore(tableName);
+								//View UsersData Function when onSuccess is true
+								const tx = db.transaction("UsersData", "readonly");
+								const userObj = tx.objectStore(tableName);
+								console.log("userObj", userObj);
+								const request = userObj.openCursor();
+								console.log("request", request);
+								request.onsuccess = (e) => {
+									const cursor = e.target.result;
+									console.log("cursor", cursor);
+									if (cursor) {
+										// console.log("There was a DB, cursor:", cursor);
+										// console.log("cursor Key" + cursor.key + "cursor.value" + cursor.value);
+										commit('SET_INDEXEDDB_USER', cursor.value);
+										// cursor.continue();
+										return resolve(cursor.value);
+									}
+								};
+							} catch(e) {
+								console.log('catch e',e);
+								console.log('catch e',e.result);
+								// indexedDB.deleteDatabase(dbName);
+	
+								return reject();
+							}
+						}
+
+					};
+				}).catch(error => {
+					console.log('promise error', error);
+					return error;
+				});
+				
+			},
+			//************************************************  Remove IndexedDb   *********************************************************/
+			removeIndexedDb(state, payload) {
+				//Global Variabes
+				const dbName = "UserDB";
+				const dbVersion = 1;
+				const indexDB = indexedDB.open(dbName, dbVersion);
+				const tableName = "UsersData";
+	
+				//On Success
+				indexDB.onsuccess = (e) => {
+					console.log("Success was called removeIndexedDb");
+					f7.dialog.alert("Success was called for removeIndexedDb.").open();
+					const db = e.target.result;
+		
+					var id = payload.id;
+					
+					const request = db.transaction("UsersData", "readwrite")
+						.objectStore(tableName)
+						.delete(id);
+	
+					console.log("request",request);
+				
+					request.onsuccess = evt => {
+						console.log('request Onsuccess Delete user evt', evt);
+						console.log('evt.target.result', evt.target.result);
+					}
+				};
+			},
+			//************************************************  SignOut   *********************************************************/
+			signOut({ commit, dispatch, state }) {
+				console.log('state.user', state.user);
+				// const userProfile = JSON.parse(JSON.stringify(state.user));
+				// console.log('userProfile', userProfile);
+				console.log('Signing Out');
 				axios.options("/django/logout/")
 				.then(response => {
 					console.log("signOut response", response);
+					dispatch('removeIndexedDb', {id: state.user.id});
 					commit('LOGOUT_USER');
 					// Clear User and Employee data in Users module
 					commit('CLEAR_USER_DATA');
@@ -270,52 +448,82 @@ export const Auth = {
 					
 				});
 			},
-			async loadCompanySpecificData({ commit, dispatch, state, rootState }) {
-				//Get a list of company specific details: departments, employees, postions, hours, etc.
-				console.log('loadCompanyData rootState', rootState);
-				await commit('SET_PLATFORM_INFO', rootState);
-				console.log('loadCompanyData state.platformInfo', state.platformInfo);
-				dispatch("getEmployeeList", state.platformInfo);
-				dispatch("getEmployeePositions", state.platformInfo);
-				dispatch("getCompanyDepartments", state.platformInfo);
-				dispatch("GETBusinessHours", state.platformInfo);
-				dispatch("GETAttendanceSettings", state.platformInfo);
-				dispatch("getHolidays", state.platformInfo);
-				f7.dialog.close();
+			//************************************************  Load Data   *********************************************************/
+			//Load All data first and set Platform Info for the rest of the methods to use
+
+			loadAllData({ commit, dispatch, state, rootState }) {
+				//Get a list of all Hierarchy data: Datacom, Partner, Merchant, Vendors
+				return new Promise( async (resolve, reject) => {
+					console.log('loadAllData rootState', rootState);
+					
+					console.log('loadAllData state.platformInfo', state.platformInfo);
+					dispatch("getDatacomList");
+					if(state.platformInfo.datacom != null) {
+						dispatch("getPartnerList");
+						dispatch("getCompanyList");
+						dispatch("getVendorList");
+						return resolve();
+					}
+					else if (state.platformInfo.partner != null) {
+						dispatch("getCompanyList", state.platformInfo);
+						dispatch("getVendorList", state.platformInfo);
+						return resolve();
+					}
+					else if (state.platformInfo.company != null) {
+						dispatch("getVendorList", state.platformInfo);
+						return resolve();
+					}
+					else if (state.platformInfo.vendor != null) {
+						return resolve();
+					}
+					return resolve();
+
+				}).catch(error => {
+					console.log('Promise error', error);
+					return error;
+				});
 			},
-			async loadUserSpecificData({ commit, dispatch, state, rootState }) {
+
+			loadCompanySpecificData({ commit, dispatch, state, rootState }) {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
-				console.log('loadUserata rootState', rootState);
-				await commit('SET_PLATFORM_INFO', rootState);
-				console.log('loadUserData state.platformInfo', state.platformInfo);
-				dispatch("getEmployeeList", state.platformInfo);
-				dispatch("getCreditCardList", state.platformInfo);
-				dispatch("getACHAccountList", state.platformInfo);
-				dispatch("getNewShippingList", state.platformInfo);
+				return new Promise((resolve, reject) => {
+					console.log('loadCompanyData rootState', rootState);
+					dispatch("getEmployeeList", state.platformInfo);
+					dispatch("getEmployeePositions", state.platformInfo);
+					dispatch("getCompanyDepartments", state.platformInfo);
+					dispatch("getHolidays", state.platformInfo);
+					dispatch("GETBusinessHours", state.platformInfo);
+					dispatch("GETAttendanceSettings", state.platformInfo);
+					dispatch("getCompanyShifts", state.platformInfo);
+					dispatch("GETSalesTaxes", state.platformInfo);
+					dispatch("GETGeneralSettings", state.platformInfo);
+
+					return resolve();
+
+				}).catch(error => {
+					console.log('Promise error', error);
+					return error;
+				});
+				
+				
 				
 			},
-			async loadAllData({ commit, dispatch, state, rootState }) {
-				//Get a list of all Hierarchy data: Datacom, Partner, Merchant, Vendors
-				console.log('loadAllData rootState', rootState);
-				await commit('SET_PLATFORM_INFO', rootState);
-				console.log('loadAllData state.platformInfo', state.platformInfo);
-				dispatch("getDatacomList");
-				if(state.platformInfo.datacom != null) {
-					dispatch("getPartnerList");
-					dispatch("getCompanyList");
-					dispatch("getVendorList");
-				}
-				else if (state.platformInfo.partner != null) {
-					dispatch("getCompanyList", state.platformInfo);
-					dispatch("getVendorList", state.platformInfo);
-				}
-				else if (state.platformInfo.company != null) {
-					dispatch("getVendorList", state.platformInfo);
-				}
-				else if (state.platformInfo.vendor != null) {
-					return
-				}
-			}
+			loadUserSpecificData({ commit, dispatch, state, rootState }) {
+				//Get a list of company specific details: departments, employees, postions, hours, etc.
+				return new Promise((resolve, reject) => {
+					console.log('loadUserata rootState', rootState);
+					dispatch("getCreditCardList", state.platformInfo);
+					dispatch("getACHAccountList", state.platformInfo);
+					dispatch("getNewShippingList", state.platformInfo);
+
+					return resolve();
+
+				}).catch(error => {
+					console.log('Promise error', error);
+					return error;
+				});				
+			},
+			
 	},
 	getters: {
 		isLoggdIn(state) {

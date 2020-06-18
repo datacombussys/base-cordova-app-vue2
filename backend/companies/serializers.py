@@ -68,5 +68,11 @@ class CompanySerializer(serializers.ModelSerializer):
         
         return data
 
+class CompanySimpleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Company
+        fields = ('id', 'dba_name', 'legal_name', 'datacom__id', 'partner__id')
+
    
 

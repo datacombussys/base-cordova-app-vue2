@@ -113,6 +113,12 @@
 								<f7-list-item view=".view-main" link="/drag-n-drop/" panel-close title="Drag-N-Drop">
 									<f7-icon size="40" icon="mdi mdi-drag-variant" slot="media"></f7-icon>
 								</f7-list-item>
+								<f7-list-item view=".view-main" link="/labelmaker/" panel-close title="Label Maker">
+									<f7-icon size="40" icon="mdi mdi-label" slot="media"></f7-icon>
+								</f7-list-item>
+								<f7-list-item view=".view-main" link="/merge-labels/" panel-close title="Label Merger">
+									<f7-icon size="40" icon="mdi mdi-label" slot="media"></f7-icon>
+								</f7-list-item>
 								<f7-list-item view=".view-main" link="/email/" panel-close title="Email">
 									<f7-icon size="40" icon="mdi mdi-email" slot="media"></f7-icon>
 								</f7-list-item>

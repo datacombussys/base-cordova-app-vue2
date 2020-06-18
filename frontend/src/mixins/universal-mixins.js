@@ -41,6 +41,7 @@ export const UniversalMixins = {
       });
     },
     setUserPlatformGET(moduleInfo) {
+      //moduleInfo is the module that is sending the request and is compared to the User organization to restrict access
       console.log('setUserPlatformGET moduleInfo', moduleInfo);
       var newForm = {};
       if (moduleInfo != undefined) {

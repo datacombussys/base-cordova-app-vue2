@@ -16,11 +16,12 @@ from .serializers import ( CountrySerializer,
                           ShippingSerializer, 
                           PermissionsSerializer, 
                           GroupsSerializer, 
-                          DepartmentSerializer, )
+                          DepartmentSerializer, 
+                          GeneralSettingsSerializer, )
 
 from cities.models import Country, Region, City, PostalCode
 
-from .models import TimeZones, Holiday, Shipping, Department
+from .models import TimeZones, Holiday, Shipping, Department, GeneralSettings
 from users.models import UserGroups, UserPermissions
 
 class CountryViewset(viewsets.ModelViewSet):
@@ -64,9 +65,6 @@ class TimezonesViewset(viewsets.ModelViewSet):
   queryset = TimeZones.objects.all()
 
 class HolidayViewset(viewsets.ModelViewSet):
-  """Handle CRUD Views
-  Methods: list, create, retrieve, 
-  update, partial_update, destroy"""
   serializer_class = HolidaySerializer
   queryset = Holiday.objects.all()
   filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -76,27 +74,22 @@ class HolidayViewset(viewsets.ModelViewSet):
   ordering = ['date']
 
 class BasePermissionsViewSet(viewsets.ModelViewSet):
-  """testing the Base Class of Django Permisisons"""
   serializer_class = BasePermissionSeializer
   queryset = Permission.objects.all()
         
 class ContentTypeViewSet(viewsets.ModelViewSet):
-  """testing the Base Class of Django Permisisons"""
   serializer_class = ContentTypeSerializer
   queryset = ContentType.objects.all()
 
 class UserGroupViewSet(viewsets.ModelViewSet):
-  """CRUD for User Groups"""
   serializer_class = GroupsSerializer
   queryset = UserGroups.objects.all()
 
 class UserPermissionsViewSet(viewsets.ModelViewSet):
-  """CRUD for User Permissions"""
   serializer_class = PermissionsSerializer
   queryset = UserPermissions.objects.all()
 
 class ShippingViewSet(viewsets.ModelViewSet):
-  """CRUD for User Permissions"""
   serializer_class = ShippingSerializer
   queryset = Shipping.objects.all()
   filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -106,11 +99,17 @@ class ShippingViewSet(viewsets.ModelViewSet):
   ordering = ['date_added']
 
 class DepartmentViewset(viewsets.ModelViewSet):
-  """Handle CRUD Views
-  Methods: list, create, retrieve, 
-  update, partial_update, destroy"""
   serializer_class = DepartmentSerializer
   queryset = Department.objects.all()
+  filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+  filterset_fields = ['id', 'datacom__id', 'partner__id', 'company__id']
+  search_fields = ['id', 'datacom__id', 'partner__id', 'company__id']
+  ordering_fields = ['__all__']
+  ordering = ['date_added']
+
+class GeneralSettingsViewset(viewsets.ModelViewSet):
+  serializer_class = GeneralSettingsSerializer
+  queryset = GeneralSettings.objects.all()
   filter_backends = [DjangoFilterBackend, filters.SearchFilter]
   filterset_fields = ['id', 'datacom__id', 'partner__id', 'company__id']
   search_fields = ['id', 'datacom__id', 'partner__id', 'company__id']

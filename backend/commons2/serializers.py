@@ -3,7 +3,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from cities.models import Country, Region, City, PostalCode
 
-from .models import TimeZones, Holiday, Shipping, Department
+from .models import TimeZones, Holiday, Shipping, Department,GeneralSettings
 from users.models import User, UserGroups, UserPermissions
 
 from datacom.models import Datacom
@@ -138,3 +138,11 @@ class DepartmentSerializer(serializers.ModelSerializer):
   class Meta:
     model = Department
     fields = ('__all__')
+
+class GeneralSettingsSerializer(serializers.ModelSerializer):
+  datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+  partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+  company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
+  class Meta:
+    model = GeneralSettings
+    fields = '__all__'

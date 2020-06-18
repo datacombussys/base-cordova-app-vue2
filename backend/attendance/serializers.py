@@ -28,11 +28,6 @@ class ShiftSerializer(serializers.ModelSerializer):
         model = Shift
         fields = ('__all__')
 
-    def create(self, validated_data):
-        print('validated_data', validated_data)
-        shift = Shift.objects.create(**validated_data)
-
-        return shift
 
 class OperatingHoursSerializer(serializers.ModelSerializer):
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
@@ -43,7 +38,6 @@ class OperatingHoursSerializer(serializers.ModelSerializer):
         model = OperatingHours
         fields = ('__all__')
 
-        
 class BusinessOperatingHoursSerializer(serializers.ModelSerializer):
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)

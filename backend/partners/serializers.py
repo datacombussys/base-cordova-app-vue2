@@ -44,3 +44,9 @@ class PartnerSerializer(serializers.ModelSerializer):
             data['barcode'] = barcode_data_serializer.data
         
         return data
+
+class PartnerSimpleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Partner
+        fields = ('id', 'dba_name', 'legal_name', 'datacom__id')

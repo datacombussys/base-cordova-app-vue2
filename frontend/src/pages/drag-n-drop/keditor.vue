@@ -3,7 +3,7 @@
 		<nav-bar-component :pageSettings="pageSettings" :moduleInfo="moduleInfo"></nav-bar-component>
     <div class="selector"></div>
 
-
+    <shift-v2-component></shift-v2-component>
   </f7-page>
 </template>
 
@@ -14,14 +14,16 @@ import {mapGetters} from 'vuex';
 // require('@kademi/keditor/dist/js/keditor');
 
 //Components
-import navBarComponent from "../../components/universal/navbar-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
+import ShiftV2Component from "@/pages/time-attendance/components/shift-v2-component.vue";
 
 
 export default {
 		name: "Editor",
 		mixins: [],
 		components: {
-			"nav-bar-component": navBarComponent,
+      "nav-bar-component": navBarComponent,
+      "shift-v2-component": ShiftV2Component
 		},
     data() {
       return {

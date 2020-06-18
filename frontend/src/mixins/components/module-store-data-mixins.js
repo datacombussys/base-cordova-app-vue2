@@ -11,7 +11,7 @@ export const StoreModuleMixins = {
 			const state = this.$store._modules.root.state;
 			if(module = "Attendance") {
 				return state.Attendance;
-			}
+			} 
     }
    
   },

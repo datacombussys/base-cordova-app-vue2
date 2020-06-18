@@ -79,7 +79,7 @@
 									<f7-row class="full-width">
 										<f7-col width="100" class="display-flex justify-content-space-between">
 											<f7-button
-												popup-open=".open-till"
+												popup-open=".open-till-popup"
 												class="tall-button padding-half"
 												style="width:23%;"
 												fill
@@ -316,7 +316,7 @@
 														<f7-col width="50">
 															<f7-row>
 																<f7-col width="50">
-																	<f7-button fill popup-open=".trans-popup" class="calc-button">Popup</f7-button>
+																	<f7-button fill popup-open=".popup-component" class="calc-button">Popup</f7-button>
 																	<popup-component :popupSettings="popupSettings">
 																		<span slot="title">Transaction Response</span>
 																		<f7-block-title class="classy text-align-center" slot="errorTitle">DECLINED</f7-block-title>
@@ -1519,357 +1519,7 @@
 		</f7-popup>
 		<!-- END Gift Card Page Popup -->
 
-		<!-- Open Till Page Popup -->
-		<f7-popup
-			class="open-till"
-			:opened="openTillPopupOpened"
-			@popup:closed="openTillPopupOpened = false"
-		>
-			<f7-page>
-				<f7-row class="popup-header">
-					<f7-col width="90" class="margin-left">
-						<f7-block-title large class="margin-top text-color-white">Open Till</f7-block-title>
-					</f7-col>
-					<f7-col width="10">
-						<f7-link
-							class="level-right text-color-grey margin-right padding-top-half"
-							popup-close
-							icon-size="50"
-							icon-color="white"
-							icon="mdi mdi-close"
-						></f7-link>
-					</f7-col>
-				</f7-row>
 
-				<f7-card>
-					<f7-card-content class="padding-half">
-						<f7-row v-if="isTillOpen">
-							<f7-col>
-								<p>Your till is already open</p>
-								<p>You must close the till before you can enter opening amounts.</p>
-							</f7-col>
-						</f7-row>
-						<f7-row v-if="!isTillOpen">
-							<f7-list class="full-width">
-								<f7-block-title class="margin-top-half">Coins</f7-block-title>
-								<!-- Coins -->
-								<f7-row>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-between full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="Pennies"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.coins.pennies = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.coins.pennies * 0.01"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-around full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="Nickles"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													class="no-margin"
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.coins.nickels = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.coins.nickels * 0.5"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-								</f7-row>
-								<f7-row>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-between full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="Dimes"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.coins.dimes = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.coins.dimes * 0.1"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-around full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="Quarters"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													class="no-margin"
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.coins.quarters = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.coins.quarters * 0.25"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-								</f7-row>
-								<f7-row>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-between full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="Half-Dollars"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.coins.halfDollars = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.coins.halfDollars * 0.5"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-around full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="Dollar Coins"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													class="no-margin"
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.coins.dollarCoins = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.coins.dollarCoins"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-								</f7-row>
-								<f7-row>
-									<f7-col class="display-flex justify-content-end" width="75">
-										<f7-list-item class="open-till-text-bold" title="Total Coins"></f7-list-item>
-									</f7-col>
-									<f7-col width="25">
-										<f7-list-item
-											class="open-till-text-bold"
-											:title="
-												cashDrawer.coins.pennies * 0.01 +
-													cashDrawer.coins.nickels * 0.5 +
-													cashDrawer.coins.dimes * 0.1 +
-													cashDrawer.coins.quarters * 0.25 +
-													cashDrawer.coins.halfDollars * 0.5 +
-													cashDrawer.coins.dollarCoins
-											"
-										></f7-list-item>
-									</f7-col>
-								</f7-row>
-								<!-- END Coins -->
-								<!-- Bills -->
-								<f7-row>
-									<f7-block-title class="margin-top-half">Bills</f7-block-title>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-between full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="$1's"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.bills.ones = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.bills.ones"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-around full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="$5's"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													class="no-margin"
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.bills.fives = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.bills.fives * 5"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-								</f7-row>
-								<f7-row>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-between full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="$10's"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.bills.tens = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.bills.tens * 10"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-around full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="$20's"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													class="no-margin"
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.bills.twenties = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.bills.twenties * 20"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-								</f7-row>
-								<f7-row>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-between full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="$50's"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.bills.fiftys = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.bills.fiftys * 50"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-									<f7-col width="50">
-										<f7-row class="display-flex justify-content-space-around full-width">
-											<f7-col width="50">
-												<f7-list-item class="open-till-text" title="$100's"></f7-list-item>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-input
-													class="no-margin"
-													type="number"
-													validate
-													step="1"
-													error-message="Whole Numbers only"
-													@input="cashDrawer.bills.hundreds = $event.target.value"
-													style="background: rgb(216,252,253)"
-												></f7-list-input>
-											</f7-col>
-											<f7-col width="25">
-												<f7-list-item class="open-till-text" :title="cashDrawer.bills.hundreds * 100"></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-col>
-								</f7-row>
-								<f7-row>
-									<f7-col class="display-flex justify-content-end" width="75">
-										<f7-list-item class="open-till-text-bold" title="Total Bills"></f7-list-item>
-									</f7-col>
-									<f7-col width="25">
-										<f7-list-item
-											class="open-till-text-bold"
-											:title="
-												cashDrawer.bills.ones +
-													cashDrawer.bills.fives * 5 +
-													cashDrawer.bills.tens * 10 +
-													cashDrawer.bills.twenties * 20 +
-													cashDrawer.bills.fiftys * 50 +
-													cashDrawer.bills.hundreds * 100
-											"
-										></f7-list-item>
-									</f7-col>
-								</f7-row>
-								<!-- END Bills -->
-								<f7-row class="margin-top">
-									<f7-block class="full-width">
-										<f7-col>
-											<f7-button fill large @click="openTill">Open Till</f7-button>
-										</f7-col>
-									</f7-block>
-								</f7-row>
-							</f7-list>
-						</f7-row>
-					</f7-card-content>
-				</f7-card>
-				<f7-row>
-					<f7-col>
-						<f7-button @click="testButton">Test</f7-button>
-					</f7-col>
-				</f7-row>
-			</f7-page>
-		</f7-popup>
-		<!-- END Open Till Page Popup -->
 	</f7-page>
 </template>
 
@@ -1879,25 +1529,33 @@ import { mapGetters } from "vuex";
 import numeral from "numeral";
 
 //Components
-import successTransComponent from "../../components/layout-elements/popup-component.vue";
+import successTransComponent from "@/components/layout-elements/popup-component.vue";
+import openTillPopupComponent from "./components/open-till-popup-component.vue";
 
 export default {
 	name: "retailPOS",
 	mixins: [],
 	components: {
-		"popup-component": successTransComponent
+		"popup-component": successTransComponent,
+		"open-till-popup-component": openTillPopupComponent
 	},
 	data() {
 		return {
 			//Componets Data
 			popupSettings: {
-				link: '.trans-popup',
+				link: '.popup-component',
 				name: "POS",
-				type: "POS"
+				type: "POS",
 			},
 			moduleInfo: {
 				name: "Retail POS",
 				type: "POS"
+			},
+			transactionDetails: {
+				type: "Sale",
+				isError: false,
+				errorLevel: 1,
+				errorData: "Error Data"
 			},
 			//Cash Drawer Coins and Bills
 			cashDrawer: {
@@ -2030,7 +1688,6 @@ export default {
 			CashpopupOpened: false,
 			GiftpopupOpened: false,
 			DiscountpopupOpened: false,
-			openTillPopupOpened: false,
 
 			//Calculator
 			showCalc: true,
@@ -2886,19 +2543,7 @@ div .till-text {
 .credit-card-popup {
 	height: 650px;
 }
-.open-till {
-	left: 35%;
-	top: 45%;
-	width: 75%;
-	height: 80%;
-}
-.open-till-text {
-	font-size: 1.5em;
-}
-.open-till-text-bold {
-	font-size: 1.5em;
-	font-family: OpenSans-SemiBold;
-}
+
 
 //Checkout Popups Totals
 .checkout-text {

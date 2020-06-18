@@ -82,8 +82,7 @@ export default {
 	},
 	methods: {
 		testButton() {
-			console.log("this.shiftForm", this.shiftForm);
-			console.log("this.Auth.platformInfo", this.Auth.platformInfo);
+
 		}
 	},
 	computed: {

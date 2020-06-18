@@ -27,7 +27,7 @@ I would like to consoldate my POST and GET requests to one method each.
 
 How to submit custom queries to PayCycleRecurrence?
 
-I cant seem tom get CronJobs to work.
+I am totally stuck on the shift-component.vue apge where I am trying to copy the object for editing. It keeps locking up. I cant troubleshoot it.
 
 The Unique_together variable in Django only makes the fields unique e.g: company and HolidayName. That means that All cannot have the same holidayName. But Partners can.
 How do I create a stack for the notifications?

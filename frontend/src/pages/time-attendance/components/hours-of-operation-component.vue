@@ -353,7 +353,7 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Users", "Attendance"]),
-		...mapGetters(["isValidOperatingHours"]),
+		...mapGetters(["HAS_OPERATING_HOURS"]),
 	},
 	async mounted() {
 		

@@ -15,6 +15,7 @@ import { Common } from "./common/common";
 import { VTHPP } from "./vthpp/vthpp";
 import { Invoices } from "./financial/invoices";
 import { Receipts } from "./financial/receipts";
+import { Financial } from "./financial/financial";
 import { Datacom } from "./datacom/datacom";
 import { Accounting } from "./accounting/accounting";
 import { Users } from "./users/users";
@@ -67,6 +68,7 @@ export default new Vuex.Store({
 		Customers,
 		SalesOffices,
 		Accounting,
+		Financial,
 		Datacom,
 		VTHPP,
 		Invoices,

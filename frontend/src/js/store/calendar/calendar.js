@@ -30,7 +30,7 @@ export const Calendar = {
 
 	},
 	getters: {
-		GETEVENTS(state) {
+		GET_EVENTS(state) {
 			return state.events;
 		}
 	}

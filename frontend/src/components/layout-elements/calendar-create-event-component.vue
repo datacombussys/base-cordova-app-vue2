@@ -38,7 +38,7 @@
                 </f7-col>
                 <f7-col width="50">
                   <p class="field-title">End Date:</p>
-                    <f7-date-picker-component :dateSettings="endDate"></f7-date-picker-component>
+                    <!-- <f7-date-picker-component :dateSettings="endDate"></f7-date-picker-component> -->
                 </f7-col>
               </f7-row>
               <f7-row>

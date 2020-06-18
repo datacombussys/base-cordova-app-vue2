@@ -175,7 +175,7 @@ export default {
 	},
 	methods: {
 		testingMethod(e) {
-			console.log('this.Attendance.holidaysList', this.Attendance.holidaysList);
+			console.log('this.Attendance.holidayList', this.Attendance.holidayList);
 		},
 		async createHoliday() {
 			console.log('createHoliday');

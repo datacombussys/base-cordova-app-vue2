@@ -36,7 +36,7 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth"]),
-		...mapGetters([]),
+		// ...mapGetters([]),
 	},
 	created() {},
 	async mounted() {

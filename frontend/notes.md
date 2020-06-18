@@ -15,9 +15,7 @@
 Previous
 </b-button>
 
-<div>
   <f7-button fill class="trans-btn-left" icon="mdi mdi-menu"><span>New Transaction</span></f7-button>
-</div>
 *************<f7-link icon-size="10" icon="mdi mdi-currency-usd"></f7-link> ***************
 Link with Badge
 <f7-link icon-only>
@@ -25,10 +23,17 @@ Link with Badge
     <f7-badge color="red">5</f7-badge>
   </f7-icon>
 </f7-link>
-dispatch actions            commit mutations
-getData(state, getters) {this.$store.getters.<gettername>}
 
-Add a "showINactive" button to show / hide inactive items in database. The user can then reactivate if they desire.
+_______________Options for this ------------------
+    console.log('this', this);
+		console.log('this.Dom7', this.Dom7);
+		console.log('this.$$', this.$$);
+		console.log('this.$f7', this.$f7);
+
+Perfect Table with Sort and Filter
+see shift-component.vue
+
+Add a "showInactive" button to show / hide inactive items in database table. The user can then reactivate if they desire.
 
 ---
 
@@ -116,6 +121,10 @@ placeholder=" ">
       >{{ pair }}</option>
 </f7-input>
 
+input PATTERNS
+pattern="[0-9]+(\.\d{1,2})" - 2 decimal for text field
+pattern="[a-zA-Z]*" - Letters only
+
 //Calendar Values. values are an array
 <f7-list-input
 id="expires"
@@ -129,10 +138,7 @@ style="background: rgb(216,252,253)">
 response: sale_expires: 0: Date Wed Feb 26 2020 00:00:00 GMT-0700 (Mountain Standard Time)
 
 //Toggle Checked pass true false for checked
-<f7-toggle @change="userForm.is_something = \$event.target.checked"></f7-toggle>
-
-//Toggle Checked pass custom value
-<f7-toggle :value="userIsAdmin" @change="userForm.is_something = \$event.target.value"></f7-toggle>
+<f7-toggle @change="userForm.is_something = $event.target.checked"></f7-toggle>
 
 //Show hide element
 v-if="!DataFeed.showCharts ? 'hidden' : ''"

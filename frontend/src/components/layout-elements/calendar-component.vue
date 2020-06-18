@@ -15,7 +15,7 @@
 		</f7-row>
 		<f7-row>
 			<create-event-popup-component :scheduleForm="scheduleForm"></create-event-popup-component>
-			<confirm-delete-component :scheduleForm="scheduleForm"></confirm-delete-component>
+			<!-- <confirm-delete-component :scheduleForm="scheduleForm"></confirm-delete-component> -->
 			<modal name="hello-world">
 				hello, world!
 			</modal>

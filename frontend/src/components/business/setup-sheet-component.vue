@@ -163,23 +163,21 @@
 										<f7-block-title class="classy margin-top">Sales Tax Profile</f7-block-title>
 										<progressbar-component :settings="salesTaxProgressbar"></progressbar-component>
 										<f7-col width="50">
-											<f7-block-title class="classy-small">Charge Sales Tax?</f7-block-title>
-											<f7-list-item checkbox></f7-list-item>
+											<f7-row class="display-flex justify-content-start align-items-center">
+												<f7-block-title class="classy-small">Charge Sales Tax?</f7-block-title>
+												<f7-list-item checkbox></f7-list-item>
+											</f7-row>
 										</f7-col>
 										<f7-col width="50">
-											<f7-block-title class="classy-small">Tax Rate (City, State, + Local):</f7-block-title>
-											<f7-list-input
-												label="Number"
-												type="text"
-												placeholder="Enter number"
-												info="With custom error message"
-												error-message="Decimal Number"
-												required
-												validate
-												pattern="[0-9]+(\.\d{1,2})"
-												clear-button
-											>
-											</f7-list-input>
+											<f7-row class="display-flex justify-content-start align-items-center">
+												<f7-block-title class="classy-small">Setup Sales Tax:</f7-block-title>
+												<f7-col width="20">
+													<f7-list-item checkbox disabled></f7-list-item>
+												</f7-col>
+												<f7-col width="40"><f7-button outline class="setup-button" sheet-open=".sales-tax-sheet" small>Setup Now</f7-button>
+													<sales-tax-sheet-component></sales-tax-sheet-component>
+												</f7-col>
+											</f7-row>
 										</f7-col>
 									</f7-row>
 									<f7-row>
@@ -276,10 +274,11 @@ import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 //Components
-import positionsComponent from "../../components/business/positions-component.vue";
-import departmentsComponent from "../../components/business/departments-component.vue";
-import payrollCycleComponent from "../../components/business/payroll-cycles-component.vue";
-import progressbarComponent from "../../components/layout-elements/progressbar-component.vue";
+import positionsComponent from "@/components/business/positions-component.vue";
+import departmentsComponent from "@/components/business/departments-component.vue";
+import payrollCycleComponent from "@/components/business/payroll-cycles-component.vue";
+import progressbarComponent from "@/components/layout-elements/progressbar-component.vue";
+import salesTaxPopupComponent from "@/pages/financial/components/sales-tax-sheet-component.vue";
 
 export default {
 	name: "setupComponent",
@@ -288,7 +287,8 @@ export default {
 		"positions-component": positionsComponent,
 		"departments-component": departmentsComponent,
 		"payroll-cycle-component": payrollCycleComponent,
-		"progressbar-component": progressbarComponent
+		"progressbar-component": progressbarComponent,
+		"sales-tax-sheet-component": salesTaxPopupComponent
 	},
 	props: {
 		moduleInfo: {

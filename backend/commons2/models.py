@@ -81,10 +81,35 @@ class Department(models.Model):
   company         = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
   name            = models.CharField(max_length=100, null=True, blank=True)
   date_added 			= models.DateTimeField(auto_now_add=True)
-  date_test 			= models.DateField(auto_now_add=True)
-  datetime_input 	= models.DateTimeField(auto_now_add=False, auto_now=False, blank=True, null=True)
-  date_input 			= models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True)
   
   def __str__(self):
     return self.name
+
+class GeneralSettings(models.Model):
+  datacom                     = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
+  partner                     = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
+  company                     = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
+  date_added 			            = models.DateTimeField(auto_now_add=True)
+  auto_approve_timecards      = models.BooleanField(default=False, blank=True, null=True)
+  created_payroll_cycles      = models.BooleanField(default=False, blank=True, null=True)
+  setup_attendance_rules      = models.BooleanField(default=False, blank=True, null=True)
+  created_departments         = models.BooleanField(default=False, blank=True, null=True)
+  created_employees           = models.BooleanField(default=False, blank=True, null=True)
+  created_products            = models.BooleanField(default=False, blank=True, null=True)
+  created_groups              = models.BooleanField(default=False, blank=True, null=True)
+  assigned_module_managers    = models.BooleanField(default=False, blank=True, null=True)
+  charge_sales_tax            = models.BooleanField(default=False, blank=True, null=True)
+  created_sales_tax           = models.BooleanField(default=False, blank=True, null=True)
+  enable_pto                  = models.BooleanField(default=False, blank=True, null=True)
+  enable_benefits_tracking    = models.BooleanField(default=False, blank=True, null=True)
+  enable_inventory_tracking   = models.BooleanField(default=False, blank=True, null=True)
+  sick_days_year              = models.IntegerField(default=0, blank=True, null=True)
+  personal_days_year          = models.IntegerField(default=0, blank=True, null=True)
+  vacation_days_year          = models.IntegerField(default=0, blank=True, null=True)
+  pto_days_year               = models.IntegerField(default=0, blank=True, null=True)
+
+  
+  def __str__(self):
+    return self.name
+ 
  

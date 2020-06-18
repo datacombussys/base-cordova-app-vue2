@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'vendors',
     'vthpp',
     'warehouses',
+    'financial',
 ]
 
 MIDDLEWARE = [

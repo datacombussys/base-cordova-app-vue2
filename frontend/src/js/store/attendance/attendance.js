@@ -1,10 +1,8 @@
-
 import axios from "axios";
 import { f7 } from 'framework7-vue';
 
 import Days from './business-hours/days';
 import Holidays from './business-hours/holidays';
-
 
 export const Attendance = {
 	namespace: true,
@@ -15,7 +13,7 @@ export const Attendance = {
 		shiftList: [],
 		attendanceSettingsObj: {},
 		operatingHoursList: [],
-		holidaysList: [],
+		holidayList: [],
 		holidayProfileOriginal: {},
 		holidayProfile: {},
 		dayHours: {},
@@ -62,6 +60,7 @@ export const Attendance = {
 			state.shiftList.push(payload);
 		},
 		SET_SHIFT_LIST(state, payload) {
+			console.log('ShiftList payload', payload);
 			state.shiftList = payload;
 		},
 		SET_HOURS_OPERATION_PROFILE(state, payload) {
@@ -102,11 +101,11 @@ export const Attendance = {
 			}
 		},
 		PUSH_HOLIDAY_LIST(state, payload) {
-			state.holidaysList.push(payload);
+			state.holidayList.push(payload);
 		},
 		SET_HOLIDAY_LIST(state, payload) {	
 			console.log('SET_HOLIDAY_LIST');
-			state.holidaysList = payload;
+			state.holidayList = payload;
 			console.log('SET_HOLIDAY_LIST payload', payload);
 			//Set Settings for Store Hours
 			var hoursOperation =
@@ -393,13 +392,13 @@ export const Attendance = {
 				axios.get("/django/attendance-settings/" + url).then(response => {
 					if (response.status === 200) {
 						commit('SET_ATTENDANCE_SETTINGS_PROFILE', response.data);
-						response.type = "Retrieve Company Shifts";
+						response.type = "Retrieve Attendance Setting";
 						// dispatch('updateNotification', response);
 
 						return resolve();
 					}
 				}).catch(error => {
-					error.type = "Retrieve Company Shifts";
+					error.type = "Retrieve Attendance Setting";
 					dispatch('updateNotification', error);
 
 				});
@@ -602,14 +601,44 @@ export const Attendance = {
 				axios.delete("/django/operating-hours/" + form.id).then(response => {
 					console.log("DELETE Hours of Operation", response);
 					if (response.status === 204) {
-						response.type = "Delete of Operation";
+						response.type = "Delete Hours of Operation";
 						dispatch('updateNotification', response);
 						dispatch('GETBusinessHours');
 
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					error.type = "Delete of Operation";
+					error.type = "Delete Hours of Operation";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			}).catch(error => {
+				return error;
+			});
+		},
+		DELETEShift({ dispatch, commit, rootState }, form) {
+			return new Promise((resolve, reject) => {
+				console.log("DELETE Shift", form);
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("DELETEBusinessHours error", error);
+					return reject(error);
+				}
+				axios.delete("/django/shifts/" + form.id).then(response => {
+					console.log("DELETE Shift", response);
+					if (response.status === 204) {
+						response.type = "Delete Shift";
+						dispatch('updateNotification', response);
+						dispatch('GETBusinessHours');
+
+						return resolve(response.data);
+					}
+				}).catch(error => {
+					error.type = "Delete Shift";
 					dispatch('updateNotification', error);
 
 					return resolve(error);
@@ -636,25 +665,25 @@ export const Attendance = {
 	},
 	getters: {
 		HAS_OPERATING_HOURS(state) {
-			if(Object.keys(state.dayHours).length != 0) {
-				return true
+			if(Object.keys(state.dayHours).length === 0 || state.dayHours == null) {
+				return false
 			}
-			return false
+			return true
 		},
 		HAS_HOLIDAYS(state) {
-			if(Object.keys(state.holidayProfile).length != 0) {
-				return true
+			if(Object.keys(state.holidayProfile).length === 0 || state.holidayProfile == null) {
+				return false
 			}
-			return false
+			return true
 		},
 		HAS_ATTENDANCE_SETTINGS(state) {
-			if(Object.keys(state.attendanceSettingsObj).length != 0) {
-				return true
+			if(Object.keys(state.attendanceSettingsObj).length === 0 || state.attendanceSettingsObj == null) {
+				return false
 			}
-			return false
+			return true
 		},
 		getHolidayList(state) {
-			return state.holidaysList;
+			return state.holidayList;
 		},
 		GETTER_BUSINESS_DAYS(state) {
 			return JSON.parse(JSON.stringify(state.hoursDays));

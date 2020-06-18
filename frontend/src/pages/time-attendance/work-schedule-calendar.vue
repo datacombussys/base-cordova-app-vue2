@@ -226,7 +226,7 @@ export default {
     },
     computed: {
       ...mapState(["Auth", "Attendance", "Calendar"]),
-      ...mapGetters(["GETEVENTS"])
+      ...mapGetters(["GET_EVENTS"])
       },
     watch: {
       

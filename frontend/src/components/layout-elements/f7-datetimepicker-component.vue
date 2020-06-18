@@ -52,8 +52,8 @@ export default {
 
 	},
 	computed: {
-		...mapState([]),
-		...mapGetters([]),
+		// ...mapState([]),
+		// ...mapGetters([]),
 	},
 	created() {},
 	async mounted() {

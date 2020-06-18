@@ -103,7 +103,7 @@
 											<f7-list-item>
 												<f7-toggle
 													:checked="settingsForm.allow_clockin_early"
-													@change="settingsForm.allow_clockin_early = !settingsForm.allow_clockin_early"
+													@change="settingsForm.allow_clockin_early = $event.target.checked"
 													slot="media"
 												></f7-toggle>
 											</f7-list-item>
@@ -127,7 +127,7 @@
 											<f7-list-item>
 												<f7-toggle
 													:checked="settingsForm.allow_clockout_late"
-													@change="settingsForm.allow_clockout_late = !settingsForm.allow_clockout_late"
+													@change="settingsForm.allow_clockout_late = $event.target.checked"
 													slot="media"
 												></f7-toggle>
 											</f7-list-item>
@@ -144,7 +144,11 @@
 							<f7-block-title>Early/Late/Absence</f7-block-title>
 							<f7-row class="display-flex align-items-center">
 								<f7-col width="15">
-									<f7-list-item checkbox :checked="clockInPast" @change="clockInPast = !clockInPast"></f7-list-item>
+									<f7-list-item 
+										checkbox 
+										:checked="clockInPast" 
+										@change="clockInPast = $event.target.checked">
+									</f7-list-item>
 								</f7-col>
 								<f7-col width="85">
 									<f7-row class="display-flex align-items-center">
@@ -173,7 +177,7 @@
 									<f7-list-item
 										checkbox
 										:checked="lateClockInPast"
-										@change="lateClockInPast = !lateClockInPast"
+										@change="lateClockInPast = $event.target.checked"
 									></f7-list-item>
 								</f7-col>
 								<f7-col width="85">
@@ -188,7 +192,6 @@
 												type="number"
 												step="1"
 												placeholder="30"
-												clear-button
 												:value="settingsForm.late_clockin_absent_minutes"
 												@input="settingsForm.late_clockin_absent_minutes = $event.target.value"
 											></f7-list-input>
@@ -204,8 +207,8 @@
 								<f7-col width="15">
 									<f7-list-item
 										checkbox
-										:checked="clockOutBefore"
-										@change="clockOutBefore = !clockOutBefore"
+										:checked="clockOutBefore || settingsForm.early_clockout_minutes != null"
+										@change="clockOutBefore = $event.target.checked"
 									></f7-list-item>
 								</f7-col>
 								<f7-col width="85">
@@ -235,8 +238,8 @@
 								<f7-col width="15">
 									<f7-list-item
 										checkbox
-										:checked="earlyClockOutBefore"
-										@change="earlyClockOutBefore = !earlyClockOutBefore"
+										:checked="earlyClockOutBefore || settingsForm.early_clockout_absent_minutes != null"
+										@change="earlyClockOutBefore = $event.target.checked"
 									></f7-list-item>
 								</f7-col>
 								<f7-col width="85">
@@ -264,7 +267,11 @@
 
 							<f7-row class="display-flex align-items-center">
 								<f7-col width="15">
-									<f7-list-item checkbox :checked="noClockIn" @change="noClockIn = !noClockIn"></f7-list-item>
+									<f7-list-item 
+										checkbox 
+										:checked="noClockIn || settingsForm.no_clockin_is != null" 
+										@change="noClockIn = $event.target.checked">
+									</f7-list-item>
 								</f7-col>
 								<f7-col width="85">
 									<f7-row class="display-flex align-items-center">
@@ -289,7 +296,11 @@
 							</f7-row>
 							<f7-row class="display-flex align-items-center">
 								<f7-col width="15">
-									<f7-list-item checkbox :checked="noClockOut" @change="noClockOut = !noClockOut"></f7-list-item>
+									<f7-list-item 
+										checkbox 
+										:checked="noClockOut || settingsForm.no_clock_out_is != null" 
+										@change="noClockOut = $event.target.checked">
+									</f7-list-item>
 								</f7-col>
 								<f7-col width="85">
 									<f7-row class="display-flex align-items-center">
@@ -324,7 +335,7 @@
 											<f7-list-item title="No clock-in">
 												<f7-toggle
 													:checked="settingsForm.notify_no_clockin"
-													@change="settingsForm.notify_no_clockin = !settingsForm.notify_no_clockin"
+													@change="settingsForm.notify_no_clockin = $event.target.checked"
 													slot="media"
 												></f7-toggle>
 											</f7-list-item>
@@ -333,7 +344,7 @@
 											<f7-list-item title="No clock-out">
 												<f7-toggle
 													:checked="settingsForm.notify_no_clockout"
-													@change="settingsForm.notify_no_clockout = !settingsForm.notify_no_clockout"
+													@change="settingsForm.notify_no_clockout = $event.target.checked"
 													slot="media"
 												></f7-toggle>
 											</f7-list-item>
@@ -342,7 +353,7 @@
 											<f7-list-item title="Clock-in late">
 												<f7-toggle
 													:checked="settingsForm.notify_clockin_late"
-													@change="settingsForm.notify_clockin_late = !settingsForm.notify_clockin_late"
+													@change="settingsForm.notify_clockin_late = $event.target.checked"
 													slot="media"
 												></f7-toggle>
 											</f7-list-item>
@@ -351,7 +362,7 @@
 											<f7-list-item title="Clock-out early">
 												<f7-toggle
 													:checked="settingsForm.notify_clockout_early"
-													@change="settingsForm.notify_clockout_early = !settingsForm.notify_clockout_early"
+													@change="settingsForm.notify_clockout_early = $event.target.checked"
 													slot="media"
 												></f7-toggle>
 											</f7-list-item>
@@ -378,7 +389,7 @@ import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 //Mixins
-import { UniversalMixins } from "../../../mixins/universal-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 
 export default {
 	name: "attendanceSettingComponent",
@@ -439,12 +450,15 @@ export default {
 	},
 	methods: {
 		async testingMethod(e) {
-			console.log('this.Attendance.operatingHoursList', this.Attendance.operatingHoursList);
+			// console.log('this.Attendance.operatingHoursList', this.Attendance.operatingHoursList);
+			console.log('this.lateClockInPast', this.lateClockInPast);
+			console.log('this.clockOutBefore', this.clockOutBefore);
 
 		},
 		async saveAttendanceSettings() {
-			var attendanceFormCopy = JSON.parse(JSON.stringify(this.settingsForm));
-			console.log("attendanceFormCopy", attendanceFormCopy);
+			const newSettings = JSON.parse(JSON.stringify(this.settingsForm));
+			console.log('newSettings', newSettings);
+			console.log("this.settingsForm", this.settingsForm);
 
 			//Check to see if User has operatingHours and Holidays Completed First
 			if(!this.HAS_HOLIDAYS) {
@@ -456,7 +470,7 @@ export default {
 				//I need to Only keep ONE Database record per company and only update that record
 				if(!this.HAS_ATTENDANCE_SETTINGS) {
 					//POST method
-					let platformForm = await this.setUserPlatformPOST(attendanceFormCopy);
+					let platformForm = await this.setUserPlatformPOST(newSettings);
 					console.log("platformForm", platformForm);
 					console.log("this.Attendance.operatingHoursList", this.Attendance.operatingHoursList);
 					//Set Variables
@@ -471,7 +485,7 @@ export default {
 					this.$store.dispatch("POSTAttendanceSettings", platformForm);
 				} if(this.HAS_ATTENDANCE_SETTINGS) {
 					//PATCH method
-					let platformForm = await this.setUserPlatformPOST(attendanceFormCopy);
+					let platformForm = await this.setUserPlatformPOST(newSettings);
 					console.log("platformForm", platformForm);
 					//Set Variables
 					const list = this.Attendance.operatingHoursList
@@ -484,25 +498,40 @@ export default {
 				}
 			}
 			
-
-			
-
 			
 		},
 		retrieveAndMountSettings() {
-			console.log('retrieveAndMountSettings');
 			console.log('this.settingsForm1', this.settingsForm);
-			console.log('retrieveAndMountSettings this.Attendance.attendanceSettingsObj1', this.Attendance.attendanceSettingsObj);
+			console.log('this.Attendance.attendanceSettingsObj1', this.HAS_ATTENDANCE_SETTINGS);
 
-			this.has_current_settings = true;
-			this.settingsForm.id = this.Attendance.attendanceSettingsObj.id;
-			this.settingsForm.datacom = this.Attendance.attendanceSettingsObj.datacom;
-			this.settingsForm.partner = this.Attendance.attendanceSettingsObj.partner;
-			this.settingsForm.company = this.Attendance.attendanceSettingsObj.company;
-			for(let key in this.settingsForm) {
-				this.settingsForm[key] = this.Attendance.attendanceSettingsObj[key];
+			if(this.HAS_ATTENDANCE_SETTINGS) {
+				console.log("There are settings");
+				this.has_current_settings = this.HAS_ATTENDANCE_SETTINGS;
+				for(let key in this.settingsForm) {
+					this.settingsForm[key] = this.Attendance.attendanceSettingsObj[key];
+				}
+				if(this.Attendance.attendanceSettingsObj.late_clockin_late_minutes != null) {
+					console.log("late_clockin_late_minutes != null");
+					this.clockInPast = true;
+				} if(this.Attendance.attendanceSettingsObj.late_clockin_absent_minutes != null) {
+					console.log("late_clockin_absent_minutes != null");
+					this.lateClockInPast = true;
+				} if(this.Attendance.attendanceSettingsObj.early_clockout_minutes != null) {
+					this.clockOutBefore = true;
+				}	if(this.Attendance.attendanceSettingsObj.early_clockout_absent_minutes != null) {
+					this.earlyClockOutBefore = true;
+				} if(this.Attendance.attendanceSettingsObj.no_clockin_is != null) {
+					this.noClockIn = true;
+				} if(this.Attendance.attendanceSettingsObj.no_clock_out_is != null) {
+					this.noClockOut = true;
+				}
+				console.log('this.settingsForm2', this.settingsForm);
+
+			} else {
+				console.log("There are NO settings");
 			}
-			console.log('this.settingsForm2', this.settingsForm);
+
+			
 		},
 
 	},
@@ -511,11 +540,42 @@ export default {
 		...mapGetters(["HAS_OPERATING_HOURS", "HAS_HOLIDAYS", "HAS_ATTENDANCE_SETTINGS"])
 
 	},
-	created() {},
-	async mounted() {
-		console.log("Settings Page hours0", this.hours);
+	watch: {
+		// clockInPast() {
+		// 	console.log("clockInPast Watcher");
+		// 	this.settingsForm.late_clockin_late_minutes = null;
+		// },
+		// lateClockInPast() {
+		// 	console.log("lateClockInPast Watcher");
+		// 	this.settingsForm.late_clockin_absent_minutes = null;
+		// },
+		// clockOutBefore() {
+		// 	console.log("clockOutBefore Watcher");
+		// 	this.settingsForm.early_clockout_minutes = null;
+		// },
+		// earlyClockOutBefore() {
+		// 	console.log("earlyClockOutBefore Watcher");
+		// 	this.settingsForm.early_clockout_absent_minutes = null;
+		// },
+		// noClockIn() {
+		// 	console.log("noClockIn Watcher");
+		// 	this.settingsForm.no_clockin_is = null;
+		// },
+		// noClockOut() {
+		// 	console.log("noClockOut Watcher");
+		// 	this.settingsForm.no_clock_out_is = null;
+		// }
+	},
+	created() {
+		console.log('created', this.settingsForm);
+		console.log("The attendance settings was created");
+		this.retrieveAndMountSettings();
 
-		
+	},
+	async mounted() {
+		console.log('mounted', this.settingsForm);
+		console.log("The attendance settings was mounted");
+
 	}
 };
 </script>
