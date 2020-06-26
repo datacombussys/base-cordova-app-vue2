@@ -53,7 +53,6 @@ export const Datacom = {
             return resolve(response.data)
           }
         }).catch(error => {
-          f7.preloader.hide();
           error.response.type = "Create Datacom";
           dispatch('updateNotification', error.response);
           return resolve(error);
@@ -108,7 +107,6 @@ export const Datacom = {
             return resolve(response.data)
           }
         }).catch(error => {
-          f7.preloader.hide();
           error.response.type = "Retrieve Datacom Profile of Logged In";
           dispatch('updateNotification', error.response);
 
@@ -131,7 +129,6 @@ export const Datacom = {
             return resolve(response.data)
           }
         }).catch(error => {
-          f7.preloader.hide();
           error.response.type = "Retrieve Datacom Profile of Selected";
           dispatch('updateNotification', error.response);
 
@@ -155,7 +152,6 @@ export const Datacom = {
             return resolve(response.data);
           }
         }).catch(error => {
-          f7.preloader.hide();
           error.response.type = "Retrieve Datacom Company Employees";
           dispatch('updateNotification', error.response);
 

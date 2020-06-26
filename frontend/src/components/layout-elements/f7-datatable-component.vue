@@ -2,28 +2,21 @@
 	<!-- Page content-->
 	<f7-row class="full-width no-margin">
 		<f7-block class="full-width no-margin-top">
-			<!-- Shifts -->
-			<f7-card v-if="Attendance.holidayList.length === 0">
-				<f7-card-content>
-					<div v-if="Attendance.holidayList.length === 0" class="error-text">
-						No records to display
-					</div>
-					<slot name="button"></slot>
-				</f7-card-content>
-			</f7-card>
-			<f7-card v-else class="data-table data-table-init">
-				<f7-card-header>
-					<!-- <f7-list>
-						<f7-list-button @click="deactivate">Deactivate</f7-list-button>
-						<f7-list-button @click="deleteItem">Delete</f7-list-button>
-					</f7-list> -->
-					<div class="data-table-links">
-						<f7-list-button class="link" :popup-open="tableSettings.popupLink">New</f7-list-button>
-						<a class="link" @click="deactivate">Deactivate</a>
-						<a class="link" @click="deleteItem">Delete</a>
-						<!-- <a class="link" @click="uncheckAllCells">Unselect All</a> -->
-
-					</div>
+			<f7-block-title medium class="margin-top no-margin-bottom no-padding-bottom padding-left">{{ tableSettings.title }}</f7-block-title> 
+			<f7-card v-if="Auth.isAuthenticated" class="data-table data-table-init">
+				<f7-card-header class="data-table-header display-flex justify-content-space-between">
+					<f7-row class="full-width">
+						<f7-col width="25">
+							<slot class="level-left" name="headerLinks"/>
+						</f7-col>
+						<f7-col width="25">
+							<div class="data-table-links">
+								<f7-list-button v-if="showActive === 1" class="link" @click="tableFilter({value: 'Inactive'}, tableData.tableId)">Show Inactive</f7-list-button>
+								<f7-list-button v-if="showActive === 2" class="link" @click="tableFilter({value: 'Active'}, tableData.tableId)">Show Active</f7-list-button> 
+								<f7-list-button v-if="showActive === 3" class="link" @click="showAllRows(tableData.tableId)">Show All</f7-list-button> 
+							</div>
+						</f7-col>
+					</f7-row>
 				</f7-card-header>
 				<f7-card-content>
 					<f7-list>
@@ -33,43 +26,152 @@
 									<tr>
 										<th class="checkbox-cell">
 											<label class="checkbox">
-												<input type="checkbox" @change="toggleAllChecks" :checked="isAllChecked"/>
+												<input type="checkbox" @change="toggleAllChecks($event, tableData.tableId, tableData.list)" :checked="isAllChecked">
 												<i class="icon-checkbox"></i>
 											</label>
 										</th>
-										<th @click="sortTable(1, tableData.tableId)" class="label-cell sortable-cell text-align-center">{{ tableSettings.col1 }}</th>
-										<th @click="sortTable(2, tableData.tableId)" class="label-cell sortable-cell text-align-center">{{ tableSettings.col2 }}</th>
-										<th @click="sortTable(3, tableData.tableId)" class="label-cell sortable-cell text-align-center">{{ tableSettings.col3 }}</th>
-										<th @click="sortTable(4, tableData.tableId)" class="label-cell sortable-cell text-align-center">{{ tableSettings.col4 }}</th>
-										<th @click="sortTable(5, tableData.tableId)" class="label-cell sortable-cell text-align-center">{{ tableSettings.col5 }}</th>
-										<th class="label-cell sortable-cell text-align-center">{{ tableSettings.col5 }}</th>
+										<th @click="sortTable(1, tableData.tableId)" class="sortable-cell text-align-center">
+											<span class="table-head-label">{{ tableSettings.header1 }}</span>
+										</th>
+										<th @click="sortTable(2, tableData.tableId)" class="sortable-cell text-align-center">
+											<span class="table-head-label">{{ tableSettings.header2 }}</span>
+										</th>
+										<th @click="sortTable(3, tableData.tableId)" class="sortable-cell text-align-center">
+											<span class="table-head-label">{{ tableSettings.header3 }}</span>
+										</th>
+										<th @click="sortTable(4, tableData.tableId)" class="sortable-cell text-align-center">
+											<span class="table-head-label">{{ tableSettings.header4 }}</span>
+										</th>
+										<th @click="sortTable(5, tableData.tableId)" class="sortable-cell text-align-center">
+											<span class="table-head-label">{{ tableSettings.header5 }}</span>
+										</th>
+										<th @click="sortTable(6, tableData.tableId)" class="sortable-cell text-align-center">
+											<span class="table-head-label">{{ tableSettings.header6 }}</span>
+										</th>
+									</tr>
+
+									<tr>
+										<th></th>
+										<th class="input-cell padding-left-half padding-right-half">
+											<div class="input filter-input datacom-input">
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
+											</div>
+										</th>
+										<th class="input-cell padding-left-half padding-right-half">
+											<div class="input filter-input datacom-input">
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
+											</div>
+										</th>
+										<th class="input-cell padding-left-half padding-right-half">
+											<div class="input filter-input datacom-input">
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
+											</div>
+										</th>
+										<th class="input-cell padding-left-half padding-right-half">
+											<div class="input filter-input datacom-input">
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
+											</div>
+										</th>
+										<th class="input-cell padding-left-half padding-right-half">
+											<div class="input filter-input datacom-input">
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
+											</div>
+										</th>
+										<th class="input-cell padding-left-half padding-right-half">
+											<div class="input filter-input datacom-input">
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
+											</div>
+										</th>
 									</tr>
 								</thead>
-								<tbody>
-									<tr v-for="(tdata, $tdataIndex) in returnStoreModule(tableData.module).holidayList" :key="$tdataIndex">
-										<td class="checkbox-cell">
-											<label class="checkbox">
-												<input type="checkbox" :id="tdata.id" @change="checkedItem($event, returnStoreModule(tableData.module).holidayList)"/>
-												<i class="icon-checkbox"></i>
-											</label>
-										</td>
-										<td class="text-align-center">{{ tdata.id }}</td>
-										<td class="text-align-center">{{ tdata.name }}</td>
-										<td class="text-align-center">{{ tdata.date | moment("MMMM Do") }}</td>
-										<td class="text-align-center">{{ tdata.duration_days }}</td>
-										<td class="text-align-center">{{ tdata.type }}</td>
-										<td class="text-align-center">
-											<b-tag size="is-medium" :type="`${tdata.is_open ? 'is-success' : 'is-danger'}`">{{
-												tdata.is_open ? "Open" : "Closed"
-											}}</b-tag>
+
+								<tbody v-if="tableData.list.length === 0">
+									<tr>
+										<td colspan="8">
+											<!-- Authenticated AND no Records -->
+											<f7-row class="display-flex justify-content-center full-width" v-if="Auth.isAuthenticated">
+												<div class="text-align-center error-text margin display-block">
+													<div>No records to display</div>
+													<f7-col width="50"class="display-flex justify-content-center align-content-center margin-top-half">
+														<f7-button fill :popup-open="tableSettings.popupLink">Add New Item</f7-button>
+													</f7-col>
+												</div>
+											</f7-row>
+											<!-- END Authenticated AND no Records -->
 										</td>
 									</tr>
 								</tbody>
+
+								<slot name="tbody" v-else></slot>
+
 							</table>
+							<!-- Footer and Pagination -->
+							<f7-row class="full-width display-flex justify-content-end">
+								<div class="data-table-footer full-width padding-half">
+									<div class="data-table-rows-select">
+										Per page:
+										<f7-input type="select" 
+											:value="pagination.pageSize" 
+											@change="pagination.pageSize = $event.target.value">
+											<option value="5">5</option>
+											<option value="10">10</option>
+											<option value="15">15</option>
+											<option value="20">20</option>
+										</f7-input>
+									</div>
+									<div class="data-table-pagination">
+										<span class="data-table-pagination-label">
+											{{ beginningPageRecord }}-{{ endingPageRecord }} of {{ tableData.list.length }}</span>
+										<f7-link icon-only @click="firstPage" :class="{ disabled: disabledPrevButton }">
+											<f7-icon size="20" color="datacom"  icon="mdi mdi-skip-previous">
+											</f7-icon>
+										</f7-link>
+										<f7-link icon-only @click="prevPage" :class="{ disabled: disabledPrevButton }">
+											<f7-icon size="20" color="datacom" icon="mdi mdi-chevron-left">
+											</f7-icon>
+										</f7-link>
+										<f7-link v-for="page in renderPageButtons" :key="page.id" @click="changePages($event.target.innerText)" >
+											<span class="pageIndicator">
+												{{ page }}
+											</span>
+										</f7-link>
+										
+										<f7-link icon-only @click="nextPage" :class="{ disabled: disabledNextButton }">
+											<f7-icon size="20" color="datacom" icon="mdi mdi-chevron-right">
+											</f7-icon>
+										</f7-link>
+										<f7-link icon-only @click="lastPage" :class="{ disabled: disabledNextButton }">
+											<f7-icon size="20" color="datacom" icon="mdi mdi-skip-next">
+											</f7-icon>
+										</f7-link>
+									</div>
+								</div>
+							</f7-row>
+							<!-- END Footer and Pagination -->
+
 						</f7-row>
 					</f7-list>
 				</f7-card-content>
 			</f7-card>
+
+			<!-- NOT Authenticated -->
+			<f7-card v-if="!Auth.isAuthenticated">
+				<f7-card-content>
+					<f7-row class="display-flex justify-content-center">
+						<f7-col width="100">
+							<div class="text-align-center error-text margin">No records to display</div>
+							<p class="text-align-center">(Please log in)</p>
+						</f7-col>
+					</f7-row>
+				</f7-card-content>
+			</f7-card>
+
 		</f7-block>
 	</f7-row>
 	<!-- END Page content-->
@@ -84,7 +186,7 @@ import { DataTableMixins } from "../../mixins/components/table-mixins";
 import { StoreModuleMixins } from "../../mixins/components/module-store-data-mixins";
 
 export default {
-	name: "databaseComponent",
+	name: "f7DatatableComponent",
 	mixins: [
 		UniversalMixins, 
 		DataTableMixins, 
@@ -99,47 +201,27 @@ export default {
 		tableSettings: {
 			type: Object,
 			required: true
+		},
+		editItem: {
+			type: Function,
+			required: false
 		}
 	},
 	data() {
 		return {
 			isAllChecked: false,
-			checkedItemData: null,
-			tableID: "holidayDatabaseTable"
 
-		};
+		}
 	},
 	methods: {
 		testButton() {
-	
-		},
-		deleteItem(e) {
-			console.log('e', e);
-		},
-		deactivate(e) {
-			console.log('e', e);
+			console.log("this.pagination.currentPage", this.pagination.currentPage);
 		},
 
-		
-		
-		//Not Used
-		uncheckAllCells(e) {
-			console.log('uncheckAllCells e', e);
-			var table = document.getElementById(this.tableData.tableId);
-			console.log('table', table);
-			var rows = table.rows;
-			console.log('rows', rows);
-			for(let index = 1; index < rows.length; index++) {
-				console.log('rows[index]', rows[index]);
-				// rows[index].childNodes[0].childNodes[0].childNodes[0].checked = false;
-			}
-			// for(let key in rows) {
-			// 	rows[key].childNodes[0].childNodes[0].childNodes[0].checked = false;
-			// }
-		},
+	
 	},
 	computed: {
-		...mapState(["Auth", "Users", "Attendance"])
+		...mapState(["Auth"])
 	},
 	watch: {},
 	async mounted() {

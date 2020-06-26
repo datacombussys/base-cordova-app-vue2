@@ -95,7 +95,6 @@ export const Inventory = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.response.type = "Create Inventory";
 					error.response.status = "400";
 					dispatch('updateNotification', error.response);
@@ -225,7 +224,6 @@ export const Inventory = {
 			console.log("updateInventoryItem form", form);
 			axios.put("/django/inventory/" + form.id + '/', form, rootState.Auth.axiosHeader).then(response => {
 				if (response.status === 200) {
-					f7.preloader.hide();
 					response.type = "Update Inventory";
 					dispatch('updateNotification', response);
 					dispatch('getInventoryList');
@@ -233,7 +231,6 @@ export const Inventory = {
 				}
 			}).catch(error => {
 				if (error.response) {
-					f7.preloader.hide();
 					dispatch('updateNotification', error.response);
 				}
 			})
@@ -243,7 +240,6 @@ export const Inventory = {
 			console.log("deleteInventoryCategories Payload", payload);
 			axios.delete("/django/invcategory/" + payload + "/").then(response => {
 				if (response.status === 204) {
-					f7.preloader.hide();
 					dispatch('getInventoryCategories');
 					response.type = "Delete Inventory Categories";
 					dispatch('updateNotification', response);
@@ -251,7 +247,6 @@ export const Inventory = {
 				}
 			}).catch(error => {
 				if (error.response) {
-					f7.preloader.hide();
 					dispatch('updateNotification', error.response);
 				}
 			});

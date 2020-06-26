@@ -190,7 +190,7 @@
 					<f7-list-input
 						required
 						validate
-						placeholder="Deborah"
+						placeholder="Michael"
 						pattern="[A-Za-z]*"
 						error-message="Format: Letters Only"
 						:value="contactForm.billing_first_name"
@@ -206,7 +206,7 @@
 					<f7-list-input
 						required
 						validate
-						placeholder="Smith"
+						placeholder="Jones"
 						pattern="[A-Za-z]*"
 						error-message="Format: Format Letters Only"
 						:value="contactForm.billing_last_name"
@@ -362,7 +362,7 @@
 					<f7-list-input
 						required
 						validate
-						placeholder="Deborah"
+						placeholder="Lisa"
 						pattern="[A-Za-z]*"
 						error-message="Format: Letters Only"
 						:value="contactForm.shipping_first_name"
@@ -378,7 +378,7 @@
 					<f7-list-input
 						required
 						validate
-						placeholder="Smith"
+						placeholder="Johnson"
 						pattern="[A-Za-z]*"
 						error-message="Format: Format Letters Only"
 						:value="contactForm.shipping_last_name"
@@ -578,6 +578,6 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 
 </style>

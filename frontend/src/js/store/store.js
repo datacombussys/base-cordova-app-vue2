@@ -32,6 +32,7 @@ import { Locale } from "./common/locale";
 import { Static } from "./common/static";
 import { Errors } from "./common/errors";
 import { Attendance } from "./attendance/attendance";
+import { Notifications } from "./common/notifications";
 import { Calendar } from "./calendar/calendar";
 
 import { Leads } from "./leads/leads";
@@ -74,7 +75,8 @@ export default new Vuex.Store({
 		Invoices,
 		Receipts,
 		Common,
-		DragNDrop
+		DragNDrop,
+		Notifications,
 	},
 	state: {
 		version: 1.0,

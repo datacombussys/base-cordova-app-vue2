@@ -421,7 +421,7 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 .open-till-popup {
 	left: 35%;
 	top: 45%;

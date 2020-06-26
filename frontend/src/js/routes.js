@@ -56,6 +56,7 @@ import LabelMerge from '../pages/inventory/label-merge.vue';
 import CustomerProfile from '../pages/customers/customerprofile.vue';
 import CustomerRegistration from '../pages/customers/customer-registration.vue';
 import UserProfile from '../pages/users/userprofile.vue';
+import EmployeeProfile from '../pages/employees/employeeprofile.vue';
 import userCalendar from '../pages/calendar/user-calendar.vue';
 import usersGroups from '../pages/users/users-groups.vue';
 import groupsPermissions from '../pages/users/groups-permissions.vue';
@@ -182,6 +183,11 @@ var routes = [
   {
     path: '/userprofile/',
     component: UserProfile,
+    // beforeEnter: checkAuth,
+  },
+  {
+    path: '/employeeprofile/',
+    component: EmployeeProfile,
     // beforeEnter: checkAuth,
   },
   {

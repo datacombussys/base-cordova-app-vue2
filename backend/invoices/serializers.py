@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from commons.base64 import Base64ImageField
 
-from .models import Invoice
+from .models import Invoice, Receipt
 
 from datacom.models import Datacom
 from partners.models import Partner
@@ -25,6 +25,32 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invoice
+        fields = ('__all__')
+
+        
+    def to_representation(self, value):
+        data = super().to_representation(value)  
+        if data['datacom']:
+            datacom_data_serializer = DatacomSerializer(value.datacom)
+            data['datacom'] = datacom_data_serializer.data
+        if data['partner']:
+            partner_data_serializer = PartnerSerializer(value.partner)
+            data['partner'] = partner_data_serializer.data
+        if data['company']:
+            company_data_serializer = CompanySerializer(value.company)
+            data['company'] = company_data_serializer.data
+       
+        return data
+
+class ReceiptSerializer(serializers.ModelSerializer):
+    datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
+    customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all(), required=False, allow_null=True)
+    invoice = serializers.PrimaryKeyRelatedField(queryset=Invoice.objects.all(), required=False, allow_null=True)
+
+    class Meta:
+        model = Receipt
         fields = ('__all__')
 
         

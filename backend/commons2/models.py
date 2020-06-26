@@ -6,7 +6,7 @@ from datacom.models import Datacom
 from partners.models import Partner
 from companies.models import Company
 from users.models import User
-
+from humanresources.models import MileageReimbursement
 
 class TimeZones(models.Model):  
 
@@ -28,15 +28,12 @@ class Holiday(models.Model):
   close_time      = models.CharField(max_length=10, blank=True, null=True)
   open_time2      = models.CharField(max_length=10, blank=True, null=True)
   close_time2     = models.CharField(max_length=10, blank=True, null=True)
-  is_open         = models.BooleanField(default=False)
+  is_active       = models.BooleanField(default=False)
 
   class Meta:
     constraints = [
-      models.UniqueConstraint(fields= ['name','datacom'], name='datacom_holiday'),
-      models.UniqueConstraint(fields= ['name','partner'], name='partner_holiday'),
-      models.UniqueConstraint(fields= ['name','company'], name='company_holiday'),
-      ]
-
+      models.UniqueConstraint(fields = ['name', 'datacom', 'partner', 'company'], name='unique_holidays')
+    ]
 
 class Shipping(models.Model):
   partner         = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
@@ -57,23 +54,9 @@ class Shipping(models.Model):
   is_primary      = models.BooleanField(default=False)
   is_active       = models.BooleanField(default=True)
 
-
-class Notifications(models.Model):
-  sender          = models.ForeignKey(User, related_name="notification_sender", on_delete=models.CASCADE, blank=True, null=True)
-  receiver        = models.ForeignKey(User, related_name="notification_receiver",on_delete=models.CASCADE, blank=True, null=True)
-  name 			      = models.CharField(max_length=100, blank=True, null=True)
-  subject 			  = models.CharField(max_length=100, blank=True, null=True)
-  body            = models.TextField(blank=True, null=True)
-  date            = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
-  is_approved     = models.BooleanField(default=False)
-  is_declined     = models.BooleanField(default=False)
-  date_sent 		  = models.DateTimeField(auto_now_add=True)
-  date_disposition= models.DateTimeField(auto_now_add=False, auto_now=False, blank=True, null=True)
-
-  
+ 
 class Industry(models.Model):
   name 			      = models.CharField(max_length=100, blank=True, null=True)
-
 
 class Department(models.Model):
   partner         = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
@@ -103,11 +86,6 @@ class GeneralSettings(models.Model):
   enable_pto                  = models.BooleanField(default=False, blank=True, null=True)
   enable_benefits_tracking    = models.BooleanField(default=False, blank=True, null=True)
   enable_inventory_tracking   = models.BooleanField(default=False, blank=True, null=True)
-  sick_days_year              = models.IntegerField(default=0, blank=True, null=True)
-  personal_days_year          = models.IntegerField(default=0, blank=True, null=True)
-  vacation_days_year          = models.IntegerField(default=0, blank=True, null=True)
-  pto_days_year               = models.IntegerField(default=0, blank=True, null=True)
-
   
   def __str__(self):
     return self.name

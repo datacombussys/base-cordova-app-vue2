@@ -357,7 +357,7 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 .setup-sheet {
 	height: 100%;
 	z-index: 11000;

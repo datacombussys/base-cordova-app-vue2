@@ -35,9 +35,55 @@ see shift-component.vue
 
 Add a "showInactive" button to show / hide inactive items in database table. The user can then reactivate if they desire.
 
----
+**********************************Successful Computed Setter ********************************
+totalThings: {
+  get: function () {
+    console.log("totalThings Getter");
+    return 28
+  },
+  set: function (newVal) {
+    console.log("totalThings Setter");
+    console.log('newVal', newVal);
+    this.newData = newVal;
+  }
+}
+mounted: {
+  this.totalThings = 10;
+}
+************** Preloader in Component from Getter ******************
+data() {
+  listItem: null
+}
+computed: {
+  listData() {
+    return this.$store.getters.GET_NOTIFICATIONS_LIST;
+  }
+}
+watch: {
+  listData(newVal, oldVal) {
+    this.messageData.list = this.listData;
+    this.loading = false;
+  }
 
-Notes:
+***************************************Lazy Load Comonents with PreLoader *********************************************
+<script>
+  const notificationMessagesComponent = import("@/components/universal/notification-messages-component.vue");
+  import LoadingState from '@/components/universal/loading-state-component.vue';
+  import ErrorState from '@/components/universal/error-state-component.vue';
+
+  components: {
+      "notification-messages-component": () => ({
+      component: notificationMessagesComponent,
+      loading: LoadingState,
+      error: ErrorState,
+      delay:100,
+      timeout: 0
+    })
+  }
+</script>
+
+
+
 Usage of BASE_URL
 url("#{\$baseURL}assets/images/backgrounds/bg-1.png")
 
@@ -96,7 +142,7 @@ v-for="item in items"
 //Rendering a list in a select and using V-Model
 <f7-input label="Choose Pair:" type="select"
 :value="names"
-@input="names = \$event.target.value">
+@input="names = $event.target.value">
 
   <option v-for="pair in getMyList" :key="pair.id" 
     :value="pair">{{pair}}</option>
@@ -106,7 +152,7 @@ v-for="item in items"
 <f7-input
 type="text"
 :value="classdata.title"
-@input="classdata.title = \$event.target.value"
+@input="classdata.title = $event.target.value"
 placeholder=" ">
 </f7-input>
 
@@ -295,14 +341,14 @@ console.log("element", element);
 
 //Passing several variables to vue method
 :checked="selectedPermissions.indexOf(item.id) >= 0"
-@change="updateSelectedItems(\$event, props.row.name)"
+@change="updateSelectedItems($event, props.row.name)"
 
 //Getting values from different state module
 addGroupPermissions({ commit, dispatch, context }, permissions) {
 var PermisisonList = context.rootState.Permissions.permissionList;
 }
 
-//Proper Javascript forloop
+    ------------------------------ Proper Javascript forloop ----------------
 for(let item in newGroupObj) {
 console.log('newGroupObj[item]', newGroupObj[item]);
 }
@@ -351,10 +397,6 @@ class HistorViewSet(CreateListMixin, viewsets.ModelViewSet):
 queryset = SymbolHistory.objects.all()
 serializer_class = HistorySerializer
 
-//Using Moment to converto to UNix
-let date = moment("10/15/2014 9:00", "MM/DD/YYYY HH:mm").valueOf()
-convert from unix to regualar
-let date = moment(1413388800000)format("dddd, MMMM Do YYYY, h:mm:ss a");
 
 //Determine if object is empty
 if(Object.keys(this.DataFeed.djangoSymbolHistory).length === 0) {
@@ -377,11 +419,28 @@ import store from './store';
 then use...
 var history = store.state.DataFeed.djangoSymbolHistory;
 
-//Using Moment to converto to UNIX
+**********************************************Date Conversion *****************************************************
+
+            ---------------------- Convert from Javascript to Django Readable ------------------------------
+let today = new Date();     // Date Wed Jun 24 2020 14:39:37 GMT-0700 (Mountain Standard Time)
+today.toISOString();       // "2020-06-24T21:39:37.733Z"
+
+            ---------------------- Convert from Django to Javascript Readable ------------------------------
+let newdate = new Date("2020-06-24T21:39:37.733Z");       //Date Wed Jun 24 2020 14:39:37 GMT-0700 (Mountain Standard Time)
+
+//Using Moment to convert to UNIX
 let date = moment("10/15/2014 9:00", "MM/DD/YYYY HH:mm").valueOf()
 convert from unix to regualar
 let date = moment(1413388800000)format("dddd, MMMM Do YYYY, h:mm:ss a");
 
+
+------------------------------- Time -----------------------------------------------
+var date_time = moment().format();
+console.log('date_time', date_time);
+var date_only = moment(date_time).format(moment.HTML5_FMT.DATE);
+console.log('date_only', date_only);
+
+********************************************** Axios Error Handling *****************************************************
 //Axios Error Handling
 async sendFile() {
 const formData = new FormData();
@@ -430,8 +489,4 @@ merging Objects in Javascript
 Use spread operator
 let merged = {...obj1, ...obj2};
 
-TIME
-var date_time = moment().format();
-console.log('date_time', date_time);
-var date_only = moment(date_time).format(moment.HTML5_FMT.DATE);
-console.log('date_only', date_only);
+

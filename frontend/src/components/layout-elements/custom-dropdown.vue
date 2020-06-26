@@ -305,7 +305,7 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 .user-container {
 	font-size: 1.5em;
 	font-weight: 600;

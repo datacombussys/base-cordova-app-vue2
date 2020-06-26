@@ -79,7 +79,7 @@ export default {
 };
 </script>
 
-<style style="less">
+<style lang="less">
 .empty {
 	display: block;
 	min-height: 170px;

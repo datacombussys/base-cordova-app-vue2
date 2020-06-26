@@ -8,6 +8,7 @@ from project.settings import base
 from datacom.common_models import CommonCompanyBase
 from datacom.models import Datacom, CommonBarcode
 from commons.models import Industry
+from humanresources.models import CompanyDocuments
 
 class PartnerManager(models.Manager):
   def create_partner(self, **kwargs):
@@ -55,6 +56,7 @@ class Partner(CommonCompanyBase):
   profile_img 	      = models.ImageField(max_length=100, upload_to='partners/', null=True, blank=True)
   logo 	              = models.ImageField(max_length=100, upload_to='partners/logo', null=True, blank=True)
   barcode             = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
+  company_docs        = models.ForeignKey(CompanyDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
 
   objects	= PartnerManager()
 

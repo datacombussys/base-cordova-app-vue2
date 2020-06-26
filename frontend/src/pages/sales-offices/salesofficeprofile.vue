@@ -70,7 +70,7 @@
 											<f7-button @click="newItemButton" fill class="bg-color-red">Add New Sales Office</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!hideSaveItem">
+									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button
 												fill
@@ -226,17 +226,14 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Parent Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 									<parent-component
-										:toggleEditProfile="toggleEditProfile"
-										:editProfile="editProfile"
-										:hideSaveUser="hideSaveItem"
-										:accountParent="salesOfficeParent"
-										:moduleInfo="moduleInfo"
-									>
-									</parent-component>
+											:toggleEditProfile="toggleEditProfile"
+											:parentSettings="parentSettings"
+											:moduleInfo="moduleInfo">
+										</parent-component>
 								</b-tab-item>
 								<!-- END Parent Company Tab -->
 
@@ -257,7 +254,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!editProfile">
+											<f7-list v-show="!parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width no-margin-top" medium>Account Information</f7-block-title>
 													<f7-col width="50">
@@ -335,7 +332,7 @@
 											</f7-list>
 											<!-- END Profile Display List -->
 											<!-- Begin Profile Edit List -->
-											<f7-list v-show="editProfile">
+											<f7-list v-show="parentSettings.editProfile">
 												<f7-block-title class="full-width" medium>Account Information</f7-block-title>
 												<f7-row>
 													<f7-col width="50">
@@ -433,10 +430,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!hideSaveItem">
+													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="activeTab = 1" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -465,7 +462,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
-											<f7-list v-show="!editProfile">
+											<f7-list v-show="!parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<f7-col width="50">
@@ -516,7 +513,7 @@
 											</f7-list>
 											<!-- END Contacts Display List -->
 											<!-- Begin Contacts Edit List -->
-											<f7-list simple-list v-show="editProfile">
+											<f7-list simple-list v-show="parentSettings.editProfile">
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<business-contact-form-component 
 														:contactForm="salesOfficeForm"
@@ -537,20 +534,50 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!hideSaveItem">
-														<f7-row class="margin-top level-right">
-															<f7-col width="40" class="display-flex justify-content-end margin">
-																<f7-button fill popover-open=".new-transaction" class="bg-color-green trans-btn-left"
+													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+														<f7-row class="margin-top deiplay-flex justify-content-right">
+															<f7-col width="100" class="display-flex margin">
+																<f7-button
+																	fill
+																	@click.prevent="createSalesOfficeandClose"
+																	:disabled="canSubmitSalesOfficeForm"
+																	class="bg-color-green trans-btn-left"
 																	><span>Save Sales Office</span></f7-button
 																>
 																<f7-button
 																	fill
-																	popover-open=".new-transaction"
+																	popover-open=".new-salesOffice-button"
+																	:disabled="canSubmitSalesOfficeForm"
 																	class="bg-color-green trans-btn-right"
 																	icon-color="white"
 																	icon-size="40"
 																	icon="mdi mdi-menu-down"
 																></f7-button>
+																<f7-popover class="new-salesOffice-button">
+																	<f7-list>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createSalesOfficeandNew"
+																			popover-close
+																			title="Save and New"
+																		></f7-list-item>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createSalesOfficeandEdit"
+																			popover-close
+																			title="Save and Edit"
+																		></f7-list-item>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createSalesOfficeandClose"
+																			popover-close
+																			title="Save and Close"
+																		></f7-list-item>
+																	</f7-list>
+																</f7-popover>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -1224,16 +1251,26 @@ export default {
 			billingContactSettings: {
 				type: "billing"
 			},
+			parentSettings: {
+				activeTab: 0,
+				editProfile: false,
+				hideSaveItem: true,
+				accountParent: {
+					company_name: null,
+					is_datacom: false,
+					is_partner: false,
+					is_merchant: false,
+					is_vendor: false
+				}
+			},
 
 			//Popups and Modals
 			salesOfficeImageSheet: false,
 			salesOfficeBulkUploadSheet: false,
 			setupSheetOpened: false,
 			//Page Setting for CRUD Display
-			editProfile: false,
 			hideUpdateItemButtons: false,
 			hideCreateItem: false,
-			hideSaveItem: true,
 			// CSV Upload
 			csv: [],
 			//Image Cropping
@@ -1262,7 +1299,6 @@ export default {
 				is_active: { title: "Status", display: true }
 			},
 			//Buefy Tabs
-			activeTab: 0,
 			isPaginated: true,
 			isPaginationSimple: false,
 			paginationPosition: "bottom",
@@ -1302,6 +1338,7 @@ export default {
 				primary_mailing_city: null,
 				primary_mailing_state: null,
 				primary_mailing_zip: null,
+				primary_mailing_country: null,
 				primary_first_name: null,
 				primary_last_name: null,
 				primary_phone: null,
@@ -1311,6 +1348,7 @@ export default {
 				shipping_city: null,
 				shipping_state: null,
 				shipping_zip: null,
+				shipping_mailing_country: null,
 				shipping_first_name: null,
 				shipping_last_name: null,
 				shipping_phone: null,
@@ -1320,6 +1358,7 @@ export default {
 				billing_city: null,
 				billing_state: null,
 				billing_zip: null,
+				billing_mailing_country: null,
 				billing_first_name: null,
 				billing_last_name: null,
 				billing_phone: null,
@@ -1330,56 +1369,51 @@ export default {
 				is_active: null,
 				status: null
 			},
-			salesOfficeParent: {
-				company_name: null,
-				is_datacom: false,
-				is_partner: false,
-				is_merchant: false,
-				is_vendor: false
-			}
+			
 		};
 	},
 	methods: {
 		testingMethod(e) {
 			console.log("this.salesOfficeForm", this.salesOfficeForm);
 			console.log("this.SalesOffices.salesOfficeList", this.SalesOffices.salesOfficeList);
-			console.log("this.SalesOffices.salesOfficeProfile", this.SalesOffices.salesOfficeProfile);
+			console.log("this.localeCities", this.localeCities);
+
 		},
 		menudropdown(UserID) {
 			console.log("menudropdown UserID", UserID);
 			// Add User to list
 		},
 		showEditProfile() {
-			this.editProfile = true;
+			this.parentSettings.editProfile = true;
 			this.hideUpdateItemButtons = true;
 			this.hideCreateItem = true;
-			this.hideSaveItem = true;
+			this.parentSettings.hideSaveItem = true;
 		},
 		toggleEditProfile() {
-			this.editProfile = !this.editProfile;
+			this.parentSettings.editProfile = !this.parentSettings.editProfile;
 			this.hideUpdateItemButtons = !this.hideUpdateItemButtons;
 			this.hideCreateItem = !this.hideCreateItem;
-			this.hideSaveItem = true;
+			this.parentSettings.hideSaveItem = true;
 		},
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearFormData();
-			this.editProfile = true;
+			this.parentSettings.editProfile = true;
 			this.hideCreateItem = !this.hideCreateItem;
 			this.hideUpdateItemButtons = false;
-			this.hideSaveItem = false;
-			this.activeTab = 0;
+			this.parentSettings.hideSaveItem = false;
+			this.parentSettings.activeTab = 0;
 		},
 		clearandResetButton() {
 			this.clearFormData();
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.editProfile = false;
+			this.parentSettings.editProfile = false;
 			this.hideUpdateItemButtons = false;
 			this.hideCreateItem = false;
-			this.hideSaveItem = true;
-			this.activeTab = 0;
+			this.parentSettings.hideSaveItem = true;
+			this.parentSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -1411,7 +1445,7 @@ export default {
 		},
 		async createSalesOffice() {
 			this.$store.commit("RESET_ERRORS");
-			this.syncWithMixin();
+			await this.syncWithMixin();
 			try {
 				this.$f7.preloader.show();
 				//Create Unlinked Copy of Form for Manipulation
@@ -1443,7 +1477,7 @@ export default {
 		// Populate Fields for editing in browser
 		editSalesOffice(salesOfficeID) {
 			this.clearFormData();
-			this.activeTab = 0;
+			this.parentSettings.activeTab = 0;
 			this.showEditProfile();
 			//Get User ID and object and map to fields
 			var salesOfficeListID = null;
@@ -1490,9 +1524,15 @@ export default {
 			this.resetViewtoHome();
 		},
 		syncWithMixin() {
-			this.salesOfficeForm.primary_mailing_state = this.localeCities.primary_state_name;
-			this.salesOfficeForm.shipping_state = this.localeCities.shipping_state_name;
-			this.salesOfficeForm.billing_state = this.localeCities.billing_state_name;
+			return new Promise((resolve, reject) => {
+				this.salesOfficeForm.primary_mailing_country = this.localeCities.primary_country_name;
+				this.salesOfficeForm.primary_mailing_state = this.localeCities.primary_state_name;
+				this.salesOfficeForm.shipping_mailing_country = this.localeCities.shipping_country_name;
+				this.salesOfficeForm.shipping_state = this.localeCities.shipping_state_name;
+				this.salesOfficeForm.billing_mailing_country = this.localeCities.billing_country_name;
+				this.salesOfficeForm.billing_state = this.localeCities.billing_state_name;
+				return resolve();
+			});
 		},
 		//Set inventory item to inactive instead of deleting instance
 		async deleteSalesOffice() {

@@ -68,14 +68,12 @@ export const Users = {
 						return resolve(response);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Create User";
 					dispatch('updateNotification', error);
 
 					return resolve(error);
 				});
 			}).catch(error => {
-				f7.preloader.hide();
 
 				return error;
 			});
@@ -102,11 +100,11 @@ export const Users = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-						f7.preloader.hide();
+
 						error.type = "Create Employee";
 						dispatch('updateNotification', error);
 						//Employee was not created, so we need to delete the User instance that was created.
-						dispatch("deleteUser", form.user_id);
+						dispatch("deleteUser", form.user);
 
 						return resolve(error);
 				});
@@ -140,7 +138,6 @@ export const Users = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					console.log('getEmployeeList error', error);
 					error.type = "Retrieve Employee List";
 					dispatch('updateNotification', error);
@@ -166,7 +163,6 @@ export const Users = {
 						return resolve(response.data)
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Retrieve Employee Profile";
 					dispatch('updateNotification', error);
 
@@ -191,7 +187,6 @@ export const Users = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Update User Profile";
 					dispatch('updateNotification', error);
 
@@ -214,7 +209,6 @@ export const Users = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Update Employee Profile";
 					dispatch('updateNotification', error);
 
@@ -233,7 +227,6 @@ export const Users = {
 				dispatch("updateNotification", response);
 				dispatch('getEmployeeList');
 			}).catch(error => {
-				f7.preloader.hide();
 				error.type = "Delete User Profile";
 				dispatch('updateNotification', error);
 			});
@@ -242,13 +235,18 @@ export const Users = {
 
 	},
 	getters: {
-		getUsers(state) {
-			console.log(state.userList, "UserList from getter");
+		GET_USER_LIST(state) {
 			return state.userList;
+		},
+		GET_EMPLOYEE_LIST(state) {
+			return [];
+		},
+		GET_EMPLOYEE_LIST_LENGTH(state) {
+			return 0;
 		},
 		getEmployeeProfile(state) {
 			return state.employeeProfile;
-		}
+		},
 	}
 }
 

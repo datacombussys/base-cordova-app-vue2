@@ -20,7 +20,13 @@ class UserBarcodeSerializer(serializers.ModelSerializer):
     #         write_only=True, required=False, allow_null=True)
     class Meta:
         model = UserBarcode
-        fields = '__all__'
+        fields = ('__all__')
+
+class SimpleUserBarcodeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserBarcode
+        fields = ['barcode_number', 'image']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -90,11 +96,26 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
 
+class SimpleUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['email', 'id', 'date_added', 'full_name', 'mobile_phone', 'groups', 'barcode']
+
+    def to_representation(self, value):
+        data = super().to_representation(value)  
+        if data['barcode']:
+            barcode_data_serializer = SimpleUserBarcodeSerializer(value.barcode)
+            data['barcode'] = barcode_data_serializer.data
+    
+        return data
+
+
 
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'password', 'id')
+        fields = ['email', 'password', 'id']
         
     def validate(self, data):
         print('data', data)

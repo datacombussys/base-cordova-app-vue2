@@ -74,7 +74,7 @@ export default {
 };
 </script>
 
-<style style="less">
+<style lang="less">
 .empty-col {
 	display: inline-block;
 	flex-direction: row;

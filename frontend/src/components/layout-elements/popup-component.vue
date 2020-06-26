@@ -31,7 +31,7 @@
 				style="height: 100vh;">
 				<!-- el1 -->
 				<div>
-					<!-- el2 -->
+				<!-- el2 -->
 					<f7-row v-if="popupSettings.type==='content'"> 
 						<slot name="slotContent"></slot>
 					</f7-row>
@@ -143,6 +143,6 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 
 </style>

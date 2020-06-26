@@ -10,12 +10,13 @@ export const Common = {
 	namespace: true,
 	state: {
 		shippingAddressList: [],
-		generalBusinessSettingsProfile: {}
+		generalBusinessSettingsProfile: {},
+
 
 	},
 	mutations: {
 		PUSH_NEW_SHIPPING_ADDRESS(state, payload) {
-			state.shippingAddressList.push(payload);
+			state.shippingAddressList.push(payload[0]);
 		},
 		SET_NEW_SHIPPING_ADDRESS(state, payload) {
 			state.shippingAddressList = payload;
@@ -26,7 +27,8 @@ export const Common = {
 			} else {
 				state.generalBusinessSettingsProfile = payload[0];
 			}			
-		}
+		},
+
 
 	},
 	actions: {
@@ -48,7 +50,6 @@ export const Common = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.response.type = "Add Shipping Address";
 					dispatch('updateNotification', error.response);
 
@@ -58,8 +59,10 @@ export const Common = {
 				return error;
 			});
 		},
+
 		//GET Methods
 		getNewShippingList({ commit, dispatch, rootState }, payload) {
+			var platForm = rootState.Auth.platformInfo;
 			return new Promise((resolve, reject) => {
 				if (!rootState.Auth.isAuthenticated) {
 					let error = {};
@@ -68,11 +71,11 @@ export const Common = {
 					dispatch('updateNotification', error);
 					return reject(error);
 				}
-				var url = "";
+				var url = platForm.url;
 				if (payload != undefined) {
 					url = payload.url;
 				}
-				axios.get("/django/shipping/" + url, rootState.Auth.axiosHeader).then(response => {
+				axios.get("/django/shipping/" + url).then(response => {
 					if (response.status === 200) {
 						response.type = "Retrieve Shipping Address";
 						commit('SET_NEW_SHIPPING_ADDRESS', response.data);
@@ -80,7 +83,6 @@ export const Common = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.response.type = "Retrieve Shipping Address";
 					dispatch('updateNotification', error.response);
 
@@ -90,6 +92,7 @@ export const Common = {
 				return error;
 			});
 		},
+	
 		GETGeneralSettings({ commit, dispatch, rootState }, payload) {
 			var platForm = rootState.Auth.platformInfo;
 			return new Promise((resolve, reject) => {
@@ -112,7 +115,6 @@ export const Common = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.response.type = "Retrieve General Settings";
 					dispatch('updateNotification', error.response);
 
@@ -122,7 +124,7 @@ export const Common = {
 				return error;
 			});
 		},
-
+		
 	},
 	getters: {
 		HAS_BUSINESS_SETTINGS(state) {
@@ -131,5 +133,6 @@ export const Common = {
 			}
 			return true
 		},
+	
 	}
 }

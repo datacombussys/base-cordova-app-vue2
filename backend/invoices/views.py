@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 
-from .serializers import InvoiceSerializer
-from invoices.models import Invoice
+from .serializers import InvoiceSerializer, ReceiptSerializer
+from invoices.models import Invoice, Receipt
 
 class InvoiceViewset(viewsets.ModelViewSet):
     """Handle CRUD Views
@@ -10,3 +10,11 @@ class InvoiceViewset(viewsets.ModelViewSet):
     update, partial_update, destroy"""
     serializer_class = InvoiceSerializer
     queryset = Invoice.objects.all()
+
+    
+class ReceiptViewset(viewsets.ModelViewSet):
+    """Handle CRUD Views
+    Methods: list, create, retrieve, 
+    update, partial_update, destroy"""
+    serializer_class = ReceiptSerializer
+    queryset = Receipt.objects.all()

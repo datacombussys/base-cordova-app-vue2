@@ -8,6 +8,7 @@ from companies.helper_functions import CompanyIDs
 from datacom.common_models import CommonCompanyBase, CommonBarcode
 from project.settings import base
 from commons.models import Industry
+from humanresources.models import CompanyDocuments
 
 # from datacom.helper import auto_increment
 
@@ -51,6 +52,7 @@ class Datacom(CommonCompanyBase):
   profile_img 	      = models.ImageField(max_length=100, upload_to='datacom/', null=True, blank=True)
   logo 	              = models.ImageField(max_length=100, upload_to='datacom/logo', null=True, blank=True)
   barcode             = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
+  company_docs        = models.ForeignKey(CompanyDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
   
   objects	= DatacomManager()
 

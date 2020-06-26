@@ -2093,7 +2093,7 @@ import { LocaleMixin } from "@/mixins/businesses/locale-mixins";
 //Components
 import navBarComponent from "@/components/universal/navbar-component.vue";
 import profileCardComponent from "@/components/layout-elements/profile-card-component.vue";
-import f7DatePickerComponent from '@/components/layout-elements/f7-datepicker-component.vue';
+import f7DatePickerComponent from '@/components/layout-elements/date-and-time/f7-datepicker-component.vue';
 
 export default {
 	name: "inventoryItem",

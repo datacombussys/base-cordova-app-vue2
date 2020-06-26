@@ -83,7 +83,7 @@ class InventoryBarcode(models.Model):
   barcode_type 		= models.CharField(max_length=10, null=True, blank=True)
   subtitle 			  = models.CharField(max_length=50, null=True, blank=True)
   metadata 		    = models.CharField(max_length=250, blank=True, null=True)
-  image 	        = models.FileField(max_length=100, upload_to='inventory/barcodes')
+  image 	        = models.FileField(max_length=100, upload_to='inventory/barcodes', blank=True, null=True)
 
   objects	= InvBarcodeManager()
 

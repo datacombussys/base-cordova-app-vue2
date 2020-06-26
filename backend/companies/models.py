@@ -7,8 +7,10 @@ from datacom.common_models import CommonCompanyBase, CommonBarcode
 from datacom.models import Datacom
 from partners.models import Partner
 from commons.models import Industry
+from humanresources.models import CompanyDocuments
 
 from companies.helper_functions import CompanyIDs
+
 
 
 # Company / Merchant Model Manager
@@ -65,6 +67,7 @@ class Company(CommonCompanyBase):
   profile_img 	      = models.ImageField(max_length=100, upload_to='companies/profile', null=True, blank=True)
   logo 	              = models.ImageField(max_length=100, upload_to='companies/logo', null=True, blank=True)
   barcode             = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
+  company_docs        = models.ForeignKey(CompanyDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
 
   objects	= CompanyManager()
 

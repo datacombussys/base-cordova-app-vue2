@@ -5,6 +5,13 @@ export const DataTableMixins = {
       lastColumsSorted: 1,
       selectedList: [],
       showActive: 1,
+      //Pagination
+      pagination: {
+        pageSize: 5,
+        currentPage: 1,
+        totalPages: 0,
+
+      },
 
     }
   },
@@ -13,6 +20,7 @@ export const DataTableMixins = {
       console.log('this.selectedList', this.selectedList);
       
     },
+
     showAllRows(tableId) {
       this.showActive = false;
       var Arr = Array.prototype;
@@ -106,10 +114,11 @@ export const DataTableMixins = {
       table = document.getElementById(tableId);
       console.log('table', table);
       switching = true;
-      rows = table.rows;
-      console.log('rows', rows);
+      rows = table.tBodies[0].rows;
+      console.log('rows before', rows);
       rows[0].children[this.lastColumsSorted].classList.remove('sortable-cell-active');
       rows[0].children[columnID].classList.add('sortable-cell-active');
+      console.log('rows after', rows);
       this.lastColumsSorted = columnID;
       //GetClass of Row to determine if is currentl asc or desc then sort appropriately
       if(rows[0].children[columnID].classList.contains('sortable-asc')) {
@@ -125,7 +134,7 @@ export const DataTableMixins = {
           
           /* Loop through all table rows (except the
           first, which contains table headers): */
-          for (i = 2; i < (rows.length - 1); i++) {
+          for (i = 0; i < (rows.length - 1); i++) {
             // Start by saying there should be no switching:
             shouldSwitch = false;
             /* Get the two elements you want to compare,
@@ -162,7 +171,7 @@ export const DataTableMixins = {
           
           /* Loop through all table rows (except the
           first, which contains table headers): */
-          for (i = 2; i < (rows.length - 1); i++) {
+          for (i = 0; i < (rows.length - 1); i++) {
             // Start by saying there should be no switching:
             shouldSwitch = false;
             /* Get the two elements you want to compare,
@@ -243,7 +252,128 @@ export const DataTableMixins = {
         console.log('this.selectedList', this.selectedList);
 			}
     },
-   
+    //Pagination Methods
+    firstPage() {
+      console.log('firstPage');
+      this.pagination.currentPage = 1;
+     },
+     lastPage() {
+      console.log('lastPage');
+      this.pagination.currentPage = this.pagination.totalPages;
+     },
+     nextPage() {
+      console.log('nextPage');
+      console.log('this.pagination.currentPage', this.pagination.currentPage);
+      console.log('this.pagination.totalPages', this.pagination.totalPages);
+      
+       if(this.pagination.currentPage <= this.pagination.totalPages) {
+        this.pagination.currentPage += 1;
+       }
+     },
+     prevPage() {
+      console.log('prevPage');
+       if(this.pagination.currentPage >= 2) {
+        this.pagination.currentPage -= 1;
+       }
+     },
+    changePages(page) {
+      console.log('page', page);
+      this.pagination.currentPage = page;
+     },
+     
+  },
+  computed: {
+   paginatedList: {
+     get: function () {
+      console.log('paginatedList get');
+      let startIndex = ((this.pagination.currentPage * this.pagination.pageSize) - this.pagination.pageSize);
+      console.log('startIndex', startIndex);
+      let endIndex = startIndex + this.pagination.pageSize;
+      console.log('endIndex', endIndex);
+      console.log('this.tableData.list.slice(startIndex, endIndex', this.tableData.list.slice(startIndex, endIndex));
+      return this.tableData.list.slice(startIndex, endIndex);
+     },
+     set: function (length) {
+      console.log('paginatedList set');
+      console.log('length', length);
+      this.pagination.totalPages = (Math.ceil(length / this.pagination.pageSize));
+     }
+   },
+   renderPageButtons() {
+    var newList = new Array();
+    var listLength = parseInt(this.tableData.list.length);
+    console.log("listLength", listLength);
+    var currentPage = parseInt(this.pagination.currentPage);
+    console.log("currentPage", currentPage);
+    var nextPage = (parseInt(this.pagination.currentPage) + 1);
+    console.log("nextPage", nextPage);
+    var lastPage = (parseInt(this.pagination.currentPage) - 1);
+    console.log("lastPage", lastPage);
+
+    var totalButtons = Math.ceil(listLength / parseInt(this.pagination.pageSize));
+    console.log("totalButtons", totalButtons);
+    var totalButtonList = new Array();
+
+    var maxListLength = 3;
+
+    let median = Math.floor(maxListLength / 2);
+    let lowNumber = (currentPage - median) || 1;
+    if((currentPage - median) < 1) {
+      lowNumber = 1;
+    } else {
+      lowNumber = (currentPage - median);
+    }
+    console.log("lowNumber", lowNumber);
+    let highNumber = 0;
+    if(Math.ceil(currentPage + median) + 1 > totalButtons) {
+      highNumber = totalButtons;
+    } else {
+      highNumber = Math.ceil(currentPage + median) + 1;
+    }
+    console.log("highNumber", highNumber);
+
+    
+    for(let i = lowNumber; i <= highNumber; i++) {
+      console.log("i", i);
+      totalButtonList.push(i);
+    } 
+    console.log("totalButtonList", totalButtonList);
+
+    return totalButtonList;
+  },
+  disabledNextButton() {
+    var listLength = parseInt(this.tableData.list.length);
+    var totalButtons = Math.ceil(listLength / parseInt(this.pagination.pageSize));
+    if(this.pagination.currentPage == totalButtons) {
+      return true
+    }
+    return false
+  },
+  disabledPrevButton() {
+    if(this.pagination.currentPage == 1) {
+      return true
+    }
+    return false
+  },
+  beginningPageRecord() {
+    if(this.tableData.list.length < this.pagination.pageSize) {
+      return 1;
+    } else {
+      return ((this.pagination.currentPage * this.pagination.pageSize) - this.pagination.pageSize);
+    }
+  },
+  endingPageRecord() {
+    if(this.tableData.list.length < this.pagination.pageSize) {
+      return this.tableData.list.length;
+    } else {
+      return (this.pagination.currentPage * this.pagination.pageSize);
+    }
+    
+  },
+  totalPages() {
+
+  }
+ 
   },
   mounted() {
 

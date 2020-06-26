@@ -69,7 +69,7 @@
 											<f7-button @click="newItemButton" fill class="bg-color-red">Add New Company</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!hideSaveItem">
+									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button fill @click="createCompanyandClose" class="bg-color-green trans-btn-left"
 												><span>Save Company</span></f7-button
@@ -202,16 +202,13 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" v-if="Auth.authLevel <= 2" icon="office-building" class="no-padding">
 									<parent-component
 										:toggleEditProfile="toggleEditProfile"
-										:editProfile="editProfile"
-										:hideSaveUser="hideSaveItem"
-										:accountParent="merchantParent"
-										:moduleInfo="moduleInfo"
-									>
+										:parentSettings="parentSettings"
+										:moduleInfo="moduleInfo">
 									</parent-component>
 								</b-tab-item>
 								<!-- END Company Tab -->
@@ -233,7 +230,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!editProfile">
+											<f7-list v-show="!parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width no-margin-top" medium>Account Information</f7-block-title>
 													<f7-col width="50">
@@ -404,7 +401,7 @@
 											</f7-list>
 											<!-- END Profile Display List -->
 											<!-- Begin Profile Edit List -->
-											<f7-list v-show="editProfile">
+											<f7-list v-show="parentSettings.editProfile">
 												<f7-block-title class="full-width" medium>Account Information</f7-block-title>
 												<f7-row>
 													<f7-col width="50">
@@ -665,10 +662,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!hideSaveItem">
+													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -697,7 +694,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
-											<f7-list v-show="!editProfile">
+											<f7-list v-show="!parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<f7-col width="50">
@@ -741,7 +738,7 @@
 											</f7-list>
 											<!-- END Contacts Display List -->
 											<!-- Begin Contacts Edit List -->
-											<f7-list simple-list v-show="editProfile">
+											<f7-list simple-list v-show="parentSettings.editProfile">
 												
 
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
@@ -767,7 +764,7 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!hideSaveItem">
+													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="40" class="display-flex justify-content-end margin">
 																<f7-button fill popover-open=".new-transaction" class="bg-color-green trans-btn-left"
@@ -810,11 +807,9 @@
 											<!-- Begin Locations Display List -->
 											<f7-list simple-list>
 												<f7-row class="margin-top">
-													<f7-block-title class="full-width" medium>Sales Offices</f7-block-title>
 													<sales-offices-component :moduleInfo="moduleInfo"></sales-offices-component>
 												</f7-row>
 												<f7-row class="margin-top">
-													<f7-block-title class="full-width" medium>Warehouses</f7-block-title>
 													<warehouse-component :moduleInfo="moduleInfo"></warehouse-component>
 												</f7-row>
 											</f7-list>
@@ -850,7 +845,7 @@
 
 								<!-- Begin Shipping Details Tab -->
 								<b-tab-item label="Shipping" icon="truck" class="no-padding">
-									<shipping-component :propForm="companyForm" :moduleInfo="moduleInfo"></shipping-component>
+									<shipping-component :dataForm="companyForm" :moduleInfo="moduleInfo"></shipping-component>
 								</b-tab-item>
 								<!-- END Shipping Details Tab -->
 
@@ -1623,7 +1618,7 @@ import profileCardComponent from "../../components/layout-elements/profile-card-
 import employeeDatabaseComponent from "../../components/business/employees-database-component.vue";
 import reportingChartsComponent from "../../components/business/reporting-component.vue";
 import parentComponent from "../../components/business/parent-company-component.vue";
-import billingComponent from "../../components/universal/billing-component.vue";
+import billingInvoiceComponent from "../../components/universal/billing-invoice-component.vue";
 import businessContactFormComponent from "@/components/business/contact-form-component.vue";
 
 export default {
@@ -1640,7 +1635,7 @@ export default {
 		"employee-database-component": employeeDatabaseComponent,
 		"reporting-charts-component": reportingChartsComponent,
 		"parent-component": parentComponent,
-		"billing-component": billingComponent,
+		"billing-component": billingInvoiceComponent,
 		"business-contact-form-component": businessContactFormComponent
 	},
 	data() {
@@ -1670,7 +1665,16 @@ export default {
 			billingContactSettings: {
 				type: "billing"
 			},
-
+			parentSettings: {
+				activeTab: 0,
+				editProfile: false,
+				hideSaveItem: true,
+				accountParent: {
+					company_name: null,
+					is_datacom: false,
+					is_partner: false
+				}
+			},
 
 			//Popups and Modals
 			deptPopupOpened: false,
@@ -1682,11 +1686,8 @@ export default {
 			ccPopupOpened: false,
 			achPopupOpened: false,
 			//Page Setting for CRUD Display
-			editProfile: false,
 			hideUpdateItemButtons: false,
 			hideCreateItem: false,
-			hideSaveItem: true,
-
 			// CSV Upload
 			csv: [],
 			//Image Cropping
@@ -1715,7 +1716,6 @@ export default {
 				is_active: { title: "Status", display: true }
 			},
 			//Buefy Tabs
-			activeTab: 0,
 			isPaginated: true,
 			isPaginationSimple: false,
 			paginationPosition: "bottom",
@@ -1804,12 +1804,9 @@ export default {
 				is_merchant: false,
 				is_vendor: false
 			},
-			merchantParent: {
-				company_name: null,
-				is_datacom: false,
-				is_partner: false
-			}
-		};
+		}
+	
+		
 	},
 	methods: {
 		testingMethod(e) {
@@ -1818,43 +1815,43 @@ export default {
 			console.log("this.Auth.userCompanyName ", this.Auth.userCompanyName);
 			console.log("this.Auth.userCompanyParent ", this.Auth.userCompanyParent);
 			console.log("this.Auth.platformInfo ", this.Auth.platformInfo);
-			console.log("this.merchantParent", this.merchantParent);
+			console.log("this.parentSettings.accountParent", this.parentSettings.accountParent);
 		},
 		menudropdown(UserID) {
 			console.log("menudropdown UserID", UserID);
 			// Add User to list
 		},
 		showEditProfile() {
-			this.editProfile = true;
+			this.parentSettings.editProfile = true;
 			this.hideUpdateItemButtons = true;
 			this.hideCreateItem = true;
-			this.hideSaveItem = true;
+			this.parentSettings.hideSaveItem = true;
 		},
 		toggleEditProfile() {
-			this.editProfile = !this.editProfile;
+			this.parentSettings.editProfile = !this.parentSettings.editProfile;
 			this.hideUpdateItemButtons = !this.hideUpdateItemButtons;
 			this.hideCreateItem = !this.hideCreateItem;
-			this.hideSaveItem = true;
+			this.parentSettings.hideSaveItem = true;
 		},
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearFormData();
-			this.editProfile = true;
+			this.parentSettings.editProfile = true;
 			this.hideCreateItem = !this.hideCreateItem;
 			this.hideUpdateItemButtons = false;
-			this.hideSaveItem = false;
-			this.activeTab = 0;
+			this.parentSettings.hideSaveItem = false;
+			this.parentSettings.activeTab = 0;
 		},
 		clearandResetButton() {
 			this.clearFormData();
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.editProfile = false;
+			this.parentSettings.editProfile = false;
 			this.hideUpdateItemButtons = false;
 			this.hideCreateItem = false;
-			this.hideSaveItem = true;
-			this.activeTab = 0;
+			this.parentSettings.hideSaveItem = true;
+			this.parentSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -1895,12 +1892,12 @@ export default {
 				//Get Company ID (from each platform) and add to Company Form
 				console.log("this.companyForm", this.companyForm);
 				var companyOBJ = {};
-				if (this.merchantParent.is_datacom) {
-					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.merchantParent.company_name);
+				if (this.parentSettings.accountParent.is_datacom) {
+					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
 					console.log("is_datacom companyOBJ", companyOBJ);
 					this.companyForm["datacom"] = companyOBJ.id;
-				} else if (this.merchantParent.is_partner) {
-					companyOBJ = this.Partners.partnerList.find((elem) => elem.dba_name == this.merchantParent.company_name);
+				} else if (this.parentSettings.accountParent.is_partner) {
+					companyOBJ = this.Partners.partnerList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
 					console.log("is_partner companyOBJ", companyOBJ);
 					this.companyForm["partner"] = companyOBJ.id;
 				} else {
@@ -1930,7 +1927,7 @@ export default {
 		// Populate Fields for editing in browser
 		editCompanyData(companyID) {
 			this.clearFormData();
-			this.activeTab = 0;
+			this.parentSettings.activeTab = 0;
 			this.showEditProfile();
 			//Get User ID and object and map to fields
 			var companyListID = null;
@@ -2165,10 +2162,10 @@ export default {
 			this.$store.dispatch("signOut");
 		},
 		resetCompanyToggles(name) {
-			this.merchantParent.is_datacom = name === "datacom";
-			this.merchantParent.is_partner = name === "partner";
-			this.merchantParent.is_merchant = name === "merchant";
-			this.merchantParent.is_vendor = name === "vendor";
+			this.parentSettings.accountParent.is_datacom = name === "datacom";
+			this.parentSettings.accountParent.is_partner = name === "partner";
+			this.parentSettings.accountParent.is_merchant = name === "merchant";
+			this.parentSettings.accountParent.is_vendor = name === "vendor";
 		},
 		companyTypeToggle(e) {
 			console.log("Toggle e", e);
@@ -2176,28 +2173,28 @@ export default {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.merchantParent.is_datacom = false;
+					this.parentSettings.accountParent.is_datacom = false;
 				}
 			}
 			if (e.target.name === "partner") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.merchantParent.is_partner = false;
+					this.parentSettings.accountParent.is_partner = false;
 				}
 			}
 			if (e.target.name === "merchant") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.merchantParent.is_merchant = false;
+					this.parentSettings.accountParent.is_merchant = false;
 				}
 			}
 			if (e.target.name === "vendor") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.merchantParent.is_vendor = false;
+					this.parentSettings.accountParent.is_vendor = false;
 				}
 			}
 		}
@@ -2205,19 +2202,19 @@ export default {
 	computed: {
 		...mapState(["Auth", "Users", "VTHPP", "Static", "Locale", "Errors"]),
 		...mapState(["Datacom", "Partners", "Companies"]),
-		...mapGetters(["getCompanies", "getCompanyDepartments", "getCompanyPositions"])
+		...mapGetters(["GET_COMPANY_LIST", "GET_DEPARTMENTS_LIST", "GET_POSITIONS_LIST"])
 	},
 	async mounted() {
 		if (this.Auth.platformInfo.platform === "datacom") {
-			this.merchantParent.is_datacom = true;
+			this.parentSettings.accountParent.is_datacom = true;
 		}
 		if (this.Auth.platformInfo.platform === "merchant") {
-			this.merchantParent.is_partner = true;
+			this.parentSettings.accountParent.is_partner = true;
 		}
 		if (this.Auth.platformInfo.platform === "company") {
-			this.companyParent.is_merchant = true;
+			this.parentSettings.accountParent.is_merchant = true;
 		}
-		this.merchantParent.company_name = this.Auth.userCompanyName;
+		this.parentSettings.accountParent.company_name = this.Auth.userCompanyName;
 		let response = await this.setUserPlatformGET();
 		this.$store.dispatch("getCompanyList", response);
 		this.$store.dispatch("getPartnerList", response);

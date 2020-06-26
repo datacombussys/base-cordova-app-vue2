@@ -54,25 +54,32 @@ from vendors.views import VendorViewset
 from vthpp.views import (CardProcessingAccountViewset, 
                             CreditCardViewset, 
                             ACHAccountViewset, )
-from invoices.views import InvoiceViewset
-
+from invoices.views import InvoiceViewset, ReceiptViewset
+from notifications.views import NotificationViewset
+from humanresources.views import (BenefitsSerializerViewset,
+                                EmployeeDocumentsViewset, 
+                                CompanyDocumentsViewset, 
+                                MileageReimbursementViewset, )
 
 router = routers.DefaultRouter()
 
 router.register(r'django/attendance-settings', AttendanceSettingsViewset)
 router.register(r'django/blogs', BlogViewset)
+router.register(r'django/benefits', BenefitsSerializerViewset)
 router.register(r'django/bankacct', ACHAccountViewset)
 router.register(r'django/cardprocessingacct', CardProcessingAccountViewset)
 router.register(r'django/calendars', CalendarViewset)
 router.register(r'django/city', CityViewset)
 router.register(r'django/contenttype', ContentTypeViewSet)
 router.register(r'django/companies', CompanyViewset)
+router.register(r'django/company-docs', CompanyDocumentsViewset)
 router.register(r'django/countries', CountryViewset)
 router.register(r'django/creditcard', CreditCardViewset)
 router.register(r'django/customers', CustomerViewset)
 router.register(r'django/datacom', DatacomViewset)
 router.register(r'django/departments', DepartmentViewset)
 router.register(r'django/employees', EmployeeViewset)
+router.register(r'django/employee-docs', EmployeeDocumentsViewset)
 router.register(r'django/general-settings', GeneralSettingsViewset)
 router.register(r'django/groups', UserGroupViewSet)
 router.register(r'django/holidays', HolidayViewset)
@@ -86,6 +93,8 @@ router.register(r'django/invoices', InvoiceViewset)
 router.register(r'django/inventory-labels', InvLabelViewSet)
 router.register(r'django/leave-request', LeaveRequestViewset)
 router.register(r'django/leads', LeadViewset)
+router.register(r'django/mileage', MileageReimbursementViewset)
+router.register(r'django/notifications', NotificationViewset)
 router.register(r'django/operating-hours', BusinessOperatingHoursViewset)
 router.register(r'django/pay-cycles', PayCyclesViewset)
 router.register(r'django/partners', PartnerViewset)
@@ -93,6 +102,7 @@ router.register(r'django/permission', BasePermissionsViewSet)
 router.register(r'django/permissions', UserPermissionsViewSet)
 router.register(r'django/positions', PositionsViewset)
 router.register(r'django/postal-code', PostalCodeViewset)
+router.register(r'django/receipts', ReceiptViewset)
 router.register(r'django/region', RegionViewset)
 router.register(r'django/shipping', ShippingViewSet)
 router.register(r'django/sales-offices', SalesOfficeViewset)

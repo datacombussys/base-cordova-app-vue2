@@ -204,7 +204,6 @@ export const Attendance = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Add Attendance Settings";
 					dispatch('updateNotification', error);
 
@@ -233,7 +232,6 @@ export const Attendance = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Add Payroll Cycle";
 					dispatch('updateNotification', error);
 
@@ -263,7 +261,6 @@ export const Attendance = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Add Payroll Cycle Recurrence";
 					dispatch('updateNotification', error);
 
@@ -293,7 +290,6 @@ export const Attendance = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Add Shift";
 					dispatch('updateNotification', error);
 
@@ -323,7 +319,6 @@ export const Attendance = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Add Operating Hours";
 					dispatch('updateNotification', error);
 
@@ -353,7 +348,6 @@ export const Attendance = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					console.log('error', error);
 					console.log('error', error.response);
 					if(error) {
@@ -401,6 +395,7 @@ export const Attendance = {
 					error.type = "Retrieve Attendance Setting";
 					dispatch('updateNotification', error);
 
+					return resolve(error);
 				});
 			});
 		},
@@ -682,11 +677,20 @@ export const Attendance = {
 			}
 			return true
 		},
-		getHolidayList(state) {
+		GET_HOLIDAY_LIST(state) {
 			return state.holidayList;
+		},
+		GET_HOLIDAY_LIST_LENGTH(state) {
+			return state.holidayList.length;
 		},
 		GETTER_BUSINESS_DAYS(state) {
 			return JSON.parse(JSON.stringify(state.hoursDays));
+		},
+		GET_SHIFT_LIST(state) {
+			return state.shiftList;
+		},
+		GET_SHIFT_LENGTH(state) {
+			return state.shiftList.length;
 		}
 		
 	}

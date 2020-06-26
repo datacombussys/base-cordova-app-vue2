@@ -151,7 +151,7 @@ export default {
     testingMethod(e) {
 
         console.log("this.shippingForm ", this.shippingForm);
-        console.log("this.propForm", this.propForm);
+        console.log("this.dataForm", this.dataForm);
     },
 
   },
@@ -168,7 +168,7 @@ export default {
 }
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 
 
 </style>

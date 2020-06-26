@@ -438,7 +438,7 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 .shift-v2-popup-component {
 	width: 750px;
 	left: 45%;

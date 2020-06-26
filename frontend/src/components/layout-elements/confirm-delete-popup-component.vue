@@ -155,7 +155,7 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Attendance", "Calendar"]),
-		...mapGetters(["getHolidayList"])
+		...mapGetters(["GET_HOLIDAY_LIST"])
 
 	},
 	created() {},
@@ -166,6 +166,6 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 
 </style>

@@ -17,6 +17,8 @@ python3 manage.py makemigrations vendors
 python3 manage.py migrate vendors
 python3 manage.py makemigrations commons2
 python3 manage.py migrate commons2
+python3 manage.py makemigrations humanresources
+python3 manage.py migrate humanresources
 python3 manage.py makemigrations employees
 python3 manage.py migrate employees
 python3 manage.py makemigrations financial

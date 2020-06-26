@@ -53,12 +53,13 @@
 								>
 									<f7-icon size="40" icon="mdi mdi-office-building" slot="media"></f7-icon>
 								</f7-list-item>
+								<f7-list-item view=".view-main" link="/employeeprofile/" panel-close title="Employees">
+									<f7-icon size="40" icon="mdi mdi-account-group" slot="media"></f7-icon>
+								</f7-list-item>
 								<f7-list-item view=".view-main" link="/customerprofile/" panel-close title="Customers">
 									<f7-icon size="40" icon="mdi mdi-account-group" slot="media"></f7-icon>
 								</f7-list-item>
-								<f7-list-item view=".view-main" link="/userprofile/" panel-close title="Employees">
-									<f7-icon size="40" icon="mdi mdi-account-group" slot="media"></f7-icon>
-								</f7-list-item>
+								
 								<!-- <f7-list-item view=".view-main" link="/leadprofile/" panel-close title="Leads">
                 <f7-icon size="40" icon="mdi mdi-office-building" slot="media"></f7-icon>
               </f7-list-item> -->

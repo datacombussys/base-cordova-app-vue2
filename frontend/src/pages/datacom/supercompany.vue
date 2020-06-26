@@ -667,11 +667,10 @@
 											<!-- Begin Locations Display List -->
 											<f7-list simple-list>
 												<f7-row class="margin-top no-margin">
-													<f7-block-title class="full-width no-margin" medium>Sales Offices</f7-block-title>
-													<sales-offices-component :moduleInfo="moduleInfo"></sales-offices-component>
+													<sales-offices-component>
+													</sales-offices-component>
 												</f7-row>
 												<f7-row class="margin-top">
-													<f7-block-title class="full-width" medium>Warehouses</f7-block-title>
 													<warehouse-component :moduleInfo="moduleInfo"></warehouse-component>
 												</f7-row>
 											</f7-list>
@@ -683,7 +682,7 @@
 
 								<!-- Begin Shipping Details Tab -->
 								<b-tab-item label="Shipping" icon="truck" class="no-padding">
-									<shipping-component :propForm="datacomForm" :moduleInfo="moduleInfo"></shipping-component>
+									<shipping-component :dataForm="datacomForm" :moduleInfo="moduleInfo"></shipping-component>
 								</b-tab-item>
 								<!-- END Shipping Details Tab -->
 
@@ -712,7 +711,7 @@
 
 								<!-- Begin Employees Tab -->
 								<b-tab-item label="Employees" icon="account-group" class="no-padding">
-									<employee-database-component :moduleInfo="moduleInfo"></employee-database-component>
+									<employee-database-component></employee-database-component>
 								</b-tab-item>
 								<!-- END Employees Tab -->
 
@@ -1375,11 +1374,10 @@ export default {
 	},
 	methods: {
 		testingMethod(e) {
-			console.log("this.Locale.primaryCountryList", this.Locale.primaryCountryList);
-			console.log("this.Locale.shippingCountryList", this.Locale.shippingCountryList);
-			console.log("this.Locale.billingCountryList", this.Locale.billingCountryList);
+			// console.log("this.SalesOffices.salesOfficeList", this.SalesOffices.salesOfficeList);
+			// console.log("this.Warehouses.warehouseList", this.Warehouses.warehouseList);
 			console.log("this.datacomForm", this.datacomForm);
-			// console.log("this.Users.employeeList", this.Users.employeeList);
+			console.log("this.Users.employeeList", this.Users.employeeList);
 			// console.log("this.Inventory.inventoryList", this.Inventory.inventoryList);
 			// console.log("this.Warehouses.warehouseList", this.Warehouses.warehouseList);
 			// console.log("this.VTHPP.creditCardList", this.VTHPP.creditCardList);
@@ -1731,9 +1729,9 @@ export default {
 		//END Croppie JS
 	},
 	computed: {
-		...mapState(["Auth", "Common", "VTHPP", "Static", "Locale", "Errors", "Warehouses"]),
+		...mapState(["Auth", "Common", "VTHPP", "Static", "Locale", "Errors", "Warehouses", "SalesOffices"]),
 		...mapState(["Users", "Companies", "Datacom", "Partners", "Vendors", "Inventory"]),
-		...mapGetters(["getCompanies", "getCompanyDepartments", "getCompanyPositions"])
+		...mapGetters(["GET_COMPANY_LIST", "GET_DEPARTMENTS_LIST", "GET_POSITIONS_LIST"])
 	},
 	async mounted() {
 		let response = await this.setUserPlatformGET();

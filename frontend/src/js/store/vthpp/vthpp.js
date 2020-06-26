@@ -221,7 +221,6 @@ export const VTHPP = {
 						}
 					})
 					.catch((error) => {
-						f7.preloader.hide();
 						error.response.type = "Add Credit Card";
 						dispatch("updateNotification", error.response);
 
@@ -252,7 +251,6 @@ export const VTHPP = {
 						}
 					})
 					.catch((error) => {
-						f7.preloader.hide();
 						error.response.type = "Add Bank Account";
 						dispatch("updateNotification", error.response);
 
@@ -286,7 +284,6 @@ export const VTHPP = {
 						}
 					})
 					.catch((error) => {
-						f7.preloader.hide();
 						error.response.type = "Retrieve Credit Card List";
 						dispatch("updateNotification", error.response);
 
@@ -320,7 +317,6 @@ export const VTHPP = {
 						}
 					})
 					.catch((error) => {
-						f7.preloader.hide();
 						error.response.type = "Retrieve Bank Account List";
 						dispatch("updateNotification", error.response);
 
@@ -343,7 +339,6 @@ export const VTHPP = {
 						}
 					})
 					.catch((error) => {
-						f7.preloader.hide();
 						error.response.type = "Create Inventory";
 						dispatch("updateNotification", error.response);
 
@@ -366,7 +361,6 @@ export const VTHPP = {
 						}
 					})
 					.catch((error) => {
-						f7.preloader.hide();
 						error.response.type = "Create Inventory";
 						dispatch("updateNotification", error.response);
 

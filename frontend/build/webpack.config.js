@@ -57,7 +57,11 @@ module.exports = {
       '/node': {
         target: 'http://localhost:9020',
         secure: false
-      }
+      },
+      // '/cms': {
+      //   target: 'http://localhost:9030',
+      //   secure: false
+      // }
     },
     watchOptions: {
       poll: 1000,

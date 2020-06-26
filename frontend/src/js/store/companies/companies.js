@@ -65,18 +65,14 @@ export const Companies = {
 						response.type = "Create Company";
 						commit('PUSH_NEW_COMPANY', response.data);
 						dispatch('updateNotification', response);
-						f7.preloader.hide();
-
 						return resolve(response.data)
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.response.type = "Create Company";
 					dispatch('updateNotification', error.response);
 					return resolve(error);
 				});
 			}).catch(error => {
-				f7.preloader.hide();
 				return error;
 			});
 		},
@@ -108,7 +104,6 @@ export const Companies = {
 					dispatch('updateNotification', response);
 				}
 			}).catch(error => {
-				f7.preloader.hide();
 				error.response.type = "Add Employee Position";
 				dispatch('updateNotification', error.response);
 			});
@@ -165,7 +160,7 @@ export const Companies = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
+
 					error.response.type = "Retrieve Company Employees";
 					dispatch('updateNotification', error.response);
 
@@ -199,7 +194,7 @@ export const Companies = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
+
 					error.response.type = "Retrieve Employee Positions";
 					dispatch('updateNotification', error.response);
 					return resolve(error);
@@ -343,18 +338,19 @@ export const Companies = {
 		}
   },
 	getters: {
-		getCompanies(state) {
+		GET_COMPANY_LIST(state) {
 			console.log("companyList from getter", state.companyList);
 			return state.companyList;
 		},
-		getCompanyDepartments(state) {
+		GET_DEPARTMENTS_LIST(state) {
 			console.log("departmentList from getter", state.departmentList);
 			return state.departmentList;
 		},
-		getCompanyPositions(state) {
+		GET_POSITIONS_LIST(state) {
 			console.log("positionList from getter", state.positionList);
 			return state.positionList;
 		},
+
 	}
 
 }

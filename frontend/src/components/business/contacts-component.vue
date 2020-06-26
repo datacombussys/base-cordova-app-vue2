@@ -379,4 +379,4 @@ export default {
 };
 </script>
 
-<style scoped style="less"></style>
+<style scoped lang="less"></style>

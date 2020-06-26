@@ -3,7 +3,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from cities.models import Country, Region, City, PostalCode
 
-from .models import TimeZones, Holiday, Shipping, Department,GeneralSettings
+from .models import TimeZones, Holiday, Shipping, Department, GeneralSettings
 from users.models import User, UserGroups, UserPermissions
 
 from datacom.models import Datacom
@@ -14,7 +14,7 @@ from vendors.models import Vendor
 from partners.serializers import PartnerSerializer, PartnerSimpleSerializer
 from datacom.serializers import DatacomSerializer, DatacomSimpleSerializer
 from companies.serializers import CompanySerializer, CompanySimpleSerializer
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, SimpleUserSerializer
 
 class CountrySerializer(serializers.ModelSerializer):
   class Meta:
@@ -70,18 +70,18 @@ class HolidaySerializer(serializers.ModelSerializer):
 class ContentTypeSerializer(serializers.ModelSerializer):
   class Meta:
     model = ContentType
-    fields = '__all__'
+    fields = ('__all__')
 
 class BasePermissionSeializer(serializers.ModelSerializer):
   class Meta:
     model = Permission
-    fields = '__all__'
+    fields = ('__all__')
 
     
 class PermissionsSerializer(serializers.ModelSerializer):
   class Meta:
     model = UserPermissions
-    fields = '__all__'
+    fields = ('__all__')
 
 class GroupsSerializer(serializers.ModelSerializer):
   # This requires a custom validate() method
@@ -92,7 +92,7 @@ class GroupsSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = UserGroups
-    fields = '__all__'
+    fields = ('__all__')
 
     def validate(self, data):
       print('validate data', data)
@@ -112,7 +112,7 @@ class ShippingSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Shipping
-    fields = '__all__'
+    fields = ('__all__')
 
   def to_representation(self, value):
     data = super().to_representation(value) 
@@ -145,4 +145,4 @@ class GeneralSettingsSerializer(serializers.ModelSerializer):
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
   class Meta:
     model = GeneralSettings
-    fields = '__all__'
+    fields = ('__all__')

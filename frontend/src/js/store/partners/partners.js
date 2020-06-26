@@ -42,7 +42,6 @@ export const Partners = {
             return resolve(response.data)
           }
         }).catch(error => {
-          f7.preloader.hide();
           error.response.type = "Create Partner";
           dispatch('updateNotification', error.response);
           return resolve(error);

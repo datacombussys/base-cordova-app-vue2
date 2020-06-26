@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<f7-block>
-			<f7-block-title medium class="margin-top no-margin-bottom no-padding-bottom padding-left">Shift Database</f7-block-title> 
+			<f7-block-title medium class="margin-top no-margin-bottom no-padding-bottom padding-left">Shift List</f7-block-title> 
 			<f7-card v-if="Auth.isAuthenticated" class="data-table data-table-init">
 				<f7-card-header class="data-table-header">
 					<div class="data-table-links">
@@ -26,7 +26,7 @@
 									<tr>
 										<th class="checkbox-cell">
 											<label class="checkbox">
-												<input type="checkbox" @change="toggleAllChecks($event, tableData.tableId, returnStoreModule(tableData.module).shiftList)" :checked="isAllChecked">
+												<input type="checkbox" @change="toggleAllChecks($event, tableData.tableId, tableData.list)" :checked="isAllChecked">
 												<i class="icon-checkbox"></i>
 											</label>
 										</th>
@@ -54,64 +54,113 @@
 										<th></th>
 										<th class="input-cell">
 											<div class="input filter-input datacom-input">
-												<f7-icon class="margin-right-half" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
 												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
 											</div>
 										</th>
 										<th class="input-cell">
 											<div class="input filter-input datacom-input">
-												<f7-icon class="margin-right-half" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
 												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
 											</div>
 										</th>
 										<th class="input-cell">
 											<div class="input filter-input datacom-input">
-												<f7-icon class="margin-right-half" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
 												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
 											</div>
 										</th>
 										<th class="input-cell">
 											<div class="input filter-input datacom-input">
-												<f7-icon class="margin-right-half" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
 												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
 											</div>
 										</th>
 										<th class="input-cell">
 											<div class="input filter-input datacom-input">
-												<f7-icon class="margin-right-half" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
 												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
 											</div>
 										</th>
 										<th class="input-cell">
 											<div class="input filter-input datacom-input">
-												<f7-icon class="margin-right-half" size="20" icon="mdi mdi-magnify"></f7-icon>
+												<f7-icon class="margin-right-half inactive-item" size="20" icon="mdi mdi-magnify"></f7-icon>
 												<input type="text" class="table-filter" :data-table="tableData.tableId" placeholder="Filter" @input="tableFilter($event.target, tableData.tableId)">
 											</div>
 										</th>
 									</tr>
 								</thead>
-								<tbody v-if="Attendance.shiftList.length != 0">
-									<tr v-for="shiftObj in Attendance.shiftList" :key="shiftObj.id">
+								<tbody v-if="tableData.list.length != 0">
+									<tr v-for="item in paginatedList" :key="item.id">
 										<td class="checkbox-cell">
 											<label class="checkbox">
-												<input :id="shiftObj.id" type="checkbox" @change="checkedItem($event, returnStoreModule(tableData.module).shiftList)">
+												<input :id="item.id" type="checkbox" @change="checkedItem($event, tableData.list)">
 												<i class="icon-checkbox"></i>
 											</label>
 										</td>
-										<td :id="shiftObj.id" class="label-cell text-align-center">{{shiftObj.id}}</td>
-										<td class="label-cell text-align-center">{{shiftObj.name}}</td>
-										<td class="label-cell text-align-center">{{shiftObj.attendance_type}}</td>
-										<td class="numeric-cell text-align-center">{{shiftObj.start_time}}</td>
-										<td class="numeric-cell text-align-center">{{shiftObj.end_time}}</td>
+										<td :id="item.id" class="label-cell text-align-center">{{item.id}}</td>
+										<td class="label-cell text-align-center">{{item.name}}</td>
+										<td class="label-cell text-align-center">{{item.attendance_type}}</td>
+										<td class="numeric-cell text-align-center">{{item.start_time}}</td>
+										<td class="numeric-cell text-align-center">{{item.end_time}}</td>
 										<td class="label-cell text-align-center">
-											<b-tag size="is-medium" :type="`${shiftObj.is_active ? 'is-success' : 'is-danger'}`">{{
-												shiftObj.is_active ? "Active" : "Inactive"
+											<b-tag size="is-medium" :type="`${item.is_active ? 'is-success' : 'is-danger'}`">{{
+												item.is_active ? "Active" : "Inactive"
 											}}</b-tag>
 										</td>
 									</tr>
 								</tbody>
 							</table>
-							<f7-row class="full-width" v-if="Attendance.shiftList.length === 0">
+							<f7-row class="full-width display-flex justify-content-end">
+								<div class="data-table-footer full-width padding-half">
+									<div class="data-table-rows-select">
+										Per page:
+										<f7-input type="select" 
+											:value="pagination.pageSize" 
+											@change="pagination.pageSize = $event.target.value">
+											<option value="5">5</option>
+											<option value="10">10</option>
+											<option value="15">15</option>
+											<option value="20">20</option>
+										</f7-input>
+									</div>
+									<div class="data-table-pagination">
+											<span class="data-table-pagination-label">
+											{{ beginningPageRecord }}-{{ endingPageRecord }} of {{ tableData.list.length }}</span>
+										<f7-link icon-only @click="firstPage" :class="{ disabled: disabledPrevButton }">
+											<f7-icon size="20" color="datacom"  icon="mdi mdi-skip-previous">
+											</f7-icon>
+										</f7-link>
+										<f7-link icon-only @click="prevPage" :class="{ disabled: disabledPrevButton }">
+											<f7-icon size="20" color="datacom" icon="mdi mdi-chevron-left">
+											</f7-icon>
+										</f7-link>
+										<f7-link v-for="page in renderPageButtons" :key="page.id" @click="changePages($event.target.innerText)" >
+											<span class="pageIndicator">
+												{{ page }}
+											</span>
+										</f7-link>
+										
+										<f7-link icon-only @click="nextPage" :class="{ disabled: disabledNextButton }">
+											<f7-icon size="20" color="datacom" icon="mdi mdi-chevron-right">
+											</f7-icon>
+										</f7-link>
+										<f7-link icon-only @click="lastPage" :class="{ disabled: disabledNextButton }">
+											<f7-icon size="20" color="datacom" icon="mdi mdi-skip-next">
+											</f7-icon>
+										</f7-link>
+									</div>
+								</div>
+							</f7-row>
+							<!-- END Footer and Pagination -->
+							<f7-row class="full-width" v-if="tableData.list.length === 0">
+								<f7-col>
+									<f7-row class="display-flex justify-content-center" v-if="Auth.isAuthenticated">
+										<f7-col width="50"class="display-flex justify-content-center align-content-center">
+											<f7-button fill popup-open=".shift-popup-component">Add New Item</f7-button>
+										</f7-col>
+									</f7-row>
+								</f7-col>
 								<div class="text-align-center error-text margin">No records to display</div>
 							</f7-row>
 						</f7-row>
@@ -119,25 +168,23 @@
 				</f7-card-content>
 			</f7-card>
 
-			<f7-card v-if="Attendance.shiftList.length === 0">
+			<f7-card v-else>
 				<f7-card-content>
-					<f7-row class="display-flex justify-content-center" v-if="Auth.isAuthenticated">
-						<f7-col width="50"class="display-flex justify-content-center align-content-center">
-							<f7-button fill popup-open=".shift-popup-component">Add New Shift</f7-button>
-						</f7-col>
-					</f7-row>
-					<f7-row class="display-flex justify-content-center" v-else>
+					<f7-row class="display-flex justify-content-center">
 						<f7-col width="100">
 							<div class="text-align-center error-text margin">No records to display</div>
-							<p class="text-align-center">Please log in to create a shift</p>
+							<p class="text-align-center">(Please log in)</p>
 						</f7-col>
 					</f7-row>
 				</f7-card-content>
 			</f7-card>
 
+			<f7-button @click="testButton">Test</f7-button>
 		</f7-block>
 
-		<!-- <f7-button @click="testMethod">Test</f7-button> -->
+
+
+		
 
 		<!-- Popup -->
 		<f7-popup
@@ -358,7 +405,7 @@
 
 										<f7-row class="full-width margin-top">
 											<f7-col width="25">
-												<f7-button fill @click="testMethod">Test</f7-button>
+												<f7-button fill @click="testButton">Test</f7-button>
 											</f7-col>
 											<f7-col width="25">
 												<f7-button fill popup-close @click="addShift">Save</f7-button>
@@ -383,6 +430,7 @@
 
 <script>
 import { mapState } from "vuex";
+import { mapGetters } from 'vuex';
 // import {EventBus} from '@/services/event-bus'
 
 //Mixins
@@ -407,7 +455,8 @@ export default {
 			//Component Settings
 			tableData: {
 				tableId: 'shiftTable',
-				module: "Attendance"
+				module: "Attendance",
+				list: new Array(),
 			},
 			//Main Settings
 			ShiftPopupOpened: false,
@@ -417,7 +466,7 @@ export default {
 				datacom: null,
 				partner: null,
 				company: null,
-				employees: null,
+				employees: [],
 				name: null,
 				attendance_type: null,
 				date_added: null,
@@ -432,17 +481,15 @@ export default {
 				is_active: null,
 				start_clockin_time: null,
 				stop_clockout_time: null
-			}
+			},
+			newData: 0
 		};
 	},
 	methods: {
-		testMethod() {
-			// var list2 = this.Attendance.shiftList[2];
-			// console.log("list2", list2);
-			// console.log("this.Auth.isAuthenticated", this.Auth.isAuthenticated);
-			console.log("this.newShiftForm", this.newShiftForm);
-			console.log("this.selectedList", this.selectedList);
-			console.log("this.Auth.platformInfo", this.Auth.platformInfo);
+		testButton(e) {
+			console.log("this.pagination", this.pagination);
+			console.log("e", e);
+
 		},
 		inputTest() {
 			console.log("Input test");
@@ -487,7 +534,7 @@ export default {
 		editItem() {
 			console.log("EditItem");
 			console.log("this.selectedList", this.selectedList);
-			var list2 = this.Attendance.shiftList[2];
+			var list2 = this.GET_SHIFT_LIST[2];
 			var newList = this.selectedList[0];
 
 			for(let key in this.newShiftForm) {
@@ -522,23 +569,24 @@ export default {
 				this.$f7.dialog.alert('There was an error deleting the record(s)');
 			}
 		},
-		checkIfSelected() {
-			var record = this.selectedList[0];
-		}
+
 
 
 
 	},
 	computed: {
 		...mapState(["Users", "Auth", "Attendance"]),
-
+		...mapGetters(["GET_SHIFT_LIST", "GET_SHIFT_LENGTH"]),
 
 	},
-	created() {},
+	created() {
+		this.tableData.list = this.GET_SHIFT_LIST;
+		this.paginatedList = this.GET_SHIFT_LENGTH;
+		console.log("created this.GET_SHIFT_LENGTH", this.GET_SHIFT_LENGTH);
+		
+	},
 	async mounted() {
-
 		var $$ = this.Dom7;
-
 		// Confirm Delete Dislog
 		$$('.confirm-delete').on('click', () => {
 			let response = this.selectedList.length;
@@ -559,16 +607,29 @@ export default {
 		});
 		//Confirm Deactivate Dialog
 		$$('.confirm-deactivate').on('click', () => {
-			this.$f7.dialog.confirm('Are you sure you want to DEACTIVATE this record?', () => {
+			let length = this.selectedList.length;
+			if(length === 0) {
+				this.$f7.dialog.confirm('You must first select at least one record');
+			}
+			if(length === 1) {
+				this.$f7.dialog.confirm('Are you sure you want to deactivate this record?', () => {
+					this.deleteItem();
+				});
+			}
+			if(length >= 2) {
+				this.$f7.dialog.confirm('Are you sure you want to deactivate these records?', () => {
+					this.deleteItem();
+				});
+			}
+			this.$f7.dialog.confirm('Are you sure you want to deactivate this record?', () => {
 				this.deactivate();
 			});
 		});
-		
 	}
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 .shift-popup-component {
 	width: 750px;
 	left: 45%;

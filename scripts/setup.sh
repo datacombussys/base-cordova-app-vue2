@@ -29,7 +29,16 @@ printf "\nInstalling python packages..\n"
 pip install -r "./backend/requirements.txt"
 
 if [ -d ./frontend ]; then
-	printf "\nInstalling Node packages...\n"
+	printf "\nInstalling frontend's node packages...\n"
+	npm --prefix ./frontend/ install ./frontend/
+	
+	printf "Adding nodeJS modules bin to your path\n"
+	export PATH="`pwd`/frontend/node_modules/.bin/:$PATH"
+	export NODE_ENV="development"
+fi
+
+if [ -d ./node ]; then
+	printf "\nInstalling Node's node packages...\n"
 	npm --prefix ./frontend/ install ./frontend/
 	
 	printf "Adding nodeJS modules bin to your path\n"
@@ -39,6 +48,15 @@ fi
 
 printf "Adding scripts folder to your path\n"
 export PATH="`pwd`/scripts/:$PATH"
+
+# if [ -d ./cms ]; then
+# 	printf "\nInstalling CMS node Packages...\n"
+# 	npm --prefix ./cms/ install ./cms/
+	
+# 	printf "Adding nodeJS modules bin to your path\n"
+# 	export PATH="`pwd`/frontend/node_modules/.bin/:$PATH"
+# 	export NODE_ENV="development"
+# fi
 
 if [ ! -f "./backend/project/settings/local_settings.py" ]; then
 	echo -e "$IRed"

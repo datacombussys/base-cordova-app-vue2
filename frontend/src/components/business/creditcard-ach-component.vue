@@ -20,7 +20,7 @@
 					<f7-row v-show="0">
 						<p>Jesus is Lord</p>
 						<p>In the name of Jesus Christ, I command all unGodly to leave.</p>
-						<p>Tis website is protected by Jesus Christ our Lord.</p>
+						<p>This website is protected by Jesus Christ our Lord.</p>
 					</f7-row>
 					<f7-row class="full-width" v-if="VTHPP.creditCardList.length != 0">
 						<f7-col width="45" class="margin-left">
@@ -78,8 +78,8 @@
 						</f7-list>
 					</div>
 				</f7-row>
-				<f7-row class="display-flex justify-content-end align-items-center">
-					<f7-button outline active small popup-open=".credit-card-popup">Add Credit Card</f7-button>
+				<f7-row class="display-flex justify-content-end align-items-center margin-top">
+					<f7-button fill small popup-open=".credit-card-popup">Add Credit Card</f7-button>
 				</f7-row>
 				<!-- END Credit Card -->
 				<!-- ACH -->
@@ -92,8 +92,8 @@
 					</f7-row>
 					<f7-row v-show="0">
 						<p>Jesus is Lord</p>
-						<p>In the name of Jesus Christ, I command all unGodly to leave.</p>
-						<p>Tis website is protected by Jesus Christ our Lord.</p>
+						<p>In the name of Jesus Christ, I command all ungodly to leave.</p>
+						<p>This website is protected by Jesus Christ our Lord.</p>
 					</f7-row>
 					<f7-row class="full-width" v-if="VTHPP.achAccountList.length != 0">
 						<f7-col width="45" class="margin-left">
@@ -152,8 +152,8 @@
 						</f7-list>
 					</div>
 				</f7-row>
-				<f7-row class="display-flex justify-content-end align-items-center">
-					<f7-button outline active small popup-open=".ach-popup">Add ACH Account</f7-button>
+				<f7-row class="display-flex justify-content-end align-items-center margin-top">
+					<f7-button fill small popup-open=".ach-popup">Add ACH Account</f7-button>
 				</f7-row>
 				<!-- END ACH -->
 
@@ -183,6 +183,7 @@
 											:value="creditCardForm.card_number_token"
 											@input="creditCardForm.card_number_token = $event.target.value"
 											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
 									<f7-col width="50">
@@ -194,6 +195,7 @@
 													:value="creditCardForm.card_exp_month"
 													@input="creditCardForm.card_exp_month = $event.target.value"
 													type="text"
+													class="datacom-input"
 												></f7-list-input>
 											</f7-col>
 											<f7-col width="50">
@@ -203,6 +205,7 @@
 													:value="creditCardForm.card_exp_year"
 													@input="creditCardForm.card_exp_year = $event.target.value"
 													type="text"
+													class="datacom-input"
 												></f7-list-input>
 											</f7-col>
 										</f7-row>
@@ -216,6 +219,7 @@
 											:value="creditCardForm.name_on_card"
 											@input="creditCardForm.name_on_card = $event.target.value"
 											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
 									<f7-col width="50">
@@ -225,19 +229,23 @@
 											:value="creditCardForm.phone"
 											@input="creditCardForm.phone = $event.target.value"
 											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
 								</f7-row>
 								<f7-row>
-									<f7-col width="50">
+									<f7-col width="100">
 										<p class="field-title">Billing Address</p>
 										<f7-list-input
 											placeholder="1 N. Main St."
 											:value="creditCardForm.billing_address"
 											@input="creditCardForm.billing_address = $event.target.value"
 											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
+								</f7-row>
+								<f7-row>
 									<f7-col width="50">
 										<p class="field-title">Suite / Unit / Apt</p>
 										<f7-list-input
@@ -245,17 +253,48 @@
 											:value="creditCardForm.billing_address2"
 											@input="creditCardForm.billing_address2 = $event.target.value"
 											type="text"
+											class="datacom-input"
+										></f7-list-input>
+									</f7-col>
+									<f7-col width="50">
+										<p class="field-title">Zip</p>
+										<f7-list-input
+											placeholder="Unit 100"
+											:value="creditCardForm.billing_zip"
+											@input="creditCardForm.billing_zip = $event.target.value"
+											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
 								</f7-row>
 								<f7-row>
+									<f7-col width="30">
+										<p class="field-title">
+											Country:
+											<span style="color: red;">*</span>
+										</p>
+										<f7-list-input
+											required
+											:value="localeCities.creditcard_country_id"
+											@input="getCreditCardStates($event, 'primary')"
+											type="select"
+											class="datacom-input"
+										>
+											<option
+												v-for="country in GET_COUNTRY_LIST"
+												:key="country.id"
+												:value="country.id">
+												{{ country.name }}
+											</option>
+										</f7-list-input>
+									</f7-col>
 									<f7-col width="30">
 										<p class="field-title">State</p>
 										<f7-list-input
 											:value="localeCities.creditcard_state_id"
 											@input="getCreditCardCities"
 											type="select"
-											style="background: rgb(216,252,253)"
+											class="datacom-input"
 										>
 											<option
 												v-for="state in GET_STATE_LIST"
@@ -271,7 +310,7 @@
 											:value="creditCardForm.billing_city"
 											@input="creditCardForm.billing_city = $event.target.value"
 											type="select"
-											style="background: rgb(216,252,253)"
+											class="datacom-input"
 										>
 											<option
 												v-for="ccardcity in GET_CITY_LIST"
@@ -280,15 +319,6 @@
 												{{ ccardcity.name }}
 											</option>
 										</f7-list-input>
-									</f7-col>
-									<f7-col width="30">
-										<p class="field-title">Zip</p>
-										<f7-list-input
-											placeholder="Unit 100"
-											:value="creditCardForm.billing_zip"
-											@input="creditCardForm.billing_zip = $event.target.value"
-											type="text"
-										></f7-list-input>
 									</f7-col>
 								</f7-row>
 								<f7-row class="display-flex justify-content-center">
@@ -324,20 +354,18 @@
 											:value="achForm.account_number"
 											@input="achForm.account_number = $event.target.value"
 											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
 									<f7-col width="50">
-										<f7-row>
-											<f7-col width="50">
-												<p class="field-title">Routing Number</p>
-												<f7-list-input
-													placeholder="1221003456"
-													:value="achForm.routing_number"
-													@input="achForm.routing_number = $event.target.value"
-													type="text"
-												></f7-list-input>
-											</f7-col>
-										</f7-row>
+										<p class="field-title">Routing Number</p>
+										<f7-list-input
+											placeholder="1221003456"
+											:value="achForm.routing_number"
+											@input="achForm.routing_number = $event.target.value"
+											type="text"
+											class="datacom-input"
+										></f7-list-input>
 									</f7-col>
 								</f7-row>
 								<f7-row>
@@ -348,6 +376,7 @@
 											:value="achForm.name_on_account"
 											@input="achForm.name_on_account = $event.target.value"
 											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
 									<f7-col width="50">
@@ -357,19 +386,23 @@
 											:value="achForm.phone"
 											@input="achForm.phone = $event.target.value"
 											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
 								</f7-row>
 								<f7-row>
-									<f7-col width="50">
+									<f7-col width="100">
 										<p class="field-title">Billing Address</p>
 										<f7-list-input
 											placeholder="1 N. Main St."
 											:value="achForm.billing_address"
 											@input="achForm.billing_address = $event.target.value"
 											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
+								</f7-row>
+								<f7-row>
 									<f7-col width="50">
 										<p class="field-title">Suite / Unit / Apt</p>
 										<f7-list-input
@@ -377,17 +410,48 @@
 											:value="achForm.billing_address2"
 											@input="achForm.billing_address2 = $event.target.value"
 											type="text"
+											class="datacom-input"
+										></f7-list-input>
+									</f7-col>
+									<f7-col width="50">
+										<p class="field-title">Zip</p>
+										<f7-list-input
+											placeholder="Unit 100"
+											:value="achForm.billing_zip"
+											@input="achForm.billing_zip = $event.target.value"
+											type="text"
+											class="datacom-input"
 										></f7-list-input>
 									</f7-col>
 								</f7-row>
 								<f7-row>
+									<f7-col width="30">
+										<p class="field-title">
+											Country:
+											<span style="color: red;">*</span>
+										</p>
+										<f7-list-input
+											required
+											:value="localeCities.ach_country_id"
+											@input="getACHStates($event, 'primary')"
+											type="select"
+											class="datacom-input"
+										>
+											<option
+												v-for="country in GET_COUNTRY_LIST"
+												:key="country.id"
+												:value="country.id">
+												{{ country.name }}
+											</option>
+										</f7-list-input>
+									</f7-col>
 									<f7-col width="30">
 										<p class="field-title">State</p>
 										<f7-list-input
 											:value="localeCities.ach_state_id"
 											@input="getACHCities"
 											type="select"
-											style="background: rgb(216,252,253)"
+											class="datacom-input"
 										>
 											<option 
 												v-for="state in GET_STATE_LIST" 
@@ -403,7 +467,7 @@
 											:value="achForm.billing_city"
 											@input="achForm.billing_city = $event.target.value"
 											type="select"
-											style="background: rgb(216,252,253)"
+											class="datacom-input"
 										>
 											<option 
 												v-for="city in GET_CITY_LIST" 
@@ -412,15 +476,6 @@
 												{{ city.name }}
 											</option>
 										</f7-list-input>
-									</f7-col>
-									<f7-col width="30">
-										<p class="field-title">Zip</p>
-										<f7-list-input
-											placeholder="Unit 100"
-											:value="achForm.billing_zip"
-											@input="achForm.billing_zip = $event.target.value"
-											type="text"
-										></f7-list-input>
 									</f7-col>
 								</f7-row>
 								<f7-row class="display-flex justify-content-center">
@@ -560,5 +615,5 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 </style>

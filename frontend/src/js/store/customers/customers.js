@@ -42,7 +42,6 @@ export const Customers = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-						f7.preloader.hide();
 						error.response.type = "Create Customer";
 						dispatch('updateNotification', error.response);
 						//Customer was not created, so we need to delete the User instance that was created.
@@ -104,7 +103,6 @@ export const Customers = {
             return resolve(response.data);
           }
         }).catch(error => {
-          f7.preloader.hide();
           error.response.type = "Update Customer Profile";
           dispatch('updateNotification', error.response);
 
@@ -128,7 +126,6 @@ export const Customers = {
 						return resolve(response.data)
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.response.type = "Retrieve Customer Profile";
 					dispatch('updateNotification', error.response);
 
@@ -167,7 +164,7 @@ export const Customers = {
 		getCustomerCreditCardsList(state) {
 			return state.customerCreditCardList;
     },
-    getCustomerList(state) {
+    GET_CUSTOMER_LIST(state) {
       return state.customerList;
     }
 	}

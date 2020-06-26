@@ -36,7 +36,6 @@ export const Warehouses = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.response.type = "Add Warehouse";
 					dispatch('updateNotification', error.response);
 
@@ -48,6 +47,7 @@ export const Warehouses = {
 		},
 		//GET Methods
 		getWarehouseList({ commit, dispatch, rootState }, payload) {
+			var platForm = rootState.Auth.platformInfo;
 			return new Promise((resolve, reject) => {
 				if (!rootState.Auth.isAuthenticated) {
 					let error = {};
@@ -56,11 +56,11 @@ export const Warehouses = {
 					dispatch('updateNotification', error);
 					return reject(error);
 				}
-				var url = "";
+				var url = platForm.url;
 				if (payload != undefined) {
 					url = payload.url;
 				}
-				axios.get("/django/warehouses/" + url, rootState.Auth.axiosHeader).then(response => {
+				axios.get("/django/warehouses/" + url).then(response => {
 					if (response.status === 200) {
 						response.type = "Retrieve Warehouse List";
 						commit('SET_WAREHOUSE_LIST', response.data);
@@ -68,7 +68,6 @@ export const Warehouses = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.response.type = "Retrieve Warehouse List";
 					dispatch('updateNotification', error.response);
 
@@ -81,6 +80,11 @@ export const Warehouses = {
 
 	},
 	getters: {
-
+		GET_WAREHOUSE_LIST(state) {
+			return state.warehouseList;
+		},
+		GET_WAREHOUSE_LIST_LENGTH(state) {
+			return state.warehouseList.length;
+		}
 	}
 };

@@ -206,7 +206,6 @@ export const Auth = {
 					}).then(res => {
 						commit('SET_EMPLOYEE_LIST');
 					}).catch(error => {
-						f7.preloader.hide();
 						error.type = "Login Unsuccessful";
 						dispatch("updateNotification", error);
 					});
@@ -220,19 +219,16 @@ export const Auth = {
 						//Set Notification
 						response.type = "Manager Approval";
 						dispatch('updateNotification', response);
-						f7.preloader.hide();
 
 						return resolve(response);
 
 					}).catch(error => {
-						f7.preloader.hide();
 						error.type = "Manager Approval";
 						dispatch("updateNotification", error);
 
 						return resolve(error);
 					});
 				}).catch(error => {
-					f7.preloader.hide();
 	
 					return error;
 				});
@@ -497,6 +493,8 @@ export const Auth = {
 					dispatch("getCompanyShifts", state.platformInfo);
 					dispatch("GETSalesTaxes", state.platformInfo);
 					dispatch("GETGeneralSettings", state.platformInfo);
+					dispatch("getSalesOfficeList", state.platformInfo);
+					dispatch("getWarehouseList", state.platformInfo);
 
 					return resolve();
 
@@ -515,6 +513,7 @@ export const Auth = {
 					dispatch("getCreditCardList", state.platformInfo);
 					dispatch("getACHAccountList", state.platformInfo);
 					dispatch("getNewShippingList", state.platformInfo);
+					dispatch("getNotifications", state.platformInfo);
 
 					return resolve();
 

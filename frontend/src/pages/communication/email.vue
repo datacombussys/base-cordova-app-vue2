@@ -115,7 +115,6 @@
               </f7-col>
             </f7-row>
               <f7-row class="full-width display-flex justify-content-center">
-                <custom-scrollbar class="email-scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
                   <f7-col width="100" class="display-block">
                     <f7-list-group media-list class="full-width email-list mail">
                       <f7-list-item
@@ -192,7 +191,6 @@
                       ></f7-list-item>
                     </f7-list-group>
                   </f7-col>
-                </custom-scrollbar>
               </f7-row>
             </f7-col>
             <!-- END Col-2 Email List-->
@@ -231,7 +229,6 @@
                   <f7-badge color="Rred">Approval Requested</f7-badge>
                 </f7-col>
               </f7-row>
-              <custom-scrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
               <f7-row class="full-width email-body">
                 <f7-col>
               
@@ -240,7 +237,6 @@
                   
                 </f7-col>
               </f7-row>
-              </custom-scrollbar>
             </f7-col>
             <!-- END Col-3 Email Display Display-->
           </f7-row>
@@ -289,7 +285,6 @@
               </f7-col>
             </f7-row>
               <f7-row class="full-width display-flex justify-content-center">
-                <custom-scrollbar class="email-scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
                   <f7-col width="100" class="display-block">
                     <f7-list-group media-list class="full-width email-list mail">
                       <f7-list-item
@@ -366,7 +361,6 @@
                       ></f7-list-item>
                     </f7-list-group>
                   </f7-col>
-                </custom-scrollbar>
               </f7-row>
             </f7-col>
             <!-- END Col-2 Notification List-->
@@ -397,7 +391,6 @@
                   <f7-badge color="green"> Active</f7-badge>
                 </f7-col>
               </f7-row>
-              <custom-scrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
               <f7-row class="full-width email-body">
                 <f7-col>
                   <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Saepe odio aspernatur tenetur, facilis eligendi magnam aut odit optio recusandae dolores totam, ipsam quidem nobis culpa quaerat vitae. Eligendi, facilis iure.</p>
@@ -410,7 +403,6 @@
                   <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Saepe odio aspernatur tenetur, facilis eligendi magnam aut odit optio recusandae dolores totam, ipsam quidem nobis culpa quaerat vitae. Eligendi, facilis iure.</p>
                 </f7-col>
               </f7-row>
-              </custom-scrollbar>
             </f7-col>
             <!-- END Col-3 Notification Display-->
           </f7-row>
@@ -482,18 +474,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.email-scroll-area {
-  position: relative;
-  margin: auto;
-  width: 100%;
-  height: 100vh;
-}
-.scroll-area {
-  position: relative;
-  margin: auto;
-  width: 100%;
-  height: 100vh;
-}
+
 .navbar {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
@@ -575,6 +556,31 @@ export default {
   height: 100%;
   background: white;
   margin-top: 10px;
+}
+//Left Nav
+.email-nav-list {
+	ul {
+		li {
+			a {
+				.item-content {
+					background: rgb(217, 230, 235);
+				}
+			}
+		}
+	}
+}
+
+//Left Nav
+.email-list {
+	ul {
+		li {
+			a {
+				.item-content {
+					background: rgb(230, 238, 241);
+				}
+			}
+		}
+	}
 }
 
 </style>

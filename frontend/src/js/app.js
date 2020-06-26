@@ -7,21 +7,18 @@ import "../fonts/fonts.less";
 // Import Framework7
 import Framework7 from './framework7-custom.js';
 
-//jQuery
-// window.$ = require('jquery');
-// window.JQuery = require('jquery');
-// require('jquery-ui');
-// require('jquery.fullscreen');
-
-//Import Template7
-import Template7 from 'template7';
-Vue.use(Template7);
+// Init Framework7-Vue Plugin
+Framework7.use(Framework7Vue);
 
 // Import Framework7-Vue Plugin
 import Framework7Vue from 'framework7-vue/framework7-vue.esm.bundle.js';
 
 // Import Framework7 Styles
 import '../css/framework7-custom.less';
+
+//Import Template7
+import Template7 from 'template7';
+Vue.use(Template7);
 
 //Import Buefy
 import buefy from 'buefy';
@@ -55,9 +52,6 @@ import App from '../components/app.vue';
 //Import Vuex and Store
 import store from "./store/store";
 require("@/js/store/subscribers");
-
-// Init Framework7-Vue Plugin
-Framework7.use(Framework7Vue);
 
 //Import and Use Axios
 var axios = require('@/js/axios');

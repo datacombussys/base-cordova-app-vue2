@@ -90,117 +90,7 @@
 				<f7-row class="full-width body-row display-flex justify-content-stretch">
 					<!-- Left Column-->
 					<f7-col width="50" class="padding">
-						<!-- Notifications -->
-						<b-tabs type="is-boxed">
-							<b-tab-item>
-								<template slot="header">
-									<f7-row class="display-flex align-items-center">
-										<b-icon icon="email-alert" size="is-medium"></b-icon>
-										<span> New Messages <b-tag rounded> 3 </b-tag> </span>
-									</f7-row>
-								</template>
-								<f7-row class="display-flex align-content-flex-start">
-									<f7-row class="full-width">
-										<f7-col width="20">
-											<p class="field-title">Archive</p>
-										</f7-col>
-										<f7-col width="50">
-											<p class="field-title">Notification</p>
-										</f7-col>
-										<f7-col width="30">
-											<p class="field-title">Approve/Decline</p>
-										</f7-col>
-									</f7-row>
-									<div
-										v-bar="{
-											preventParentScroll: false,
-											scrollThrottle: 30
-										}"
-										style="height:250px; width: 100%;"
-									>
-										<!-- el1 -->
-										<div>
-											<!-- el2 -->
-											<f7-row class="full-width">
-												<f7-col width="100">
-													<f7-list media-list class="display-flex justify-content-space-evenly no-margin full-width">
-														<f7-col width="10" class="display-flex align-items-center">
-															<f7-list-item checkbox></f7-list-item>
-														</f7-col>
-														<f7-col class="full-width">
-															<f7-list-item
-																link="#"
-																title="Facebook"
-																after="17:14"
-																subtitle="New messages from John Doe"
-																text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-															></f7-list-item>
-														</f7-col>
-														<f7-col width="20" class="display-flex justify-content-space-between align-items-center">
-															<b-icon class="margin-half" icon="thumb-up-outline" size="is-medium"></b-icon>
-															<b-icon class="margin-half" icon="thumb-down-outline" size="is-medium"></b-icon>
-														</f7-col>
-													</f7-list>
-												</f7-col>
-											</f7-row>
-											<f7-row class="full-width">
-												<f7-col width="100">
-													<f7-list media-list class="display-flex justify-content-space-evenly no-margin full-width">
-														<f7-col width="10" class="display-flex align-items-center">
-															<f7-list-item checkbox></f7-list-item>
-														</f7-col>
-														<f7-col class="full-width">
-															<f7-list-item
-																link="#"
-																title="Facebook"
-																after="17:14"
-																subtitle="New messages from John Doe"
-																text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-															></f7-list-item>
-														</f7-col>
-														<f7-col width="20" class="display-flex justify-content-space-between align-items-center">
-															<b-icon class="margin-half" icon="thumb-up-outline" size="is-medium"></b-icon>
-															<b-icon class="margin-half" icon="thumb-down-outline" size="is-medium"></b-icon>
-														</f7-col>
-													</f7-list>
-												</f7-col>
-											</f7-row>
-											<f7-row class="full-width">
-												<f7-col width="100">
-													<f7-list media-list class="display-flex justify-content-space-evenly no-margin full-width">
-														<f7-col width="10" class="display-flex align-items-center">
-															<f7-list-item checkbox></f7-list-item>
-														</f7-col>
-														<f7-col class="full-width">
-															<f7-list-item
-																link="#"
-																title="Facebook"
-																after="17:14"
-																subtitle="New messages from John Doe"
-																text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-															></f7-list-item>
-														</f7-col>
-														<f7-col width="20" class="display-flex justify-content-space-between align-items-center">
-															<b-icon class="margin-half" icon="thumb-up-outline" size="is-medium"></b-icon>
-															<b-icon class="margin-half" icon="thumb-down-outline" size="is-medium"></b-icon>
-														</f7-col>
-													</f7-list>
-												</f7-col>
-											</f7-row>
-										</div>
-									</div>
-									<!-- END Vue Scrollbar Container -->
-								</f7-row>
-							</b-tab-item>
-							<b-tab-item>
-								<template slot="header">
-									<f7-row class="display-flex align-items-center">
-										<b-icon icon="email-lock" size="is-medium"></b-icon>
-										<span> Archived Messages <b-tag rounded> 135 </b-tag> </span>
-									</f7-row>
-								</template>
-							</b-tab-item>
-						</b-tabs>
+						<notification-messages-component></notification-messages-component>
 					</f7-col>
 					<!-- END Left Column-->
 
@@ -253,6 +143,9 @@
 			</f7-fab-buttons>
 		</f7-fab>
 	</f7-page>
+
+
+
 </template>
 
 <script>
@@ -261,6 +154,9 @@ import { mapGetters } from "vuex";
 
 //LayoutComponents
 import navBarComponent from "../components/universal/navbar-component.vue";
+const notificationMessagesComponent = import("@/components/universal/notification-messages-component.vue");
+import LoadingState from '@/components/universal/loading-state-component.vue';
+import ErrorState from '@/components/universal/error-state-component.vue';
 
 //Charts
 import jsPDF from "jspdf";
@@ -280,7 +176,15 @@ export default {
 		"line-chart": LineChart,
 		"multi-line-chart": MultiLineChart,
 		"multi-line2": MultiLineChart2,
-		"histogram-chart": HistogramChart
+		"histogram-chart": HistogramChart,
+		"notification-messages-component": () => ({
+      component: notificationMessagesComponent,
+			loading: LoadingState,
+			error: ErrorState,
+			delay:10000,
+			timeout: 7000
+		})
+
 	},
 	data() {
 		return {
@@ -294,14 +198,16 @@ export default {
 				type: "dashboard",
 				level: 0
 			},
-			showChart: true
+			showChart: true,
+			loading: true
 		};
 	},
 	methods: {
 		testMethods() {
-			console.log("this.Attendance.hoursOfOperation", this.Attendance.hoursOfOperation);
-			console.log("this.Attendance.holidayProfile", this.Attendance.holidayProfile);
+			// console.log("this.Attendance.hoursOfOperation", this.Attendance.hoursOfOperation);
+			// console.log("this.Attendance.holidayProfile", this.Attendance.holidayProfile);
 			console.log("this.Auth.userLoginProfile", this.Auth.userLoginProfile);
+			console.log("this.Common.notificationList", this.Common.notificationList);
 			
 		},
 
@@ -352,7 +258,7 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(["Users", "Inventory", "Auth", "Errors", "Attendance", "Datacom"]),
+		...mapState(["Users", "Inventory", "Auth", "Errors", "Attendance", "Datacom", "Common"]),
 		pieStyle() {
 			return {
 				width: "175px"
@@ -420,9 +326,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.notification-message {
-	border-bottom: 1px solid black;
-}
+
 .swiper1-container {
 	max-width: 600px;
 	.swiper1-bar-chart {

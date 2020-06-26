@@ -71,7 +71,7 @@
 											<f7-button @click="newItemButton" fill class="bg-color-red">Add New Partner</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!hideSaveItem">
+									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button fill @click="createPartnerandClose" class="bg-color-green trans-btn-left"
 												><span>Save Partner</span></f7-button
@@ -204,16 +204,13 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" v-if="Auth.authLevel === 1" icon="office-building" class="no-padding">
 									<parent-component
 										:toggleEditProfile="toggleEditProfile"
-										:editProfile="editProfile"
-										:hideSaveUser="hideSaveItem"
-										:accountParent="partnerParent"
-										:moduleInfo="moduleInfo"
-									>
+										:parentSettings="parentSettings"
+										:moduleInfo="moduleInfo">
 									</parent-component>
 								</b-tab-item>
 								<!-- END Company Tab -->
@@ -235,7 +232,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!editProfile">
+											<f7-list v-show="!parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width no-margin-top" medium>Account Information</f7-block-title>
 													<f7-col width="50">
@@ -413,7 +410,7 @@
 											<!-- END Profile Display List -->
 
 											<!-- Begin Profile Edit List -->
-											<f7-list v-show="editProfile">
+											<f7-list v-show="parentSettings.editProfile">
 												<f7-block-title class="full-width" medium>Account Information</f7-block-title>
 												<f7-row>
 													<f7-col width="50">
@@ -675,10 +672,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!hideSaveItem">
+													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -707,7 +704,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
-											<f7-list v-show="!editProfile">
+											<f7-list v-show="!parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<f7-col width="50">
@@ -758,7 +755,7 @@
 											</f7-list>
 											<!-- END Contacts Display List -->
 											<!-- Begin Contacts Edit List -->
-											<f7-list simple-list v-show="editProfile">
+											<f7-list simple-list v-show="parentSettings.editProfile">
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="partnerForm"
@@ -782,10 +779,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!hideSaveItem">
-														<f7-row class="margin-top level-right">
-															<f7-col width="40" class="display-flex justify-content-end margin">
-																<f7-button fill popover-open=".new-transaction" class="bg-color-green trans-btn-left"
+													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+														<f7-row class="full-width">
+															<f7-col width="100" class="display-flex margin">
+																<f7-button fill @click="createPartnerandClose" class="bg-color-green trans-btn-left"
 																	><span>Save Partner</span></f7-button
 																>
 																<f7-button
@@ -796,6 +793,31 @@
 																	icon-size="40"
 																	icon="mdi mdi-menu-down"
 																></f7-button>
+																<f7-popover class="new-transaction">
+																	<f7-list>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createPartnerandNew"
+																			popover-close
+																			title="Save and New"
+																		></f7-list-item>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createPartnerandEdit"
+																			popover-close
+																			title="Save and Edit"
+																		></f7-list-item>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createPartnerandClose"
+																			popover-close
+																			title="Save and Close"
+																		></f7-list-item>
+																	</f7-list>
+																</f7-popover>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -825,11 +847,9 @@
 											<!-- Begin Locations Display List -->
 											<f7-list simple-list>
 												<f7-row class="margin-top">
-													<f7-block-title class="full-width" medium>Sales Offices</f7-block-title>
 													<sales-offices-component :moduleInfo="moduleInfo"></sales-offices-component>
 												</f7-row>
 												<f7-row class="margin-top">
-													<f7-block-title class="full-width" medium>Warehouses</f7-block-title>
 													<warehouse-component :moduleInfo="moduleInfo"></warehouse-component>
 												</f7-row>
 											</f7-list>
@@ -865,7 +885,7 @@
 
 								<!-- Begin Shipping Details Tab -->
 								<b-tab-item label="Shipping" icon="truck" class="no-padding">
-									<shipping-component :propForm="partnerForm" :moduleInfo="moduleInfo"></shipping-component>
+									<shipping-component :dataForm="partnerForm" :moduleInfo="moduleInfo"></shipping-component>
 								</b-tab-item>
 								<!-- END Shipping Details Tab -->
 
@@ -1624,21 +1644,21 @@ import Croppie from "croppie";
 var moment = require("moment");
 
 //Mixins
-import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
-import { UniversalMixins } from "../../mixins/universal-mixins";
+import { LocaleMixin } from "@/mixins/businesses/locale-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 
 //Components
-import navBarComponent from "../../components/universal/navbar-component.vue";
-import creditCardComponent from "../../components/business/creditcard-ach-component.vue";
-import shippingComponent from "../../components/business/shipping-component.vue";
-import setupSheetComponent from "../../components/business/setup-sheet-component.vue";
-import salesOfficesComponent from "../../components/business/salesoffices-database-component.vue";
-import warehouseComponent from "../../components/business/warehouses-database-component.vue";
-import profileCardComponent from "../../components/layout-elements/profile-card-component.vue";
-import employeeDatabaseComponent from "../../components/business/employees-database-component.vue";
-import reportingChartsComponent from "../../components/business/reporting-component.vue";
-import parentComponent from "../../components/business/parent-company-component.vue";
-import billingComponent from "../../components/universal/billing-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
+import creditCardComponent from "@/components/business/creditcard-ach-component.vue";
+import shippingComponent from "@/components/business/shipping-component.vue";
+import setupSheetComponent from "@/components/business/setup-sheet-component.vue";
+import salesOfficesComponent from "@/components/business/salesoffices-database-component.vue";
+import warehouseComponent from "@/components/business/warehouses-database-component.vue";
+import profileCardComponent from "@/components/layout-elements/profile-card-component.vue";
+import employeeDatabaseComponent from "@/components/business/employees-database-component.vue";
+import reportingChartsComponent from "@/components/business/reporting-component.vue";
+import parentComponent from "@/components/business/parent-company-component.vue";
+import billingInvoiceComponent from "@/components/universal/billing-invoice-component.vue";
 import businessContactFormComponent from "@/components/business/contact-form-component.vue";
 
 export default {
@@ -1655,7 +1675,7 @@ export default {
 		"employee-database-component": employeeDatabaseComponent,
 		"reporting-charts-component": reportingChartsComponent,
 		"parent-component": parentComponent,
-		"billing-component": billingComponent,
+		"billing-component": billingInvoiceComponent,
 		"business-contact-form-component": businessContactFormComponent
 	},
 	data() {
@@ -1685,7 +1705,15 @@ export default {
 			billingContactSettings: {
 				type: "billing"
 			},
-
+			parentSettings: {
+				activeTab: 0,
+				editProfile: false,
+				hideSaveItem: true,
+				accountParent: {
+					company_name: null,
+					is_datacom: false
+				}
+			},
 			//Popups and Modals
 			deptPopupOpened: false,
 			payCyclesPopupOpened: false,
@@ -1694,10 +1722,8 @@ export default {
 			partnerBulkUploadSheet: false,
 			setupSheetOpened: false,
 			//Page Setting for CRUD Display
-			editProfile: false,
 			hideUpdateItemButtons: false,
 			hideCreateItem: false,
-			hideSaveItem: true,
 			// CSV Upload
 			csv: [],
 			//Image Cropping
@@ -1726,7 +1752,6 @@ export default {
 				is_active: { title: "Status", display: true }
 			},
 			//Buefy Tabs
-			activeTab: 0,
 			isPaginated: true,
 			isPaginationSimple: false,
 			paginationPosition: "bottom",
@@ -1777,6 +1802,7 @@ export default {
 				main_phone: null,
 				main_fax: null,
 				main_email: null,
+				primary_mailing_country: null,
 				primary_mailing_address: null,
 				primary_mailing_city: null,
 				primary_mailing_state: null,
@@ -1786,6 +1812,7 @@ export default {
 				primary_phone: null,
 				primary_fax: null,
 				primary_email: null,
+				shipping_mailing_country: null,
 				shipping_address: null,
 				shipping_city: null,
 				shipping_state: null,
@@ -1795,6 +1822,7 @@ export default {
 				shipping_phone: null,
 				shipping_fax: null,
 				shipping_email: null,
+				billing_mailing_country: null,
 				billing_address: null,
 				billing_city: null,
 				billing_state: null,
@@ -1816,10 +1844,7 @@ export default {
 				is_merchant: false,
 				is_vendor: false
 			},
-			partnerParent: {
-				company_name: null,
-				is_datacom: false
-			}
+			
 		};
 	},
 	methods: {
@@ -1827,7 +1852,7 @@ export default {
 			console.log("this.partnerForm ", this.partnerForm);
 			console.log("this.Companaies.partnerList", this.Partners.partnerList);
 			console.log("this.partnerForm.entity_type ", this.partnerForm.entity_type);
-			console.log("this.partnerParent ", this.partnerParent);
+			console.log("this.parentSettings.accountParent ", this.parentSettings.accountParent);
 			console.log("this.Auth.platformInfo", this.Auth.platformInfo);
 		},
 		menudropdown(UserID) {
@@ -1835,36 +1860,36 @@ export default {
 			// Add User to list
 		},
 		showEditProfile() {
-			this.editProfile = true;
+			this.parentSettings.editProfile = true;
 			this.hideUpdateItemButtons = true;
 			this.hideCreateItem = true;
-			this.hideSaveItem = true;
+			this.parentSettings.hideSaveItem = true;
 		},
 		toggleEditProfile() {
-			this.editProfile = !this.editProfile;
+			this.parentSettings.editProfile = !this.parentSettings.editProfile;
 			this.hideUpdateItemButtons = !this.hideUpdateItemButtons;
 			this.hideCreateItem = !this.hideCreateItem;
-			this.hideSaveItem = true;
+			this.parentSettings.hideSaveItem = true;
 		},
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearFormData();
-			this.editProfile = true;
+			this.parentSettings.editProfile = true;
 			this.hideCreateItem = !this.hideCreateItem;
 			this.hideUpdateItemButtons = false;
-			this.hideSaveItem = false;
-			this.activeTab = 0;
+			this.parentSettings.hideSaveItem = false;
+			this.parentSettings.activeTab = 0;
 		},
 		clearandResetButton() {
 			this.clearFormData();
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.editProfile = false;
+			this.parentSettings.editProfile = false;
 			this.hideUpdateItemButtons = false;
 			this.hideCreateItem = false;
-			this.hideSaveItem = true;
-			this.activeTab = 0;
+			this.parentSettings.hideSaveItem = true;
+			this.parentSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -1908,8 +1933,8 @@ export default {
 
 				//Get Company ID (from each company type) and UserID add to Employee Form
 				var companyOBJ = {};
-				if (this.partnerParent.is_datacom) {
-					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.partnerParent.company_name);
+				if (this.parentSettings.accountParent.is_datacom) {
+					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
 					console.log("is_datacom companyOBJ", companyOBJ);
 					partnerFormCopy["datacom"] = companyOBJ.id;
 				} else {
@@ -1938,7 +1963,7 @@ export default {
 		// Populate Fields for editing in browser
 		editPartnerData(partnerID) {
 			this.clearFormData();
-			this.activeTab = 0;
+			this.parentSettings.activeTab = 0;
 			this.showEditProfile();
 			//Get User ID and object and map to fields
 			var partnerListID = null;
@@ -2054,8 +2079,11 @@ export default {
 			this.resetViewtoHome();
 		},
 		syncWithMixin() {
+			this.partnerForm.primary_mailing_country = this.localeCities.primary_country_name;
 			this.partnerForm.primary_mailing_state = this.localeCities.primary_state_name;
+			this.partnerForm.billing_mailing_country = this.localeCities.billing_country_name;
 			this.partnerForm.billing_state = this.localeCities.billing_state_name;
+			this.partnerForm.shipping_mailing_country = this.localeCities.shipping_country_name;
 			this.partnerForm.shipping_state = this.localeCities.shipping_state_name;
 		},
 		// Parsing CSV for Django storage
@@ -2204,10 +2232,10 @@ export default {
 			this.$store.dispatch("signOut");
 		},
 		resetCompanyToggles(name) {
-			this.partnerParent.is_datacom = name === "datacom";
-			this.partnerParent.is_partner = name === "partner";
-			this.partnerParent.is_merchant = name === "merchant";
-			this.partnerParent.is_vendor = name === "vendor";
+			this.parentSettings.accountParent.is_datacom = name === "datacom";
+			this.parentSettings.accountParent.is_partner = name === "partner";
+			this.parentSettings.accountParent.is_merchant = name === "merchant";
+			this.parentSettings.accountParent.is_vendor = name === "vendor";
 		},
 		companyTypeToggle(e) {
 			console.log("Toggle e", e);
@@ -2215,28 +2243,28 @@ export default {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.partnerParent.is_datacom = false;
+					this.parentSettings.accountParent.is_datacom = false;
 				}
 			}
 			if (e.target.name === "partner") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.partnerParent.is_partner = false;
+					this.parentSettings.accountParent.is_partner = false;
 				}
 			}
 			if (e.target.name === "merchant") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.partnerParent.is_merchant = false;
+					this.parentSettings.accountParent.is_merchant = false;
 				}
 			}
 			if (e.target.name === "vendor") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.partnerParent.is_vendor = false;
+					this.parentSettings.accountParent.is_vendor = false;
 				}
 			}
 		}
@@ -2248,12 +2276,12 @@ export default {
 	},
 	async mounted() {
 		if (this.Auth.platformInfo.platform === "datacom") {
-			this.partnerParent.is_datacom = true;
+			this.parentSettings.accountParent.is_datacom = true;
 		}
 		if (this.Auth.platformInfo.platform === "partner") {
-			this.partnerParent.is_partner = true;
+			this.parentSettings.accountParent.is_partner = true;
 		}
-		this.partnerParent.company_name = this.Auth.userCompanyName;
+		this.parentSettings.accountParent.company_name = this.Auth.userCompanyName;
 		let response = await this.setUserPlatformGET();
 		this.$store.dispatch("getPartnerList", response);
 		this.$store.dispatch("getStates");

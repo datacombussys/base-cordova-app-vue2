@@ -24,6 +24,7 @@ class SalesOffice(CommonCompanyBase):
   profile_img 	          = models.ImageField(max_length=100, upload_to='salesoffices/profile', null=True, blank=True)
   date_added 		          = models.DateTimeField(verbose_name="date added", auto_now_add=True)
   description 	          = models.TextField(blank=True, null=True)
+  primary_mailing_country = models.CharField(max_length=200, blank=True, null=True)
   primary_mailing_address = models.CharField(max_length=200, blank=True, null=True)
   primary_mailing_city    = models.CharField(max_length=60, blank=True, null=True)
   primary_mailing_state   = models.CharField(max_length=20, blank=True, null=True)
@@ -34,6 +35,7 @@ class SalesOffice(CommonCompanyBase):
                             validators=[RegexValidator(r'^\d{1,10}$')])
   primary_fax 		        = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
   primary_email           = models.CharField(max_length=200, blank=True, null=True)
+  shipping_mailing_country = models.CharField(max_length=200, blank=True, null=True)
   shipping_address 	      = models.CharField(max_length=200, blank=True, null=True)
   shipping_city 	  	    = models.CharField(max_length=60, blank=True, null=True)
   shipping_state 		      = models.CharField(max_length=20, blank=True, null=True)
@@ -45,6 +47,7 @@ class SalesOffice(CommonCompanyBase):
                             validators=[RegexValidator(r'^\d{1,10}$')])
   shipping_fax 		        = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
   shipping_email          = models.CharField(max_length=200, blank=True, null=True)
+  billing_mailing_country = models.CharField(max_length=200, blank=True, null=True)
   billing_address 	      = models.CharField(max_length=200, blank=True, null=True)
   billing_city 	  	      = models.CharField(max_length=60, blank=True, null=True)
   billing_state 		      = models.CharField(max_length=20, blank=True, null=True)
@@ -61,3 +64,8 @@ class SalesOffice(CommonCompanyBase):
   is_active               = models.BooleanField(default=True)
   status                  = models.CharField(max_length=200, blank=True, null=True)
   
+  class Meta:
+    ordering = ['date_added', 'id', 'salesoffice_name']
+
+  def __str__(self):
+    return self.salesoffice_name

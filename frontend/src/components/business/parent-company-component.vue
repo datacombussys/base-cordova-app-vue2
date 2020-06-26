@@ -15,21 +15,21 @@
 			</f7-card-header>
 			<f7-card-content>
 				<!-- Begin Company Display List -->
-				<f7-list v-show="!editProfile">
+				<f7-list v-show="!parentSettings.editProfile">
 					<f7-block-title class="full-width" medium>Affiliated Company</f7-block-title>
 					<f7-row v-if="moduleInfo.level >= 1 && Auth.authLevel === 1" class="margin-top">
 						<f7-col width="50">
 							<p>Datacom:</p>
 							<f7-list-item>
-								<f7-toggle :checked="accountParent.is_datacom" disabled></f7-toggle>
+								<f7-toggle :checked="parentSettings.accountParent.is_datacom" disabled></f7-toggle>
 							</f7-list-item>
 						</f7-col>
 						<f7-col width="50">
 							<p>Company Name:</p>
-							<f7-list-item v-if="accountParent.is_datacom" :title="accountParent.company_name">
+							<f7-list-item v-if="parentSettings.accountParent.is_datacom" :title="parentSettings.accountParent.company_name">
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
-							<f7-list-item v-if="!accountParent.is_datacom" title="Not Selected">
+							<f7-list-item v-if="!parentSettings.accountParent.is_datacom" title="Not Selected">
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
 						</f7-col>
@@ -38,15 +38,15 @@
 						<f7-col width="50">
 							<p>Partner:</p>
 							<f7-list-item>
-								<f7-toggle :checked="accountParent.is_partner" disabled></f7-toggle>
+								<f7-toggle :checked="parentSettings.accountParent.is_partner" disabled></f7-toggle>
 							</f7-list-item>
 						</f7-col>
 						<f7-col width="50">
 							<p>Partner Name:</p>
-							<f7-list-item v-if="accountParent.is_partner" :title="accountParent.company_name">
+							<f7-list-item v-if="parentSettings.accountParent.is_partner" :title="parentSettings.accountParent.company_name">
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
-							<f7-list-item v-if="!accountParent.is_partner" title="Not Selected">
+							<f7-list-item v-if="!parentSettings.accountParent.is_partner" title="Not Selected">
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
 						</f7-col>
@@ -55,15 +55,15 @@
 						<f7-col width="50">
 							<p>Merchant:</p>
 							<f7-list-item>
-								<f7-toggle :checked="accountParent.is_merchant" disabled></f7-toggle>
+								<f7-toggle :checked="parentSettings.accountParent.is_merchant" disabled></f7-toggle>
 							</f7-list-item>
 						</f7-col>
 						<f7-col width="50">
 							<p>Merchant Name:</p>
-							<f7-list-item v-if="accountParent.is_merchant" :title="accountParent.company_name">
+							<f7-list-item v-if="parentSettings.accountParent.is_merchant" :title="parentSettings.accountParent.company_name">
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
-							<f7-list-item v-if="!accountParent.is_merchant" title="Not Selected">
+							<f7-list-item v-if="!parentSettings.accountParent.is_merchant" title="Not Selected">
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
 						</f7-col>
@@ -73,15 +73,15 @@
 						<f7-col width="50">
 							<p>Vendor:</p>
 							<f7-list-item>
-								<f7-toggle :checked="accountParent.is_vendor" disabled></f7-toggle>
+								<f7-toggle :checked="parentSettings.accountParent.is_vendor" disabled></f7-toggle>
 							</f7-list-item>
 						</f7-col>
 						<f7-col width="50">
 							<p>Vendor Name:</p>
-							<f7-list-item v-if="accountParent.is_vendor" :title="accountParent.company_name">
+							<f7-list-item v-if="parentSettings.accountParent.is_vendor" :title="parentSettings.accountParent.company_name">
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
-							<f7-list-item v-if="!accountParent.is_vendor" title="Not Selected">
+							<f7-list-item v-if="!parentSettings.accountParent.is_vendor" title="Not Selected">
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
 						</f7-col>
@@ -92,7 +92,7 @@
 				</f7-list>
 				<!-- END Company Display -->
 				<!-- Begin Company Edit View List -->
-				<f7-list v-show="editProfile">
+				<f7-list v-show="parentSettings.editProfile">
 					<f7-block-title class="full-width" medium>Super User View</f7-block-title>
 					<f7-row class="margin-top" v-if="moduleInfo.level >= 1 && Auth.authLevel === 1">
 						<f7-col width="50">
@@ -101,7 +101,7 @@
 								<f7-toggle
 									name="datacom"
 									:disabled="Datacom.datacomList.length === 0"
-									:checked="accountParent.is_datacom"
+									:checked="parentSettings.accountParent.is_datacom"
 									@change="companyTypeToggle"
 								></f7-toggle>
 							</f7-list-item>
@@ -110,9 +110,9 @@
 							<p>Datacom Name:</p>
 							<f7-list-input
 								v-if="Auth.authLevel === 1"
-								:disabled="accountParent.is_datacom === false"
-								:value="accountParent.company_name"
-								@input="accountParent.company_name = $event.target.value"
+								:disabled="parentSettings.accountParent.is_datacom === false"
+								:value="parentSettings.accountParent.company_name"
+								@input="parentSettings.accountParent.company_name = $event.target.value"
 								type="select"
 								class="datacom-input"
 							>
@@ -131,7 +131,7 @@
 								<f7-toggle
 									name="partner"
 									:disabled="Partners.partnerList.length === 0"
-									:checked="accountParent.is_partner"
+									:checked="parentSettings.accountParent.is_partner"
 									@change="companyTypeToggle"
 								></f7-toggle>
 							</f7-list-item>
@@ -139,9 +139,9 @@
 						<f7-col width="50">
 							<p>Partner Name:</p>
 							<f7-list-input
-								:disabled="accountParent.is_partner === false"
-								:value="accountParent.company_name"
-								@input="accountParent.company_name = $event.target.value"
+								:disabled="parentSettings.accountParent.is_partner === false"
+								:value="parentSettings.accountParent.company_name"
+								@input="parentSettings.accountParent.company_name = $event.target.value"
 								type="select"
 								class="datacom-input"
 							>
@@ -156,7 +156,7 @@
 								<f7-toggle
 									name="merchant"
 									:disabled="Companies.companyList.length === 0"
-									:checked="accountParent.is_merchant"
+									:checked="parentSettings.accountParent.is_merchant"
 									@change="companyTypeToggle"
 								></f7-toggle>
 							</f7-list-item>
@@ -164,11 +164,11 @@
 						<f7-col width="50">
 							<p>Merchant Name:</p>
 							<f7-list-input
-								:disabled="accountParent.is_merchant === false"
+								:disabled="parentSettings.accountParent.is_merchant === false"
 								:value="
-									Auth.platformInfo.platform === 'company' && Auth.isAuthenticated ? accountParent.company_name : ''
+									Auth.platformInfo.platform === 'company' && Auth.isAuthenticated ? parentSettings.accountParent.company_name : ''
 								"
-								@input="accountParent.company_name = $event.target.value"
+								@input="parentSettings.accountParent.company_name = $event.target.value"
 								type="select"
 								class="datacom-input"
 							>
@@ -183,7 +183,7 @@
 								<f7-toggle
 									name="vendor"
 									:disabled="Vendors.vendorList.length === 0"
-									:checked="accountParent.is_vendor"
+									:checked="parentSettings.accountParent.is_vendor"
 									@change="companyTypeToggle"
 								></f7-toggle>
 							</f7-list-item>
@@ -191,11 +191,11 @@
 						<f7-col width="50">
 							<p>Vendor Name:</p>
 							<f7-list-input
-								:disabled="accountParent.is_vendor === false"
+								:disabled="parentSettings.accountParent.is_vendor === false"
 								:value="
-									Auth.platformInfo.platform === 'vendor' && Auth.isAuthenticated ? accountParent.company_name : ''
+									Auth.platformInfo.platform === 'vendor' && Auth.isAuthenticated ? parentSettings.accountParent.company_name : ''
 								"
-								@input="accountParent.company_name = $event.target.value"
+								@input="parentSettings.accountParent.company_name = $event.target.value"
 								type="select"
 								class="datacom-input"
 							>
@@ -203,10 +203,10 @@
 							</f7-list-input>
 						</f7-col>
 					</f7-row>
-					<f7-block class="full-width" v-if="!hideSaveUser">
+					<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 						<f7-row class="margin-top level-right">
 							<f7-col width="25">
-								<f7-button fill @click="activeTab = 1" class="bg-color-deeporange">Next -></f7-button>
+								<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 							</f7-col>
 						</f7-row>
 					</f7-block>
@@ -235,18 +235,14 @@ export default {
 			type: Object,
 			required: true
 		},
-		accountParent: {
-			type: Object
-		},
-		editProfile: {
-			type: Boolean
+		parentSettings: {
+			type: Object,
+			required: true
 		},
 		toggleEditProfile: {
 			type: Function
 		},
-		hideSaveUser: {
-			type: Boolean
-		}
+	
 	},
 	data() {
 		return {};
@@ -257,10 +253,10 @@ export default {
 			console.log("this.Auth.authLevel", this.Auth.authLevel);
 		},
 		resetCompanyToggles(name) {
-			this.accountParent.is_datacom = name === "datacom";
-			this.accountParent.is_partner = name === "partner";
-			this.accountParent.is_merchant = name === "merchant";
-			this.accountParent.is_vendor = name === "vendor";
+			this.parentSettings.accountParent.is_datacom = name === "datacom";
+			this.parentSettings.accountParent.is_partner = name === "partner";
+			this.parentSettings.accountParent.is_merchant = name === "merchant";
+			this.parentSettings.accountParent.is_vendor = name === "vendor";
 		},
 		companyTypeToggle(e) {
 			console.log("Toggle e", e);
@@ -268,28 +264,28 @@ export default {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.accountParent.is_datacom = false;
+					this.parentSettings.accountParent.is_datacom = false;
 				}
 			}
 			if (e.target.name === "partner") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.accountParent.is_partner = false;
+					this.parentSettings.accountParent.is_partner = false;
 				}
 			}
 			if (e.target.name === "merchant") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.accountParent.is_merchant = false;
+					this.parentSettings.accountParent.is_merchant = false;
 				}
 			}
 			if (e.target.name === "vendor") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.accountParent.is_vendor = false;
+					this.parentSettings.accountParent.is_vendor = false;
 				}
 			}
 		}
@@ -304,4 +300,4 @@ export default {
 };
 </script>
 
-<style scoped style="less"></style>
+<style scoped lang="less"></style>

@@ -23,16 +23,23 @@ When I create a credit card, The returned object does not include the modified f
 
 I need to start going through the documentation for the pinpad integration.
 
-I would like to consoldate my POST and GET requests to one method each.
 
-How to submit custom queries to PayCycleRecurrence?
+How to submit custom queries to PayCycleRecurrence? -rrule field
 
-I am totally stuck on the shift-component.vue apge where I am trying to copy the object for editing. It keeps locking up. I cant troubleshoot it.
+The Unique_together variable in Django only makes the fields unique e.g: company and HolidayName. That means that all companies cannot have the same holidayName. 
+But Partners can use the same name. It is between 2 relationships and not 3 or 4.
 
-The Unique_together variable in Django only makes the fields unique e.g: company and HolidayName. That means that All cannot have the same holidayName. But Partners can.
 How do I create a stack for the notifications?
 
-When a User logs in. I need to immediately identlfy if they are customer or employee. How do I do this?
+I have a questions on Django permissions. When I add a permission to a user, it allows a user to perform that particular funciton. 
+Which means that it was disabled before? How do permissions grant access when access was already accessible?
+
+
+What does this mean:let PROD = process.env.NODE_ENV === 'production';
+I have keditor up and running. Need to configure Database. Install Axios? Set up a Store, etc...
+Help me get it setup
+
+INgenico terminals require Windows and .NET
 
 I need to change to uplaod path to Amazon AWS for employees to /employee/name.
 I need to figure out how to delete the files from Amazon AWS using a CRON job. What script do I need to write

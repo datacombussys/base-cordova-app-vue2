@@ -28,7 +28,7 @@ from .models import ( Shift,
                     AttendanceSettings, 
                     TimeCard, 
                     LeaveRequest, 
-                    PayCycles, 
+                    PayCycle, 
                     PayCycleRecurrence, )
 
 class ShiftViewset(viewsets.ModelViewSet):
@@ -98,7 +98,7 @@ class PayCyclesViewset(viewsets.ModelViewSet):
     Methods: list, create, retrieve, 
     update, partial_update, destroy"""
     serializer_class = PayCyclesSerializer
-    queryset = PayCycles.objects.all()
+    queryset = PayCycle.objects.all()
 
 class PayCycleRecurrenceView(APIView):
     """Handles creating Recurring Payroll Cycles"""

@@ -25,7 +25,7 @@
             <p>This website is protected by Jesus Christ our Lord and savior.</p>
           </f7-row>
           <f7-block-title class="full-width" medium>Manage Addresses</f7-block-title>
-          <f7-row class="full-width" v-if="!propForm.id">
+          <f7-row class="full-width" v-if="!dataForm.id">
             <div class="error-text text-align-center padding-top">
               You must first select a company
             </div>
@@ -196,7 +196,7 @@ export default {
 
   },
   props: {
-    propForm: {
+    dataForm: {
       type: Object,
     },
     moduleInfo: {
@@ -226,7 +226,7 @@ export default {
     testingMethod(e) {
 
         console.log("this.shippingForm ", this.shippingForm);
-        console.log("this.propForm", this.propForm);
+        console.log("this.dataForm", this.dataForm);
     },
     async addShippingAddress() {
       this.shippingForm.state = this.localeCities.new_shipping_state_name;
@@ -251,7 +251,7 @@ export default {
 }
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 
 
 </style>

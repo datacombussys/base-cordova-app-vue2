@@ -250,7 +250,7 @@ export default {
 };
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 .sales-tax-sheet {
 	height: 100%;
 }

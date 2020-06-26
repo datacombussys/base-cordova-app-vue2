@@ -15,7 +15,7 @@ from .models import ( Shift,
                     AttendanceSettings, 
                     TimeCard, 
                     LeaveRequest, 
-                    PayCycles, 
+                    PayCycle, 
                     PayCycleRecurrence, )
 
 class ShiftSerializer(serializers.ModelSerializer):
@@ -58,16 +58,8 @@ class AttendanceSettingsSerializer(serializers.ModelSerializer):
         model = AttendanceSettings
         fields = ('__all__')
 
-class PayCyclesSerializer(serializers.ModelSerializer):
-    datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
-    partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
-    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
-    class Meta:
-        model = PayCycles
-        fields = ('__all__')
-
 class TimeCardSerializer(serializers.ModelSerializer):
-    cycle = serializers.PrimaryKeyRelatedField(queryset=PayCycles.objects.all(), required=False, allow_null=True)
+    cycle = serializers.PrimaryKeyRelatedField(queryset=PayCycle.objects.all(), required=False, allow_null=True)
     employee = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), required=False, allow_null=True)
   
     class Meta:
@@ -75,17 +67,23 @@ class TimeCardSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class LeaveRequestSerializer(serializers.ModelSerializer):
-    employee = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), required=False, allow_null=True)
-    manager = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), required=False, allow_null=True)
-    approved_by = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = LeaveRequest
         fields = ('__all__')
 
-
+class PayCyclesSerializer(serializers.ModelSerializer):
+    datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
+    employees = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), many=True, required=True, allow_null=False)
+    
+    class Meta:
+        model = PayCycle
+        fields = ('__all__')
+        
 class PayCycleRecurrenceSerializer(serializers.Serializer):
-    recurrence = serializers.PrimaryKeyRelatedField(queryset=PayCycles.objects.all(), required=True, allow_null=False)
+    recurrence = serializers.PrimaryKeyRelatedField(queryset=PayCycle.objects.all(), required=True, allow_null=False)
     rrule = serializers.CharField(max_length=255, required=False, allow_null=True)
     start_date = serializers.DateTimeField(required=False, allow_null=True)
     end_date = serializers.DateTimeField(required=False, allow_null=True)

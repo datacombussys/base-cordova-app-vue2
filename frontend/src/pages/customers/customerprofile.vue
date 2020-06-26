@@ -1,58 +1,20 @@
 <template>
-	<f7-page name="customerProfile">
-		<f7-navbar f7="menu" back-link="Back">
-			<f7-nav-left>
-				<f7-link
-					icon-color="white"
-					icon-ios="material:menu"
-					icon-aurora="material:menu"
-					icon-md="material:menu"
-					panel-open=".customer-panel"
-				></f7-link>
-			</f7-nav-left>
-			<f7-nav-title class="display-flex justify-content-center align-items-center">
-				Customer Profile
-			</f7-nav-title>
-			<f7-nav-right>
-				<f7-link href="/checkout/">
-					<f7-icon color="white" ios="f7:bell" aurora="f7:bell" md="f7:bell">
-						<f7-badge color="red">5</f7-badge>
-					</f7-icon>
-				</f7-link>
-				<f7-link
-					v-if="Auth.isAuthenticated"
-					icon-size="30"
-					icon-color="white"
-					icon="mdi mdi-logout"
-					@click="logout"
-					href="/#/"
-				></f7-link>
-				<f7-link
-					v-if="!Auth.isAuthenticated"
-					icon-size="30"
-					icon-color="white"
-					icon="mdi mdi-login"
-					href="/login/"
-				></f7-link>
-			</f7-nav-right>
-		</f7-navbar>
-
+	<f7-page name="customer-profile">
+		<nav-bar-component :pageSettings="pageSettings" :moduleInfo="moduleInfo"></nav-bar-component>
 		<!-- Main Container Row -->
 		<f7-row class="display-flex justify-content-center full-width margin-right">
 			<!-- Left Column -->
-			<f7-col width="100" medium="30" class="sticky-top">
+			<f7-col width="100" small="30" class="sticky-top">
 				<!-- Vue Scrollbar (dragger) -->
 				<div
 					v-bar="{
 						preventParentScroll: true,
 						scrollThrottle: 30
 					}"
-					style="height: 100vh;"
-				>
+					style="height: 100vh;">
 					<!-- el1 -->
 					<div>
-						<!-- el2 -->
-						<!-- User Image and Common Details -->
+					<!-- el2 -->
 						<f7-block class="display-block margin-top-half full-height">
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
@@ -141,7 +103,7 @@
 											<f7-button @click="newUserButton" fill class="bg-color-red">Add New User</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!hideSaveUser">
+									<f7-row class="full-width" v-show="!hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button fill @click.prevent="createCustomerandClose" class="bg-color-green trans-btn-left"
 												><span>Save User</span></f7-button
@@ -188,21 +150,23 @@
 									</f7-row>
 								</f7-card-content>
 							</f7-card>
-
-							<f7-col class="no-margin no-padding">
-								<f7-button @click="testingMethod" fill class="bg-color-orange">test</f7-button>
-							</f7-col>
-							<f7-block class="margin padding"></f7-block>
-							<f7-block class="padding"></f7-block>
+							<f7-row>
+								<f7-col class="no-margin no-padding">
+									<f7-button @click="testingMethod" fill class="bg-color-orange">test</f7-button>
+								</f7-col>
+							</f7-row>
+							<f7-row>
+								<f7-block class="padding margin"></f7-block>
+							</f7-row>
 						</f7-block>
 					</div>
 				</div>
-				<!-- End Scrollbar (dragger) -->
+				<!-- END Scrollbar-->
 			</f7-col>
 			<!-- END Left Column -->
 
 			<!-- Right Column -->
-			<f7-col width="100" medium="70" class="margin-top-half">
+			<f7-col width="100" medium="70" class="no-margin-top">
 				<!-- Vue Scrollbar (dragger) -->
 				<div
 					v-bar="{
@@ -214,7 +178,7 @@
 					<!-- el1 -->
 					<div>
 						<!-- el2 -->
-						<f7-block class="no-margin">
+						<f7-block class="margin-top-half">
 							<f7-row class="full-width display-flex justify-content-center">
 								<div v-if="Errors.customerErrorHandle" class="left message is-danger">
 									<div class="message-body">
@@ -289,172 +253,11 @@
 							<b-tabs type="is-boxed" v-model="activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
-									<f7-card class="mo-margin-top">
-										<f7-card-header class="no-border hovering" valign="bottom" style="background: lightgray">
-											<f7-row class="full-width display-flex align-items-center">
-												<f7-col width="50" class="align-self-flex-end">
-													<f7-block-title class="full-width margin-bottom-half">Company Details</f7-block-title>
-												</f7-col>
-												<f7-col width="50" class="text-align-right">
-													<f7-link @click="toggleEditProfile">
-														<b-icon icon="pencil" class="edit-icon"></b-icon>
-													</f7-link>
-												</f7-col>
-											</f7-row>
-										</f7-card-header>
-										<f7-card-content>
-											<!-- Begin Company Display List -->
-											<f7-list v-show="!editProfile">
-												<f7-block-title class="full-width" medium>Affiliated Company</f7-block-title>
-												<f7-row v-if="Auth.authLevel === 1" class="margin-top">
-													<f7-col width="50">
-														<p>Datacom Customer:</p>
-														<f7-list-item>
-															<f7-toggle :checked="customerParent.is_datacom" disabled> </f7-toggle>
-														</f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p>Name:</p>
-														<f7-list-item v-if="customerParent.is_datacom" :title="customerParent.company_name">
-															<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
-														</f7-list-item>
-														<f7-list-item v-if="!customerParent.is_datacom" title="Not Selected">
-															<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
-														</f7-list-item>
-													</f7-col>
-												</f7-row>
-												<f7-row v-if="Auth.authLevel <= 2" class="margin-top">
-													<f7-col width="50">
-														<p>Partner Customer:</p>
-														<f7-list-item>
-															<f7-toggle :checked="customerParent.is_partner" disabled> </f7-toggle>
-														</f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p>Name:</p>
-														<f7-list-item v-if="customerParent.is_partner" :title="customerParent.company_name">
-															<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
-														</f7-list-item>
-														<f7-list-item v-if="!customerParent.is_partner" title="Not Selected">
-															<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
-														</f7-list-item>
-													</f7-col>
-												</f7-row>
-												<f7-row v-if="Auth.authLevel <= 3" class="margin-top">
-													<f7-col width="50">
-														<p>Merchant Customer:</p>
-														<f7-list-item>
-															<f7-toggle :checked="customerParent.is_merchant" disabled> </f7-toggle>
-														</f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p>Name:</p>
-														<f7-list-item v-if="customerParent.is_merchant" :title="customerParent.company_name">
-															<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
-														</f7-list-item>
-														<f7-list-item v-if="!customerParent.is_merchant" title="Not Selected">
-															<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
-														</f7-list-item>
-													</f7-col>
-												</f7-row>
-											</f7-list>
-											<!-- END Company Display -->
-											<!-- Begin Company Edit View List -->
-											<f7-list v-show="editProfile">
-												<f7-block-title class="full-width" medium>Super User View</f7-block-title>
-												<f7-row class="margin-top">
-													<f7-col width="50">
-														<p>Datacom Customer:</p>
-														<f7-list-item>
-															<f7-toggle
-																name="datacom"
-																:disabled="Datacom.datacomList.length === 0"
-																:checked="customerParent.is_datacom"
-																@change="companyTypeToggle"
-															>
-															</f7-toggle>
-														</f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p>Name:</p>
-														<f7-list-input
-															:disabled="customerParent.is_datacom === false"
-															:value="customerParent.company_name"
-															@input="customerParent.company_name = $event.target.value"
-															type="select"
-															class="datacom-input"
-														>
-															<option v-for="dataco in Datacom.datacomList" :key="dataco.id">{{
-																dataco.legal_name
-															}}</option>
-														</f7-list-input>
-													</f7-col>
-												</f7-row>
-												<f7-row class="margin-top">
-													<f7-col width="50">
-														<p>Partner Customer:</p>
-														<f7-list-item>
-															<f7-toggle
-																name="partner"
-																:disabled="Partners.partnerList.length === 0"
-																:checked="customerParent.is_partner"
-																@change="companyTypeToggle"
-															>
-															</f7-toggle>
-														</f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p>Name:</p>
-														<f7-list-input
-															:disabled="customerParent.is_partner === false"
-															:value="customerParent.company_name"
-															@input="customerParent.company_name = $event.target.value"
-															type="select"
-															class="datacom-input"
-														>
-															<option v-for="partner in Partners.partnerList" :key="partner.id">{{
-																partner.legal_name
-															}}</option>
-														</f7-list-input>
-													</f7-col>
-												</f7-row>
-												<f7-row class="margin-top">
-													<f7-col width="50">
-														<p>Merchant Customer:</p>
-														<f7-list-item>
-															<f7-toggle
-																name="merchant"
-																:disabled="Companies.companyList.length === 0"
-																:checked="customerParent.is_merchant"
-																@change="companyTypeToggle"
-															>
-															</f7-toggle>
-														</f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p>Name:</p>
-														<f7-list-input
-															:disabled="customerParent.is_merchant === false"
-															:value="customerParent.company_name"
-															@input="customerParent.company_name = $event.target.value"
-															type="select"
-															class="datacom-input"
-														>
-															<option v-for="co in Companies.companyList" :key="co.id">{{ co.legal_name }}</option>
-														</f7-list-input>
-													</f7-col>
-												</f7-row>
-												<f7-block class="full-width" v-if="!hideSaveUser">
-													<f7-row class="margin-top level-right">
-														<f7-col width="25">
-															<f7-button fill @click="activeTab = 1" class="bg-color-deeporange">Next -></f7-button>
-														</f7-col>
-													</f7-row>
-												</f7-block>
-											</f7-list>
-											<!-- END Company Edit View -->
-										</f7-card-content>
-									</f7-card>
+								<parent-component
+									:toggleEditProfile="toggleEditProfile"
+									:parentSettings="parentSettings"
+									:moduleInfo="moduleInfo">
+								</parent-component>
 								</b-tab-item>
 								<!-- END Company Tab -->
 
@@ -495,7 +298,7 @@
 														<f7-list-item :title="customerForm.user.last_name"></f7-list-item>
 														<p class="field-title">Date of Birth:</p>
 														<f7-list-item
-															:title="customerDOBDate.slice(-1)[0] | moment('MMM, Do, YYYY')"
+															:title="customerForm.user.dob | moment('MMM, Do, YYYY')"
 														></f7-list-item>
 														<p class="field-title">Fax Number:</p>
 														<f7-list-item :title="customerForm.user.fax"></f7-list-item>
@@ -615,17 +418,7 @@
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Date of Birth:</p>
-														<f7-list-input
-															ref="customerDOBDate"
-															type="datepicker"
-															placeholder="Select date"
-															yearpicker
-															closeOnSelect="true"
-															@calendar:change="(values) => customerDOBDate.push(...values)"
-															:calendar-params="{ dateFormat: 'MM dd, yyyy' }"
-															style="background: rgb(216,252,253)"
-														>
-														</f7-list-input>
+														<f7-date-picker-component @receiveDate="receiveDobDate"></f7-date-picker-component>
 													</f7-col>
 												</f7-row>
 												<f7-row>
@@ -851,7 +644,7 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!hideSaveUser">
+													<f7-block class="full-width" v-if="!hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
 																<f7-button fill @click="activeTab = 1" class="bg-color-deeporange">Next -></f7-button>
@@ -868,13 +661,13 @@
 
 								<!-- Begin Shipping Details Tab -->
 								<b-tab-item label="Shipping" icon="truck" class="no-padding">
-									<shipping-component :propForm="customerForm"></shipping-component>
+									<shipping-component :dataForm="customerForm" :moduleInfo="moduleInfo"></shipping-component>
 								</b-tab-item>
 								<!-- END Shipping Details Tab -->
 
 								<!-- Begin Payment Tab -->
 								<b-tab-item label="Payment" icon="credit-card" class="no-padding">
-									<credit-card-component></credit-card-component>
+									<credit-card-component :moduleInfo="moduleInfo"></credit-card-component>
 								</b-tab-item>
 								<!-- END Payment Tab -->
 
@@ -890,12 +683,12 @@
 											<!-- Begin Receipts Display List -->
 											<f7-list v-show="!editProfile">
 												<f7-row class="margin-top display-flex justify-content-center">
-													<f7-block-title class="full-width" medium>Invoices</f7-block-title>
-													<b-table :data="data" :columns="columns"></b-table>
+													<billing-component></billing-component>
+							
 												</f7-row>
 												<f7-row class="margin-top display-flex justify-content-center">
-													<f7-block-title class="full-width" medium>Receipts</f7-block-title>
-													<b-table :data="data" :columns="columns"></b-table>
+													<receipt-component></receipt-component>
+			
 												</f7-row>
 											</f7-list>
 											<!-- END Receipts Display -->
@@ -1072,17 +865,16 @@
 								<!-- END Database Tab -->
 							</b-tabs>
 						</f7-block>
-
-						<!-- END Profile Tabs -->
 					</div>
 				</div>
-				<!-- END Vue Scrollbar (dragger) -->
 			</f7-col>
-			<!-- END Right Column -->
-		</f7-row>
-		<!-- END Main Container -->
+				<!-- END Right Column -->
 
-		<!-- Product Bulk Upload Sheet -->
+		</f7-row>
+		<!-- END Main Container Row -->
+
+		<!-- ****************************************** Sheets and Modals *********************************************-->
+			<!-- Product Bulk Upload Sheet -->
 		<f7-sheet
 			class="uploadInventory image-sheet"
 			:opened="userBulkUploadSheet"
@@ -1353,6 +1145,7 @@
 			<!-- END User Sheet Content -->
 		</f7-sheet>
 		<!-- END User Image Upload Sheet -->
+
 	</f7-page>
 </template>
 
@@ -1364,24 +1157,60 @@ import _ from "lodash";
 import Croppie from "croppie";
 
 var moment = require("moment");
-var momenttz = require("moment-timezone");
 
 //Mixins
 import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
+import { UniversalMixins } from "../../mixins/universal-mixins";
 
 //Components
-import creditCardComponent from "../../components/business/creditcard-ach-component.vue";
+import navBarComponent from "../../components/universal/navbar-component.vue";
+import f7DatePickerComponent from '@/components/layout-elements/date-and-time/f7-datepicker-component.vue';
 import shippingComponent from "../../components/business/shipping-component.vue";
+import creditCardComponent from "../../components/business/creditcard-ach-component.vue";
+import parentComponent from "@/components/business/parent-company-component.vue";
+import billingInvoiceComponent from '@/components/universal/billing-invoice-component.vue';
+import receiptsComponent from '@/components/universal/receipt-component.vue';
 
 export default {
 	name: "customerProfile",
-	mixins: [LocaleMixin],
+	mixins: [
+		LocaleMixin,
+		UniversalMixins
+		],
 	components: {
-		shippingComponent,
-		creditCardComponent
+		"nav-bar-component": navBarComponent,
+		"f7-date-picker-component": f7DatePickerComponent,
+		"shipping-component": shippingComponent,
+		"credit-card-component": creditCardComponent,
+		"parent-component": parentComponent,
+		"billing-component": billingInvoiceComponent,
+		"receipt-component": receiptsComponent
+
 	},
 	data() {
 		return {
+			pageSettings: {
+				leftNavDrawer: ".employee-panel",
+				pageTitle: "Employee Profile"
+			},
+			moduleInfo: {
+				name: "Employees",
+				type: "profile",
+				level: 5
+			},
+			parentSettings: {
+				activeTab: 0,
+				editProfile: false,
+				hideSaveItem: true,
+				accountParent: {
+					company_name: null,
+					is_datacom: false,
+					is_partner: false,
+					is_merchant: false,
+					is_vendor: false
+				},
+			},
+
 			//Error Handling
 			showPasswordRest: false,
 			passwordMessage: "",
@@ -1396,7 +1225,7 @@ export default {
 			editProfile: false,
 			hideUpdateUserButtons: false,
 			hideCreateUser: false,
-			hideSaveUser: true,
+			hideSaveItem: true,
 			//V-IF Blocks
 			isPrimaryCreditCard: false,
 			//Popups and Sheets
@@ -1439,39 +1268,7 @@ export default {
 			sortIconSize: "is-small",
 			currentPage: 1,
 			perPage: 10,
-			// Buefy Paychecks-DataTables
-			data: [
-				{ id: 1, first_name: "Jesse", last_name: "Simmons", date: "2016-10-15 13:43:27", gender: "Male" },
-				{ id: 2, first_name: "John", last_name: "Jacobs", date: "2016-12-15 06:00:53", gender: "Male" },
-				{ id: 3, first_name: "Tina", last_name: "Gilbert", date: "2016-04-26 06:26:28", gender: "Female" },
-				{ id: 4, first_name: "Clarence", last_name: "Flores", date: "2016-04-10 10:28:46", gender: "Male" },
-				{ id: 5, first_name: "Anne", last_name: "Lee", date: "2016-12-06 14:38:38", gender: "Female" }
-			],
-			columns: [
-				{
-					field: "id",
-					label: "ID",
-					width: "40",
-					numeric: true
-				},
-				{
-					field: "first_name",
-					label: "First Name"
-				},
-				{
-					field: "last_name",
-					label: "Last Name"
-				},
-				{
-					field: "date",
-					label: "Date",
-					centered: true
-				},
-				{
-					field: "gender",
-					label: "Gender"
-				}
-			],
+
 			//Begin Image Processing Wizard Template
 			activeStep: 0,
 			showSocial: false,
@@ -1529,33 +1326,25 @@ export default {
 					pin: null,
 					fax: null
 				}
-			},
-			customerParent: {
-				company_name: null,
-				is_datacom: false,
-				is_partner: false,
-				is_merchant: false,
-				is_vendor: false
 			}
-		};
+		}
 	},
 	methods: {
 		testingMethod(e) {
 			console.log("this.Customers.customerList", this.Customers.customerList);
 			console.log("this.customerForm", this.customerForm);
 		},
-
 		showEditProfile() {
 			this.editProfile = true;
 			this.hideUpdateUserButtons = true;
 			this.hideCreateUser = true;
-			this.hideSaveUser = true;
+			this.hideSaveItem = true;
 		},
 		toggleEditProfile() {
 			this.editProfile = !this.editProfile;
 			this.hideUpdateUserButtons = !this.hideUpdateUserButtons;
 			this.hideCreateUser = !this.hideCreateUser;
-			this.hideSaveUser = true;
+			this.hideSaveItem = true;
 		},
 		async newUserButton() {
 			//Show/Hide Edit Fields and buttons
@@ -1567,7 +1356,7 @@ export default {
 			this.editProfile = true;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = true;
-			this.hideSaveUser = false;
+			this.hideSaveItem = false;
 			this.activeTab = 0;
 			this.showPasswordRest = false;
 		},
@@ -1579,7 +1368,7 @@ export default {
 			this.editProfile = false;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = false;
-			this.hideSaveUser = true;
+			this.hideSaveItem = true;
 			this.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
@@ -1626,7 +1415,7 @@ export default {
 				this.$f7.preloader.show();
 				// Await addUser then await AddCustomer using email address to find user in Django
 				this.customerForm.user.bio = this.$refs.userBio.f7TextEditor.contentEl.innerHTML;
-				this.customerForm.dob = new Date(this.customerDOBDate.slice(-1)[0]);
+				this.customerForm.dob = new Date(this.customerForm.user.dob);
 
 				console.log("Create User this.customerForm.user", this.customerForm.user);
 				//Create UnLinked Copy of Form
@@ -1655,16 +1444,16 @@ export default {
 				//Get Company ID (from each company type) and UserID add to Employee Form
 				console.log("this.Auth.platformInfo", this.Auth.platformInfo);
 				var companyOBJ = {};
-				if (this.customerParent.is_datacom) {
-					companyOBJ = this.Datacom.datacomList.find((elem) => elem.legal_name == this.customerParent.company_name);
+				if (this.parentSettings.accountParent.is_datacom) {
+					companyOBJ = this.Datacom.datacomList.find((elem) => elem.legal_name == this.parentSettings.accountParent.company_name);
 					console.log("is_datacom companyOBJ", companyOBJ);
 					this.customerForm["datacom"] = companyOBJ.id;
-				} else if (this.customerParent.is_partner) {
-					companyOBJ = this.Partners.partnerList.find((elem) => elem.legal_name == this.customerParent.company_name);
+				} else if (this.parentSettings.accountParent.is_partner) {
+					companyOBJ = this.Partners.partnerList.find((elem) => elem.legal_name == this.parentSettings.accountParent.company_name);
 					console.log("is_partner companyOBJ", companyOBJ);
 					this.customerForm["partner"] = companyOBJ.id;
-				} else if (this.customerParent.is_merchant) {
-					companyOBJ = this.Companies.companyList.find((elem) => elem.legal_name == this.customerParent.company_name);
+				} else if (this.parentSettings.accountParent.is_merchant) {
+					companyOBJ = this.Companies.companyList.find((elem) => elem.legal_name == this.parentSettings.accountParent.company_name);
 					console.log("is_merchant companyOBJ", companyOBJ);
 					this.customerForm["company"] = companyOBJ.id;
 				} else {
@@ -1740,7 +1529,7 @@ export default {
 				//I need to update the calendar fields and bio field manually
 				if (this.customerForm.dob) {
 					var foramttedDOBDate = this.customerForm.dob.split("T")[0];
-					this.$refs.customerDOBDate.$refs.inputEl.value = moment(foramttedDOBDate).format("MMMM DD, YYYY");
+					//Need to Populate Hire Date
 				}
 
 				//Populate User Bio Field
@@ -1806,7 +1595,7 @@ export default {
 		//Make the PUT request to update datebase instance from updated form Data
 		async updateUserPATCH() {
 			this.customerForm.user.bio = this.$refs.userBio.f7TextEditor.contentEl.innerHTML;
-			this.customerForm.dob = new Date(this.customerDOBDate.slice(-1)[0]);
+			this.customerForm.dob = new Date(this.customerForm.user.dob);
 
 			try {
 				await this.$store.dispatch("PATCHUser", this.customerForm.user).then((response) => {
@@ -2054,10 +1843,10 @@ export default {
 			this.$refs.customerDOBDate.$refs.inputEl.value = "";
 		},
 		resetCompanyToggles(name) {
-			this.customerParent.is_datacom = name === "datacom";
-			this.customerParent.is_partner = name === "partner";
-			this.customerParent.is_merchant = name === "merchant";
-			this.customerParent.is_vendor = name === "vendor";
+			this.parentSettings.accountParent.is_datacom = name === "datacom";
+			this.parentSettings.accountParent.is_partner = name === "partner";
+			this.parentSettings.accountParent.is_merchant = name === "merchant";
+			this.parentSettings.accountParent.is_vendor = name === "vendor";
 		},
 		companyTypeToggle(e) {
 			console.log("Toggle e", e);
@@ -2065,36 +1854,42 @@ export default {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.customerParent.is_datacom = false;
+					this.parentSettings.accountParent.is_datacom = false;
 				}
 			}
 			if (e.target.name === "partner") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.customerParent.is_partner = false;
+					this.parentSettings.accountParent.is_partner = false;
 				}
 			}
 			if (e.target.name === "merchant") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.customerParent.is_merchant = false;
+					this.parentSettings.accountParent.is_merchant = false;
 				}
 			}
 			if (e.target.name === "vendor") {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
-					this.customerParent.is_vendor = false;
+					this.parentSettings.accountParent.is_vendor = false;
 				}
 			}
-		}
+		},
+		//Verified Methods
+		receiveDobDate(date) {
+			console.log('receiveDate date', date);
+			this.customerForm.user.dob = date;
+		},
+		
 	},
 	computed: {
 		...mapState(["Auth", "Locale", "Static", "Errors", "Common", "VTHPP"]),
 		...mapState(["Users", "Companies", "Datacom", "Partners", "Customers"]),
-		...mapGetters(["getUsers", "GET_STATE_LIST", "getcustomerCreditCardsList"]),
+		...mapGetters(["GET_USER_LIST", "GET_STATE_LIST", "getcustomerCreditCardsList"]),
 		computedPasswords: {
 			get() {
 				console.log("this.passwordMessage", this.passwordMessage);
@@ -2110,22 +1905,22 @@ export default {
 			},
 			canSubmitUserForm() {
 				if (this.Auth.isAuthenticated) {
-					if (this.customerParent.is_datacom) {
+					if (this.parentSettings.accountParent.is_datacom) {
 						if ((this.requiredFieldsDone = 6)) {
 							return false;
 						}
 					}
-					if (this.customerParent.is_partner) {
+					if (this.parentSettings.accountParent.is_partner) {
 						if ((this.requiredFieldsDone = 6)) {
 							return false;
 						}
 					}
-					if (this.customerParent.is_merchant) {
+					if (this.parentSettings.accountParent.is_merchant) {
 						if ((this.requiredFieldsDone = 6)) {
 							return false;
 						}
 					}
-					if (this.customerParent.is_vendor) {
+					if (this.parentSettings.accountParent.is_vendor) {
 						if ((this.requiredFieldsDone = 6)) {
 							return false;
 						}
@@ -2137,100 +1932,16 @@ export default {
 	},
 	beforeMount() {},
 	async mounted() {
-		let userID = "?user__id=" + this.Auth.userLoginProfile.id;
-		this.$store.dispatch("getCustomerProfileByUserID", userID);
-		//Load States
-		if (this.Locale.regions.length === 0) {
-			this.$store.dispatch("getStates");
-		}
-		//Load Credit Card And ACH Accounts
-		this.$store.dispatch("getACHAccountList", userID);
-		this.$store.dispatch("getNewShippingList", userID);
 
 		// Method to put an initial image on the canvas for Croppie.js.
-		this.$refs.croppieRefUser.bind({
-			url: "http://datacom.localhost.mydataboxx.com:9000/static/UserProfileGrey170x170.png"
-		});
+		// this.$refs.croppieRefUser.bind({
+		// 	url: "http://datacom.localhost.mydataboxx.com:9000/static/UserProfileGrey170x170.png"
+		// });
 	},
 	on: {}
 };
 </script>
 
 <style lang="scss" scoped>
-.sticky-top {
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0;
-}
-.about-me-box {
-	width: 100%;
-	border: 1px solid rgb(182, 181, 181);
-	height: 100px;
-}
-.shipping-card {
-	background: rgb(191, 243, 240);
-}
 
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
-}
-.dashboard-icons {
-	text-align: center;
-	p {
-		text-align: center;
-	}
-}
-.image-sheet {
-	height: 100vh;
-}
-.file-input {
-	cursor: pointer;
-}
-.file-cta {
-	width: 100vw;
-}
-.file-name {
-	width: 100vw;
-}
-.dropzone {
-	min-height: 200px;
-	padding: 10px 10px;
-	position: relative;
-	cursor: pointer;
-	outline: 2px dashed grey;
-	outline-offset: -10px;
-	width: 90%;
-	background: lightcyan;
-	color: dimgray;
-	&:hover {
-		background: lightblue;
-	}
-	& .call-to-action {
-		font-size: 2rem;
-		text-align: center;
-		padding-top: 50px;
-	}
-}
-
-.input-field {
-	opacity: 0;
-	width: 100%;
-	height: 200px;
-	position: absolute;
-	cursor: pointer;
-}
-.img-container {
-	width: 900px;
-	height: 300px;
-}
-.imageNavButtons {
-	.button {
-		height: 75px;
-		align-content: center;
-	}
-}
 </style>

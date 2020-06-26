@@ -2194,7 +2194,7 @@ export default {
 		margin-top: 5px;
 		margin-bottom: 10px;
 		text-align: center;
-		font-size: 1.25em;
+
 		font-weight: 900;
 	}
 }
@@ -2207,7 +2207,7 @@ export default {
 		margin-top: 5px;
 		margin-bottom: 10px;
 		text-align: center;
-		font-size: 1.25em;
+
 		font-weight: 900;
 	}
 }
@@ -2219,7 +2219,7 @@ export default {
 		margin-top: 5px;
 		margin-bottom: 10px;
 		text-align: center;
-		font-size: 1.25em;
+
 		font-weight: 900;
 	}
 }
@@ -2234,7 +2234,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	height: 4.5rem;
-	font-size: 1rem;
+
 	border-radius: 10px;
 }
 .med-button {
@@ -2309,7 +2309,6 @@ export default {
 					box-shadow: 0px 7px 10px rgb(34, 33, 33);
 					text-align: center;
 					font-weight: 600;
-					font-size: 1.25em;
 					color: black;
 					height: 25%;
 					color: white;

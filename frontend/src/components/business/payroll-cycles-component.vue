@@ -626,7 +626,7 @@ export default {
 }
 </script>
 
-<style scoped style="less">
+<style scoped lang="less">
 .navbar-bg {
   background: linear-gradient(45deg, rgba(0,55,87,1) 0%, rgba(23,122,143,1) 100%);
 }

@@ -21,13 +21,13 @@ class Shift(models.Model):
   date_added        = models.DateTimeField(verbose_name="date added", auto_now_add=True)
   start_time        = models.TimeField(verbose_name="Start Time", auto_now_add=False, auto_now=False, blank=True, null=True)
   end_time          = models.TimeField(verbose_name="End Time", auto_now_add=False, auto_now=False, blank=True, null=True)
-  require_clock_in  = models.BooleanField(default=False)
-  require_clock_out = models.BooleanField(default=False)
-  auto_deduct_meal  = models.BooleanField(default=False)
+  require_clock_in  = models.BooleanField(default=False, blank=True, null=True)
+  require_clock_out = models.BooleanField(default=False, blank=True, null=True)
+  auto_deduct_meal  = models.BooleanField(default=False, blank=True, null=True)
   meal_minutes      = models.IntegerField(default=0, blank=True, null=True)
-  auto_deduct_break = models.BooleanField(default=False)
+  auto_deduct_break = models.BooleanField(default=False, blank=True, null=True)
   break_minutes     = models.IntegerField(default=0, blank=True, null=True)
-  is_active         = models.BooleanField(default=True)
+  is_active         = models.BooleanField(default=True, blank=True, null=True)
   start_clockin_time  = models.TimeField(auto_now_add=False, auto_now=False, blank=True, null=True)
   stop_clockout_time = models.TimeField(auto_now_add=False, auto_now=False, blank=True, null=True)
 
@@ -35,7 +35,6 @@ class OperatingHours(models.Model):
   company         = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
   partner         = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
   datacom         = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
-
 
 class BusinessOperatingHours(models.Model):
   company         = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
@@ -47,7 +46,6 @@ class BusinessOperatingHours(models.Model):
   close           = models.CharField(max_length=10, blank=True, null=True)
   open2           = models.CharField(max_length=10, blank=True, null=True)
   close2          = models.CharField(max_length=10, blank=True, null=True)
-  
 
 class AttendanceSettings(models.Model):
   company                     = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
@@ -78,10 +76,11 @@ class AttendanceSettings(models.Model):
   notify_clockin_late         = models.BooleanField(default=False)
   notify_clockout_early       = models.BooleanField(default=False)
 
-class PayCycles(BaseEvent):
+class PayCycle(BaseEvent):
   company         = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
   partner         = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
   datacom         = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
+  employees       = models.ManyToManyField(Employee, blank=True)
   name 			      = models.CharField(max_length=100)
   frequency       = models.CharField(max_length=100, blank=True, null=True)
   rule            = models.CharField(max_length=250, blank=True, null=True)
@@ -98,12 +97,12 @@ class PayCycles(BaseEvent):
 # 		cycle_recurrence.save(using=self._db)
 
 class PayCycleRecurrence(BaseOccurrence):
-  recurrence = models.ForeignKey(PayCycles, on_delete=models.CASCADE)
+  recurrence = models.ForeignKey(PayCycle, on_delete=models.CASCADE)
 
   # objects	= PayCycleManager()
 
 class TimeCard(models.Model):
-  cycle           = models.ForeignKey(PayCycles, on_delete=models.CASCADE, blank=True, null=True)
+  cycle           = models.ForeignKey(PayCycle, on_delete=models.CASCADE, blank=True, null=True)
   employee        = models.ForeignKey(Employee, on_delete=models.CASCADE, blank=True, null=True)
   punchType 			= models.CharField(max_length=50)
   date_added      = models.DateTimeField(verbose_name="date added", auto_now_add=True)
@@ -117,27 +116,32 @@ class TimeCard(models.Model):
     ordering = ['date_added']
 
 class LeaveRequest(models.Model):
-  employee            = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee_leave')
-  manager             = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, related_name='manager_leave', blank=True, null=True)
-  approved_by         = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, related_name='approved_by', blank=True, null=True)
-  approve_decline_date= models.CharField(max_length=250, blank=True, null=True)
-  leaveType 			    = models.CharField(max_length=50, blank=True, null=True)
-  start_date          = models.DateTimeField(verbose_name="Start Date", auto_now_add=False, auto_now=False, blank=True, null=True)
-  end_date            = models.DateTimeField(verbose_name="End Date", auto_now_add=False, auto_now=False, blank=True, null=True)
-  days_requested      = models.IntegerField(default=1, blank=True, null=True)
-  date_added          = models.DateTimeField(verbose_name="Date Added", auto_now_add=True)
-  status              = models.CharField(max_length=50, default="Open")
-  is_approved         = models.BooleanField(default=False)
-  leave_comments      = models.TextField(blank=True, null=True)
-  approval_remarks    = models.TextField(blank=True, null=True)
-  vacation_remaining  = models.IntegerField(blank=True, null=True)
-  sick_remaining      = models.IntegerField(blank=True, null=True)
-  personal_remaining  = models.IntegerField(blank=True, null=True)
-  pto_remaining       = models.IntegerField(blank=True, null=True)
-  files               = models.FileField(max_length=100, upload_to='employee/leave', blank=True, null=True)
+  STATUS_CHOICES = [
+    ('Approved', 'Approved'),
+    ('Declined', 'Declined'),
+    ('Open', 'Open'),
+    ('Expired', 'Expired'),
+    ('Deleted', 'Deleted'),
+	]
+  LEAVE_CHOICES = [
+    ('Vacation', 'Vacation'),
+    ('Sick', 'Sick'),
+    ('Personal', 'Personal'),
+    ('Medical', 'Medical'),
+    ('Paid Time Off', 'Paid Time Off'),
+  ]
+  leave_type 			            = models.CharField(max_length=50, choices=LEAVE_CHOICES, blank=True, null=True)
+  start_date                  = models.DateTimeField(verbose_name="Start Date", auto_now_add=False, auto_now=False, blank=True, null=True)
+  end_date                    = models.DateTimeField(verbose_name="End Date", auto_now_add=False, auto_now=False, blank=True, null=True)
+  days_requested              = models.IntegerField(default=1, blank=True, null=True)
+  status 											= models.CharField(max_length=100, choices=STATUS_CHOICES, blank=True, null=True)
+  disposition_date 			  		= models.DateTimeField(auto_now_add=False, auto_now=False, blank=True, null=True)
+  title 			    						= models.CharField(max_length=100, blank=True, null=True)
+  subject 			  						= models.CharField(max_length=100, blank=True, null=True)
+  message            					= models.TextField(blank=True, null=True)
+  docs                        = models.FileField(max_length=100, upload_to='employees/leave-docs', blank=True, null=True)
+  approval_remarks            = models.TextField(blank=True, null=True)
 
-  class Meta:
-    ordering = ['date_added']
 
 
 

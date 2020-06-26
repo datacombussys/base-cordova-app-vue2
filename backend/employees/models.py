@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import RegexValidator
 from django.contrib import auth
+from django.contrib.contenttypes.models import ContentType
 
 from project.settings import base
 # from users.models import MainUserManager
@@ -14,6 +15,7 @@ from partners.models import Partner
 from datacom.models import Datacom
 from vendors.models import Vendor
 from commons2.models import Department
+from humanresources.models import Benefits, EmployeeDocuments
 
 
 class Position(models.Model):
@@ -70,18 +72,20 @@ class Employee(models.Model):
   vendor            = models.ForeignKey(Vendor, on_delete=models.CASCADE, blank=True, null=True)
   user              = models.OneToOneField(base.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
   department        = models.ForeignKey(Department, on_delete=models.DO_NOTHING, blank=True, null=True)
-  # Assigned Modules to employee Many-to-many field
-  position 			    = models.ForeignKey(Position, on_delete=models.DO_NOTHING, blank=True, null=True)
+  position 			    = models.ForeignKey(Position, on_delete=models.DO_NOTHING, blank=True, null=True) 
+  benefits          = models.ForeignKey(Benefits, on_delete=models.DO_NOTHING, blank=True, null=True)
+  employee_docs     = models.ForeignKey(EmployeeDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
+  is_module_manager = models.BooleanField(default=False, blank=True, null=True)
+  # modules_managed   = models.ManyToManyField(ContentType, blank=True)
   employee_number   = models.CharField(max_length=16, null=True, 
 									    blank=True, validators=[RegexValidator(r'^\d{1,16}$')])
   salary            = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
   salary_type       = models.CharField(max_length=50, blank=True, null=True)
-  # Make as a ForeignKey in Payroll module
-  pay_cycle         = models.CharField(max_length=50, blank=True, null=True)
   employee_type     = models.CharField(max_length=20, blank=True, null=True)
   work_phone        = models.CharField(max_length=10, null=True, 
 									    blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
   is_business 	    = models.BooleanField(default=False, blank=True, null=True)
+  is_sales_office_ee= models.BooleanField(default=False, blank=True, null=True)
   is_sales_rep	    = models.BooleanField(default=False, blank=True, null=True)
   is_warehouse_ee   = models.BooleanField(default=False, blank=True, null=True)
   is_exempt 	      = models.BooleanField(default=False, blank=True, null=True)
@@ -93,31 +97,9 @@ class Employee(models.Model):
   ssn               = models.CharField(max_length=9, null=True, 
 									    blank=True, validators=[RegexValidator(r'^\d{1,9}$')])
   dob               = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
-  medical_ins       = models.BooleanField(default=False, blank=True, null=True)
-  accident_ins      = models.BooleanField(default=False, blank=True, null=True)
-  dental_ins        = models.BooleanField(default=False, blank=True, null=True)
-  vision_ins        = models.BooleanField(default=False, blank=True, null=True)
-  retirement        = models.BooleanField(default=False, blank=True, null=True)
-  #I need to create a benefits app and include all benefit fields and calculations
-  #contribution_percent  = models.DecimalField(max_digits=5, decimal_places=2)
   org_name          = models.CharField(max_length=100, blank=True, null=True)
-  handbook	        = models.FileField(max_length=100, upload_to='employee/', null=True, blank=True)
-  signed_handbook	  = models.BooleanField(default=False,blank=True, null=True)
-  policies_procedures	= models.FileField(max_length=100, upload_to='employee/', null=True, blank=True)
-  signed_pp	        = models.BooleanField(default=False,blank=True, null=True)
-  code_conduct	    = models.FileField(max_length=100, upload_to='employee/', null=True, blank=True)
-  signed_code	      = models.BooleanField(default=False,blank=True, null=True)
-  employment_agmt	  = models.FileField(max_length=100, upload_to='employee/', null=True, blank=True)
-  signed_ee_agmt	  = models.BooleanField(default=False,blank=True, null=True)
-  compensation_plan	= models.FileField(max_length=100, upload_to='employee/', null=True, blank=True)
-  signed_comp_plan  = models.BooleanField(default=False,blank=True, null=True)
-  personal_days_rem = models.IntegerField(blank=True, null=True)
-  vacation_days_rem = models.IntegerField(blank=True, null=True)
-  sick_days_rem     = models.IntegerField(blank=True, null=True)
-  pto_days_rem      = models.IntegerField(blank=True, null=True)
   profile_img 		  = models.ImageField(max_length=100, upload_to='employees/profile/', null=True, blank=True)
   
-
   objects	= EmployeeManager()
   
   class Meta:

@@ -9,6 +9,11 @@ import axios from "axios";
 export const Financial = {
 	namespace: true,
 	state: {
+		salesTaxList: [
+			"Az Sales Tax",
+			"Texas Sales Tax"
+		],
+		//Place the Profile in the array and parse on the table [0]
 		salesTaxProfile: {}
 	},
 	mutations: {
@@ -40,7 +45,6 @@ export const Financial = {
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					f7.preloader.hide();
 					error.type = "Add Sales Tax";
 					dispatch('updateNotification', error);
 
