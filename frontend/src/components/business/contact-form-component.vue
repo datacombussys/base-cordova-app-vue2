@@ -79,7 +79,7 @@
 					<f7-list-input
 						required
 						:value="localeCities.primary_country_id"
-						@input="getPrimaryStates($event, 'primary')"
+						@input="getPrimaryStates($event, 'primary'); sendToParent();"
 						type="select"
 						style="background: rgb(216,252,253)"
 					>
@@ -99,7 +99,7 @@
 					<f7-list-input
 						required
 						:value="localeCities.primary_state_id"
-						@input="getPrimaryCities($event, 'primary')"
+						@input="getPrimaryCities($event, 'primary'); sendToParent();"
 						type="select"
 						style="background: rgb(216,252,253)"
 					>
@@ -558,7 +558,10 @@ export default {
 	methods: {
 		async testingMethod(e) {
 
-
+		},
+		sendToParent() {
+			this.$emit('updateLocaleInfo', this.localeCities);
+			console.log('sendToParent this.localeCities', this.localeCities);
 		},
 
 			

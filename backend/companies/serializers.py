@@ -5,26 +5,49 @@ from rest_framework import serializers
 from rest_framework import exceptions
 
 from commons.base64 import Base64ImageField
-from datacom.common_models import CommonBarcode
 from users.models import User
+from users.serializers import SimpleUserSerializer
 from .models import Company
+from commons.models import Industry, CommonBarcode
+from commons.serializers import IndustrySerializer, CommonBarcodeSerializer, SimpleBarcodeSerializer
+from humanresources.models import CompanyDocuments
+from humanresources.serializers import CompanyDocumentsSerializer
+
 from datacom.models import Datacom
 from partners.models import Partner
-from partners.serializers import PartnerSerializer
-from datacom.serializers import DatacomSerializer, CommonBarcodeSerializer
+from partners.serializers import PartnerSerializer, SimplePartnerSerializer
+from datacom.serializers import DatacomSerializer, SimpleDatacomSerializer
 
 
-class CompanySimpleSerializer(serializers.ModelSerializer):
+class SimpleCompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
         fields = ('id', 'dba_name', 'legal_name')
 
 class CompanySerializer(serializers.ModelSerializer):
+    datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    created_by_obj = SimpleUserSerializer(read_only=True, source='created_by')
     created_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
+    barcode_obj = CommonBarcodeSerializer(read_only=True, source='barcode')
     barcode = serializers.PrimaryKeyRelatedField(queryset=CommonBarcode.objects.all(), required=False, allow_null=True)
+    company_docs_obj = CompanyDocumentsSerializer(read_only=True, source='company_docs')
+    company_docs = serializers.PrimaryKeyRelatedField(queryset=CompanyDocuments.objects.all(), required=False, allow_null=True)
+    industry_obj = IndustrySerializer(read_only=True, source='industry')
+    industry = serializers.PrimaryKeyRelatedField(queryset=Industry.objects.all(), required=False, allow_null=True)
+
+    primary_contact_list = SimpleUserSerializer(many=True, read_only=True, source='primary_contacts')
+    primary_contacts = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True), allow_null=True)
+    billing_contact_list = SimpleUserSerializer(many=True, read_only=True, source='billing_contacts')
+    billing_contacts = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True), allow_null=True)
+    technical_contacts_list = SimpleUserSerializer(many=True, read_only=True, source='technical_contacts')
+    technical_contacts = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True), allow_null=True)
+    shipping_contacts_list = SimpleUserSerializer(many=True, read_only=True, source='shipping_contacts')
+    shipping_contacts = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True), allow_null=True)
+
     profile_img = Base64ImageField(max_length=None,
                                     use_url=True,
                                     required=False,
@@ -54,21 +77,21 @@ class CompanySerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    def to_representation(self, value):
-        data = super().to_representation(value)  
-        if data['datacom']:
-            datacom_data_serializer = DatacomSerializer(value.datacom)
-            data['datacom'] = datacom_data_serializer.data
-        if data['partner']:
-            partner_data_serializer = PartnerSerializer(value.partner)
-            data['partner'] = partner_data_serializer.data
-        if data['barcode']:
-            barcode_data_serializer = CommonBarcodeSerializer(value.barcode)
-            data['barcode'] = barcode_data_serializer.data
+    # def to_representation(self, value):
+    #     data = super().to_representation(value)  
+    #     if data['datacom']:
+    #         datacom_data_serializer = DatacomSerializer(value.datacom)
+    #         data['datacom'] = datacom_data_serializer.data
+    #     if data['partner']:
+    #         partner_data_serializer = PartnerSerializer(value.partner)
+    #         data['partner'] = partner_data_serializer.data
+    #     if data['barcode']:
+    #         barcode_data_serializer = CommonBarcodeSerializer(value.barcode)
+    #         data['barcode'] = barcode_data_serializer.data
         
-        return data
+    #     return data
 
-class CompanySimpleSerializer(serializers.ModelSerializer):
+class SimpleCompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company

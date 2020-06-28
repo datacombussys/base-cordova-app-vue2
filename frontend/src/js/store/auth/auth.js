@@ -14,13 +14,14 @@ export const Auth = {
 		user: null,
 		preLoginPagePath: null,
 		platformInfo: {},
-		domain: '',
+		webdomain: '',
 	},
 	mutations: {
 		SET_INDEXEDDB_USER(state, payload) {
 			console.log("SET_INDEXEDDB_USER", payload);
 			state.user = payload;
 			state.isAuthenticated = true;
+			axios.defaults.headers.common['Authorization'] = "Token " + payload.token;
 		},
 		SET_LOGIN_PROFILE(state, payload) {
 				console.log("SET_LOGIN_PROFILE", payload);
@@ -49,24 +50,23 @@ export const Auth = {
 
 		SET_DOMAIN(state, payload) {
 			console.log('SET_DOMAIN payload', payload);
-			state.domain = payload;
-			console.log('state.domain', state.domain);
+			state.webdomain = payload;
+			console.log('state.domain', state.webdomain);
 		},
 		SET_PLATFORM_INFO(state, payload) {
 			console.log('SET_PLATFORM_INFO payload', payload);
 			return new Promise(async (resolve, reject) => {
 				console.log('SET_PLATFORM_INFO payload.employeeProfile', payload);
         if(payload.datacom != null) {
-					let platform = {id: payload.datacom.id, platform: "datacom", url: "?datacom__id=" + payload.datacom.id, domain: state.domain};
+					let platform = {id: payload.datacom, platform: "datacom", url: "?datacom__id=" + payload.datacom};
 					state.platformInfo = platform;
 					state.authLevel = 1;
-					state.userCompanyParent = payload.datacom.dba_name;
 					state.userCompanyName = payload.datacom.dba_name;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         }
         else if(payload.partner != null) {
-					let platform = {id: payload.partner.id, platform: "partner", url: "?partner__id=" + payload.partner.id, domain: state.domain};
+					let platform = {id: payload.partner, platform: "partner", url: "?partner__id=" + payload.partner};
 					state.platformInfo = platform;
 					state.authLevel = 2;
 					state.userCompanyParent = payload.partner.datacom.dba_name;
@@ -75,19 +75,19 @@ export const Auth = {
 					return resolve();
         }
         else if(payload.company != null) {
-					let platform = {id: payload.company.id, platform: "company", url: "?company__id=" + payload.company.id, domain: state.domain};
+					let platform = {id: payload.company, platform: "company", url: "?company__id=" + payload.company};
 					state.platformInfo = platform;
 					state.authLevel = 3;
-					state.userCompanyParent = payload.company.partner.dba_name;
+					state.userCompanyParent = payload.company.partner.dba_name || payload.company.datacom.dba_name;
 					state.userCompanyName = payload.company.dba_name;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         }
         else if(payload.vendor != null) {
-					let platform = {id: payload.vendor.id, platform: "vendor", url: "?vendor__id=" + payload.vendor.id, domain: state.domain};
+					let platform = {id: payload.vendor, platform: "vendor", url: "?vendor__id=" + payload.vendor};
 					state.platformInfo = platform;
 					state.authLevel = 4;
-					state.userCompanyParent = payload.vendor.company.dba_name;
+					state.userCompanyParent = payload.vendor.company.dba_name || payload.vendor.partner.dba_name || payload.vendor.datacom.dba_name;
 					state.userCompanyName = payload.vendor.dba_name;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
@@ -495,6 +495,10 @@ export const Auth = {
 					dispatch("GETGeneralSettings", state.platformInfo);
 					dispatch("getSalesOfficeList", state.platformInfo);
 					dispatch("getWarehouseList", state.platformInfo);
+					dispatch("GETInventoryList", state.platformInfo);
+					dispatch("GETInventoryCategories", state.platformInfo);
+					//Not Completed Yet
+					// this.$store.dispatch("getInventoryLabels", state.platformInfo);
 
 					return resolve();
 

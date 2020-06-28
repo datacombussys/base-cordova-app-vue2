@@ -22,6 +22,7 @@ from commons.models import UOMWeight, UOMDimensions
 class InvBarcodeManager(models.Manager):
   def create_barcode_number(self):
     last_barcode = InventoryBarcode.objects.all().order_by('barcode_number').last()
+    # last_barcode = UserBarcode.objects.filter(user__employee__datacom__id__gte=1).order_by().last()
     print("last_barcode", last_barcode)
     if not last_barcode:
       return "100000000000"
@@ -59,23 +60,23 @@ class InvBarcodeManager(models.Manager):
     
     return finalImage
 
-  def create_barcode(self, **kwargs):
+  def create_barcode(self, item, **kwargs):
+    print('create_barcode kwargs', kwargs)
+    print('create_barcode item', item)
     current_barcode_number = self.create_barcode_number()
     barcode_image = self.create_barcode_image(current_barcode_number)
     
     uuid_id = uuid4()
 
-    item = self.model(product_id=kwargs['id'], title=kwargs['name'] + "_" + str(uuid_id)[:10])
-    item.image = barcode_image
-    item.barcode_type = "ean-13"
-    item.barcode_number = int(current_barcode_number)
-    item.save(using=self._db)
+    barcode = self.model(title=item.name + "_" + str(uuid_id)[:10])
+    barcode.image = barcode_image
+    barcode.barcode_type = "ean-13"
+    barcode.barcode_number = int(current_barcode_number)
+    barcode.save(using=self._db)
     
-    return item
+    return barcode
 
 class InventoryBarcode(models.Model):
-  product 			  = models.ForeignKey('Inventory', on_delete=models.CASCADE, null=True, blank=True)
-  # uploaded_by 	= models.ForeignKey(Employee, on_delete=models.CASCADE)
   date_added 		  = models.DateTimeField(verbose_name="date added", 														
                     auto_now_add=True)
   title 			    = models.CharField(max_length=50, null=True, blank=True)
@@ -111,14 +112,10 @@ class InventoryManager(models.Manager):
     item.is_active = True
     item.save(using=self._db)
 
-    objID = Inventory.objects.get(name=kwargs['name'])
-    print('objID', objID)
-    kwargs['id'] = objID.id
-    InventoryBarcode.objects.create_barcode(**kwargs)
+    InventoryBarcode.objects.create_barcode(item)
   
     return item
     
-
 # User Model
 class Inventory(models.Model):
   company         = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
@@ -129,6 +126,7 @@ class Inventory(models.Model):
   category        = models.ForeignKey(InvCategory, on_delete=models.DO_NOTHING, blank=True, null=True)
   uom_weight 		  = models.ForeignKey(UOMWeight, on_delete=models.DO_NOTHING, blank=True, null=True)
   uom_dimensions 	= models.ForeignKey(UOMDimensions, on_delete=models.DO_NOTHING, blank=True, null=True)
+  barcode 			  = models.ForeignKey(InventoryBarcode, on_delete=models.CASCADE, null=True, blank=True)
   global_id 		  = models.UUIDField(primary_key=False, default=uuid4, editable=False)
   name 			      = models.CharField(max_length=50)
   manufacturer 		= models.CharField(max_length=50, blank=True, null=True)
@@ -190,6 +188,7 @@ class Inventory(models.Model):
 
 
 class InventoryImage(models.Model):
+  #Only make GET request on id when inv item is being loaded in datatable
   product 			  = models.ForeignKey('Inventory', on_delete=models.CASCADE, null=True, blank=True)
   date_added 		  = models.DateTimeField(verbose_name="date added", 														
                     auto_now_add=True)

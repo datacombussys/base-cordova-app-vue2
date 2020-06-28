@@ -226,16 +226,15 @@ class="datacom-input"
 --Child--
 <slot name="button"></slot>
 
-**********Passing Data from Child to Parent Component*******
+******************************Passing Data from Child to Parent Component*****************************
 Parent Listen for event
 <component @receiveOpenTimes="changeOpenData"></component>
 methods(){
-changeOpenData(payload) {
-this.timeOpenListFromChild = payload;
-},
+  changeOpenData(payload) {
+    this.timeOpenListFromChild = payload;
+  },
 }
-Child Emit Event
-
+---------------------Child Emit Event-----------------
 <div @change="sendToParent" id="idClose">
 methods() {
   sendToParent() {

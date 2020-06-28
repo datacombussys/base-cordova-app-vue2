@@ -701,7 +701,7 @@
 														<p class="field-title">Sales Office Name:</p>
 														<f7-list-input 
 															:disabled="!employeeForm.is_sales_office_ee"
-															@change="salesoffice_employees = [$event.target.value]"
+															@change="sales_office_id = [$event.target.value]"
 															type="select">
 															<option 
 																v-for="office in GET_SALES_OFFICE_LIST" 
@@ -2230,7 +2230,7 @@ export default {
 					permissions: [],
 				}
 			},
-			salesoffice_employees: [],
+			sales_office_id: [],
 			warehouse_employees: [],
 
 	
@@ -2239,6 +2239,8 @@ export default {
 	methods: {
 		testingMethod(e) {
 			console.log('this.employeeForm', this.employeeForm);
+			// console.log('sales_office_id', sales_office_id);
+			console.log('warehouse_employees', warehouse_employees);
 		},
 		showEditProfile() {
 			this.parentSettings.editProfile = true;
@@ -2320,7 +2322,6 @@ export default {
 				this.$f7.preloader.show();
 				// Await addUser then await AddEmployee using email address to find user in Django
 				this.employeeForm.user.bio = this.$refs.userBio.f7TextEditor.contentEl.innerHTML;
-				delete this.employeeForm.user.groups;
 
 				console.log("Create User this.employeeForm.user", this.employeeForm.user);
 				let response = await this.$store.dispatch("createUser", this.employeeForm.user);
@@ -2332,11 +2333,10 @@ export default {
 					newUserForm = response.data;
 				} else {
 					response.type = "Create User";
-					if (response.status) {
-					} else {
+					if (!response.status) {
 						response.status = 401;
 						this.$store.dispatch("updateNotification", response);
-					}
+					} 
 
 					return reject(response.message);
 				}
@@ -2379,21 +2379,26 @@ export default {
 				console.log("Create Employee Promise eeResponse", eeResponse);
 
 				if (eeResponse.status === 200 || eeResponse.status === 201) {
-				//---------------------------------------====----------------//
+				//-----------------------------------------------------------//
 				
-				//Make submission to add employee to Sales office or Warehouse
-				if(salesoffice_employees.length != 0) {
-					let eeObj = {
-						id: this.salesoffice_employees,
-						employees_id: [this.eeResponse.data.id]
+					//Make submission to add employee to Sales office or Warehouse
+					if(this.GET_SALES_OFFICE_LIST.length != 0) {
+						let idArray = this.GET_SALES_OFFICE_EMPLOYEE_IDS;
+						console.log('idArray', idArray);
+						idArray.push(this.eeResponse.data.id);
+
+						if(this.sales_office_id.length != 0) {
+							let eeObj = {
+								id: this.this.sales_office_id,
+								employees: idArray
+							}
+							console.log('eeObj', eeObj);
+							
+							this.$store.dispatch("PATCHSalesOffice", eeObj);
+						}
 					}
-
-					console.log('eeObj', eeObj);
 					
-					this.$store.dispatch("PATCHSalesOffice", eeObj);
-				}
-
-					this.$store.dispatch("getEmployeeList");
+					// this.$store.dispatch("getEmployeeList");
 					this.$f7.preloader.hide();
 					return resolve(eeResponse);
 				} else {
@@ -2734,7 +2739,7 @@ export default {
 		...mapState(["Auth", "Orders", "Inventory", "Locale", "Static", "Errors"]),
 		...mapState(["Users", "Companies", "Datacom", "Partners", "Vendors"]),
 		...mapGetters(["GET_USER_LIST", "GET_COUNTRY_LIST", "GET_STATE_LIST", "GET_CITY_LIST", 
-									"GET_POSITIONS_LIST", "GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST"]),
+									"GET_POSITIONS_LIST", "GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST", "GET_SALES_OFFICE_EMPLOYEE_IDS"]),
 		computedPasswords: {
 			get() {
 				console.log("this.passwordMessage", this.passwordMessage);

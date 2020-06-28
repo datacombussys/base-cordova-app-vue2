@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from .models import Calendar
 from employees.models import Employee
 from employees.serializers import EmployeeSerializer
-from commons2.serializers import ContentTypeSerializer
+from users.serializers import ContentTypeSerializer
 
 
 class CalendarSerializer(serializers.ModelSerializer):

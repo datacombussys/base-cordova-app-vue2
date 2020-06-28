@@ -13,6 +13,7 @@ import { Admin } from "./admin/admin";
 import { Auth } from "./auth/auth";
 import { Common } from "./common/common";
 import { VTHPP } from "./vthpp/vthpp";
+import { RetailPOS } from './retail-pos/retail-pos';
 import { Invoices } from "./financial/invoices";
 import { Receipts } from "./financial/receipts";
 import { Financial } from "./financial/financial";
@@ -77,6 +78,7 @@ export default new Vuex.Store({
 		Common,
 		DragNDrop,
 		Notifications,
+		RetailPOS,
 	},
 	state: {
 		version: 1.0,

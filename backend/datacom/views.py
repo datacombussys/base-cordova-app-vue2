@@ -6,14 +6,11 @@ from .models import Datacom
 from .serializers import DatacomSerializer
 
 class DatacomViewset(viewsets.ModelViewSet):
-    """Handle CRUD Views
-    Methods: list, create, retrieve, 
-    update, partial_update, destroy"""
     serializer_class = DatacomSerializer
     queryset = Datacom.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['id', 'domain']
-    search_fields = ['id', 'domain']
+    filterset_fields = ['id', 'domain', 'barcode']
+    search_fields = ['id', 'domain', 'barcode']
     ordering_fields = '__all__'
     ordering = ['date_added']
 

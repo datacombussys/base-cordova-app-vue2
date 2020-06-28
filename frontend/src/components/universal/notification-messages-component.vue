@@ -14,7 +14,7 @@
 							<p class="msg-header-text">Archive</p>
 						</f7-col>
 						<f7-col width="40">
-							<p class="msg-header-text">Notification</p>
+							<p class="msg-header-text text-align-center">Notification</p>
 						</f7-col>
 						<f7-col width="40" class="padding-right">
 							<p class="msg-header-text text-align-right">Approve/Decline</p>
@@ -132,7 +132,7 @@
 							<p class="msg-header-text">Delete</p>
 						</f7-col>
 						<f7-col width="40">
-							<p class="msg-header-text">Notification</p>
+							<p class="msg-header-text text-align-center">Notification</p>
 						</f7-col>
 						<f7-col width="40" class="padding-right">
 							<p class="msg-header-text text-align-right">Status</p>

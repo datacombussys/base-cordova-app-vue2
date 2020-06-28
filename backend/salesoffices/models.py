@@ -3,20 +3,69 @@ from project.settings import base
 from uuid import uuid4
 from django.core.validators import RegexValidator
 
-from datacom.common_models import CommonCompanyBase, CommonBarcode
+from companies.helper_functions import CompanyIDs
+
+from datacom.common_models import CommonCompanyBase
+from commons.models import CommonBarcode
 from companies.models import Company
 from datacom.models import Datacom
 from partners.models import Partner
 from employees.models import Employee
 from commons2.models import Shipping
 
+class SalesOfficeManager(models.Manager):
+  def create_sales_office(self, **kwargs):
+    if not kwargs['salesoffice_name']:
+      raise ValueError("You must enter a valid name")
+
+    print("salesoffice kwargs", kwargs)
+
+    salesofficeObj = SalesOffice.objects.all().order_by('id').last()
+    if salesofficeObj:
+      kwargs['salesoffice_number'] = salesofficeObj.salesoffice_number
+      print("salesofficeObj.salesoffice_number", salesofficeObj.salesoffice_number)
+      print('salesofficeObj.__dict__', salesofficeObj.__dict__)
+    if not salesofficeObj:
+      kwargs['salesoffice_number'] = 0
+
+    kwargs['is_salesoffice'] = True
+    print('Modified salesoffice kwargs', kwargs)
+    newSOID = CompanyIDs.newCompanyID(self, **kwargs)
+
+    primary_contacts_var = kwargs['primary_contacts']
+    billing_contacts_var = kwargs['billing_contacts']
+    technical_contacts_var = kwargs['technical_contacts']
+    shipping_contacts_var = kwargs['shipping_contacts']
+
+    del kwargs['primary_contacts']
+    del kwargs['billing_contacts']
+    del kwargs['technical_contacts']
+    del kwargs['shipping_contacts']
+    
+    salesoffice = self.model(**kwargs)
+    salesoffice.is_active = True
+    salesoffice.salesoffice_number = newSOID
+
+    salesoffice.save(using=self._db)
+
+    salesoffice.primary_contacts.set(primary_contacts_var)
+    salesoffice.billing_contacts.set(billing_contacts_var)
+    salesoffice.technical_contacts.set(technical_contacts_var)
+    salesoffice.shipping_contacts.set(shipping_contacts_var)
+
+    salesoffice.save()
+
+    return salesoffice
+
 class SalesOffice(CommonCompanyBase):
   company                 = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
   partner                 = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
   datacom                 = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
   barcode                 = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
-  primary_contact         = models.OneToOneField(Employee, on_delete=models.DO_NOTHING, blank=True, null=True)
-  billing_contacts        = models.ManyToManyField(Employee, related_name="billing_contacts", blank=True)
+  primary_contacts        = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="salesoffice_primary_contacts", blank=True)
+  billing_contacts        = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="salesoffice_billing_contacts", blank=True)
+  technical_contacts      = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="salesoffice_technical_contacts", blank=True)
+  shipping_contacts       = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="salesoffice_shipping_contacts", blank=True)
   employees               = models.ManyToManyField(Employee, related_name="salesoffice_employees", blank=True)
   salesoffice_name        = models.CharField(max_length=200, blank=True)
   salesoffice_number      = models.CharField(max_length=20, blank=True, null=True)
@@ -64,8 +113,12 @@ class SalesOffice(CommonCompanyBase):
   is_active               = models.BooleanField(default=True)
   status                  = models.CharField(max_length=200, blank=True, null=True)
   
+  objects	= SalesOfficeManager()
+
   class Meta:
     ordering = ['date_added', 'id', 'salesoffice_name']
 
   def __str__(self):
-    return self.salesoffice_name
+    return str(self.salesoffice_name)
+    
+  

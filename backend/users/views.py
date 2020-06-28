@@ -3,6 +3,9 @@ from django.http import Http404
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import is_password_usable, check_password, make_password
 
+from django.contrib.auth.models import Permission, Group
+from django.contrib.contenttypes.models import ContentType
+
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
@@ -16,16 +19,39 @@ from rest_framework.settings import api_settings
 from rest_framework import filters, exceptions, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 
-
 from .serializers import (UserSerializer, 
                         LoginSerializer, 
                         UserBarcodeSerializer,  
                         AlternativeLoginSerializer,
                         ChangePasswordSerializer,
-                        ManagerApprovalBarcodeSerializer, )
+                        ManagerApprovalBarcodeSerializer, 
+                        ContentTypeSerializer, 
+                        BasePermissionSeializer, 
+                        UserPermissionsSerializer, 
+                        BaseGroupSerializer, 
+                        UserGroupSerializer, )
 from .permissions import AdminSuperAdmin
-from .models import User, UserBarcode
+from .models import User, UserBarcode, UserPermission, UserGroup
 
+class BasePermissionsViewSet(viewsets.ModelViewSet):
+  serializer_class = BasePermissionSeializer
+  queryset = Permission.objects.all()
+
+class UserPermissionsViewSet(viewsets.ModelViewSet):
+  serializer_class = UserPermissionsSerializer
+  queryset = UserPermission.objects.all()
+        
+class ContentTypeViewSet(viewsets.ModelViewSet):
+  serializer_class = ContentTypeSerializer
+  queryset = ContentType.objects.all()
+
+class GroupViewSet(viewsets.ModelViewSet):
+  serializer_class = BaseGroupSerializer
+  queryset = Group.objects.all()
+
+class UserGroupViewSet(viewsets.ModelViewSet):
+  serializer_class = UserGroupSerializer
+  queryset = UserGroup.objects.all()
 
 class UserProfileViewset(viewsets.ModelViewSet):
     """Handles CRUD for User Profile"""

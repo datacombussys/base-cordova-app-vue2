@@ -30,11 +30,29 @@ class PartnerManager(models.Manager):
     kwargs['is_partner'] = True
     print('Modified partner kwargs', kwargs)
     newPartnerID = CompanyIDs.newCompanyID(self, **kwargs)
+
+    primary_contacts_var = kwargs['primary_contacts']
+    billing_contacts_var = kwargs['billing_contacts']
+    technical_contacts_var = kwargs['technical_contacts']
+    shipping_contacts_var = kwargs['shipping_contacts']
+
+    del kwargs['primary_contacts']
+    del kwargs['billing_contacts']
+    del kwargs['technical_contacts']
+    del kwargs['shipping_contacts']
     
     partner = self.model(**kwargs)
     partner.is_active = True
     partner.account_number = newPartnerID
+
     partner.save(using=self._db)
+
+    partner.primary_contacts.set(primary_contacts_var)
+    partner.billing_contacts.set(billing_contacts_var)
+    partner.technical_contacts.set(technical_contacts_var)
+    partner.shipping_contacts.set(shipping_contacts_var)
+
+    partner.save()
 
     return partner
 
@@ -43,10 +61,12 @@ class Partner(CommonCompanyBase):
   created_by 		      = models.ForeignKey(base.AUTH_USER_MODEL, related_name='partner_creator', 
                         on_delete=models.DO_NOTHING, blank=True, null=True)
   industry            = models.ForeignKey(Industry, on_delete=models.DO_NOTHING, blank=True, null=True)
-  primary_contact_list= models.ManyToManyField(base.AUTH_USER_MODEL, related_name="partner_primary_contacts", blank=True)
-  billing_contact_list= models.ManyToManyField(base.AUTH_USER_MODEL, related_name="partner_billing_contacts", blank=True)
-  technical_contact_list= models.ManyToManyField(base.AUTH_USER_MODEL, related_name="partner_technical_contacts", blank=True)
-  shipping_contact_list= models.ManyToManyField(base.AUTH_USER_MODEL, related_name="partner_shipping_contacts", blank=True)
+  barcode             = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
+  company_docs        = models.ForeignKey(CompanyDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
+  primary_contacts    = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="partner_primary_contacts", blank=True)
+  billing_contacts    = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="partner_billing_contacts", blank=True)
+  technical_contacts  = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="partner_technical_contacts", blank=True)
+  shipping_contacts   = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="partner_shipping_contacts", blank=True)
   dba_name 			      = models.CharField(max_length=200)
   legal_name 		      = models.CharField(max_length=200)
   domain              = models.CharField(max_length=100)
@@ -55,10 +75,9 @@ class Partner(CommonCompanyBase):
 									      blank=True, validators=[RegexValidator(r'^\d{1,9}$')])
   profile_img 	      = models.ImageField(max_length=100, upload_to='partners/', null=True, blank=True)
   logo 	              = models.ImageField(max_length=100, upload_to='partners/logo', null=True, blank=True)
-  barcode             = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
-  company_docs        = models.ForeignKey(CompanyDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
+  
 
   objects	= PartnerManager()
 
   def __str__(self):
-    return self.datacom.dba_name
+    return str(self.dba_name)

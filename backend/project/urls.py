@@ -13,7 +13,12 @@ from users.views import (UserProfileViewset,
                         UserBarcodeViewSet, 
                         AlternativeLoginAPIView, 
                         ChangePasswordAPI,
-                        ManagerBarcodeApprovalAPIView, )
+                        ManagerBarcodeApprovalAPIView, 
+                        ContentTypeViewSet, 
+                        GroupViewSet,
+                        UserGroupViewSet,
+                        UserPermissionsViewSet, 
+                        BasePermissionsViewSet, )
 from companies.views import CompanyViewset
 from customers.views import CustomerViewset
 from employees.views import EmployeeViewset, PositionsViewset
@@ -30,14 +35,10 @@ from commons2.views import (CountryViewset,
                             PostalCodeViewset, 
                             TimezonesViewset, 
                             HolidayViewset, 
-                            ContentTypeViewSet, 
-                            UserGroupViewSet,
-                            UserPermissionsViewSet, 
-                            BasePermissionsViewSet, 
                             ShippingViewSet, 
                             DepartmentViewset, 
                             GeneralSettingsViewset, )
-from commons.views import IndustryViewset
+from commons.views import IndustryViewset, CommonBarcodeViewset, UOMWeightViewset, UOMDimensionViewset
 from attendance.views import (ShiftViewset, 
                             BusinessOperatingHoursViewset, 
                             AttendanceSettingsViewset, 
@@ -60,13 +61,15 @@ from humanresources.views import (BenefitsSerializerViewset,
                                 EmployeeDocumentsViewset, 
                                 CompanyDocumentsViewset, 
                                 MileageReimbursementViewset, )
+from retailpos.views import OpenAndCloseTillViewset
 
 router = routers.DefaultRouter()
 
 router.register(r'django/attendance-settings', AttendanceSettingsViewset)
-router.register(r'django/blogs', BlogViewset)
-router.register(r'django/benefits', BenefitsSerializerViewset)
 router.register(r'django/bankacct', ACHAccountViewset)
+router.register(r'django/barcodes', CommonBarcodeViewset)
+router.register(r'django/benefits', BenefitsSerializerViewset)
+router.register(r'django/blogs', BlogViewset)
 router.register(r'django/cardprocessingacct', CardProcessingAccountViewset)
 router.register(r'django/calendars', CalendarViewset)
 router.register(r'django/city', CityViewset)
@@ -81,7 +84,8 @@ router.register(r'django/departments', DepartmentViewset)
 router.register(r'django/employees', EmployeeViewset)
 router.register(r'django/employee-docs', EmployeeDocumentsViewset)
 router.register(r'django/general-settings', GeneralSettingsViewset)
-router.register(r'django/groups', UserGroupViewSet)
+router.register(r'django/groups', GroupViewSet)
+router.register(r'django/groups-users', UserGroupViewSet)
 router.register(r'django/holidays', HolidayViewset)
 router.register(r'django/industries', IndustryViewset)
 router.register(r'django/invbarcodes', InvBarcodesViewset)
@@ -108,77 +112,15 @@ router.register(r'django/shipping', ShippingViewSet)
 router.register(r'django/sales-offices', SalesOfficeViewset)
 router.register(r'django/sales-tax', SalesTaxViewset)
 router.register(r'django/shifts', ShiftViewset)
+router.register(r'django/open-till', OpenAndCloseTillViewset)
 router.register(r'django/timezones', TimezonesViewset)
 router.register(r'django/time-cards', TimeCardViewset)
+router.register(r'django/uom-weight', UOMWeightViewset)
+router.register(r'django/uom-dimension', UOMDimensionViewset)
 router.register(r'django/users', UserProfileViewset)
 router.register(r'django/user-barcodes', UserBarcodeViewSet)
 router.register(r'django/vendors', VendorViewset)
 router.register(r'django/warehouses', WarehouseViewset)
-
-
-# router = routers.DefaultRouter()
-# #VTHPP
-# router.register(r'django/bankacct', ACHAccountViewset)
-# router.register(r'django/cardprocessingacct', CardProcessingAccountViewset)
-# router.register(r'django/cardtrans', CardTransactionViewset)
-# router.register(r'django/cardtransres', CardTransactionResponseViewset)
-# router.register(r'django/creditcard', CreditCardViewset)
-# #commons
-# router.register(r'django/region', RegionViewset)
-# router.register(r'django/city', CityViewset)
-# router.register(r'django/timezones', TimezonesViewset)
-# router.register(r'django/shipping', ShippingViewSet)
-# #Users Base
-# router.register(r'django/groups', UserGroupViewSet)
-# router.register(r'django/contenttype', ContentTypeViewSet)
-# router.register(r'django/permission', BasePermissionsViewSet)
-# router.register(r'django/permissions', UserPermissionsViewSet)
-# router.register(r'django/users', UserProfileViewset)
-# router.register(r'django/user-barcodes', UserBarcodeViewSet)
-# #Employees
-# router.register(r'django/employees', EmployeeViewset)
-# router.register(r'django/positions', PositionsViewset)
-# #Inventory
-# router.register(r'django/invbarcodes', InvBarcodesViewset)
-# router.register(r'django/inventory', InventoryViewset)
-# router.register(r'django/inventorygallery', InvGalleryViewset)
-# router.register(r'django/invcategoryclass', InvCategoryClassViewset)
-# router.register(r'django/invcategory', InvCategoryViewset)
-# router.register(r'django/inventory-labels', InvLabelViewSet)
-# #Companies
-# router.register(r'django/companies', CompanyViewset)
-# router.register(r'django/departments', DepartmentViewset)
-# #Sales offices
-# router.register(r'django/sales-offices', SalesOfficeViewset)
-# #Warehouses
-# router.register(r'django/warehouses', WarehouseViewset)
-# #Blog
-# router.register(r'django/blogs', BlogViewset)
-# #Leads
-# router.register(r'django/leads', LeadViewset)
-# #Partners
-# router.register(r'django/partners', PartnerViewset)
-# #Vendor
-# router.register(r'django/vendors', VendorViewset)
-# #Customers
-# router.register(r'django/customers', CustomerViewset)
-# #Datacom
-# router.register(r'django/datacom', DatacomViewset)
-# #Attendance
-# router.register(r'django/holidays', HolidayViewset)
-# router.register(r'django/shifts', ShiftViewset)
-# router.register(r'django/operating-hours', OperatingHoursViewset)
-# router.register(r'django/attendance-settings', AttendanceSettingsViewset)
-# router.register(r'django/time-cards', TimeCardViewset)
-# router.register(r'django/leave-request', LeaveRequestViewset)
-# router.register(r'django/pay-cycles', PayCyclesViewset)
-# #Calendars
-# router.register(r'django/calendars', CalendarViewset)
-# #Invoices
-# router.register(r'django/Invoices', InvoiceViewset)
-
-
-
 
 
 urlpatterns = [

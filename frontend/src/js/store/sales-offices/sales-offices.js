@@ -117,6 +117,9 @@ export const SalesOffices = {
 		},
 		GET_SALES_OFFICE_LIST_LENGTH(state) {
 			return state.salesOfficeList.length
+		},
+		GET_SALES_OFFICE_EMPLOYEE_IDS(state) {
+			return state.salesOfficeList.employees;
 		}
 	}
 };

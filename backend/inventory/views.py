@@ -25,9 +25,7 @@ from .models import Inventory, InventoryBarcode, InventoryImage, InvCategoryClas
 from .mixins import CreateListMixin
 from .permissions import CanViewInventory
 
-
 class InventoryViewset(CreateListMixin, viewsets.ModelViewSet):
-    '''Inventory Items'''
     serializer_class = InventorySerializer
     # queryset = Inventory.objects.all().filter(is_active=True)
     queryset = Inventory.objects.all()
@@ -37,9 +35,7 @@ class InventoryViewset(CreateListMixin, viewsets.ModelViewSet):
     filterset_fields = ['name', 'category__id', 'datacom__id', 'partner__id', 'company__id', 'vendor__id', 'warehouse_loc__id']
     search_fields = ['name', 'category__id', 'datacom__id', 'partner__id', 'company__id', 'vendor__id', 'warehouse_loc__id']
 
-
 class InvCategoryClassViewset(viewsets.ModelViewSet):
-    '''Inventory Items'''
     serializer_class = InvCategoryClassSerializer
     queryset = InvCategoryClass.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -47,35 +43,34 @@ class InvCategoryClassViewset(viewsets.ModelViewSet):
     search_fields = ['name']
 
 class InvCategoryViewset(viewsets.ModelViewSet):
-    '''Inventory Items'''
     serializer_class = InvCategorySerializer
     queryset = InvCategory.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['name']
     search_fields = ['name']
 
-
-
-# IMAGE GALLERY
 class InvGalleryViewset(viewsets.ModelViewSet):
-    '''Inventory Items'''
+    #Only make GET request on id when inv item is being loaded in datatable
     serializer_class = InventoryGallerySerializer
     queryset = InventoryImage.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['product']
-    search_fields = ['product']
+    filterset_fields = ['product__id', 'id']
+    search_fields = ['product__id', 'id']
+    ordering_fields = ['date_added']
+    ordering = ['date_added']
 
  
 class InvBarcodesViewset(viewsets.ModelViewSet):
-    ''' Inventory Barcodes '''
     serializer_class = InventoryBarcodeSerializer
     queryset = InventoryBarcode.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['title']
-    search_fields = ['title']
+    filterset_fields = ['id', 'title', 'barcode_number']
+    search_fields = ['id', 'title', 'barcode_number']
+    ordering_fields = ['id']
+    ordering = ['id']
+
 
 class InvLabelViewSet(viewsets.ModelViewSet):
-    ''' Inventory Barcodes '''
     serializer_class = InventoryLabelSerializer
     queryset = InventoryLabels.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]

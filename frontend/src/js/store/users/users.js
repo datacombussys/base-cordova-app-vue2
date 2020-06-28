@@ -97,7 +97,7 @@ export const Users = {
 						commit('PUSH_NEW_EE_LIST', response.data);
 						dispatch('updateNotification', response);
 
-						return resolve(response.data);
+						return resolve(response);
 					}
 				}).catch(error => {
 

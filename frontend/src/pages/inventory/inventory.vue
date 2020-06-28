@@ -17,7 +17,7 @@
 					<div>
 						<!-- el2 -->
 
-						<!-- User Image and Common Details -->
+						<!-- INventory Image and Common Details -->
 						<f7-block class="display-block full-height">
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
@@ -29,6 +29,7 @@
 											<f7-link sheet-open=".inventory-image">
 												<b-icon class="edit-icon" icon="pencil"></b-icon>
 											</f7-link>
+											<profile-image-popup-component :profileData="invForm"></profile-image-popup-component>
 										</f7-col>
 									</f7-row>
 								</f7-card-header>
@@ -43,11 +44,11 @@
 									<f7-row v-if="invForm.profile_img" class="display-flex justify-content-center">
 										<img :src="invForm.profile_img" style="width:150px;height:150px;" alt="" />
 									</f7-row>
-									<f7-row>
+									<f7-row v-if="invForm.barcode">
 										<f7-col class="text-align-center margin-top">
-											<img :src="barcode.image" style="width:150px;" alt="Please load item" />
+											<img :src="invForm.barcode.image" style="width:150px;" alt="Please load item" />
 											<div>
-												{{ barcode.barcode_number }}
+												{{ invForm.barcode.barcode_number }}
 											</div>
 										</f7-col>
 									</f7-row>
@@ -119,7 +120,7 @@
 							<!--<f7-col>
                   <f7-button fill @click="testingMethod" class="bg-color-blue">TestButton</f7-button>
                 </f7-col>-->
-							<f7-block></f7-block>
+							<f7-block class="padding margin"></f7-block>
 						</f7-block>
 					</div>
 				</div>
@@ -427,6 +428,7 @@
 													<f7-col width="20">
 														<p>Edit Categories:</p>
 														<f7-button small popup-open=".category-popup" fill>Edit</f7-button>
+														<inventory-categories-popup-component :categoryData="invCategory" :categorySettings="categorySettings"></inventory-categories-popup-component>
 													</f7-col>
 													<f7-col width="50">
 														<p>SKU:</p>
@@ -647,15 +649,15 @@
 														<f7-list-item :title="invForm.height"></f7-list-item>
 													</f7-col>
 												</f7-row>
-												<f7-row>
+												<f7-row v-if="invForm.barcode">
 													<f7-block-title class="full-width" medium>Barcode Details</f7-block-title>
 													<f7-col width="50">
 														<p>Barcode:</p>
-														<img :src="barcode.image" style="width:200px;" :alt="barcode.barcode_number" />
+														<img :src="invForm.barcode.image" style="width:200px;" :alt="invForm.barcode.barcode_number" />
 													</f7-col>
 													<f7-col width="50">
 														<p>Barcode Number:</p>
-														<div>{{ barcode.barcode_number }}</div>
+														<div>{{ invForm.barcode.barcode_number }}</div>
 													</f7-col>
 												</f7-row>
 											</f7-list>
@@ -879,14 +881,14 @@
 												</f7-row>
 												<f7-row>
 													<f7-block-title class="full-width" medium>Barcode Details</f7-block-title>
-													<f7-col width="50">
+													<f7-col width="50" v-if="invForm.barcode">
 														<p>Barcode:</p>
-														<img :src="barcode.image" style="width:200px;" :alt="barcode.barcode_number" />
+														<img :src="invForm.barcode.image" style="width:200px;" :alt="invForm.barcode.barcode_number" />
 													</f7-col>
 													<f7-col width="50">
 														<p>Generate New Barcode:</p>
-														<f7-button fill @click="generateNewBarcode" disabled>Generate New Barcode</f7-button>
-														<f7-button class="margin-top" fill @click="generateNewBarcode" disabled
+														<f7-button fill disabled>Generate New Barcode</f7-button>
+														<f7-button class="margin-top" fill disabled
 															>Assign New Barcode</f7-button
 														>
 													</f7-col>
@@ -1346,6 +1348,7 @@
 											<f7-row class="full-width">
 												<f7-col width="50" class="align-self-flex-end">
 													<f7-block-title class="full-width">Image Gallery</f7-block-title>
+													<image-gallery-upload-sheet-component :galleryUploadSettings="galleryUploadSettings"></image-gallery-upload-sheet-component>
 												</f7-col>
 											</f7-row>
 										</f7-card-header>
@@ -1353,7 +1356,7 @@
 											<!-- Begin Images Gallery Section -->
 											<f7-row v-if="checkedRows.length != 0">
 												<f7-col>
-													<f7-button sheet-open=".gallery-images">Add Images</f7-button>
+													<f7-button @click="galleryUploadSettings.gallerySheetOpened=true">Add Images</f7-button>
 												</f7-col>
 											</f7-row>
 											<f7-row v-if="checkedRows.length === 0">
@@ -1767,312 +1770,8 @@
 		</f7-sheet>
 		<!-- END Bulk Upload Sheet -->
 
-		<!-- Product Image Upload Sheet -->
-		<f7-sheet
-			class="inventory-image image-sheet"
-			:opened="invImageSheetOpened"
-			@sheet:closed="invImageSheetOpened = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content class="padding-bottom">
-				<section>
-					<div class="block">
-						<button class="button" fill @click="activeStep = 0">Start Over</button>
-					</div>
-					<b-steps
-						v-model="activeStep"
-						:animated="isAnimated"
-						:has-navigation="hasNavigation"
-						:icon-prev="prevIcon"
-						:icon-next="nextIcon"
-					>
-						<b-step-item label="Choose Image" :clickable="isStepsClickable">
-							<div class="left" v-if="uploadMessage" :class="`message ${error ? 'is-danger' : 'is-success'}`">
-								<div class="message-body">{{ uploadMessage }}</div>
-							</div>
-							<f7-block>
-								<form enctype="multipart/form-data">
-									<f7-row class="justify-content-center">
-										<div class="dropzone">
-											<input type="file" name="invArray" @change="selectFile" ref="invFile" class="input-field" />
 
-											<p v-if="!uploading" class="call-to-action">
-												Drop file here
-											</p>
-											<p v-if="uploading" class="progress-bar is-primary" :value="progress" max="100">
-												<progress class="progress"> </progress>
-												{{ progress }} %
-											</p>
-										</div>
-										<f7-row>
-											<f7-col width="100">
-												<div v-if="file" class="file-name" style="font-size:3rem;">{{ file.name }}</div>
-											</f7-col>
-										</f7-row>
-									</f7-row>
-								</form>
-							</f7-block>
-						</b-step-item>
 
-						<b-step-item label="Resize Image" :clickable="isStepsClickable" :type="{ 'is-success': isProfileSuccess }">
-							<template>
-								<f7-row>
-									<f7-col width="50">
-										<!-- Note that 'ref' is important here (value can be anything). read the description about `ref` below. -->
-										<vue-croppie
-											ref="croppieRefInv"
-											:enableOrientation="true"
-											:boundary="{ width: 500, height: 500 }"
-											:viewport="{ width: 300, height: 300, type: 'circle' }"
-											@result="result"
-											@update="update"
-										>
-										</vue-croppie>
-										<f7-button fill @click="crop()">Crop</f7-button>
-									</f7-col>
-									<f7-col width="50">
-										<!-- the result -->
-										<f7-row v-if="cropped">
-											<f7-col class="display-flex justify-content-center">
-												<img v-bind:src="cropped" />
-											</f7-col>
-										</f7-row>
-									</f7-col>
-								</f7-row>
-							</template>
-						</b-step-item>
-
-						<b-step-item label="Upload Image" :clickable="isStepsClickable" disabled>
-							<!-- the result -->
-							<f7-row v-if="cropped">
-								<f7-col class="display-flex justify-content-center">
-									<img v-bind:src="cropped" />
-								</f7-col>
-							</f7-row>
-							<f7-row v-if="!cropped">
-								<f7-col class="display-flex justify-content-center">
-									<p style="font-size: 30px;">You have not cropped an image. Please go back and click "Cropped".</p>
-								</f7-col>
-							</f7-row>
-						</b-step-item>
-
-						<!-- navigation Links -->
-						<template v-if="customNavigation" slot="navigation" slot-scope="{ previous, next }">
-							<f7-row class="display-flex justify-content-space-around">
-								<f7-col width="25" class="imageNavButtons">
-									<b-button
-										v-if="!previous.disabled"
-										class="display-flex justify-content-center"
-										outlined
-										type="is-danger"
-										icon-pack="mdi"
-										icon-left="arrow-left-box"
-										size="is-large"
-										:disabled="previous.disabled"
-										@click.prevent="previous.action"
-									>
-										<span>Previous</span>
-									</b-button>
-								</f7-col>
-								<f7-col width="25" class="imageNavButtons">
-									<b-button
-										v-if="!next.disabled"
-										class="display-flex justify-content-center"
-										outlined
-										type="is-success"
-										icon-pack="mdi"
-										size="is-large"
-										icon-left="arrow-right-box"
-										:disabled="next.disabled"
-										@click.prevent="next.action"
-									>
-										<span>Next</span>
-									</b-button>
-									<f7-button
-										class="display-flex justify-content-center"
-										v-if="next.disabled"
-										large
-										fill
-										sheet-close
-										@click.prevent="sendFile"
-										>Submit</f7-button
-									>
-								</f7-col>
-							</f7-row>
-						</template>
-						<!-- END navigation Links -->
-					</b-steps>
-				</section>
-				<f7-block class="margin-bottom"></f7-block>
-			</f7-page-content>
-			<!-- END Product Sheet Content -->
-		</f7-sheet>
-		<!-- END Image Upload Sheet -->
-
-		<!-- Product Image Gallery Content -->
-		<f7-sheet
-			class="gallery-images image-sheet"
-			:opened="gallerySheetOpened"
-			@sheet:closed="gallerySheetOpened = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content>
-				<div class="left" v-if="uploadMessage" :class="`message ${error ? 'is-danger' : 'is-success'}`">
-					<div class="message-body">{{ uploadMessage }}</div>
-				</div>
-				<f7-block>
-					<form enctype="multipart/form-data">
-						<f7-row class="justify-content-center">
-							<div class="dropzone">
-								<input
-									type="file"
-									name="invArray"
-									multiple
-									@change="selectFiles"
-									ref="galleryfiles"
-									class="input-field"
-								/>
-								<p v-if="!uploading" class="call-to-action">
-									Drop files here
-								</p>
-							</div>
-						</f7-row>
-						<f7-row>
-							<f7-col>
-								<f7-block>
-									<div class="field">
-										<f7-row calss="full-width" v-if="files.length != 0">
-											<f7-col width="20">
-												<p>Name</p>
-											</f7-col>
-											<f7-col width="20">
-												<p class="text-align-center">Title</p>
-											</f7-col>
-											<f7-col width="30">
-												<p class="text-align-center">Subtitle</p>
-											</f7-col>
-											<f7-col width="20">
-												<p class="text-align-center">Progress</p>
-											</f7-col>
-											<f7-col width="10" class="level-right">
-												<p>Delete</p>
-											</f7-col>
-										</f7-row>
-										<div
-											:class="`level ${file.invalidMessage && 'has-text-danger'}`"
-											v-for="(file, index) in files"
-											:key="index"
-										>
-											<f7-row class="full-width">
-												<f7-col width="20">
-													<div class="level-left">
-														{{ file.name }}
-														<span v-if="file.invalidMessage">&nbsp; - {{ file.invalidMessage }}</span>
-													</div>
-												</f7-col>
-												<f7-col width="20">
-													<f7-input
-														:value="file.title"
-														@input="file.title = $event.target.value"
-														type="text"
-													></f7-input>
-												</f7-col>
-												<f7-col width="30">
-													<f7-input
-														:value="file.sub_title"
-														@input="file.sub_title = $event.target.value"
-														type="text"
-													></f7-input>
-												</f7-col>
-												<f7-col width="20">
-													<p v-if="uploading" class="progress-bar is-primary" :value="progress" max="100">
-														<progress class="progress"></progress>
-														{{ progress }} %
-													</p>
-												</f7-col>
-												<f7-col width="10">
-													<div class="level-right">
-														<a
-															@click.prevent="
-																files.splice(index, 1);
-																uploadFiles.splice(index, 1);
-															"
-															class="delete"
-														>
-														</a>
-													</div>
-												</f7-col>
-											</f7-row>
-										</div>
-									</div>
-								</f7-block>
-							</f7-col>
-						</f7-row>
-						<f7-row class="margin">
-							<f7-col width="50">
-								<f7-button fill @click.prevent="sendFiles">Submit</f7-button>
-							</f7-col>
-							<f7-col width="50">
-								<f7-button fill @click.prevent="testingMethod">Test</f7-button>
-							</f7-col>
-						</f7-row>
-					</form>
-				</f7-block>
-			</f7-page-content>
-			<!-- END Product Image Gallery Content -->
-		</f7-sheet>
-
-		<!-- Categories Popup -->
-		<f7-popup class="category-popup" :opened="catPopupOpened" @popup:closed="catPopupOpened = false">
-			<f7-page>
-				<f7-navbar title="Inventory Categories">
-					<f7-nav-right>
-						<f7-link popup-close>Close</f7-link>
-					</f7-nav-right>
-				</f7-navbar>
-				<f7-block>
-					<f7-row>
-						<f7-col width="50">
-							<f7-list>
-								<p>New Category:</p>
-								<f7-list-input :value="invCategory.name" @input="invCategory.name = $event.target.value" type="text">
-								</f7-list-input>
-							</f7-list>
-							<f7-button class="margin" @click="addCategory">Add Category</f7-button>
-						</f7-col>
-						<f7-col width="50">
-							<p class="field-title">All Departments</p>
-							<div
-								class="full-width display-flex justify-content-space-around"
-								v-for="(category, index) in getInventoryCategories"
-								:key="index"
-							>
-								<div class="margin-half full-width">{{ category.name }}</div>
-								<div class="delete" @click="deleteCategory(category.name)"></div>
-							</div>
-						</f7-col>
-					</f7-row>
-					<f7-row>
-						<!--<f7-col width="100">
-                <f7-button @click="saveCategories" fill>Save Categories</f7-button>
-              </f7-col>-->
-					</f7-row>
-				</f7-block>
-			</f7-page>
-		</f7-popup>
-		<!-- END Categories Popup -->
 	</f7-page>
 </template>
 
@@ -2094,6 +1793,9 @@ import { LocaleMixin } from "@/mixins/businesses/locale-mixins";
 import navBarComponent from "@/components/universal/navbar-component.vue";
 import profileCardComponent from "@/components/layout-elements/profile-card-component.vue";
 import f7DatePickerComponent from '@/components/layout-elements/date-and-time/f7-datepicker-component.vue';
+import inventoryCategoriesPopupComponent from "@/pages/inventory/components/categories-popup-component.vue";
+import profileImagePopupComponent from "@/components/universal/profile-image/profile-image-sheet-component.vue";
+import imageGalleryUploadSheetComponent from "@/pages/inventory/components/product-image-gallery-sheet-component.vue";
 
 export default {
 	name: "inventoryItem",
@@ -2105,6 +1807,9 @@ export default {
 		"nav-bar-component": navBarComponent,
 		"profile-card-component": profileCardComponent,
 		"f7-date-picker-component": f7DatePickerComponent,
+		"inventory-categories-popup-component": inventoryCategoriesPopupComponent,
+		"profile-image-popup-component": profileImagePopupComponent,
+		"image-gallery-upload-sheet-component": imageGalleryUploadSheetComponent
 	},
 	data() {
 		return {
@@ -2122,35 +1827,36 @@ export default {
 				type: "profile",
 				level: 5
 			},
+			//Category Popup Component
+			invCategory: {
+				id: null,
+				name: null
+			},
+			categorySettings: {
+				catPopupOpened: false,
+			},
+			//IMage Gallery Popup
+			galleryUploadSettings: {
+				gallerySheetOpened: false,
+			},
+
 			//Scrollbar Settings
 			settings: {
 				maxScrollbarLength: 120
 			},
+
 			//Page Setting for CRUD Display
 			editProfile: false,
 			hideUpdateItemButtons: false,
 			hideCreateItem: false,
 			hideSaveItem: true,
 			//Popups and Sheets
-			catPopupOpened: false,
-			invImageSheetOpened: false,
-			gallerySheetOpened: false,
 			invBulkSheetOpened: false,
 			// CSV Upload
 			csv: [],
-			//Image Cropping
-			cropped: null,
-			image: null,
-			altIMage: "/static/test.png",
-			//Image Uploading
-			fileURL: null,
-			file: "",
-			files: [],
-			uploadFiles: [],
-			uploadedFiles: [],
-			progress: 0,
-			uploading: false,
-			uploadMessage: "",
+	
+			
+
 			error: false,
 			//Buefy Tabs
 			activeTab: 0,
@@ -2173,15 +1879,9 @@ export default {
 			sortIconSize: "is-small",
 			currentPage: 1,
 			perPage: 10,
-			//Begin Image Processing Wizard Template
-			activeStep: 0,
-			isAnimated: true,
-			hasNavigation: true,
-			customNavigation: true,
-			prevIcon: "chevron-left",
-			nextIcon: "chevron-right",
-			isStepsClickable: false,
-			isProfileSuccess: false,
+
+
+
 			//Inventory Form Items
 			categories: [],
 			saleExpireCalendar: [],
@@ -2192,6 +1892,7 @@ export default {
 				vendor: null,
 				warehouse_loc: null,
 				category: null,
+				barcode: null,
 				id: null,
 				name: null,
 				global_id: null,
@@ -2237,20 +1938,12 @@ export default {
 				height: 0,
 				uom_dimensions: null
 			},
-			invCategory: {
-				id: null,
-				name: null
-			},
 			invImgGallery: {
 				files: null,
 				title: null,
 				sub_title: ""
 			},
-			barcode: {
-				title: null,
-				image: null,
-				barcode_number: null
-			}
+
 		};
 	},
 	methods: {
@@ -2259,25 +1952,9 @@ export default {
 			console.log("this.invForm", this.invForm);
 
 			console.log("this.Auth.axiosHeader", this.Auth.axiosHeader);
-			this.$store.dispatch("getInventoryList");
+			this.$store.dispatch("GETInventoryList");
 		},
-		addCategory() {
-			console.log("adding new category");
-			var categoryObj = this.invCategory;
-			delete categoryObj.id;
-			this.$store.dispatch("createCategories", categoryObj);
-		},
-		saveCategories() {
-			console.log("this.categories", this.categories);
-			this.$store.dispatch("createCategories", this.categories);
-		},
-		deleteCategory(name) {
-			//I need to do a search for inventory items that already have a category attached to them that are being deleted
-			//Ask the user if they want to delete the categories from the items first. Otherwise prevent deletion.
-			var categoryObj = this.Inventory.inventoryList.find((elem) => elem.name === name);
-			console.log("categoryObj", categoryObj);
-			this.$store.dispatch("deleteInventoryCategories", categoryObj.id);
-		},
+	
 		showEditProfile() {
 			this.editProfile = true;
 			this.hideUpdateItemButtons = true;
@@ -2311,7 +1988,6 @@ export default {
 			this.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
-			this.uploadMessage = "";
 			this.file = "";
 			this.cropped = "";
 			this.fileURL = "";
@@ -2340,8 +2016,8 @@ export default {
 			console.log("newitem", newitem);
 			//Clear Form and Reset to Starting Viewing Position
 			console.log("createInventoryandClose All Done");
-			await this.clearFormData();
-			this.resetViewtoHome();
+			// await this.clearFormData();
+			// this.resetViewtoHome();
 		},
 		async createInventory() {
 			this.$store.commit("RESET_ERRORS");
@@ -2361,7 +2037,7 @@ export default {
 				console.log("this.invForm pre-Action", this.invForm);
 
 				let newInvForm = await this.setUserPlatformPOST(this.invForm);
-				let response = await this.$store.dispatch("createInventory", newInvForm);
+				let response = await this.$store.dispatch("POSTInventory", newInvForm);
 				this.$f7.preloader.hide();
 
 				return response;
@@ -2370,9 +2046,7 @@ export default {
 			}
 		},
 		async refreshInventory() {
-			console.log("this.getInventory", this.getInventory);
-			await this.$store.dispatch("getInventoryList");
-			this.getInventory;
+			await this.$store.dispatch("GETInventoryList");
 		},
 		// Populate Fields for editing in Browser
 		editInventoryItem(invID) {
@@ -2424,29 +2098,16 @@ export default {
 		},
 		//Get images including Barcode
 		async getInventoryImages() {
+			//I need to reconfigure this to only get the images for the selected Inventory Item
 			try {
 				//Get Inventory Gallery Images for ID
 				console.log("Get Inv Gallery Imgs this.invForm", this.invForm);
-				//Wrong ID
-				this.$store.dispatch("getInventoryImages", this.invForm.id);
-				//Not working
-				this.$forceUpdate();
-				//Update Barcode and Inventory Profile Image
-				if (this.getInventoryBarcodes.length === 0) {
-					return "There are no barcodes";
-				}
-				if (this.getInventoryBarcodes.length != 0) {
-					console.log("this.Inventory.inventoryBarcodes", this.Inventory.inventoryBarcodes);
-					let response = await this.$store.dispatch("getInventoryBarcodesbyId", this.invForm.id);
-					console.log("response", response);
-					this.barcode.image = response["image"];
-					this.barcode.barcode_number = response["barcode_number"];
-				}
+				this.$store.dispatch("GETInventoryImagesById", this.invForm);
+
 			} catch (error) {
 				console.log("getInventoryImages Try Catch error", error);
 			}
 		},
-		generateNewBarcode() {},
 		//Make the PUT request to update datebase instance from updated form Data
 		putInventoryItem() {
 			//House Cleaning
@@ -2476,7 +2137,7 @@ export default {
 			// remove profile_img from form
 			delete this.invForm.profile_img;
 			console.log("this.invForm", this.invForm);
-			this.$store.dispatch("updateInventoryItem", this.invForm);
+			this.$store.dispatch("PATCHInventoryItem", this.invForm);
 			//I may have to refresh the database Inventory items
 		},
 		//Set inventory item to inactive instead of deleting instance
@@ -2512,7 +2173,7 @@ export default {
 					}
 					//Set to inactive
 					this.invForm.is_active = false;
-					await this.$store.dispatch("deleteInventoryItem", this.invForm);
+					await this.$store.dispatch("DELETEInventoryItem", this.invForm);
 				}
 			}
 			await this.clearFormData();
@@ -2539,11 +2200,7 @@ export default {
 						console.log("key", this.invImgGallery[key]);
 						this.invImgGallery[key] = null;
 					}
-					////Bacode Images
-					for (let key in this.barcode) {
-						console.log("key", this.barcode[key]);
-						this.barcode[key] = null;
-					}
+	
 					//Reset Variables
 					this.invForm.is_active = true;
 
@@ -2556,7 +2213,6 @@ export default {
 
 		// Parsing CSV for Django storage
 		parseDataHistory() {
-			// this.$store.dispatch('firePreloader');
 			console.log("csv", this.csv);
 			var djangoInvObj = [];
 			let mappedData = this.csv.map((data) => {
@@ -2580,202 +2236,12 @@ export default {
 					setTimeout(() => {
 						let chunk = djangoInvObj.splice(0, 1);
 						console.log("chunk", chunk);
-						this.$store.dispatch("createInventory", chunk);
+						this.$store.dispatch("POSTInventory", chunk);
 					}, 2000 * i);
 				})(i++);
 			}
-			// this.$store.dispatch('closePreloader');
 		},
-		//Profile Image
-		selectFile(e) {
-			//Get image URL and send to bind method
-			console.log("Event", e);
-			let newImageFile = e.target.files[0];
-			var reader = new FileReader();
-			reader.readAsDataURL(newImageFile);
-			reader.onload = (e) => {
-				this.fileURL = e.target.result;
-				this.bind();
-			};
-			//Get Image object and validate then send
-			this.file = this.$refs.invFile.files[0];
-			const allowedFileTypes = ["image/jpeg", "image/png", "image/gif"];
-			const MAX_SIZE = 2000000;
-			const tooLarge = this.file.size > MAX_SIZE;
-
-			if (allowedFileTypes.includes(this.file.type) && !tooLarge) {
-				this.error = false;
-				this.uploadMessage = "";
-			} else {
-				this.error = true;
-				this.uploadMessage = toolarge ? `Too large, Max size is ${MAX_SIZE / 1000}kb` : "Only Images are allowed";
-			}
-		},
-		//Send Profile Image
-		async sendFile() {
-			console.log("this.invForm", this.invForm);
-			console.log("this.cropped", this.cropped);
-			this.invForm.profile_img = this.cropped;
-			let newForm = await this.stripCompanyObject(this.invForm);
-			console.log("newForm from stripCompanyObject", newForm);
-			//I Need to add header information
-			var token = localStorage.getItem("token");
-			console.log("inventory token", token);
-			try {
-				let response = await axios({
-					method: "put",
-					headers: {
-						"Content-Type": "application/json;charset=UTF-8",
-						"Access-Control-Allow-Origin": "*",
-						Authorization: "Token " + token
-					},
-					url: "/django/inventory/" + newForm.id + "/",
-					data: newForm
-				}).then((response) => {
-					console.log("Django Image PUT response", response);
-					response.type = "Update Inventory Profile Image";
-					this.$store.dispatch("updateNotification", response);
-					this.$store.dispatch("getInventoryList");
-				});
-				// this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-				this.activeStep = 0;
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-		selectFiles() {
-			const files = this.$refs.galleryfiles.files;
-			this.uploadFiles = [...this.files, ...files];
-			this.files = [
-				...this.files,
-				..._.map(files, (key) => ({
-					name: key.name,
-					size: key.size,
-					type: key.type,
-					title: key.title,
-					invalidMessage: this.validateFiles(key)
-				}))
-			];
-			console.log("this.files2", this.files);
-			console.log("this.uploadFiles", this.uploadFiles);
-		},
-		sendFiles() {
-			if (this.uploadFiles.length != 0) {
-				console.log("this.uploadFiles.length", this.uploadFiles);
-				var lastUploadFile = this.uploadFiles.pop();
-				console.log("lastUploadFile.pop", lastUploadFile);
-				var lastFile = this.files.pop();
-				console.log("lastFile.pop", lastFile);
-
-				const formData = new FormData();
-				if (this.validateFiles(lastUploadFile) === undefined) {
-					formData.set("image", lastUploadFile);
-					console.log("file[key]", lastUploadFile);
-					console.log("lastFile", lastFile);
-					formData.set("product", this.invForm.id);
-					formData.set("title", lastFile.title);
-					formData.append("sub_title", lastFile.sub_title);
-					formData.append("size", lastFile.size);
-					//Just logging the formData Only
-					for (let pair of formData.entries()) {
-						console.log("formData Pairs", pair[0] + "," + pair[1]);
-					}
-					try {
-						this.uploading = true;
-						axios({
-							method: "put",
-							data: formData,
-							headers: {
-								"Content-Type": "application/json;charset=UTF-8",
-								"Access-Control-Allow-Origin": "*",
-								Authorization: "Token " + token
-							},
-							url: "/django/inventorygallery/" + formdata.id + "/",
-							onUploadProgress: function(e) {
-								this.progress = Math.round((e.loaded * 100) / e.total);
-							}
-						}).then((response) => {
-							console.log("response", response);
-							this.$store.commit("APPEND_GALLERY_LIST", response.data);
-							this.uploadedFiles.push(response.data.file);
-							response.type = "Update Inventory Gallery Images";
-							this.$store.dispatch("updateNotification", response);
-						});
-						this.uploading = false;
-						this.message = "File has been uploaded";
-						formData.delete("file");
-					} catch {
-						this.uploadMessage = err.response.data.error;
-						this.error = true;
-						this.uploading = false;
-					}
-				}
-				console.log("formData2", formData);
-				this.sendFiles();
-			} else {
-				console.log("Else Statement of Images, No more left");
-				console.log("Else, this.invForm", this.invForm);
-				this.getInventoryImages();
-			}
-		},
-		deleteInvGalleryImg(id) {
-			this.$store.dispatch("deleteInventoryImage", id);
-		},
-		validateFiles(file) {
-			const MAX_SIZE = 5400000000;
-			const allowedFileTypes = ["image/jpeg", "image/png", "image/x-png", "image/gif"];
-			if (file.size > MAX_SIZE) {
-				return `Max Size: ${MAX_SIZE / 1000}kb`;
-			}
-			if (!allowedFileTypes.includes(file.type)) {
-				return "Not an Image";
-			}
-		},
-		//Croppie JS Image Cropper
-		bind() {
-			var $$ = this.Dom7;
-			// Bind image to Cropper
-			console.log("this.fileURL from bind()", this.fileURL);
-			this.$refs.croppieRefInv
-				.bind({
-					url: this.fileURL
-				})
-				.then(() => {
-					$$(".cr-slider").attr({ min: 0.15, max: 3 });
-				});
-		},
-		// Croppie JS CALLBACK USAGE
-		crop() {
-			// Here we are getting the result via callback function
-			// and set the result to this.cropped which is being
-			// used to display the result above.
-			let options = {
-				format: "png",
-				circle: true
-			};
-			this.$refs.croppieRefInv.result(options, (output) => {
-				this.cropped = output;
-			});
-		},
-		// Croppie JS EVENT USAGE
-		cropViaEvent() {
-			this.$refs.croppieRefInv.result(options);
-		},
-		result(output) {
-			this.cropped = output;
-		},
-		update(val) {
-			console.log(val);
-		},
-		rotate(rotationAngle) {
-			// Rotates the image
-			this.$refs.croppieRefInv.rotate(rotationAngle);
-		},
+	
 		calcWholesaleMargin(e) {
 			console.log("calcWholesaleMargin");
 			this.invForm.wholesale_price = e.target.value;
@@ -2794,18 +2260,11 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Inventory", "Orders", "Companies", "Errors", "Static", "Users"]),
-		...mapGetters(["getInventory", "getInventoryBarcodes", "getInventoryCategories", "getInventoryGallery"])
+		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST"])
 	},
 	async mounted() {
-		let response = await this.setUserPlatformGET();
-		this.$store.dispatch("getInventoryList", response);
-		this.$store.dispatch("getInventoryBarcodes");
-		this.$store.dispatch("getInventoryCategories");
 
-		// function to put an initial image on the canvas for Croppie.js.
-		this.$refs.croppieRefInv.bind({
-			url: ""
-		});
+		
 	},
 	on: {}
 };
@@ -2836,65 +2295,5 @@ p {
 	font-weight: 900;
 	text-align: left;
 }
-.image-sheet {
-	height: 100vh;
-}
-.file-input {
-	cursor: pointer;
-}
-.file-cta {
-	width: 100vw;
-}
-.file-name {
-	width: 100vw;
-}
-.dropzone {
-	min-height: 200px;
-	padding: 10px 10px;
-	position: relative;
-	cursor: pointer;
-	outline: 2px dashed grey;
-	outline-offset: -10px;
-	width: 90%;
-	background: lightcyan;
-	color: dimgray;
-	&:hover {
-		background: lightblue;
-	}
-	& .call-to-action {
-		font-size: 2rem;
-		text-align: center;
-		padding-top: 50px;
-	}
-}
 
-.input-field {
-	opacity: 0;
-	width: 100%;
-	height: 200px;
-	position: absolute;
-	cursor: pointer;
-}
-.img-container {
-	width: 900px;
-	height: 300px;
-}
-.imageNavButtons {
-	.button {
-		height: 75px;
-		align-content: center;
-	}
-}
-
-//Inventory Image Database
-.inventory-img {
-	display: flex;
-	background: rgb(255, 255, 255);
-	height: 75%;
-	text-align: center;
-	justify-content: center;
-	img {
-		height: 55px;
-	}
-}
 </style>

@@ -9,13 +9,7 @@ import axios from "axios";
 export const Orders = {
   namespace: true,
 	state: {
-    enableCashDisocunt: true,
-    dicountsList: [
-      "5", "10", "15", "20", "25", "30", 
-      "35", "40", "45", "50", "55", "60", 
-      "65", "70", "80", "85", "90", "95", "100"
-    ],
-    transactions: [],
+    transactionList: [],
     orders: [
       {
         id: 1,
@@ -79,8 +73,11 @@ export const Orders = {
 		
   },
 	getters: {
-    getTransactions(state) {
-      return state.transactions;
+    GET_TRANSACTION_LIST(state) {
+      return state.transactionList;
+    },
+    GET_TRANSACTION_LIST_LENGTH(state) {
+      return state.transactionList.length;
     }
 		
   }

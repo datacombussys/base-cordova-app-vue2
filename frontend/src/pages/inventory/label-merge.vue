@@ -354,9 +354,6 @@ import {mapGetters} from 'vuex';
       }
     },
     mounted() {
-      this.$store.dispatch("getInventoryLabels");
-      this.$store.dispatch("getInventoryList");
-      this.$store.dispatch("getInventoryCategories");
     },
     on: {
       pageInit() {

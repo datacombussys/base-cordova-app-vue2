@@ -7,7 +7,6 @@ from django.contrib import auth
 from django.contrib.contenttypes.models import ContentType
 
 from project.settings import base
-# from users.models import MainUserManager
 
 from employees.helper_functions import EmployeeIDs
 from companies.models import Company
@@ -26,7 +25,7 @@ class Position(models.Model):
   name                = models.CharField(max_length=100, null=True, blank=True)
 
   def __str__(self):
-    return self.name
+    return str(self.name)
 
 # Employee Model Manager
 class EmployeeManager(models.Manager):
@@ -36,6 +35,9 @@ class EmployeeManager(models.Manager):
   def create_employee(self, **kwargs):
     '''Create Employee using email address as login id'''
     print("Employee kwargs", kwargs)
+
+    modules_managed_var = kwargs['modules_managed']
+    del kwargs['modules_managed']
 
     employee = self.model(**kwargs)
     eeObj = Employee.objects.all().order_by('id').last()
@@ -52,6 +54,11 @@ class EmployeeManager(models.Manager):
     employee.employee_number = newEmployeeID
     print("employee", employee)
     employee.save(using=self._db)
+
+    if modules_managed_var:
+      employee.modules_managed.set(modules_managed_var)
+
+    employee.save()
 
     return employee
 
@@ -75,8 +82,8 @@ class Employee(models.Model):
   position 			    = models.ForeignKey(Position, on_delete=models.DO_NOTHING, blank=True, null=True) 
   benefits          = models.ForeignKey(Benefits, on_delete=models.DO_NOTHING, blank=True, null=True)
   employee_docs     = models.ForeignKey(EmployeeDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
+  modules_managed   = models.ManyToManyField(ContentType, blank=True)
   is_module_manager = models.BooleanField(default=False, blank=True, null=True)
-  # modules_managed   = models.ManyToManyField(ContentType, blank=True)
   employee_number   = models.CharField(max_length=16, null=True, 
 									    blank=True, validators=[RegexValidator(r'^\d{1,16}$')])
   salary            = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
@@ -106,5 +113,5 @@ class Employee(models.Model):
     ordering = ['user__last_name', 'hire_date']
 
   def __str__(self):
-    return self.user.full_name
+    return str(self.user.full_name)
 

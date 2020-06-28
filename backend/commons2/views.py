@@ -3,7 +3,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, filters, exceptions, viewsets
 
 from django.contrib.auth.models import Permission, Group
-from django.contrib.contenttypes.models import ContentType
 
 from .serializers import ( CountrySerializer, 
                           RegionSerializer, 
@@ -11,18 +10,13 @@ from .serializers import ( CountrySerializer,
                           PostalCodeSerializer, 
                           TimezoneSerializer, 
                           HolidaySerializer, 
-                          ContentTypeSerializer, 
-                          BasePermissionSeializer, 
                           ShippingSerializer, 
-                          PermissionsSerializer, 
-                          GroupsSerializer, 
                           DepartmentSerializer, 
                           GeneralSettingsSerializer, )
 
 from cities.models import Country, Region, City, PostalCode
 
 from .models import TimeZones, Holiday, Shipping, Department, GeneralSettings
-from users.models import UserGroups, UserPermissions
 
 class CountryViewset(viewsets.ModelViewSet):
   serializer_class = CountrySerializer
@@ -73,21 +67,6 @@ class HolidayViewset(viewsets.ModelViewSet):
   ordering_fields = ['date']
   ordering = ['date']
 
-class BasePermissionsViewSet(viewsets.ModelViewSet):
-  serializer_class = BasePermissionSeializer
-  queryset = Permission.objects.all()
-        
-class ContentTypeViewSet(viewsets.ModelViewSet):
-  serializer_class = ContentTypeSerializer
-  queryset = ContentType.objects.all()
-
-class UserGroupViewSet(viewsets.ModelViewSet):
-  serializer_class = GroupsSerializer
-  queryset = UserGroups.objects.all()
-
-class UserPermissionsViewSet(viewsets.ModelViewSet):
-  serializer_class = PermissionsSerializer
-  queryset = UserPermissions.objects.all()
 
 class ShippingViewSet(viewsets.ModelViewSet):
   serializer_class = ShippingSerializer

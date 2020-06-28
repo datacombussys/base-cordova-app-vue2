@@ -3,10 +3,10 @@ from django.utils import timezone
 from project.settings import base
 from django.core.validators import RegexValidator
 
-from datacom.common_models import CommonCompanyBase, CommonBarcode
+from datacom.common_models import CommonCompanyBase
 from datacom.models import Datacom
 from partners.models import Partner
-from commons.models import Industry
+from commons.models import Industry, CommonBarcode
 from humanresources.models import CompanyDocuments
 
 from companies.helper_functions import CompanyIDs
@@ -38,11 +38,29 @@ class CompanyManager(models.Manager):
 
     newCompanyID = CompanyIDs.newCompanyID(self, **kwargs)
     print('newCompanyID', newCompanyID)
+
+    primary_contacts_var = kwargs['primary_contacts']
+    billing_contacts_var = kwargs['billing_contacts']
+    technical_contacts_var = kwargs['technical_contacts']
+    shipping_contacts_var = kwargs['shipping_contacts']
+    
+    del kwargs['primary_contacts']
+    del kwargs['billing_contacts']
+    del kwargs['technical_contacts']
+    del kwargs['shipping_contacts']
     
     company = self.model(**kwargs)
-    company.account_number = newCompanyID
     company.is_active = True
+    company.account_number = newCompanyID
+
     company.save(using=self._db)
+
+    company.primary_contacts.set(primary_contacts_var)
+    company.billing_contacts.set(billing_contacts_var)
+    company.technical_contacts.set(technical_contacts_var)
+    company.shipping_contacts.set(shipping_contacts_var)
+
+    company.save()
 
     return company
 
@@ -51,11 +69,13 @@ class Company(CommonCompanyBase):
   partner             = models.ForeignKey(Partner, on_delete=models.DO_NOTHING, blank=True, null=True)
   datacom             = models.ForeignKey(Datacom, on_delete=models.DO_NOTHING, blank=True, null=True)
   industry            = models.ForeignKey(Industry, on_delete=models.DO_NOTHING, blank=True, null=True)
-  created_by 		      = models.OneToOneField(base.AUTH_USER_MODEL,  related_name="company_creator", on_delete=models.DO_NOTHING, blank=True, null=True)
-  primary_contact_list= models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_primary_contacts", blank=True)
-  billing_contact_list= models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_billing_contacts", blank=True)
-  technical_contact_list= models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_technical_contacts", blank=True)
-  shipping_contact_list= models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_shipping_contacts", blank=True)
+  barcode             = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
+  company_docs        = models.ForeignKey(CompanyDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
+  created_by 		      = models.ForeignKey(base.AUTH_USER_MODEL, related_name="company_creator", on_delete=models.DO_NOTHING, blank=True, null=True)
+  primary_contacts    = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_primary_contacts", blank=True)
+  billing_contacts    = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_billing_contacts", blank=True)
+  technical_contacts  = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_technical_contacts", blank=True)
+  shipping_contacts   = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_shipping_contacts", blank=True)
   domain              = models.CharField(max_length=100)
   dba_name 			      = models.CharField(max_length=200)
   legal_name 		      = models.CharField(max_length=200)
@@ -66,12 +86,11 @@ class Company(CommonCompanyBase):
   products_sold       = models.CharField(max_length=50, blank=True, null=True) 
   profile_img 	      = models.ImageField(max_length=100, upload_to='companies/profile', null=True, blank=True)
   logo 	              = models.ImageField(max_length=100, upload_to='companies/logo', null=True, blank=True)
-  barcode             = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
-  company_docs        = models.ForeignKey(CompanyDocuments, on_delete=models.DO_NOTHING, blank=True, null=True)
+
 
   objects	= CompanyManager()
 
 def __str__(self):
-  return self.dba_name
+  return str(self.dba_name)
 
 

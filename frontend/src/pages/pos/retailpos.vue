@@ -40,7 +40,7 @@
 										</f7-col>
 										<f7-row class="full-width">
 											<f7-col width="100" class="display-flex justify-content-space-between">
-												<div
+												<!-- <div
 													class="tall-button time-box display-flex flex-direction-column"
 													style="width:23%; border: 1px solid gray;"
 												>
@@ -48,7 +48,7 @@
 														<f7-row class="justify-content-center" style="font-size: 1.3em">{{ Static.time }}</f7-row>
 													</strong>
 													<f7-row class="justify-content-center" style="font-size: 1.25em">{{ Static.date }}</f7-row>
-												</div>
+												</div> -->
 												<f7-button
 													class="tall-button padding-half"
 													@click="initSale"
@@ -89,6 +89,9 @@
 											<f7-button class="tall-button padding-half" style="width:23%;" fill>Drawer</f7-button>
 										</f7-col>
 									</f7-row>
+									<f7-row>
+										<open-till-popup-component></open-till-popup-component>
+									</f7-row>
 								</f7-col>
 
 								<f7-col width="33" class="quarterbox-top margin-left-half elevation-10">
@@ -107,8 +110,10 @@
 												class="bottom-button padding-half bg-color-gray"
 												style="width:28%;"
 												fill
-												sheet-open=".retail-POS-Settings"
-											>Settings</f7-button>
+												sheet-open=".retail-POS-Settings">
+												Settings
+											</f7-button>
+											<retail-POS-settings-component :retailSettings="retailSettings"></retail-POS-settings-component>
 											<f7-button
 												class="bottom-button bg-color-black text-color-white padding-half margin-bottom"
 												style="width:28%;"
@@ -311,13 +316,19 @@
 													</f7-row>
 													<f7-row class="full-width">
 														<f7-col width="50" class="display-flex">
-															<f7-button fill class="calc-button" @click="canApplyDiscount">Discount</f7-button>
+															<f7-button fill class="calc-button" @click="canApplyDiscount" popup-open=".discount-popup">Discount</f7-button>
+															<discount-popup-component 
+																:discountSettings="discountSettings" 
+																:discountData="sharedData"
+																:formData="orderForm">
+															</discount-popup-component>
 														</f7-col>
 														<f7-col width="50">
 															<f7-row>
 																<f7-col width="50">
 																	<f7-button fill popup-open=".popup-component" class="calc-button">Popup</f7-button>
-																	<popup-component :popupSettings="popupSettings">
+																	<transaction-response-popup-component :transResponseSettings="transResponseSettings"></transaction-response-popup-component>
+																	
 																		<span slot="title">Transaction Response</span>
 																		<f7-block-title class="classy text-align-center" slot="errorTitle">DECLINED</f7-block-title>
 																		<span slot="errorMsg">
@@ -346,12 +357,15 @@
 													<f7-row class="full-width">
 														<f7-col class="display-flex">
 															<f7-button fill popup-open=".cash-popup" class="bg-color blue calc-button">Cash</f7-button>
+															<cash-payment-popup-component :sharedData="sharedData" :formData="orderForm"></cash-payment-popup-component>
 															<f7-button
 																fill
 																popup-open=".credit-card-popup"
 																class="bg-color blue calc-button"
 															>Credit</f7-button>
+															<credit-card-popup-component :sharedData="sharedData" :formData="orderForm"></credit-card-popup-component>
 															<f7-button fill popup-open=".gift-card-popup" class="bg-color blue calc-button">Gift</f7-button>
+															<gift-card-popup-component :sharedData="sharedData" :formData="orderForm"></gift-card-popup-component>
 														</f7-col>
 													</f7-row>
 												</div>
@@ -418,7 +432,7 @@
 															<!-- your scrollable content -->
 															<f7-list class="no-margin">
 																<f7-list-item
-																	v-for="(item, index) in allItemsInTill"
+																	v-for="(item, index) in sharedData.allItemsInTill"
 																	:key="item.id"
 																	class="pos-till no-margin"
 																	swipeout
@@ -466,13 +480,13 @@
 														<f7-col width="50">
 															<f7-row>
 																<f7-col class="total-text margin-left-half" width="50">
-																	<div v-if="enableGratuity" style="font-size:1em;">Gratuity</div>
+																	<div v-if="retailSettings.enableGratuity" style="font-size:1em;">Gratuity</div>
 																	<div>Tax</div>
 																	<div style="font-size:1em;">Discounts</div>
 																</f7-col>
 																<f7-col class="total-text" width="50">
 																	<div
-																		v-if="enableGratuity"
+																		v-if="retailSettings.enableGratuity"
 																		class="text-align-center"
 																		style="font-size:1em;"
 																	>{{ orderForm.gratuity | formatDollar }}</div>
@@ -557,12 +571,12 @@
 			<f7-view>
 				<f7-page>
 					<f7-navbar title="Datacom Links"></f7-navbar>
-					<f7-list v-if="Inventory.categories.length === 0">
+					<f7-list v-if="GET_INV_CATEGORY_LIST_LENGTH === 0">
 						<f7-list-item view=".view-main" link="#" panel-close title="Categories are Empty"></f7-list-item>
 					</f7-list>
-					<f7-list v-if="Inventory.categories.length != 0">
+					<f7-list v-if="GET_INV_CATEGORY_LIST_LENGTH != 0">
 						<f7-list-item
-							v-for="cat in Inventory.categories"
+							v-for="cat in GET_INV_CATEGORY_LIST"
 							:key="cat.id"
 							view=".view-main"
 							link="#"
@@ -573,953 +587,6 @@
 				</f7-page>
 			</f7-view>
 		</div>
-
-		<!-- Settings Sheet -->
-		<f7-sheet
-			class="retail-POS-Settings"
-			:opened="retailPOSsheetOpened"
-			@sheet:closed="retailPOSsheetOpened = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content>
-				<f7-card>
-					<f7-card-header class="padding">
-						<f7-block-header>POS Settings</f7-block-header>
-					</f7-card-header>
-					<f7-card-content>
-						<f7-list>
-							<f7-row class="padding">
-								<f7-col width="50">
-									<p>Enable Gratuity</p>
-									<f7-list-item>
-										<f7-toggle :checked="enableGratuity" @change="enableGratuity = $event.target.checked"></f7-toggle>
-									</f7-list-item>
-								</f7-col>
-								<f7-col width="50">
-									<p>Enable Cash Discount</p>
-									<f7-list-item>
-										<f7-toggle
-											:checked="Orders.enableCashDisocunt"
-											@change="Orders.enableCashDisocunt = $event.target.checked"
-										></f7-toggle>
-									</f7-list-item>
-								</f7-col>
-							</f7-row>
-							<f7-row class="padding">
-								<f7-col width="50">
-									<p>Enable Gratuity</p>
-									<f7-list-item>
-										<f7-toggle :checked="enableGratuity" @change="enableGratuity = $event.target.checked"></f7-toggle>
-									</f7-list-item>
-								</f7-col>
-								<f7-col width="50">
-									<p>Cash Discount Percentage</p>
-									<f7-list-input
-										type="number"
-										step="0.01"
-										error-message="Numbers only. 2 decimal places."
-										required
-										validate
-										style="background: rgb(216,252,253)"
-									></f7-list-input>
-								</f7-col>
-							</f7-row>
-						</f7-list>
-					</f7-card-content>
-				</f7-card>
-			</f7-page-content>
-		</f7-sheet>
-		<!-- END Settings Sheet -->
-
-		<!-- Discount Page Popup -->
-		<f7-popup
-			class="discount-popup"
-			:opened="DiscountpopupOpened"
-			@popup:closed="
-				DiscountpopupOpened = false;
-				resetDiscounts;
-			"
-		>
-			<f7-page>
-				<f7-row class="popup-header">
-					<f7-col width="90" class="margin-left">
-						<f7-block-title large class="margin-top text-color-white">Discounts</f7-block-title>
-					</f7-col>
-					<f7-col width="10">
-						<f7-link
-							class="level-right margin-right margin-top-half"
-							@click="popupCloseDiscount($event)"
-							icon-size="50"
-							icon-color="white"
-							icon="mdi mdi-close"
-						></f7-link>
-					</f7-col>
-				</f7-row>
-				<f7-row class="full-width margin-bottom">
-					<f7-button class="full-width" @click="resetDiscounts">Start Over</f7-button>
-				</f7-row>
-				<b-steps
-					v-model="activeStepDiscount"
-					:animated="isAnimated"
-					:has-navigation="hasNavigation"
-					:icon-prev="prevIcon"
-					:icon-next="nextIcon"
-				>
-					<!-- Enter Manager Approval -->
-					<b-step-item
-						:visible="!manager.isUserManager"
-						label="Manager Approval"
-						:clickable="isStepsClickable"
-					>
-						<f7-card v-show="allItemsInTill.length === 0">
-							<f7-card-content>
-								<p>There are no items in your till.</p>
-								<p>Click on Sale" or to get started.</p>
-							</f7-card-content>
-						</f7-card>
-						<f7-card
-							v-show="!orderForm.discounts.managerApproved && !manager.invalidCredentials && allItemsInTill.length != 0"
-						>
-							<f7-card-content>
-								<f7-row>
-									<f7-col width="100">
-										<f7-block-header>Barcode + PIN</f7-block-header>
-										<f7-list form>
-											<f7-list-input
-												ref="barcodeInput"
-												id="barcodeInputID"
-												autofocus
-												maxlength="7"
-												:value="manager.loginBarcode.barcode_number"
-												@input="
-													changeFocus('barcodeInput', 'pinInput');
-													manager.loginBarcode.barcode_number = $event.target.value;
-												"
-												label="Barcode Number"
-												type="number"
-												placeholder="10000001"
-											></f7-list-input>
-											<div v-if="Errors.loginErrorData.length != 0">
-												<div
-													class="full-width"
-													v-for="errorArray in Errors.loginErrorData"
-													:key="errorArray.id"
-												>
-													<div
-														class="display-flex justify-content-center"
-														:class="`message ${Errors.loginErrorHandle ? 'is-danger' : 'is-success'}`"
-													>
-														<div v-show="errorArray[0] === 'username'" class="message-body">{{ errorArray[1][0] }}</div>
-													</div>
-												</div>
-											</div>
-											<f7-list-item>
-												<input
-													id="pinInput"
-													class="pin-cell"
-													type="password"
-													placeholder="PIN"
-													maxlength="4"
-													:value="manager.loginBarcode.pin"
-													@input="manager.loginBarcode.pin = $event.target.value"
-													@focus="show"
-													data-layout="numeric"
-												/>
-											</f7-list-item>
-											<vue-touch-keyboard
-												:options="options"
-												v-show="visible"
-												:layout="layout"
-												:cancel="hide"
-												:accept="accept"
-												:input="input"
-											/>
-											<div v-if="Errors.loginErrorData.length != 0">
-												<div
-													class="full-width"
-													v-for="errorArray in Errors.loginErrorData"
-													:key="errorArray.id"
-												>
-													<div
-														class="display-flex justify-content-center"
-														:class="`message ${Errors.loginErrorHandle ? 'is-danger' : 'is-success'}`"
-													>
-														<div v-show="errorArray[0] === 'password'" class="message-body">{{ errorArray[1][0] }}</div>
-													</div>
-												</div>
-											</div>
-											<div v-if="Errors.loginErrorData.length != 0">
-												<div
-													class="full-width display-flex justify-content-center no-padding-no-margin"
-													v-for="errorArray in Errors.loginErrorData"
-													:key="errorArray.id"
-												>
-													<div
-														class="display-flex justify-content-center"
-														:class="`message ${Errors.loginErrorHandle ? 'is-danger' : 'is-success'}`"
-													>
-														<div
-															v-show="errorArray[0] === 'non_field_errors'"
-															class="message-body"
-														>{{ errorArray[1][0] }}</div>
-													</div>
-												</div>
-											</div>
-										</f7-list>
-									</f7-col>
-								</f7-row>
-								<f7-row class="margin-top display-flex justify-content-center">
-									<f7-col width="50">
-										<f7-button fill @click="sendManagerCredentials">Submit</f7-button>
-									</f7-col>
-								</f7-row>
-							</f7-card-content>
-						</f7-card>
-						<f7-card v-if="orderForm.discounts.managerApproved">
-							<f7-card-content style="height: 175px;">
-								<f7-row class="display-flex justify-content-center">
-									<img src="/static/AnimatedGreenCheck.gif" />
-								</f7-row>
-								<f7-row class="display-flex justify-content-center">
-									<p>Success.</p>
-								</f7-row>
-							</f7-card-content>
-						</f7-card>
-						<f7-card v-if="manager.invalidCredentials">
-							<f7-card-content style="height: 175px;">
-								<f7-row class="display-flex justify-content-center">
-									<img src="/static/AnimatedRedX.gif" />
-								</f7-row>
-								<f7-row class="display-flex justify-content-center">
-									<p>Credentials were not approved.</p>
-									<p>Please try again.</p>
-								</f7-row>
-							</f7-card-content>
-						</f7-card>
-					</b-step-item>
-					<!-- Enter Discount Type -->
-					<b-step-item
-						label="Select Discount Type"
-						:clickable="isStepsClickable"
-						:type="{ 'is-success': isProfileSuccess }"
-					>
-						<f7-row class="margin-top">
-							<f7-col width="50">
-								<f7-button outline class="tall-button" @click="selectIndividualItem">Single Item</f7-button>
-							</f7-col>
-							<f7-col width="50">
-								<f7-button outline class="tall-button" @click="selectEntireOrder">Entire Order</f7-button>
-							</f7-col>
-						</f7-row>
-					</b-step-item>
-					<!-- Individual Item Discount -->
-					<b-step-item
-						:visible="orderForm.discounts.individualItemSelected"
-						label="Individual Item"
-						:clickable="isStepsClickable"
-					>
-						<f7-card v-if="allItemsInTill.length === 0">
-							<f7-card-content>
-								<p>There are no items in your till.</p>
-								<p>Click on Sale" or "Refund" to get started.</p>
-							</f7-card-content>
-						</f7-card>
-						<f7-card v-if="allItemsInTill.length != 0">
-							<f7-card-content>
-								<f7-list>
-									<!-- Select Item to Discount -->
-									<f7-row v-if="!orderForm.discounts.individualItem">
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text" title="Select Item"></f7-list-item>
-										</f7-col>
-										<f7-col
-											v-if="allItemsInTill.length != 0"
-											width="50"
-											class="display-flex justify-content-center"
-										>
-											<f7-list-input
-												class="checkout-text-bold-paid"
-												type="select"
-												validate-on-blur
-												:value="orderForm.discounts.individualItem"
-												@input="selectDiscountItem"
-												style="background: rgb(216,252,253)"
-											>
-												<option v-for="discountItem in allItemsInTill" :key="discountItem.id">
-													{{
-													discountItem.name
-													}}
-												</option>
-											</f7-list-input>
-										</f7-col>
-									</f7-row>
-									<!-- Show Selected item -->
-									<f7-row v-if="orderForm.discounts.individualItem">
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text" :title="orderForm.discounts.individualItem"></f7-list-item>
-										</f7-col>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item
-												class="checkout-text"
-												:title="
-													`$ ${orderForm.discounts.individualItemList[0]['price'] *
-														orderForm.discounts.individualDiscountQtySelected}`
-												"
-											></f7-list-item>
-										</f7-col>
-									</f7-row>
-									<!-- How Many items to Discount -->
-									<f7-row v-if="orderForm.discounts.individualItem">
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text-paid" title="Select Qty"></f7-list-item>
-										</f7-col>
-										<f7-col
-											v-if="allItemsInTill.length != 0"
-											width="50"
-											class="display-flex justify-content-center"
-										>
-											<b-numberinput
-												v-model="orderForm.discounts.individualDiscountQtySelected"
-												step="1"
-												min="1"
-												:max="selectedItem.qty"
-												type="is-success"
-											></b-numberinput>
-										</f7-col>
-									</f7-row>
-									<!-- Select Discount Type -->
-									<f7-row v-if="showDiscountType">
-										<f7-col width="50">
-											<f7-list-item
-												checkbox
-												:disabled="discountType == 'discount-dollar'"
-												:checked="discountType == 'discount-percent'"
-												title="Percentage"
-												name="discount-checkbox"
-												value="discount-percentage"
-												@change="selectDiscountType($event.target.value)"
-											></f7-list-item>
-										</f7-col>
-										<f7-col width="50">
-											<f7-list-item
-												checkbox
-												title="Dollar Amount"
-												name="discount-checkbox"
-												value="discount-dollar"
-												:checked="discountType == 'discount-dollar'"
-												:disabled="discountType == 'discount-percentage'"
-												@change="selectDiscountType($event.target.value)"
-											></f7-list-item>
-										</f7-col>
-									</f7-row>
-									<!-- Selected Percentage Discount -->
-									<f7-row
-										v-if="discountType === 'discount-percentage'"
-										class="display-flex justify-content-center"
-									>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text-paid" title="Discount %"></f7-list-item>
-										</f7-col>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-input
-												class="checkout-text-bold-paid"
-												type="select"
-												validate-on-blur
-												:value="orderForm.discounts.individualItemSelectedPercent"
-												@input="orderForm.discounts.individualItemSelectedPercent = $event.target.value"
-												style="background: rgb(216,252,253)"
-											>
-												<option v-for="discount in Orders.dicountsList" :key="discount.id">{{ discount }}%</option>
-											</f7-list-input>
-										</f7-col>
-									</f7-row>
-									<!-- Selected Dollar Amount Discount -->
-									<f7-row
-										v-if="discountType === 'discount-dollar'"
-										class="display-flex justify-content-center"
-									>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text-paid" title="Discount $"></f7-list-item>
-										</f7-col>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-row class="justify-content-center">
-												<b-field>
-													<b-numberinput
-														class="checkout-text-bold"
-														v-model="orderForm.discounts.individualItemAmount"
-														step="0.01"
-														min="0"
-														:max="selectedItem.price"
-														type="is-success"
-													></b-numberinput>
-												</b-field>
-											</f7-row>
-										</f7-col>
-									</f7-row>
-									<!-- Discount Applied Calculation-->
-									<f7-row
-										v-if="discountType === 'discount-percentage' || discountType === 'discount-dollar'"
-									>
-										<f7-row class="full-width">
-											<f7-col width="50" class="display-flex justify-content-center">
-												<f7-list-item class="checkout-text-paid" title="Discount Applied"></f7-list-item>
-											</f7-col>
-											<f7-col width="50" class="display-flex justify-content-center">
-												<f7-list-item class="checkout-text-paid" :title="`$ ${discountCalculation}`"></f7-list-item>
-											</f7-col>
-										</f7-row>
-										<f7-row class="full-width">
-											<f7-col width="50" class="display-flex justify-content-center">
-												<f7-list-item class="checkout-text-bold" title="New Item Total"></f7-list-item>
-											</f7-col>
-											<f7-col width="50" class="display-flex justify-content-center">
-												<f7-list-item
-													class="checkout-text-bold"
-													:title="orderForm.discounts.newItemTotal | formatDollar"
-												></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-row>
-								</f7-list>
-								<f7-row>
-									<f7-col>
-										<f7-button
-											fill
-											large
-											:disabled="checkToDiscountSave"
-											@click="setNewItemDiscountedPrice"
-										>Confirm</f7-button>
-									</f7-col>
-								</f7-row>
-							</f7-card-content>
-						</f7-card>
-					</b-step-item>
-					<!-- Entire Order Discount -->
-					<b-step-item
-						:visible="orderForm.discounts.entireOrderSelected"
-						label="Entire Order"
-						:clickable="isStepsClickable"
-					>
-						<f7-card v-if="allItemsInTill.length === 0">
-							<f7-card-content>
-								<p>There are no items in your till.</p>
-								<p>Click on Sale" or to get started.</p>
-							</f7-card-content>
-						</f7-card>
-						<f7-card v-if="allItemsInTill.length != 0">
-							<f7-card-content>
-								<f7-list>
-									<!-- Show Selected item -->
-									<f7-row>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text" title="Order Total"></f7-list-item>
-										</f7-col>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text" :title="`$ ${orderForm.total}` | formatDollar"></f7-list-item>
-										</f7-col>
-									</f7-row>
-									<!-- Select Discount Type -->
-									<f7-row v-if="!showDiscountType">
-										<f7-col width="50">
-											<f7-list-item
-												checkbox
-												:disabled="discountType == 'discount-dollar'"
-												:checked="discountType == 'discount-percent'"
-												title="Percentage"
-												name="discount-checkbox"
-												value="discount-percentage"
-												@change="selectDiscountType($event.target.value)"
-											></f7-list-item>
-										</f7-col>
-										<f7-col width="50">
-											<f7-list-item
-												checkbox
-												title="Dollar Amount"
-												name="discount-checkbox"
-												value="discount-dollar"
-												:checked="discountType == 'discount-dollar'"
-												:disabled="discountType == 'discount-percentage'"
-												@change="selectDiscountType($event.target.value)"
-											></f7-list-item>
-										</f7-col>
-									</f7-row>
-									<!-- Selected Percentage Discount -->
-									<f7-row
-										v-if="discountType === 'discount-percentage'"
-										class="display-flex justify-content-center"
-									>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text-paid" title="Discount %"></f7-list-item>
-										</f7-col>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-input
-												class="checkout-text-bold-paid"
-												type="select"
-												validate-on-blur
-												:value="orderForm.discounts.entireOrderPercent"
-												@input="orderForm.discounts.entireOrderPercent = $event.target.value"
-												style="background: rgb(216,252,253)"
-											>
-												<option v-for="discount in Orders.dicountsList" :key="discount.id">{{ discount }}%</option>
-											</f7-list-input>
-										</f7-col>
-									</f7-row>
-									<!-- Selected Dollar Amount Discount -->
-									<f7-row
-										v-if="discountType === 'discount-dollar'"
-										class="display-flex justify-content-center"
-									>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-list-item class="checkout-text-paid" title="Discount $"></f7-list-item>
-										</f7-col>
-										<f7-col width="50" class="display-flex justify-content-center">
-											<f7-row class="justify-content-center">
-												<b-field>
-													<b-numberinput
-														class="checkout-text-bold"
-														v-model="orderForm.discounts.entireOrderAmount"
-														step="0.01"
-														min="0"
-														:max="orderForm.total"
-														type="is-success"
-													></b-numberinput>
-												</b-field>
-											</f7-row>
-										</f7-col>
-									</f7-row>
-									<!-- Discount Applied Calculation-->
-									<f7-row
-										v-if="discountType === 'discount-percentage' || discountType === 'discount-dollar'"
-									>
-										<f7-row class="full-width">
-											<f7-col width="50" class="display-flex justify-content-center">
-												<f7-list-item class="checkout-text-paid" title="Discount Applied"></f7-list-item>
-											</f7-col>
-											<f7-col width="50" class="display-flex justify-content-center">
-												<f7-list-item class="checkout-text-paid" :title="`$ ${discountCalculation}`"></f7-list-item>
-											</f7-col>
-										</f7-row>
-										<f7-row class="full-width">
-											<f7-col width="50" class="display-flex justify-content-center">
-												<f7-list-item class="checkout-text-bold" title="New Item Total"></f7-list-item>
-											</f7-col>
-											<f7-col width="50" class="display-flex justify-content-center">
-												<f7-list-item
-													class="checkout-text-bold"
-													:title="orderForm.discounts.newOrderTotal | formatDollar"
-												></f7-list-item>
-											</f7-col>
-										</f7-row>
-									</f7-row>
-								</f7-list>
-								<f7-row>
-									<f7-col>
-										<f7-button
-											fill
-											large
-											:disabled="!orderForm.discounts.newItemTotal"
-											@click="setNewItemDiscountedPrice"
-										>Confirm</f7-button>
-									</f7-col>
-								</f7-row>
-							</f7-card-content>
-						</f7-card>
-					</b-step-item>
-
-					<!-- navigation Links -->
-					<template v-if="customNavigation" slot="navigation" slot-scope="{ previous, next }">
-						<f7-row class="display-flex justify-content-space-around">
-							<f7-col width="25" class="imageNavButtons">
-								<b-button
-									v-if="!previous.disabled"
-									class="display-flex justify-content-center"
-									outlined
-									type="is-danger"
-									icon-pack="mdi"
-									icon-left="arrow-left-box"
-									size="is-large"
-									:disabled="previous.disabled"
-									@click.prevent="previous.action"
-								>
-									<span>Previous</span>
-								</b-button>
-							</f7-col>
-							<f7-col width="25" class="imageNavButtons">
-								<b-button
-									v-if="!next.disabled"
-									class="display-flex justify-content-center"
-									outlined
-									type="is-success"
-									icon-pack="mdi"
-									size="is-large"
-									icon-left="arrow-right-box"
-									:disabled="next.disabled"
-									@click.prevent="next.action"
-								>
-									<span>Next</span>
-								</b-button>
-								<f7-button
-									class="display-flex justify-content-center"
-									v-if="next.disabled"
-									large
-									fill
-									sheet-close
-									@click.prevent="sendFile"
-								>Submit</f7-button>
-							</f7-col>
-						</f7-row>
-					</template>
-					<!-- END navigation Links -->
-				</b-steps>
-				<f7-row>
-					<f7-col>
-						<f7-button @click="testButton">Test Button</f7-button>
-					</f7-col>
-				</f7-row>
-			</f7-page>
-		</f7-popup>
-		<!-- END Discount Page Popup -->
-
-		<!-- Cash Payment Page Popup -->
-		<f7-popup class="cash-popup" :opened="CashpopupOpened" @popup:closed="CashpopupOpened = false">
-			<f7-page>
-				<f7-row class="popup-header">
-					<f7-col width="90" class="margin-left">
-						<f7-block-title large class="margin-top text-color-white">Cash Tender</f7-block-title>
-					</f7-col>
-					<f7-col width="10">
-						<f7-link
-							class="level-right text-color-grey margin-right"
-							@click="popupCloseCashPayment($event)"
-							popup-close
-							icon-size="50"
-							icon-color="white"
-							icon="mdi mdi-close"
-						></f7-link>
-					</f7-col>
-				</f7-row>
-
-				<f7-card>
-					<f7-card-content>
-						<f7-row v-show="allItemsInTill.length === 0">
-							<f7-col>
-								<p>Your till is empty</p>
-								<p>Select "Sale" or "Refund" to get started</p>
-							</f7-col>
-						</f7-row>
-						<f7-row v-show="showTotalPaid === false && allItemsInTill.length != 0">
-							<f7-list>
-								<f7-row>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text" title="Total Due"></f7-list-item>
-									</f7-col>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text" :title="orderForm.total | currency"></f7-list-item>
-									</f7-col>
-								</f7-row>
-								<f7-row v-if="showTotalPaid">
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text-bold-paid" title="Total Paid"></f7-list-item>
-									</f7-col>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text-bold-paid" title="$(120.00)"></f7-list-item>
-									</f7-col>
-								</f7-row>
-
-								<f7-row class="display-flex justify-content-center">
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text-paid" title="Amount Tendered"></f7-list-item>
-									</f7-col>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-input
-											class="checkout-text-bold-paid"
-											type="number"
-											validate
-											step="0.01"
-											error-message="Numbers only"
-											:value="orderForm.payment.cashPaidAmount"
-											@input="orderForm.payment.cashPaidAmount = $event.target.value"
-											style="background: rgb(216,252,253)"
-										></f7-list-input>
-									</f7-col>
-								</f7-row>
-								<f7-row class="full-width margin-top display-flex justify-content-center">
-									<f7-col width="50">
-										<f7-button fill large @click="processTransactionCash">Confirm</f7-button>
-									</f7-col>
-								</f7-row>
-							</f7-list>
-						</f7-row>
-						<f7-row class="full-width" v-show="showTotalPaid === true && allItemsInTill.length != 0">
-							<f7-list class="full-width">
-								<f7-row>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text" title="Total Due"></f7-list-item>
-									</f7-col>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text" :title="orderForm.total | currency"></f7-list-item>
-									</f7-col>
-								</f7-row>
-								<f7-row v-if="showTotalPaid">
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text-bold-paid" title="Total Paid"></f7-list-item>
-									</f7-col>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item
-											class="checkout-text-bold-paid"
-											:title="orderForm.payment.cashPaidAmount | currency"
-										></f7-list-item>
-									</f7-col>
-								</f7-row>
-								<f7-row>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item class="checkout-text-bold" title="Change"></f7-list-item>
-									</f7-col>
-									<f7-col width="50" class="display-flex justify-content-center">
-										<f7-list-item
-											class="checkout-text-bold"
-											:title="(parseFloat(orderForm.payment.cashPaidAmount) - parseFloat(orderForm.total)) | currency"
-										></f7-list-item>
-									</f7-col>
-								</f7-row>
-							</f7-list>
-						</f7-row>
-						<!-- <f7-row class="margin-top full-width">
-							<f7-col>
-								<f7-button popup-close fill large>Close</f7-button>
-							</f7-col>
-						</f7-row>-->
-					</f7-card-content>
-				</f7-card>
-				<f7-row>
-					<f7-col>
-						<f7-button @click="testButton">Test</f7-button>
-					</f7-col>
-				</f7-row>
-			</f7-page>
-		</f7-popup>
-		<!-- END Cash Payment Page Popup -->
-
-		<!-- Credit Card Payment Page Popup -->
-		<f7-popup class="credit-card-popup" :opened="CCpopupOpened" @popup:closed="CCpopupOpened = false">
-			<f7-page>
-				<f7-row>
-					<f7-col width="90" class="margin-left">
-						<f7-block-title large>Credit Card Payment</f7-block-title>
-					</f7-col>
-					<f7-col width="10">
-						<f7-link
-							class="level-right text-color-grey margin-right"
-							popup-close
-							icon-size="50"
-							icon="mdi mdi-close"
-						></f7-link>
-					</f7-col>
-				</f7-row>
-
-				<f7-card>
-					<f7-card-content>
-						<f7-list>
-							<f7-row>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text" title="Total Due"></f7-list-item>
-								</f7-col>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text" title="$125.45"></f7-list-item>
-								</f7-col>
-							</f7-row>
-							<f7-row v-if="showTotalPaid">
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-bold-paid" title="Total Paid"></f7-list-item>
-								</f7-col>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-bold-paid" title="$(120.00)"></f7-list-item>
-								</f7-col>
-							</f7-row>
-							<f7-row class="display-flex justify-content-center">
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-paid" title="Amount Tendered"></f7-list-item>
-								</f7-col>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-input
-										class="checkout-text-bold-paid"
-										type="number"
-										step="0.01"
-										validate-on-blur
-										error-message="Numbers only. 2 decimal places."
-										style="background: rgb(216,252,253)"
-									></f7-list-input>
-								</f7-col>
-							</f7-row>
-
-							<f7-row>
-								<!-- Row 1 Credit Card Number -->
-								<f7-col width="100" medium="100">
-									<f7-list-input
-										outline
-										label="Card Number"
-										floating-label
-										type="text"
-										placeholder="Card Number"
-										clear-button
-									>
-										<f7-icon f7="creditcard" slot="media"></f7-icon>
-									</f7-list-input>
-								</f7-col>
-							</f7-row>
-							<!-- Row 2 - Exp Date and CVV -->
-							<f7-row>
-								<f7-col width="50" medium="50">
-									<f7-list-input
-										outline
-										label="Expiration Date"
-										floating-label
-										type="text"
-										placeholder="MMYY"
-										clear-button
-									>
-										<f7-icon f7="cerdit_card" slot="media"></f7-icon>
-									</f7-list-input>
-								</f7-col>
-								<f7-col width="50" medium="50">
-									<f7-list-input
-										outline
-										label="CVV / CVV2"
-										floating-label
-										type="text"
-										placeholder="###"
-										clear-button
-									></f7-list-input>
-								</f7-col>
-							</f7-row>
-
-							<f7-row>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-bold" title="Change"></f7-list-item>
-								</f7-col>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-bold" title="$5.65"></f7-list-item>
-								</f7-col>
-							</f7-row>
-						</f7-list>
-						<!-- Row 3 Submit Button -->
-						<f7-row>
-							<f7-col width="50" medium="50">
-								<f7-button fill large color="deeporange">Cancel</f7-button>
-							</f7-col>
-							<f7-col width="50" medium="50">
-								<f7-button fill large color="blue">Authorize</f7-button>
-							</f7-col>
-						</f7-row>
-					</f7-card-content>
-				</f7-card>
-			</f7-page>
-		</f7-popup>
-		<!-- END Credit Card Payment Page Popup -->
-
-		<!-- Gift Card Page Popup -->
-		<f7-popup
-			class="gift-card-popup"
-			:opened="GiftpopupOpened"
-			@popup:closed="GiftpopupOpened = false"
-		>
-			<f7-page>
-				<f7-row>
-					<f7-col width="90" class="margin-left">
-						<f7-block-title large>Gift Card Payment</f7-block-title>
-					</f7-col>
-					<f7-col width="10">
-						<f7-link
-							class="level-right text-color-grey margin-right"
-							popup-close
-							icon-size="50"
-							icon="mdi mdi-close"
-						></f7-link>
-					</f7-col>
-				</f7-row>
-
-				<f7-card>
-					<f7-card-content>
-						<f7-list>
-							<f7-row>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text" title="Total Due"></f7-list-item>
-								</f7-col>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text" title="$125.45"></f7-list-item>
-								</f7-col>
-							</f7-row>
-							<f7-row v-if="showTotalPaid">
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-bold-paid" title="Total Paid"></f7-list-item>
-								</f7-col>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-bold-paid" title="$(120.00)"></f7-list-item>
-								</f7-col>
-							</f7-row>
-							<f7-row class="display-flex justify-content-center">
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-paid" title="Amount Tendered"></f7-list-item>
-								</f7-col>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-input
-										class="checkout-text-bold-paid"
-										type="number"
-										step="0.01"
-										validate-on-blur
-										error-message="Numbers only. 2 decimal places."
-										style="background: rgb(216,252,253)"
-									></f7-list-input>
-								</f7-col>
-							</f7-row>
-
-							<!-- Row 1 Credit Card Number -->
-							<f7-row>
-								<f7-col width="100" medium="100">
-									<f7-list-input
-										outline
-										label="Card Number"
-										floating-label
-										type="text"
-										placeholder="Card Number"
-										clear-button
-									>
-										<f7-icon f7="creditcard" slot="media"></f7-icon>
-									</f7-list-input>
-								</f7-col>
-							</f7-row>
-							<f7-row class="display-flex justify-content-center">
-								<f7-col width="60">
-									<f7-button>Customer Lookup</f7-button>
-								</f7-col>
-							</f7-row>
-							<f7-row>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-bold" title="Change"></f7-list-item>
-								</f7-col>
-								<f7-col width="50" class="display-flex justify-content-center">
-									<f7-list-item class="checkout-text-bold" title="$5.65"></f7-list-item>
-								</f7-col>
-							</f7-row>
-						</f7-list>
-						<f7-row>
-							<f7-col>
-								<f7-button fill large>Confirm</f7-button>
-							</f7-col>
-						</f7-row>
-					</f7-card-content>
-				</f7-card>
-			</f7-page>
-		</f7-popup>
-		<!-- END Gift Card Page Popup -->
-
-
 	</f7-page>
 </template>
 
@@ -1529,77 +596,68 @@ import { mapGetters } from "vuex";
 import numeral from "numeral";
 
 //Components
-import successTransComponent from "@/components/layout-elements/popup-component.vue";
 import openTillPopupComponent from "./components/open-till-popup-component.vue";
+import discountPopupComponent from "@/pages/pos/components/discount-popup-component.vue";
+import transactionResponsePopupComponent from "@/pages/pos/components/transaction-response-component.vue";
+import cashPaymentPopupComponent from "@/pages/pos/components/cash-payment-popup-component.vue";
+import giftCardPopupComponent from "@/pages/pos/components/gift-card-popup-component.vue";
+import creditCardPopupComponent from "@/pages/pos/components/credit-card-popup-component.vue";
+import retailPOSSettingsComponent from "@/pages/pos/components/retail-pos-settings-component.vue"
 
 export default {
 	name: "retailPOS",
 	mixins: [],
 	components: {
-		"popup-component": successTransComponent,
-		"open-till-popup-component": openTillPopupComponent
+		"open-till-popup-component": openTillPopupComponent,
+		"discount-popup-component": discountPopupComponent,
+		"transaction-response-popup-component": transactionResponsePopupComponent,
+		"cash-payment-popup-component": cashPaymentPopupComponent,
+		"gift-card-popup-component": giftCardPopupComponent,
+		"credit-card-popup-component": creditCardPopupComponent,
+		"retail-POS-settings-component": retailPOSSettingsComponent
 	},
 	data() {
 		return {
-			//Componets Data
-			popupSettings: {
-				link: '.popup-component',
-				name: "POS",
-				type: "POS",
-			},
+			// Component Data 
 			moduleInfo: {
 				name: "Retail POS",
 				type: "POS"
 			},
+			retailSettings: {
+				retailPOSsheetOpened: false,
+				enableGratuity: true,
+			},
+			//Transaction Response Popup
+			transResponseSettings: {
+				link: '.popup-component',
+				name: "POS",
+				type: "POS",
+			},
+			sharedData: {
+				CCpopupOpened: false,
+				CashpopupOpened: false,
+				GiftpopupOpened: false,
+				allItemsInTill: [],
+			},
+			//Transaction Completion Popup
 			transactionDetails: {
 				type: "Sale",
 				isError: false,
 				errorLevel: 1,
 				errorData: "Error Data"
 			},
-			//Cash Drawer Coins and Bills
-			cashDrawer: {
-				coins: {
-					pennies: 0,
-					nickels: 0,
-					dimes: 0,
-					quarters: 0,
-					halfDollars: 0,
-					dollarCoins: 0
-				},
-				bills: {
-					ones: 0,
-					fives: 0,
-					tens: 0,
-					twenties: 0,
-					fiftys: 0,
-					hundreds: 0
-				}
+			//Disocunt Popup Settings
+			discountSettings: {
+				DiscountpopupOpened: false,
+				activeStepDiscount: 0,
 			},
+
 			//Main Settings and Variables
 			isOnLine: navigator.onLine,
-			isTillOpen: false,
-			enableGratuity: true,
+			
 			printReport: false,
 			openCashDrawer: null,
-			manager: {
-				managerMode: null,
-				isUserManager: false,
-				approvingManager: null,
-				invalidCredentials: false,
-				loginForm: {
-					email: null,
-					password: null
-				},
-				loginBarcode: {
-					barcode_number: null,
-					pin: null
-				}
-			},
-			allItemsInTill: [],
-			taxRate: null,
-			inventoryCategory: null,
-			showTotalPaid: false,
+
 			//Selected Item
 			selectedItem: {
 				id: null,
@@ -1611,8 +669,8 @@ export default {
 				total_price: 0
 			},
 			selectedOrder: {},
-			showDiscountType: false,
-			discountType: null,
+
+			
 			//Order Form
 			orderForm: {
 				id: null,
@@ -1655,39 +713,11 @@ export default {
 					},
 					status: 400
 				},
-				//Discounts Popup
-				discounts: {
-					managerApproved: false,
-					individualItemList: [],
-					individualItemSelected: false,
-					individualItem: "",
-					selectedDiscountPercent: false,
-					individualItemAmount: 0,
-					individualItemSelectedPercent: 0,
-					individualDiscountQtySelected: 1,
-					individualDiscountQtyTotal: 1,
-					newItemTotal: null,
-					newOrderTotal: null,
-					entireOrderSelected: false,
-					entireOrderAmount: 0,
-					entireOrderPercent: 0
-				},
+				//Totals
 				gratuity: 0,
 				tax: 0,
 				total: 0,
-				status: null,
-				table: null,
-				qty_customers: null
 			},
-			//End orderForm
-			//Settings and Popups
-			retailPOSsheetOpened: false,
-			openRegisterPopup: false,
-			closeRegisterPopup: false,
-			CCpopupOpened: false,
-			CashpopupOpened: false,
-			GiftpopupOpened: false,
-			DiscountpopupOpened: false,
 
 			//Calculator
 			showCalc: true,
@@ -1701,40 +731,22 @@ export default {
 				"pos-login": "this.$refs.barcodeInput.$el.querySelector('input').focus()",
 				CashPayment: "this.$refs.barcodeInput.$el.querySelector('input').focus()"
 			},
-			//Buefy Tabs
-			activeStepDiscount: 0,
-			stepItems: [],
-			isAnimated: true,
-			hasNavigation: false,
-			customNavigation: false,
-			prevIcon: "chevron-left",
-			nextIcon: "chevron-right",
-			isStepsClickable: true,
-			isProfileSuccess: false,
 			//Login Data
 			loginBarcode: {
 				barcode: "",
 				pin: ""
 			},
-			//Built-In Keyboard
-			visible: false,
-			layout: "numeric",
-			input: null,
-			options: {
-				useKbEvents: false,
-				preventClickEvent: false
-			}
+			
 		};
 	},
 
 	methods: {
 		testButton() {
-			console.log("this.Static.date", this.Static.date);
-			console.log("this.Static.time", this.Static.time);
+			console.log("this.$refs", this.$refs);
 		},
 		//Reset View
 		resetView() {
-			this.allItemsInTill = [];
+			this.sharedData.allItemsInTill = [];
 			this.orderForm.isSale = false;
 			this.orderForm.isVoid = false;
 			this.orderForm.isReturn = false;
@@ -1743,51 +755,6 @@ export default {
 			this.orderForm.tax = 0;
 			this.orderForm.totalDiscounts = 0;
 			this.orderForm.total = 0;
-		},
-		//Reset Methods
-		resetDiscounts() {
-			this.activeStepDiscount = 0;
-			this.orderForm.totalDiscounts = 0;
-			this.orderForm.discounts.managerApproved = false;
-			this.manager.invalidCredentials = false;
-			this.orderForm.discounts.individualItem = null;
-		},
-		resetCashPayment() {},
-		//SelectDiscountItem
-		selectDiscountItem(e) {
-			console.log("e", e);
-			//find Item in inventoryList
-			var invObj = this.Inventory.inventoryList.find((elem) => elem.name === e.target.value);
-			console.log("invObj", invObj);
-			this.orderForm.discounts.individualItemList.push(invObj);
-			this.orderForm.discounts.individualItem = e.target.value;
-			console.log("this.orderForm.discounts", this.orderForm.discounts);
-			this.showDiscountType = true;
-		},
-		selectDiscountType(e) {
-			console.log("e", e);
-			if (this.discountType) {
-				this.discountType = "";
-			} else {
-				this.orderForm.discounts.selectedDiscountPercent = true;
-				this.discountType = e;
-			}
-		},
-
-		//Close Discount Popup
-		popupCloseDiscount(e) {
-			// console.log('discount popup e', e);
-			this.$f7.popup.close();
-			this.resetDiscounts();
-		},
-		//Close Cash Payment Popup
-		popupCloseCashPayment(e) {
-			// console.log('discount popup e', e);
-			this.$f7.popup.close();
-			this.resetCashPayment();
-		},
-		openTill() {
-			this.isTillOpen = true;
 		},
 		//Initiate Sale
 		initSale() {
@@ -1807,9 +774,9 @@ export default {
 
 		//Ticket
 		addItemToTill(id) {
-			console.log("this.allItemsInTill", this.allItemsInTill);
+			console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);
 			//Find item in Ticket First to increase QTY
-			var findTillItem = this.allItemsInTill.find((elem) => {
+			var findTillItem = this.sharedData.allItemsInTill.find((elem) => {
 				return elem.id == id;
 			});
 			console.log("findTillItem", findTillItem);
@@ -1822,7 +789,7 @@ export default {
 				//Add Item Attributes
 				invObj.qty = 1;
 				invObj.is_discounted = false;
-				this.allItemsInTill.push(invObj);
+				this.sharedData.allItemsInTill.push(invObj);
 				// this.subtotal += invObj.list_price * invObj.qty;
 				this.calculateTotals();
 			} else {
@@ -1845,27 +812,27 @@ export default {
 		deleteItemFromTill(e) {
 			console.log("e", e);
 			console.log("deleteItemFromTill");
-			this.allItemsInTill.splice(e, 1);
+			this.sharedData.allItemsInTill.splice(e, 1);
 			this.calculateTotals();
 		},
 		calculateTotals() {
 			//Reduce the tax rate from each item and add them up
 			var taxRatePercent = 9.75;
 
-			this.orderForm.subtotal = this.allItemsInTill.reduce((acc, obj) => {
+			this.orderForm.subtotal = this.sharedData.allItemsInTill.reduce((acc, obj) => {
 				return acc + parseFloat(obj.list_price) * parseFloat(obj.qty);
 			}, 0);
 			console.log("this.orderForm.subtotal", this.orderForm.subtotal);
 
-			this.orderForm.tax = this.allItemsInTill.reduce((acc, obj) => {
+			this.orderForm.tax = this.sharedData.allItemsInTill.reduce((acc, obj) => {
 				return acc + (parseFloat(obj.list_price) * parseFloat(obj.qty) * taxRatePercent) / 100;
 			}, 0);
 			console.log("this.orderForm.tax", this.orderForm.tax);
 			//Calculate Total Discounts
-			// console.log("Object.keys(this.allItemsInTill[0].discounted_price", Object.keys(this.allItemsInTill[0].discounted_price));
-			if (this.allItemsInTill.length != 0) {
-				if (this.allItemsInTill[0].discount != undefined) {
-					var sumDiscount = this.allItemsInTill.reduce((acc, obj) => {
+			// console.log("Object.keys(this.sharedData.allItemsInTill[0].discounted_price", Object.keys(this.sharedData.allItemsInTill[0].discounted_price));
+			if (this.sharedData.allItemsInTill.length != 0) {
+				if (this.sharedData.allItemsInTill[0].discount != undefined) {
+					var sumDiscount = this.sharedData.allItemsInTill.reduce((acc, obj) => {
 						return acc + obj.discount;
 					}, 0);
 					console.log("sumDiscount", sumDiscount);
@@ -1880,12 +847,6 @@ export default {
 			}
 			//Totals computed in watcher
 		},
-		discountDollars(e) {
-			console.log("e", e);
-			if (e >= this.selectedItem.price) {
-				this.orderForm.discounts.individualItemAmount = this.selectedItem.price;
-			}
-		},
 		editSelectedItem(itemId) {
 			if (this.selectedItem.id) {
 				this.selectedItem.id = null;
@@ -1893,8 +854,8 @@ export default {
 				this.selectedItem.id = itemId;
 			}
 			console.log("itemId", itemId);
-			console.log("this.allItemsInTill", this.allItemsInTill);
-			var findOrderItem = this.allItemsInTill.find((elem) => elem.id === itemId);
+			console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);
+			var findOrderItem = this.sharedData.allItemsInTill.find((elem) => elem.id === itemId);
 			console.log("findOrderItem", findOrderItem);
 
 			this.calc.value = findOrderItem.qty;
@@ -1910,101 +871,27 @@ export default {
 		},
 		canApplyDiscount() {
 			if (this.orderForm.isSale) {
-				this.$f7.popup.open(".discount-popup");
-				this.$refs.barcodeInput.$el.querySelector("input").focus();
+				// this.$f7.popup.open(".discount-popup");
+				this.discountSettings.DiscountpopupOpened=true;
 			}
 			if (this.orderForm.isReturn) {
 				// this.$f7.popup.open(".discount-popup");
-				console.log("You cannot apply a disocunt to a return order");
+				this.$f7.dialog.alert('Discounts cannot be applied to return orders!');
 			}
-		},
-		//Save item in Till with updated Discounted Price
-		setNewItemDiscountedPrice() {
-			console.log("setNewItemDiscountedPrice");
-			console.log("this.orderForm.discounts.newItemTotal", this.orderForm.discounts.newItemTotal);
-			var discountedPrice = this.orderForm.discounts.newItemTotal;
-
-			var finTillItemIndex = this.allItemsInTill.findIndex(
-				(elem) => elem.name === this.orderForm.discounts.individualItem
-			);
-			console.log("finTillItemIndex", finTillItemIndex);
-			this.allItemsInTill[finTillItemIndex]["is_discounted"] = true;
-			this.allItemsInTill[finTillItemIndex]["discount"] =
-				this.allItemsInTill[finTillItemIndex]["price"] - discountedPrice;
-			this.allItemsInTill[finTillItemIndex]["discounted_price"] = discountedPrice;
-			console.log("this.allItemsInTill", this.allItemsInTill);
-			this.resetDiscounts();
-			this.calculateTotals();
-
-			this.$f7.popup.close();
 		},
 		saveQty() {
 			//Find object in array
 			var id = this.selectedItem.id;
 			console.log("this.selectedItem.id", this.selectedItem.id);
-			var findTillItem = this.allItemsInTill.find((elem) => {
+			var findTillItem = this.sharedData.allItemsInTill.find((elem) => {
 				return elem.id == id;
 			});
 			findTillItem.qty = this.calc.value;
-			console.log("Orde qty has been updated", this.allItemsInTill);
+			console.log("Orde qty has been updated", this.sharedData.allItemsInTill);
 			this.selectedItem.id = null;
 			this.calc.value = 0;
 		},
-		async sendManagerCredentials() {
-			this.$f7.preloader.show();
-			// If Manager uses the UserID and PW Field... Need to create API endpoint
-			if (this.manager.loginForm.email) {
-				if (this.manager.loginForm.email && this.manager.loginForm.password) {
-					this.$store.dispatch("managerAuthorizationBarcode", this.loginForm);
-				} else {
-					this.$store.dispatch("updateNotification", this.errorData);
-				}
-			}
-			//Barcode signIn Option
-			if (this.manager.loginBarcode.barcode_number) {
-				console.log("Auth using barcode signin");
-				console.log("this.manager.loginBarcode", this.manager.loginBarcode);
-				if (this.manager.loginBarcode.barcode_number && this.manager.loginBarcode.pin) {
-					//find user in employeeList by barcode and sign that person in
-					var managerAuthRes = await this.$store.dispatch("managerAuthorizationBarcode", this.manager.loginBarcode);
-					console.log("managerAuthRes", managerAuthRes);
-					//Clear Login Form
-					this.manager.loginBarcode.barcode_number = null;
-					this.manager.loginBarcode.pin = null;
-					//Handle Response
-					if (managerAuthRes.status === 200) {
-						this.orderForm.discounts.managerApproved = true;
-						setTimeout(() => {
-							this.activeStepDiscount = 1;
-						}, 2000);
-					} else {
-						this.manager.invalidCredentials = true;
-						setTimeout(() => {
-							this.resetDiscounts();
-						}, 2000);
-					}
-				} else {
-					this.$store.dispatch("updateNotification", this.errorData);
-				}
-			}
-		},
-		selectIndividualItem() {
-			this.orderForm.discounts.individualItemSelected = true;
-			this.orderForm.discounts.entireOrderSelected = false;
-			this.activeStepDiscount = 2;
-		},
-		selectEntireOrder() {
-			this.orderForm.discounts.individualItemSelected = false;
-			this.orderForm.discounts.entireOrderSelected = true;
-			this.activeStepDiscount = 3;
-		},
-		//Cash Transaction
-		processTransactionCash() {
-			this.showTotalPaid = true;
-			//if Balance reamins do not close order offer another payment method
-			//if Balance === 0, them clear the order and reset for new entry order
-		},
-		closeCashTender() {},
+
 		//Calculator
 		addExpresion(e) {
 			if (Number.isInteger(this.calc.value)) this.calc.value = "";
@@ -2040,23 +927,7 @@ export default {
 				nextField.focus();
 			}
 		},
-		//Vue-Keyboard-Methods
-		accept(text) {
-			alert("Input text: " + text);
-			this.hide();
-		},
-		show(e) {
-			console.log("e", e);
-			console.log("this.$refs", this.$refs);
-			this.input = e.target;
-			this.layout = e.target.dataset.layout;
 
-			if (!this.visible) this.visible = true;
-			console.log("this.visible", this.visible);
-		},
-		hide() {
-			this.visible = false;
-		},
 		//LogOut
 		logout() {
 			this.$store.dispatch("signOut");
@@ -2068,74 +939,13 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Users", "Inventory", "Orders", "Static", "Errors"]),
-		...mapGetters(["getInventoryBarcodes"]),
+		...mapGetters(["GET_INV_CATEGORY_LIST", "GET_INV_CATEGORY_LIST_LENGTH"]),
 		categoryItems() {
 			var filtered = this.Inventory.inventoryList.filter((elem) => elem.category != null);
 			var answer = filtered.filter((elem) => elem.category.name === this.Inventory.selectedCategory);
 			return answer;
 		},
-		discountCalculation() {
-			console.log("Start discountCalculation");
-			//Calculation for Individual Item Discount
-			if (this.orderForm.discounts.individualItemList.length != 0) {
-				var currentPercentString = String(this.orderForm.discounts.individualItemSelectedPercent);
-				var currentItemPrice = this.orderForm.discounts.individualItemList[0]["price"];
-				var currentPercentFloat = currentPercentString.split("%")[0];
-				var currentItemPriceFloat = parseFloat(currentItemPrice);
-				var discount = 0;
-				if (this.discountType == "discount-percentage") {
-					// console.log("discount-percentage");
-					if (this.orderForm.discounts.individualItemSelectedPercent) {
-						discount =
-							(currentPercentFloat / 100) *
-							currentItemPriceFloat *
-							this.orderForm.discounts.individualDiscountQtySelected;
-						// console.log("discount-percentage", discount);
-					}
-				}
-				if (this.discountType == "discount-dollar") {
-					console.log("this.orderForm.discounts.individualItemAmount", this.orderForm.discounts.individualItemAmount);
-					if (this.orderForm.discounts.individualItemAmount) {
-						// console.log("discount-dollar");
-						discount =
-							this.orderForm.discounts.individualItemAmount * this.orderForm.discounts.individualDiscountQtySelected;
-						// console.log("discount-dollar", discount);
-					}
-				} else {
-				}
-				if (discount === undefined) {
-					return "0.00";
-				}
-				this.orderForm.discounts.newItemTotal =
-					currentItemPriceFloat * this.orderForm.discounts.individualDiscountQtySelected - discount;
-				return numeral(discount).format("0,0.00");
-			}
-			//Calculation for entitre order
-			if (this.orderForm.discounts.entireOrderSelected) {
-				var currentPercentString = String(this.orderForm.discounts.entireOrderPercent);
-				var currentPercentFloat = currentPercentString.split("%")[0];
-				console.log("grandTotal", this.grandTotal);
-				var discount = 0;
-				if (this.orderForm.discounts.entireOrderAmount) {
-					if (this.discountType == "discount-percentage") {
-						// console.log("discount-percentage");
-						discount = (currentPercentFloat / 100) * this.grandTotal;
-						// console.log("discount-percentage", discount);
-					}
-					if (this.discountType == "discount-dollar") {
-						console.log("this.orderForm.discounts.entireOrderAmount", this.orderForm.discounts.entireOrderAmount);
-						console.log("discount-dollar");
-						discount = this.orderForm.discounts.entireOrderAmount;
-						// console.log("discount-dollar", discount);
-					}
-					if (discount === undefined) {
-						return "0.00";
-					}
-					this.orderForm.discounts.newOrderTotal = this.grandTotal - discount;
-					return numeral(discount).format("0,0.00");
-				}
-			}
-		},
+
 		grandTotal() {
 			//Calculate Grand Total
 			var newTotal =
@@ -2145,35 +955,17 @@ export default {
 
 			return newTotal;
 		},
-		checkToDiscountSave() {
-			if (this.orderForm.discounts.newItemTotal) {
-				var currentItemPrice = this.orderForm.discounts.individualItemList[0]["price"];
-				var currentItemPriceFloat = parseFloat(currentItemPrice);
-				if (this.discountCalculation <= currentItemPriceFloat) {
-					console.log("You can make a discount greater than the item itself");
-					return false;
-				}
-			}
-			return true;
-		}
+
 	},
 	watch: {
 		isOnLine() {
 			console.log("Orders are being pushed to a List");
 			this.saveOrdersInstead();
 		},
-		"orderForm.discounts.individualItem": {
-			deep: true,
-			handler: function(after, before) {
-				console.log("There has been a change to the orderForm.discounts.individualItem");
-				console.log("before", before);
-				console.log("after", after);
-			}
-		}
+
 	},
 	mounted() {
-		this.$store.dispatch("getInventoryList");
-		this.$store.dispatch("getInventoryCategories");
+
 	}
 };
 </script>
@@ -2526,22 +1318,8 @@ div .till-text {
 	// background: green;
 }
 
-// Sheets and Popups
-.popup-header {
-	background: rgb(2, 41, 51);
-}
-.retail-POS-Settings {
-	height: 100%;
-}
-.discount-popup {
-	height: 750px;
-}
-.cash-popup {
-	height: 500px;
-}
-.credit-card-popup {
-	height: 650px;
-}
+
+
 
 
 //Checkout Popups Totals
@@ -2567,11 +1345,5 @@ div .till-text {
 	background: rgb(235, 192, 192);
 }
 
-//Login PIN
-.pin-cell {
-	height: 50px;
-	width: 50%;
-	background: rgb(169, 236, 236);
-	font-size: 1.5em;
-}
+
 </style>

@@ -432,7 +432,8 @@
 												<f7-block-title class="full-width" medium>Primary Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="datacomForm"
-													:formSettings="primaryContactSettings">
+													:formSettings="primaryContactSettings"
+													@updateLocaleInfo="syncWithMixin">
 												</business-contact-form-component>
 												
 												<f7-row>
@@ -1295,8 +1296,12 @@ export default {
 				domain: null,
 				profile_img: null,
 				barcode: null,
+				//Arrays
+				primary_contacts: [],
+				billing_contacts: [],
+				technical_contacts: [],
+				shipping_contacts: [],
 				//Common Company Fields
-				id: 0,
 				dba_name: null,
 				legal_name: null,
 				description: null,
@@ -1373,15 +1378,15 @@ export default {
 		};
 	},
 	methods: {
-		testingMethod(e) {
-			// console.log("this.SalesOffices.salesOfficeList", this.SalesOffices.salesOfficeList);
-			// console.log("this.Warehouses.warehouseList", this.Warehouses.warehouseList);
+		async testingMethod(e) {
+			console.log("this.Auth.userLoginProfile", this.Auth.userLoginProfile);
 			console.log("this.datacomForm", this.datacomForm);
 			console.log("this.Users.employeeList", this.Users.employeeList);
-			// console.log("this.Inventory.inventoryList", this.Inventory.inventoryList);
-			// console.log("this.Warehouses.warehouseList", this.Warehouses.warehouseList);
-			// console.log("this.VTHPP.creditCardList", this.VTHPP.creditCardList);
-			// console.log("this.Common.shippingAddressList", this.Common.shippingAddressList);
+			console.log("this.Users.employeeProfile", this.Users.employeeProfile);
+			console.log("this.localeCities", this.localeCities);
+			// let response = await this.syncWithMixin();
+			// console.log('response', response);
+
 		},
 		menudropdown(UserID) {
 			console.log("menudropdown UserID", UserID);
@@ -1450,7 +1455,7 @@ export default {
 		},
 		async createCompany() {
 			this.$store.commit("RESET_ERRORS");
-			this.syncWithMixin();
+
 			try {
 				this.$f7.preloader.show();
 
@@ -1543,7 +1548,6 @@ export default {
 						this.datacomForm[key] = companyItem[key];
 					}
 					this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
-					this.$store.dispatch("getEmployeeFilter", companyListID);
 				}
 			}
 		},
@@ -1596,13 +1600,22 @@ export default {
 			}
 			this.resetViewtoHome();
 		},
-		syncWithMixin() {
-			this.datacomForm.primary_mailing_country = this.localeCities.primary_country_name;
-			this.datacomForm.primary_mailing_state = this.localeCities.primary_state_name;
-			this.datacomForm.billing_country = this.localeCities.billing_country_name;
-			this.datacomForm.billing_state = this.localeCities.billing_state_name;
-			this.datacomForm.shipping_country = this.localeCities.shipping_country_name;
-			this.datacomForm.shipping_state = this.localeCities.shipping_state_name;
+		syncWithMixin(payload) {
+			console.log("Must emit informaiotn from child component to parent");
+			console.log('syncWithMixin payload', payload);
+			return new Promise((resolve, reject) => {
+				this.datacomForm.primary_mailing_country = payload.primary_country_name;
+				this.datacomForm.primary_mailing_state = payload.primary_state_name;
+				this.datacomForm.billing_country = payload.billing_country_name;
+				this.datacomForm.billing_state = payload.billing_state_name;
+				this.datacomForm.shipping_country = payload.shipping_country_name;
+				this.datacomForm.shipping_state = payload.shipping_state_name;
+				console.log('this.datacomForm', this.datacomForm);
+				console.log('this.localeCities', this.localeCities);
+
+				return resolve(payload.primary_state_name);
+			});
+			
 
 		},
 		deleteChip() {
@@ -1734,12 +1747,6 @@ export default {
 		...mapGetters(["GET_COMPANY_LIST", "GET_DEPARTMENTS_LIST", "GET_POSITIONS_LIST"])
 	},
 	async mounted() {
-		let response = await this.setUserPlatformGET();
-		console.log('response', response);
-		// this.$store.dispatch("getDatacomLoggedInProfile", response);
-		
-		
-
 		this.editDatacom();
 
 		// function to put an initial image on the canvas for Croppie.js.

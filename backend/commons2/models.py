@@ -66,7 +66,7 @@ class Department(models.Model):
   date_added 			= models.DateTimeField(auto_now_add=True)
   
   def __str__(self):
-    return self.name
+    return str(self.name)
 
 class GeneralSettings(models.Model):
   datacom                     = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
@@ -88,6 +88,6 @@ class GeneralSettings(models.Model):
   enable_inventory_tracking   = models.BooleanField(default=False, blank=True, null=True)
   
   def __str__(self):
-    return self.name
+    return str(self.name)
  
  

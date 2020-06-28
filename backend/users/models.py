@@ -21,8 +21,12 @@ from .common_models import CommonUserBase
 import treepoem
 
 class UserBarcodeManager(models.Manager):
-	def create_barcode_number(self):
+	def create_barcode_number(self, kwargs):
+		# I can get the last user barcode becasue they aere not dependent on anything
 		last_barcode = UserBarcode.objects.all().order_by('barcode_number').last()
+		# I can print Datacom Barcodes for users becasue the employee is not yet made
+		# last_barcode = UserBarcode.objects.filter(user__employee__datacom__id__gte=1).order_by().last()
+
 		print("last_barcode", last_barcode)
 		if not last_barcode:
 			return "000003100000"
@@ -61,16 +65,20 @@ class UserBarcodeManager(models.Manager):
 		return finalImage
 
 	def create_barcode(self, **kwargs):
-		current_barcode_number = self.create_barcode_number()
+		print('create_barcode kwargs', kwargs)
+		current_barcode_number = self.create_barcode_number(kwargs)
 		barcode_image = self.create_barcode_image(current_barcode_number)
   
 		uuid_id = uuid4()
 
 		item = self.model(title=kwargs['first_name'] + "_" + kwargs['last_name']+ "_" + str(uuid_id)[:10])
+		print('1 user barcode item has id?', item)
 		item.image = barcode_image
 		item.barcode_type = "qrcode"
 		item.barcode_number = int(current_barcode_number)
 		item.save(using=self._db)
+
+		print('2 user barcode item has id?', item)
 
 		return item
 
@@ -98,7 +106,10 @@ class MainUserManager(BaseUserManager):
 		if not kwargs['password']:
 			raise ValueError("Users must have a valid password")
 		print('CreateUser kwargs', kwargs)
-		
+
+		groups_var = kwargs['groups']
+		del kwargs['groups']
+
 		user = self.model(**kwargs)
 		user.full_name = self.make_full_name(kwargs['first_name'], kwargs['last_name'])
 		user.is_active = True
@@ -109,13 +120,17 @@ class MainUserManager(BaseUserManager):
 		objID = User.objects.get(email=kwargs['email'])
 		print('CreateUser objID', objID)
 
+		#set groups
+		if groups_var:
+			datacom.groups.set(groups_var)
+
 		kwargs['id'] = objID.id
 		barcode = UserBarcode.objects.create_barcode(**kwargs)
 		print('User barcode returned', barcode)
 		user.barcode_id = barcode.id
 		print('User', user)
 		user.save()
-		
+
 		return user
 
 
@@ -150,13 +165,13 @@ class User(CommonUserBase):
 	objects	= MainUserManager()
 
 	def __str__(self):
-		return self.email
+		return str(self.email)
 
 	def get_fullname(self):
-		return self.full_name
+		return str(self.full_name)
 
 
-class UserGroups(Group):
+class UserGroup(Group):
 # Inherits with name, and ID
 # Has Many-to-Many with Permissions
 # *Use permissions.set()* for adding permissions to group or use Forward-side
@@ -167,7 +182,7 @@ class UserGroups(Group):
 
 
 #Django Permissions Model 
-class UserPermissions(Permission):
+class UserPermission(Permission):
 	#Has ForeignKey to ContentType
 	# Inherits with name, content_type(model) and codename (of permission in the model)
 	date_added 						= models.DateField(verbose_name="date joined",auto_now_add=True)

@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'financial',
     'humanresources',
     'notifications',
+    'retailpos',
 ]
 
 MIDDLEWARE = [

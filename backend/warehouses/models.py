@@ -3,12 +3,59 @@ from project.settings import base
 from uuid import uuid4
 from django.core.validators import RegexValidator
 
-from datacom.common_models import CommonCompanyBase, CommonBarcode
+from companies.helper_functions import CompanyIDs
+
+from datacom.common_models import CommonCompanyBase
+from commons.models import CommonBarcode
 from salesoffices.models import SalesOffice
 from companies.models import Company
 from datacom.models import Datacom
 from partners.models import Partner
 from employees.models import Employee
+
+class WarehouseManager(models.Manager):
+  def create_warehouse(self, **kwargs):
+    if not kwargs['warehouse_name']:
+      raise ValueError("You must enter a valid name")
+
+    print("warehouse kwargs", kwargs)
+
+    warehouseObj = Warehouse.objects.all().order_by('id').last()
+    if warehouseObj:
+      kwargs['warehouse_number'] = warehouseObj.warehouse_number
+      print("warehouseObj.warehouse_number", warehouseObj.warehouse_number)
+      print('warehouseObj.__dict__', warehouseObj.__dict__)
+    if not warehouseObj:
+      kwargs['warehouse_number'] = 0
+
+    kwargs['is_salesoffice'] = True
+    print('warehouse kwargs', kwargs)
+    newWarehouseID = CompanyIDs.newCompanyID(self, **kwargs)
+
+    primary_contacts_var = kwargs['primary_contacts']
+    billing_contacts_var = kwargs['billing_contacts']
+    technical_contacts_var = kwargs['technical_contacts']
+    shipping_contacts_var = kwargs['shipping_contacts']
+
+    del kwargs['primary_contacts']
+    del kwargs['billing_contacts']
+    del kwargs['technical_contacts']
+    del kwargs['shipping_contacts']
+    
+    warehouse = self.model(**kwargs)
+    warehouse.is_active = True
+    warehouse.warehouse_number = newWarehouseID
+
+    warehouse.save(using=self._db)
+
+    warehouse.primary_contacts.set(primary_contacts_var)
+    warehouse.billing_contacts.set(billing_contacts_var)
+    warehouse.technical_contacts.set(technical_contacts_var)
+    warehouse.shipping_contacts.set(shipping_contacts_var)
+
+    warehouse.save()
+
+    return warehouse
 
 
 class Warehouse(models.Model):
@@ -17,8 +64,10 @@ class Warehouse(models.Model):
   datacom                 = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
   barcode                 = models.ForeignKey(CommonBarcode, on_delete=models.DO_NOTHING, blank=True, null=True)
   sales_offices           = models.ManyToManyField(SalesOffice, related_name="warehouse_salesoffice", blank=True)
-  primary_contact         = models.OneToOneField(Employee, on_delete=models.DO_NOTHING, blank=True, null=True)
-  shipping_contacts       = models.ManyToManyField(Employee, related_name="shipping_contacts", blank=True)
+  primary_contacts        = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="warehouse_primary_contacts", blank=True)
+  billing_contacts        = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="warehouse_billing_contacts", blank=True)
+  technical_contacts      = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="warehouse_technical_contacts", blank=True)
+  shipping_contacts       = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="warehouse_shipping_contacts", blank=True)
   employees               = models.ManyToManyField(Employee, related_name="warehouse_employees", blank=True)
   warehouse_name          = models.CharField(max_length=200, blank=True, null=True)
   warehouse_number        = models.CharField(max_length=20, blank=True, null=True)
@@ -54,5 +103,10 @@ class Warehouse(models.Model):
   is_active               = models.BooleanField(default=True)
   status                  = models.CharField(max_length=200, blank=True, null=True)
 
- 
- 
+  objects	= WarehouseManager()
+
+  class Meta:
+    ordering = ['date_added', 'id', 'warehouse_name']
+
+  def __str__(self):
+    return str(self.warehouse_name)

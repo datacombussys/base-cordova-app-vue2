@@ -9,10 +9,59 @@ from django.contrib.auth.hashers import check_password
 from rest_framework import serializers
 from rest_framework import exceptions
 
-
+from django.contrib.auth.models import Permission, Group
+from django.contrib.contenttypes.models import ContentType
+from users.models import User, UserGroup, UserPermission
 from commons.base64 import Base64ImageField
-
 from .models import User, UserBarcode
+
+class ContentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentType
+        fields = ('__all__')
+
+class BasePermissionSeializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = ('__all__')
+
+    
+class UserPermissionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPermission
+        fields = ('__all__')
+
+class BaseGroupSerializer(serializers.ModelSerializer):
+    permissions_list = BasePermissionSeializer(many=True, read_only=True, source='permissions')
+    permissions = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Permission.objects.all(), many=True, allow_null=True), allow_null=True)
+
+    class Meta:
+        model = Group
+        fields = ('__all__')
+
+    # def __init__(self, *args, **kwargs):
+    #     kwargs['allow_null'] = True
+    #     super(BaseGroupSerializer, self).__init__(*args, **kwargs)
+
+class UserGroupSerializer(serializers.ModelSerializer):
+    # This requires a custom validate() method
+    permissions_list = BasePermissionSeializer(many=True, read_only=True, source='permissions')
+    permissions = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Permission.objects.all(), many=True, allow_null=True), allow_null=True)
+
+    class Meta:
+        model = UserGroup
+        fields = ('__all__')
+
+        def validate(self, data):
+            print('validate data', data)
+            try:
+                data['permissions'] = data.pop('permissions_id')
+            except KeyError:
+                print('We had an error adding the permission to the UserGroup')
+                pass
+
+            return data
+
 
 class UserBarcodeSerializer(serializers.ModelSerializer):
     # user = UserSerializer(read_only=True)
@@ -30,7 +79,12 @@ class SimpleUserBarcodeSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    barcode_obj = UserBarcodeSerializer(read_only=True, source='barcode')
     barcode = serializers.PrimaryKeyRelatedField(queryset=UserBarcode.objects.all(), required=False, allow_null=True)
+    
+    groups_list = BaseGroupSerializer(many=True, read_only=True, source='groups')
+    groups = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), many=True, allow_null=True), allow_null=True)
+    
     profile_img = Base64ImageField( max_length=None,
                                     use_url=True,
                                     required=False,
@@ -87,13 +141,13 @@ class UserSerializer(serializers.ModelSerializer):
             
         return data
 
-    def to_representation(self, value):
-        data = super().to_representation(value)  
-        if data['barcode']:
-            barcode_data_serializer = UserBarcodeSerializer(value.barcode)
-            data['barcode'] = barcode_data_serializer.data
+    # def to_representation(self, value):
+    #     data = super().to_representation(value)  
+    #     if data['barcode']:
+    #         barcode_data_serializer = UserBarcodeSerializer(value.barcode)
+    #         data['barcode'] = barcode_data_serializer.data
     
-        return data
+    #     return data
 
 
 class SimpleUserSerializer(serializers.ModelSerializer):

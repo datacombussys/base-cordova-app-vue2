@@ -536,7 +536,7 @@
 													</f7-block>
 													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="margin-top deiplay-flex justify-content-right">
-															<f7-col width="100" class="display-flex margin">
+															<f7-col width="50" class="display-flex margin">
 																<f7-button
 																	fill
 																	@click.prevent="createSalesOfficeandClose"

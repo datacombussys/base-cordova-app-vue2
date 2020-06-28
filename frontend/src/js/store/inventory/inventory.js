@@ -13,16 +13,13 @@ export const Inventory = {
 		selectedCategory: '',
 		inventoryData: {},
 		inventoryList: [],
-		categories: [],
-		inventoryBarcodes: [],
+		categoriesList: [],
 		inventoryGalleryImgs: [],
-		//Error Data
-		errorHandle: false,
-		errorData: [],
 
 	},
 	mutations: {
 		SET_INVENTORY_LIST(state, payload) {
+			// setting price as the sale price or retail price
 			var saleItemList = payload.filter(item => item.sale_price != null)
 			saleItemList.map(elem => {
 				elem['price'] = elem.sale_price;
@@ -36,32 +33,23 @@ export const Inventory = {
 
 			state.inventoryList = combined;
 		},
-		PUSH_NEW_INVENTORY(state, payload) {
+		PUSH_INVENTORY_LIST(state, payload) {
 			state.inventoryList.push(payload);
 		},
-		SET_BARCODE_LIST(state, payload) {
-			state.inventoryBarcodes = payload;
-		},
 		SET_CATEGORY_LIST(state, payload) {
-			state.categories = [];
-			state.categories = payload;
+			state.categoriesList = payload;
+		},
+		PUSH_INVENTORY_CATEGORY(state, payload) {
+			state.categoriesList.push(payload);
 		},
 		SET_GALLERY_LIST(state, payload) {
-			state.inventoryGalleryImgs = [];
 			state.inventoryGalleryImgs = payload;
 		},
 		APPEND_GALLERY_LIST(state, payload) {
 			state.inventoryGalleryImgs.push(payload);
 		},
-		SET_ERROR_HANDLER(state, payload) {
-			state.errorHandle = true;
-			state.errorData = Object.entries(payload.data);
-		},
-		RESET_ERRORS(state, payload) {
-			state.errorData = [];
-			state.errorHandle = false;
-		},
-		REMOVE_CATEGORY_LIST(state, payload) {
+
+		REMOVE_CATEGORY_FROM_LIST(state, payload) {
 			console.log('REMOVE_CATEGORY_LIST payload', payload);
 			var indexObj = state.categoryList.findIndex(elem => elem.id === payload);
 			console.log('REMOVE_CATEGORY_LIST indexObj', indexObj);
@@ -71,10 +59,9 @@ export const Inventory = {
 	},
 	actions: {
 		//Create Methods
-		createInventory({ commit, dispatch, rootState }, form) {
+		POSTInventory({ commit, dispatch, rootState }, form) {
+			console.log("createInventory", form);
 			return new Promise((resolve, reject) => {
-				console.log("createInventory", form);
-				console.log("rootState.Auth.axiosHeader", rootState.Auth.axiosHeader);
 				if (!rootState.Auth.isAuthenticated) {
 					let error = {};
 					error.type = "Login Required";
@@ -82,22 +69,17 @@ export const Inventory = {
 					dispatch('updateNotification', error);
 					return reject(error);
 				}
-				axios({
-					url: "/django/inventory/",
-					method: 'post',
-					headers: rootState.Auth.axiosHeader.headers,
-					data: form
-				}).then(response => {
-					if (response.status === 201) {
+				axios.post("/django/inventory/", form).then(response => {
+					if (response.status === 200 || response.status === 201) {
 						response.type = "Create Inventory";
-						commit('PUSH_NEW_INVENTORY', response.data);
+						commit('PUSH_INVENTORY_LIST', response.data);
 						dispatch('updateNotification', response);
+
 						return resolve(response.data);
 					}
 				}).catch(error => {
-					error.response.type = "Create Inventory";
-					error.response.status = "400";
-					dispatch('updateNotification', error.response);
+					error.type = "Create Inventory";
+					dispatch('updateNotification', error);
 
 					return resolve(error);
 				});
@@ -105,23 +87,9 @@ export const Inventory = {
 				return error;
 			});
 		},
-		createCategories({ dispatch, commit }, payload) {
-			console.log("Creating CategoriesList");
-			axios.post("/django/invcategory/", payload).then(response => {
-				if (response.status === 201) {
-					response.type = "Create Inventory Categories";
-					dispatch('getInventoryCategories');
-					dispatch('updateNotification', response);
-				}
-			}).catch(error => {
-				if (error.response) {
-					dispatch('updateNotification', error.response);
-				}
-			})
-		},
-		//GET and LIST Methods
-		getInventoryList({ dispatch, commit, rootState }, form) {
-			return new Promise(async (resolve, reject) => {
+		POSTCategories({ commit, dispatch, rootState }, form) {
+			console.log("createCategories", form);
+			return new Promise((resolve, reject) => {
 				if (!rootState.Auth.isAuthenticated) {
 					let error = {};
 					error.type = "Login Required";
@@ -129,78 +97,125 @@ export const Inventory = {
 					dispatch('updateNotification', error);
 					return reject(error);
 				}
-				var url = "";
-				if (form != undefined) {
-					url = form.url;
-				}
-				axios.get("/django/inventory/" + url, rootState.Auth.axiosHeader).then(response => {
-					if (response.status === 200) {
-						commit('SET_INVENTORY_LIST', response.data);
-						response.type = "Retrieve Inventory List";
+				axios.post("/django/invcategory/", form).then(response => {
+					if (response.status === 200 || response.status === 201) {
+						response.type = "Create Inventory Categories";
+						commit('PUSH_INVENTORY_CATEGORY', response.data);
 						dispatch('updateNotification', response);
+
+						return resolve(response.data);
 					}
 				}).catch(error => {
-					error.response.type = "Retrieve Inventory List";
-					error.response.status = "400";
-					dispatch('updateNotification', error.response);
-					return resolve(error);
+					error.type = "Create Inventory Categories";
+					dispatch('updateNotification', error);
 
+					return resolve(error);
 				});
 			}).catch(error => {
 				return error;
 			});
-
 		},
-		//Filter by Inventory ID# to retrieve
-		getInventoryImages({ dispatch, commit }, id) {
-			console.log("getInventoryImages id", id);
-			axios.get("django/inventorygallery/?product=" + id).then(response => {
-				if (response.status === 200) {
-					commit('SET_GALLERY_LIST', response.data);
-					response.type = "Retrieve Inventory Images";
-					// dispatch('updateNotification', response);
-				}
-			}).catch(error => {
-				if (error.response) {
-					dispatch('updateNotification', error.response);
-				}
-			})
-		},
-		getInventoryBarcodes({ dispatch, commit }) {
-			console.log("getInventoryBarcodes");
-			axios.get("/django/invbarcodes/").then(response => {
-				if (response.status === 200) {
-					commit('SET_BARCODE_LIST', response.data);
-					response.type = "Retrieve Inventory Barcodes";
-					// dispatch('updateNotification', response);
-				}
-			}).catch(error => {
-				if (error.response) {
-					dispatch('updateNotification', error.response);
-				}
-			})
-		},
-		getInventoryCategories({ dispatch, commit }) {
-			console.log("getInventoryCategories");
-			axios.get("/django/invcategory/").then(response => {
-				if (response.status === 200) {
-					commit('SET_CATEGORY_LIST', response.data);
-					response.type = "Retrieve Inventory Categories";
-					// dispatch('updateNotification', response);
-				}
-			}).catch(error => {
-				if (error.response) {
-					dispatch('updateNotification', error.response);
-				}
-			})
-		},
-		//Filter by ID
-		getInventoryBarcodesbyId({ dispatch, commit }, form) {
+		//GET and LIST Methods
+		GETInventoryList({ dispatch, commit, rootState }, payload) {
+			var platForm = rootState.Auth.platformInfo;
 			return new Promise((resolve, reject) => {
-				axios.get("/django/invbarcodes/" + form + "/").then(response => {
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("GETInventoryList error", error);
+					return reject(error);
+				}
+				console.log("GETInventoryList", payload);
+				var url = platForm.url;
+				if (payload != undefined) {
+					url = payload.url;
+				}
+				axios.get("/django/inventory/" + url).then(response => {
+					if (response.status === 200) {
+						commit('SET_INVENTORY_LIST', response.data);
+						response.type = "Retrieve Inventory";
+						// dispatch('updateNotification', response);
+
+						return resolve();
+					}
+				}).catch(error => {
+					error.type = "Retrieve Inventory";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			});
+		},
+		//Still Need to fix by passing in the ID of the inventory Item
+		GETInventoryImagesById({ dispatch, commit, rootState }, payload) {
+			var platForm = rootState.Auth.platformInfo;
+			return new Promise((resolve, reject) => {
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("GETInventoryList error", error);
+					return reject(error);
+				}
+				console.log("GETInventoryList", payload);
+				axios.get("/django/inventorygallery/?product=" + payload.id).then(response => {
+					if (response.status === 200) {
+						commit('SET_INVENTORY_LIST', response.data);
+						response.type = "Retrieve Inventory Item";
+						dispatch('updateNotification', response);
+
+						return resolve();
+					}
+				}).catch(error => {
+					error.type = "Retrieve Inventory Item";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			});
+		},
+		GETInventoryCategories({ dispatch, commit, rootState }, payload) {
+			var platForm = rootState.Auth.platformInfo;
+			return new Promise((resolve, reject) => {
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("GETInventoryList error", error);
+					return reject(error);
+				}
+				console.log("getHolidays", payload);
+				var url = platForm.url;
+				if (payload != undefined) {
+					url = payload.url;
+				}
+				axios.get("/django/invcategory/" + url).then(response => {
+					if (response.status === 200) {
+						commit('SET_CATEGORY_LIST', response.data);
+						response.type = "Retrieve Inventory Categories";
+						dispatch('updateNotification', response);
+
+						return resolve();
+					}
+				}).catch(error => {
+					error.type = "Retrieve Inventory Categories";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			});
+		},
+
+		//Filter by ID
+		GETInventoryBarcodeById({ dispatch, commit }, form) {
+			return new Promise((resolve, reject) => {
+				axios.get("/django/invbarcodes/" + form.id + "/").then(response => {
 					console.log("Getting barceodes by ID", form);
 					if (response.status === 200) {
-						commit('SET_BARCODE_LIST', response.data);
 						response.type = "Retrieve Inventory Barcode";
 						dispatch('updateNotification', response);
 
@@ -219,89 +234,145 @@ export const Inventory = {
 
 		},
 		//Update Methods
-		async updateInventoryItem({ dispatch, commit, rootState }, form) {
-			await commit('AXIOS_HEADER');
-			console.log("updateInventoryItem form", form);
-			axios.put("/django/inventory/" + form.id + '/', form, rootState.Auth.axiosHeader).then(response => {
-				if (response.status === 200) {
-					response.type = "Update Inventory";
-					dispatch('updateNotification', response);
-					dispatch('getInventoryList');
+		PATCHInventoryItem({ dispatch, commit, rootState }, form) {
+			return new Promise((resolve, reject) => {
+				console.log("PATCH Inventory Item", form);
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("PATCHInventoryItem error", error);
+					return reject(error);
+				}
+				axios.patch("/django/inventory/" + form.id + "/", form).then(response => {
+					console.log("PATCH Inventory Item", response);
+					if (response.status === 200) {
+						response.type = "Update Inventory Item";
+						dispatch('updateNotification', response);
+						//I still need to make a commitment to update the current inventoy in Vuex
 
-				}
+						return resolve(response.data);
+					}
+				}).catch(error => {
+					error.type = "Update Inventory Item";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
 			}).catch(error => {
-				if (error.response) {
-					dispatch('updateNotification', error.response);
-				}
-			})
+				return error;
+			});
 		},
+
 		//Delete Methods
-		deleteInventoryCategories({ dispatch, commit }, payload) {
-			console.log("deleteInventoryCategories Payload", payload);
-			axios.delete("/django/invcategory/" + payload + "/").then(response => {
-				if (response.status === 204) {
-					dispatch('getInventoryCategories');
-					response.type = "Delete Inventory Categories";
-					dispatch('updateNotification', response);
-					commit('REMOVE_CATEGORY_LIST', payload);
+		DELETEInventoryCategory({ dispatch, commit, rootState }, form) {
+			return new Promise((resolve, reject) => {
+				console.log("DELETE Inventory Category", form);
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("DELETEInventoryCategory error", error);
+					return reject(error);
 				}
-			}).catch(error => {
-				if (error.response) {
-					dispatch('updateNotification', error.response);
-				}
-			});
-		},
-		deleteInventoryImage({ dispatch, commit }, payload) {
-			console.log("deleteInventoryImage Payload", payload);
-			axios.delete("/django/inventorygallery/" + payload + '/').then(response => {
-				if (response.status === 204) {
-					dispatch('getInventoryImages');
-					response.type = "Delete Inventory Images";
-					dispatch('updateNotification', response);
-				}
-			}).catch(error => {
-				if (error.response) {
-					dispatch('updateNotification', error.response);
-				}
-			});
-		},
-		deleteInventoryItem({ dispatch, commit }, payload) {
-			console.log("deleteInventoryItem Payload", payload);
-			axios.put("/django/inventory/" + payload.id + '/', payload).then(response => {
-				console.log("Delete Django Inventory Item", response);
-				if (response.status === 200) {
-					dispatch('getInventoryList');
-					response.type = "Delete Inventory";
-					dispatch('updateNotification', response);
-				}
-			}).catch(error => {
-				if (error.response) {
-					dispatch('updateNotification', error.response);
-				}
-			});
-		},
-		//Set Axios Header Informaiton
-		setAxiosHeader() {
+				axios.delete("/django/invcategory/" + form.id).then(response => {
+					console.log("DELETE Inventory Category", response);
+					if (response.status === 204) {
+						response.type = "Delete Inventory Category";
+						dispatch('updateNotification', response);
+						commit('REMOVE_CATEGORY_FROM_LIST', form.id);
+						//Need to make a mutation to remove from Vuex using form.id
 
+						return resolve(response.data);
+					}
+				}).catch(error => {
+					error.type = "Delete Inventory Category";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			}).catch(error => {
+				return error;
+			});
 		},
+		DELETEInventoryImage({ dispatch, commit, rootState }, form) {
+			return new Promise((resolve, reject) => {
+				console.log("DELETE Inventory Item", form);
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("DELETEInventoryImage error", error);
+					return reject(error);
+				}
+				axios.delete("/django/inventorygallery/" + form.id).then(response => {
+					console.log("DELETE Inventory Item", response);
+					if (response.status === 204) {
+						response.type = "Delete Inventory Item";
+						dispatch('updateNotification', response);
+						//Need to make a mutation to remove from Vuex using form.id
+
+						return resolve(response.data);
+					}
+				}).catch(error => {
+					error.type = "Delete Inventory Item";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			}).catch(error => {
+				return error;
+			});
+		},
+		DELETEInventoryItem({ dispatch, commit, rootState }, form) {
+			return new Promise((resolve, reject) => {
+				console.log("DELETE Inventory Item", form);
+				if (!rootState.Auth.isAuthenticated) {
+					let error = {};
+					error.type = "Login Required";
+					error.status = 2000;
+					dispatch('updateNotification', error);
+					console.log("DELETEInventoryItem error", error);
+					return reject(error);
+				}
+				form.is_active=false;
+				axios.delete("/django/inventory/" + form.id).then(response => {
+					console.log("DELETE Inventory Item", response);
+					if (response.status === 204) {
+						response.type = "Delete Inventory Item";
+						dispatch('updateNotification', response);
+						//Need to make a mutation to remove from Vuex using form.id
+
+						return resolve(response.data);
+					}
+				}).catch(error => {
+					error.type = "Delete Inventory Item";
+					dispatch('updateNotification', error);
+
+					return resolve(error);
+				});
+			}).catch(error => {
+				return error;
+			});
+		},
+
 
 	},
 	getters: {
-		getInventory(state) {
-			console.log("inventoryList from getter", state.inventoryList);
+		GET_INVENTORY_LIST(state) {
 			return state.inventoryList;
 		},
-		getInventoryBarcodes(state) {
-			console.log("inventoryBarcodes from getter", state.inventoryBarcodes);
-			return state.inventoryBarcodes;
-		},
-		getInventoryGallery(state) {
-			console.log("inventoryGalleryImgs from getter", state.inventoryBarcodes);
+		GET_INVENTORY_IMAGE_GALLERY_LIST(state) {
 			return state.inventoryGalleryImgs;
 		},
-		getInventoryCategories(state) {
-			console.log("getInventoryCategories from getter", state.categories);
-			return state.categories;
+		GET_INV_CATEGORY_LIST(state) {
+			return state.categoriesList;
+		},
+		GET_INV_CATEGORY_LIST_LENGTH(state) {
+			return state.categoriesList.length;
 		}
 	}
 }

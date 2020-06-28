@@ -18,11 +18,20 @@ from .models import ( Shift,
                     PayCycle, 
                     PayCycleRecurrence, )
 
+from partners.serializers import PartnerSerializer, SimplePartnerSerializer
+from datacom.serializers import DatacomSerializer, SimpleDatacomSerializer
+from companies.serializers import CompanySerializer, SimpleCompanySerializer
+from users.serializers import UserSerializer, SimpleUserSerializer
+
 class ShiftSerializer(serializers.ModelSerializer):
+    datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    company_obj = SimpleCompanySerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
-    employees = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), many=True, required=False, allow_null=True)
+    employees_list = SimpleUserSerializer(many=True, read_only=True, source='employees')
+    employees = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), many=True, allow_null=True), allow_null=True)
 
     class Meta:
         model = Shift
@@ -30,8 +39,11 @@ class ShiftSerializer(serializers.ModelSerializer):
 
 
 class OperatingHoursSerializer(serializers.ModelSerializer):
+    datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    company_obj = SimpleCompanySerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
 
     class Meta:
@@ -39,8 +51,11 @@ class OperatingHoursSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class BusinessOperatingHoursSerializer(serializers.ModelSerializer):
+    datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    company_obj = SimpleCompanySerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
 
     class Meta:
@@ -48,19 +63,27 @@ class BusinessOperatingHoursSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class AttendanceSettingsSerializer(serializers.ModelSerializer):
+    datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    company_obj = SimpleCompanySerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
+    operating_hours_obj = SimpleCompanySerializer(read_only=True, source='operating_hours')
     operating_hours= serializers.PrimaryKeyRelatedField(queryset=BusinessOperatingHours.objects.all(), many=True, required=False, allow_null=True)
-    shift = serializers.PrimaryKeyRelatedField(queryset=Shift.objects.all(), many=True, required=False, allow_null=True)
+    
+    shift_list = SimpleUserSerializer(many=True, read_only=True, source='shift')
+    shift = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Shift.objects.all(), many=True, allow_null=True), allow_null=True)
 
     class Meta:
         model = AttendanceSettings
         fields = ('__all__')
 
 class TimeCardSerializer(serializers.ModelSerializer):
+    cycle_obj = SimpleCompanySerializer(read_only=True, source='cycle')
     cycle = serializers.PrimaryKeyRelatedField(queryset=PayCycle.objects.all(), required=False, allow_null=True)
-    employee = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), required=False, allow_null=True)
+    employee_obj = SimpleCompanySerializer(read_only=True, source='employee')
+    employee = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
   
     class Meta:
         model = TimeCard
@@ -73,16 +96,22 @@ class LeaveRequestSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class PayCyclesSerializer(serializers.ModelSerializer):
+    datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    company_obj = SimpleCompanySerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
-    employees = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), many=True, required=True, allow_null=False)
+    
+    employees_list = SimpleUserSerializer(many=True, read_only=True, source='employees')
+    employees = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all(), many=True, allow_null=True), allow_null=True)
     
     class Meta:
         model = PayCycle
         fields = ('__all__')
         
 class PayCycleRecurrenceSerializer(serializers.Serializer):
+    recurrence_obj = SimpleCompanySerializer(read_only=True, source='recurrence')
     recurrence = serializers.PrimaryKeyRelatedField(queryset=PayCycle.objects.all(), required=True, allow_null=False)
     rrule = serializers.CharField(max_length=255, required=False, allow_null=True)
     start_date = serializers.DateTimeField(required=False, allow_null=True)

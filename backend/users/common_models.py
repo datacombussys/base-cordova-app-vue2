@@ -1,8 +1,11 @@
 from uuid import uuid4
-from django.db import models
-from django.utils import timezone
-from django.core.validators import RegexValidator
+
 from django.contrib.auth.models import AbstractBaseUser, Group
+from django.core.validators import RegexValidator
+from django.db import models
+from django.db.models.deletion import DO_NOTHING
+from django.utils import timezone
+
 
 class CommonUserBase(AbstractBaseUser):
 	email 				= models.EmailField(verbose_name="email", max_length=60, unique=True)
@@ -26,8 +29,7 @@ class CommonUserBase(AbstractBaseUser):
 	country 			= models.CharField(max_length=200, blank=True, null=True)
 	bio 					= models.TextField(blank=True, null=True)
 	global_id 		= models.UUIDField(primary_key=False, default=uuid4, editable=False)
-	groups 		    = models.ManyToManyField(Group, related_name='user_groups', blank=True) 
+	groups  			= models.ManyToManyField(Group, related_name="user_groups", blank=True)
 
 	class Meta:
 		abstract = True
-

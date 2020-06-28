@@ -1,19 +1,18 @@
 from rest_framework import serializers
-from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
 from cities.models import Country, Region, City, PostalCode
 
 from .models import TimeZones, Holiday, Shipping, Department, GeneralSettings
-from users.models import User, UserGroups, UserPermissions
+
 
 from datacom.models import Datacom
 from partners.models import Partner
 from companies.models import Company
 from vendors.models import Vendor
+from users.models import User
 
-from partners.serializers import PartnerSerializer, PartnerSimpleSerializer
-from datacom.serializers import DatacomSerializer, DatacomSimpleSerializer
-from companies.serializers import CompanySerializer, CompanySimpleSerializer
+from partners.serializers import PartnerSerializer, SimplePartnerSerializer
+from datacom.serializers import DatacomSerializer, SimpleDatacomSerializer
+from companies.serializers import CompanySerializer, SimpleCompanySerializer
 from users.serializers import UserSerializer, SimpleUserSerializer
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -44,95 +43,67 @@ class TimezoneSerializer(serializers.ModelSerializer):
 
     
 class HolidaySerializer(serializers.ModelSerializer):
+  datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
   datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+  partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
   partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+  company_obj = SimpleCompanySerializer(read_only=True, source='company')
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
 
   class Meta:
     model = Holiday
     fields = ('__all__')
 
-    def to_representation(self, value):
-        data = super().to_representation(value)  
-        if data['datacom']:
-            datacom_data_serializer = DatacomSimpleSerializer(value.datacom)
-            data['datacom'] = datacom_data_serializer.data
-        if data['partner']:
-            partner_data_serializer = PartnerSimpleSerializer(value.partner)
-            data['partner'] = partner_data_serializer.data
-        if data['company']:
-            company_data_serializer = CompanySimpleSerializer(value.company)
-            data['company'] = company_data_serializer.data
+    # def to_representation(self, value):
+    #     data = super().to_representation(value)  
+    #     if data['datacom']:
+    #         datacom_data_serializer = SimpleDatacomSerializer(value.datacom)
+    #         data['datacom'] = datacom_data_serializer.data
+    #     if data['partner']:
+    #         partner_data_serializer = SimplePartnerSerializer(value.partner)
+    #         data['partner'] = partner_data_serializer.data
+    #     if data['company']:
+    #         company_data_serializer = SimpleCompanySerializer(value.company)
+    #         data['company'] = company_data_serializer.data
        
-        return data
-
-            
-class ContentTypeSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = ContentType
-    fields = ('__all__')
-
-class BasePermissionSeializer(serializers.ModelSerializer):
-  class Meta:
-    model = Permission
-    fields = ('__all__')
-
-    
-class PermissionsSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = UserPermissions
-    fields = ('__all__')
-
-class GroupsSerializer(serializers.ModelSerializer):
-  # This requires a custom validate() method
-  permissions = BasePermissionSeializer(many=True, read_only=True)
-  permissions_id = serializers.PrimaryKeyRelatedField(many=True,
-    queryset=Permission.objects.all(), write_only=True,
-    required=False, allow_null=True) #- write Only field
-
-  class Meta:
-    model = UserGroups
-    fields = ('__all__')
-
-    def validate(self, data):
-      print('validate data', data)
-      try:
-        data['permissions'] = data.pop('permissions_id')
-      except KeyError:
-        print('We had an error adding the permission to the UserGroup')
-        pass
-
-      return data
+    #     return data
 
 class ShippingSerializer(serializers.ModelSerializer):
+  datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
   datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+  partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
   partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+  company_obj = SimpleCompanySerializer(read_only=True, source='company')
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
+  user_obj = SimpleUserSerializer(read_only=True, source='user')
   user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True) 
 
   class Meta:
     model = Shipping
     fields = ('__all__')
 
-  def to_representation(self, value):
-    data = super().to_representation(value) 
-    if data['datacom']:
-      datacom_data_serializer = DatacomSerializer(value.datacom)
-      data['datacom'] = datacom_data_serializer.data
-    if data['partner']:
-      partner_data_serializer = PartnerSerializer(value.partner)
-      data['partner'] = partner_data_serializer.data
-    if data['company']:
-      company_data_serializer = CompanySerializer(value.company)
-      data['company'] = company_data_serializer.data   
-    if data['user']:
-      user_data_serializer = UserSerializer(value.user)
-      data['user'] = user_data_serializer.data    
-    return data
+  # def to_representation(self, value):
+  #   data = super().to_representation(value) 
+  #   if data['datacom']:
+  #     datacom_data_serializer = DatacomSerializer(value.datacom)
+  #     data['datacom'] = datacom_data_serializer.data
+  #   if data['partner']:
+  #     partner_data_serializer = PartnerSerializer(value.partner)
+  #     data['partner'] = partner_data_serializer.data
+  #   if data['company']:
+  #     company_data_serializer = CompanySerializer(value.company)
+  #     data['company'] = company_data_serializer.data   
+  #   if data['user']:
+  #     user_data_serializer = UserSerializer(value.user)
+  #     data['user'] = user_data_serializer.data    
+  #   return data
 
 class DepartmentSerializer(serializers.ModelSerializer):
+  datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
   datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+  partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
   partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+  company_obj = SimpleCompanySerializer(read_only=True, source='company')
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
 
   class Meta:
@@ -140,9 +111,13 @@ class DepartmentSerializer(serializers.ModelSerializer):
     fields = ('__all__')
 
 class GeneralSettingsSerializer(serializers.ModelSerializer):
+  datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
   datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+  partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
   partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+  company_obj = SimpleCompanySerializer(read_only=True, source='company')
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
+  
   class Meta:
     model = GeneralSettings
     fields = ('__all__')

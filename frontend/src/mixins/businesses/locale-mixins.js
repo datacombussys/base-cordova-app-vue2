@@ -54,12 +54,15 @@ export const LocaleMixin = {
     },
     getPrimaryCities(e, type) {
       if(e.target.value) {
-        console.log('e', e);
+        console.log('getPrimaryCities e', e);
         console.log('type', type);
         var state = this.Locale.primaryStateList.find(elem => elem.id == e.target.value);
         console.log('state', state);
         this.localeCities.primary_state_id = e.target.value;
-        this.localeCities['primary_state_name'] = state.name;
+        this.localeCities.primary_state_name = state['name'];
+        console.log('state.name', state.name);
+        console.log('state[name]', state['name']);
+        console.log('this.localeCities.primary_state_name', this.localeCities.primary_state_name);
         console.log('this.localeCities', this.localeCities);
         this.$store.dispatch("getCities", {id: e.target.value, type: type});
       }
@@ -76,7 +79,7 @@ export const LocaleMixin = {
       if(e.target.value) {
         var state = this.Locale.billingStateList.find(elem => elem.id == e.target.value);
         this.localeCities.billing_state_id = e.target.value;
-        this.localeCities['billing_state_name'] = state.name;
+        this.localeCities.billing_state_name = state.name;
         this.$store.dispatch("getCities", {id: e.target.value, type: type});
       }
     },
@@ -92,7 +95,7 @@ export const LocaleMixin = {
       if(e.target.value) {
         var state = this.Locale.shippingStateList.find(elem => elem.id == e.target.value);
         this.localeCities.shipping_state_id = e.target.value;
-        this.localeCities['shipping_state_name'] = state.name;
+        this.localeCities.shipping_state_name = state.name;
         this.$store.dispatch("getCities", {id: e.target.value, type: type});
       }
     },
@@ -108,7 +111,7 @@ export const LocaleMixin = {
       if(e.target.value) {
         var state = this.Locale.stateList.find(elem => elem.id == e.target.value);
         this.localeCities.creditcard_state_id = e.target.value;
-        this.localeCities['creditcard_state_name'] = state.name;
+        this.localeCities.creditcard_state_name = state.name;
         this.$store.dispatch("getSharedCities", e.target.value);
         // this.$store.dispatch("getPostalCodes", e.target.value);
       }
@@ -125,7 +128,7 @@ export const LocaleMixin = {
       if(e.target.value) {
         var state = this.Locale.stateList.find(elem => elem.id == e.target.value);
         this.localeCities.ach_state_id = e.target.value;
-        this.localeCities['ach_state_name'] = state.name;
+        this.localeCities.ach_state_name = state.name;
         this.$store.dispatch("getSharedCities", e.target.value);
         // this.$store.dispatch("getPostalCodes", e.target.value);
       }
@@ -142,7 +145,7 @@ export const LocaleMixin = {
       if(e.target.value) {
         var state = this.Locale.stateList.find(elem => elem.id == e.target.value);
         this.localeCities.new_shipping_id = e.target.value;
-        this.localeCities['new_shipping_state_name'] = state.name;
+        this.localeCities.new_shipping_state_name = state.name;
         this.$store.dispatch("getSharedCities", e.target.value);
         // this.$store.dispatch("getPostalCodes", e.target.value);
       }
@@ -163,7 +166,7 @@ export const LocaleMixin = {
         console.log('Yes, e exists');
         var state = this.Locale.stateList.find(elem => elem.id == e.target.value);
         this.localeCities.user_state_id = e.target.value;
-        this.localeCities['user_state_state_name ']= state.name;
+        this.localeCities.user_state_state_name = state.name;
         this.$store.dispatch("getSharedCities", e.target.value);
         // this.$store.dispatch("getPostalCodes", e.target.value);
       }

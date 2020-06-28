@@ -33,23 +33,23 @@ class CommonCompanyBase(models.Model):
   shipping_zip 			  = models.CharField(max_length=5, null=True, 
                         blank=True, validators=[RegexValidator(r'^\d{1,5}$')])
   shipping_country    = models.CharField(max_length=200, blank=True, null=True)
-  shipping_first_name  = models.CharField(max_length=100, blank=True, null=True)
-  shipping_last_name   = models.CharField(max_length=100, blank=True, null=True)
-  shipping_phone       = models.CharField(max_length=10, null=True, blank=True, 
+  shipping_first_name = models.CharField(max_length=100, blank=True, null=True)
+  shipping_last_name  = models.CharField(max_length=100, blank=True, null=True)
+  shipping_phone      = models.CharField(max_length=10, null=True, blank=True, 
                           validators=[RegexValidator(r'^\d{1,10}$')])
-  shipping_fax 		        = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
-  shipping_email       = models.CharField(max_length=200, blank=True, null=True)
+  shipping_fax 		    = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
+  shipping_email      = models.CharField(max_length=200, blank=True, null=True)
   billing_address 	  = models.CharField(max_length=200, blank=True, null=True)
   billing_city 	  	  = models.CharField(max_length=60, blank=True, null=True)
   billing_state 		  = models.CharField(max_length=20, blank=True, null=True)
   billing_zip 			  = models.CharField(max_length=5, null=True, 
                         blank=True, validators=[RegexValidator(r'^\d{1,5}$')])
-  billing_country    = models.CharField(max_length=200, blank=True, null=True)
+  billing_country     = models.CharField(max_length=200, blank=True, null=True)
   billing_first_name  = models.CharField(max_length=100, blank=True, null=True)
   billing_last_name   = models.CharField(max_length=100, blank=True, null=True)
   billing_phone       = models.CharField(max_length=10, null=True, blank=True, 
                           validators=[RegexValidator(r'^\d{1,10}$')])
-  billing_fax 		        = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
+  billing_fax 		    = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
   billing_email       = models.CharField(max_length=200, blank=True, null=True)
   tax_id              = models.CharField(max_length=9, null=True, 
 									      blank=True, validators=[RegexValidator(r'^\d{1,9}$')])
@@ -61,6 +61,8 @@ class CommonCompanyBase(models.Model):
   is_partner          = models.BooleanField(default=False, blank=True, null=True)
   is_merchant         = models.BooleanField(default=False, blank=True, null=True)
   is_vendor           = models.BooleanField(default=False, blank=True, null=True)
+  is_warehouse        = models.BooleanField(default=False, blank=True, null=True)
+  is_salesoffice      = models.BooleanField(default=False, blank=True, null=True)
   board_date          = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
   acct_closure_date   = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
   closure_reason      = models.CharField(max_length=250, blank=True, null=True)
@@ -69,13 +71,4 @@ class CommonCompanyBase(models.Model):
       abstract 	= True
 
 
-class CommonBarcode(models.Model):
-  date_added 		  = models.DateTimeField(verbose_name="date added", 														
-                    auto_now_add=True)
-  title 			    = models.CharField(max_length=50, null=True, blank=True)
-  barcode_number  = models.BigIntegerField(null=True, blank=True)
-  barcode_type 		= models.CharField(max_length=10, null=True, blank=True)
-  subtitle 			  = models.CharField(max_length=50, null=True, blank=True)
-  metadata 		    = models.CharField(max_length=250, blank=True, null=True)
-  image 	        = models.FileField(max_length=100, upload_to='company/barcodes/')
 

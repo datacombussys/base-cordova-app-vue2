@@ -10,11 +10,13 @@ from partners.models import Partner
 from vendors.models import Vendor
 from warehouses.models import Warehouse
 
-from partners.serializers import PartnerSerializer
-from datacom.serializers import DatacomSerializer
-from companies.serializers import CompanySerializer
-from warehouses.serializers import WarehouseSerializer
-from vendors.serializers import VendorSerializer
+from commons.models import UOMWeight, UOMDimensions
+from commons.serializers import UOMWeightSerializer, UOMDimensionsSerializer
+from partners.serializers import PartnerSerializer, SimplePartnerSerializer
+from datacom.serializers import DatacomSerializer, SimpleDatacomSerializer
+from companies.serializers import CompanySerializer, SimpleCompanySerializer
+from vendors.serializers import VendorSerializer, SimpleVendorSerializer
+from warehouses.serializers import WarehouseSerializer, SimpleWarehouseSerializer
 
 
 class InventoryBarcodeSerializer(serializers.ModelSerializer):
@@ -36,15 +38,26 @@ class InvCategorySerializer(serializers.ModelSerializer):
         
 
 class InventorySerializer(serializers.ModelSerializer):
-    # category = InvCategorySerializer(read_only=True)
-    # category_id = serializers.PrimaryKeyRelatedField(queryset=InvCategory.objects.all(), 
-    #         write_only=True, required=False, allow_null=True)
+    datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
+    partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
+    company_obj = SimpleCompanySerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
+    vendor_obj = SimpleVendorSerializer(read_only=True, source='vendor')
     vendor = serializers.PrimaryKeyRelatedField(queryset=Vendor.objects.all(), required=False, allow_null=True)
-    warehouse = serializers.PrimaryKeyRelatedField(queryset=Warehouse.objects.all(), required=False, allow_null=True)
+    warehouse_loc_obj = SimpleWarehouseSerializer(read_only=True, source='warehouse_loc')
+    warehouse_loc = serializers.PrimaryKeyRelatedField(queryset=Warehouse.objects.all(), required=False, allow_null=True)
+    category_obj = InvCategorySerializer(read_only=True, source='category')
     category = serializers.PrimaryKeyRelatedField(queryset=InvCategory.objects.all(), required=False, allow_null=True)
+
+    uom_weight_obj = UOMWeightSerializer(read_only=True, source='uom_weight')
+    uom_weight = serializers.PrimaryKeyRelatedField(queryset=UOMWeight.objects.all(), required=False, allow_null=True)
+    uom_dimensions_obj = UOMDimensionsSerializer(read_only=True, source='uom_dimensions')
+    uom_dimensions = serializers.PrimaryKeyRelatedField(queryset=UOMDimensions.objects.all(), required=False, allow_null=True)
+    barcode_obj = InventoryBarcodeSerializer(read_only=True, source='barcode')
+    barcode = serializers.PrimaryKeyRelatedField(queryset=InventoryBarcode.objects.all(), required=False, allow_null=True)
+
     profile_img = Base64ImageField( max_length=None,
                                     use_url=True,
                                     required=False,
@@ -71,28 +84,33 @@ class InventorySerializer(serializers.ModelSerializer):
             pass
         return data
 
-    def to_representation(self, value):
-        data = super().to_representation(value)  
-        if data['datacom']:
-            datacom_data_serializer = DatacomSerializer(value.datacom)
-            data['datacom'] = datacom_data_serializer.data
-        if data['company']:
-            company_data_serializer = CompanySerializer(value.company)
-            data['company'] = company_data_serializer.data
-        if data['partner']:
-            partner_data_serializer = PartnerSerializer(value.partner)
-            data['partner'] = partner_data_serializer.data
-        if data['warehouse']:
-            warehouse_data_serializer = WarehouseSerializer(value.warehouse)
-            data['warehouse'] = warehouse_data_serializer.data
-        if data['vendor']:
-            vendor_data_serializer = VendorSerializer(value.vendor)
-            data['vendor'] = vendor_data_serializer.data
-        if data['category']:
-            category_data_serializer = InvCategorySerializer(value.category)
-            data['category'] = category_data_serializer.data
+    # def to_representation(self, value):
+    #     data = super().to_representation(value)  
+    #     if data['datacom']:
+    #         datacom_data_serializer = DatacomSerializer(value.datacom)
+    #         data['datacom'] = datacom_data_serializer.data
+    #     if data['company']:
+    #         company_data_serializer = CompanySerializer(value.company)
+    #         data['company'] = company_data_serializer.data
+    #     if data['partner']:
+    #         partner_data_serializer = PartnerSerializer(value.partner)
+    #         data['partner'] = partner_data_serializer.data
+    #     if data['warehouse']:
+    #         warehouse_data_serializer = WarehouseSerializer(value.warehouse)
+    #         data['warehouse'] = warehouse_data_serializer.data
+    #     if data['vendor']:
+    #         vendor_data_serializer = VendorSerializer(value.vendor)
+    #         data['vendor'] = vendor_data_serializer.data
+    #     if data['category']:
+    #         category_data_serializer = InvCategorySerializer(value.category)
+    #         data['category'] = category_data_serializer.data
 
-        return data
+    #     return data
+    
+class SimpleInventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = ['id', 'date_added', 'name', 'list_price', 'profile_img', 'category', 'is_active']
 
 class InvCategoryClassSerializer(serializers.ModelSerializer):
     class Meta:
@@ -101,11 +119,10 @@ class InvCategoryClassSerializer(serializers.ModelSerializer):
 
 # IMAGE GALLERY
 class InventoryGallerySerializer(serializers.ModelSerializer):
-    # product = InventorySerializer(read_only=True)
-    # product_id = serializers.PrimaryKeyRelatedField(queryset=Inventory.objects.all(), 
-    #         write_only=True, required=False, allow_null=True)
+    #Only make GET request on id when inv item is being loaded in datatable
+    product_obj = SimpleInventorySerializer(read_only=True, source='product')
     product = serializers.PrimaryKeyRelatedField(queryset=Inventory.objects.all(), required=False, allow_null=True)
-
+    
     class Meta:
         model = InventoryImage
         fields = ('__all__')
