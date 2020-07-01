@@ -40,15 +40,15 @@
 										</f7-col>
 										<f7-row class="full-width">
 											<f7-col width="100" class="display-flex justify-content-space-between">
-												<!-- <div
+												<div
 													class="tall-button time-box display-flex flex-direction-column"
 													style="width:23%; border: 1px solid gray;"
 												>
 													<strong>
 														<f7-row class="justify-content-center" style="font-size: 1.3em">{{ Static.time }}</f7-row>
 													</strong>
-													<f7-row class="justify-content-center" style="font-size: 1.25em">{{ Static.date }}</f7-row>
-												</div> -->
+													<f7-row class="justify-content-center" style="font-size: 1em">{{ Static.date }}</f7-row>
+												</div>
 												<f7-button
 													class="tall-button padding-half"
 													@click="initSale"
@@ -98,8 +98,9 @@
 									<f7-row class="padding-bottom display-flex justify-content-center">
 										<f7-col>
 											<f7-segmented raised round>
-												<f7-button round active>Clerk</f7-button>
-												<f7-button @click="testButton" round>Mgr</f7-button>
+												<f7-button round active>{{ Auth.userLoginProfile.full_name || 'Clerk' }}</f7-button>
+												<f7-button @click="testButton" popup-open=".manager-login-popup"round>Manager</f7-button>
+												<manager-login-popup-component></manager-login-popup-component>
 											</f7-segmented>
 										</f7-col>
 									</f7-row>
@@ -127,6 +128,7 @@
 													:value="isOnLine"
 													size="is-large"
 													:type="isOnLine ? 'is-success' : 'is-danger'"
+													class="no-margin-right"
 												></b-switch>
 											</f7-row>
 											<f7-row class="full-width display-flex justify-content-center">
@@ -149,7 +151,7 @@
 									<f7-col resizable class="thirdbox-middle mbox-1 no-padding display-flex elevation-10">
 										<f7-row class="full-width">
 											<f7-list class="full-width no-margin no-padding">
-												<f7-list-input type="text" class="barcode-search" placeholder="Barcode Number">
+												<f7-list-input ref="barcodeInput" type="text" class="barcode-search" placeholder="Barcode Number">
 													<f7-icon f7="barcode" slot="media"></f7-icon>
 												</f7-list-input>
 											</f7-list>
@@ -222,200 +224,124 @@
 									<!-- Begin Calculator -->
 									<f7-col
 										resizable
-										class="no-padding thirdbox-middle center-box display-flex flex-direction-column justify-content-center elevation-10"
+										class="no-padding thirdbox-middle center-box display-flex flex-direction-column justify-content-start elevation-10"
 									>
 										<f7-row class="bg-color-black" @click="showCalc = !showCalc" style="cursor: pointer;">
-											<p class="no-margin text-color-white" style="font-size: 1em;">Change View</p>
+											<f7-icon icon="mdi mdi-swap-horizontal-bold" color="white" size="35"></f7-icon>
 										</f7-row>
-										<f7-row v-show="showCalc" class="full-width">
-											<f7-col width="100">
-												<div id="calculator" class="no-padding no-margin">
-													<input
-														type="string"
-														class="calculator-input"
-														:value="calc.value"
-														@keyup.enter="getResult()"
-													/>
-													<div class="calculator-row">
-														<div class="calculator-col">
-															<button class="calculator-btn gray action" @click="clear()">C</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn gray action" @click="del()">del</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn gray action" @click="addExpresion('%')">%</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn accent action" @click="addExpresion('/')">/</button>
-														</div>
-													</div>
-													<div class="calculator-row">
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(7)">7</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(8)">8</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(9)">9</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn accent action" @click="addExpresion('*')">*</button>
-														</div>
-													</div>
-													<div class="calculator-row">
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(4)">4</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(5)">5</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(6)">6</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn accent action" @click="addExpresion('-')">-</button>
-														</div>
-													</div>
-													<div class="calculator-row">
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(1)">1</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(2)">2</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn" @click="addExpresion(3)">3</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn accent action" @click="addExpresion('+')">+</button>
-														</div>
-													</div>
-													<div class="calculator-row">
-														<div class="calculator-col wide">
-															<button class="calculator-btn" @click="addExpresion(0)">0</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn action" @click="addExpresion('.')">.</button>
-														</div>
-														<div class="calculator-col">
-															<button class="calculator-btn accent action" @click="getResult()">=</button>
-														</div>
-													</div>
-												</div>
-											</f7-col>
+										<f7-row class="full-width">
+											<transition name="calc-transition" class="flip-card">
+												<!-- Frontside Card -->
+												<div v-if="showCalc" key="frontSide" class="cardFront">
+													<f7-col width="100" class="cardFront">
+												
+													<f7-row class="full-width">
+														<calculator-component :calcData="calc"></calculator-component>
 
-											<f7-row class="calc-row no-padding full-width no-margin">
-												<div class="display-flex justify-content-center flex-direction-column order-buttons-bg">
-													<f7-row class="full-width">
-														<f7-col class="display-flex">
-															<f7-button fill class="bg-color-green calc-button">Gratuity</f7-button>
-															<f7-button fill @click="saveQty" class="bg-color-green calc-button">Save</f7-button>
-														</f7-col>
-													</f7-row>
-													<f7-row class="full-width">
-														<f7-col width="50" class="display-flex">
-															<f7-button fill class="calc-button" @click="canApplyDiscount" popup-open=".discount-popup">Discount</f7-button>
-															<discount-popup-component 
-																:discountSettings="discountSettings" 
-																:discountData="sharedData"
-																:formData="orderForm">
-															</discount-popup-component>
-														</f7-col>
-														<f7-col width="50">
-															<f7-row>
-																<f7-col width="50">
-																	<f7-button fill popup-open=".popup-component" class="calc-button">Popup</f7-button>
-																	<transaction-response-popup-component :transResponseSettings="transResponseSettings"></transaction-response-popup-component>
+														<f7-row class="no-padding full-width no-margin">
+															<f7-col class="order-buttons-bg">
+																<f7-row class="full-width justify-content-space-around">
+																	<f7-col>
+																		<f7-button fill class="bg-color-green calc-button" @click="clearBarcodeInterval" popup-open=".gratuity-popup">Gratuity</f7-button>
+																		<gratuity-popup-component :orderForm="orderForm" :startTimer="startTimer"></gratuity-popup-component>
+																	</f7-col>
+																	<f7-col>
+																		<f7-button fill @click="saveQty" class="bg-color-green calc-button">Save</f7-button>
+																	</f7-col>
+																
 																	
-																		<span slot="title">Transaction Response</span>
-																		<f7-block-title class="classy text-align-center" slot="errorTitle">DECLINED</f7-block-title>
-																		<span slot="errorMsg">
-																			<p class="field-title">Please call support for help with this issue</p>
-																			<p class="field-title">Error Code: 4205</p>
-																			<p class="field-title">Phone Number: 1-800-555-1212</p>
-																		</span>
-																	</popup-component>
-																</f7-col>
-																<f7-col width="50">
-																	<f7-button fill @click="testButton" class="calc-button">Test</f7-button>
-																</f7-col>
-															</f7-row>
-														</f7-col>
-													</f7-row>
-												</div>
-											</f7-row>
+																</f7-row>
+																<f7-row class="full-width justify-content-space-around">
+																	<f7-col width="50">
+																		<f7-button fill class="calc-button" @click="canApplyDiscount" popup-open=".discount-popup">Discount</f7-button>
+																		<discount-popup-component 
+																			:discountSettings="discountSettings" 
+																			:sharedData="sharedData"
+																			:formData="orderForm">
+																		</discount-popup-component>
+																	</f7-col>
+																	<f7-col width="50">
+																		<f7-row>
+																			<f7-col width="50">
+																				<f7-button fill popup-open=".popup-component" class="calc-button">Popup</f7-button>
+																				<transaction-response-popup-component :transResponseSettings="transResponseSettings">
+																				
+																					<span slot="title">Transaction Response</span>
+																					<f7-block-title class="classy text-align-center" slot="errorTitle">DECLINED</f7-block-title>
+																					<span slot="errorMsg">
+																						<p class="field-title">Please call support for help with this issue</p>
+																						<p class="field-title">Error Code: 4205</p>
+																						<p class="field-title">Phone Number: 1-800-555-1212</p>
+																					</span>
+																				</transaction-response-popup-component>
+																			</f7-col>
+																			<f7-col width="50">
+																				<f7-button fill @click="testButton" class="calc-button">Test</f7-button>
+																			</f7-col>
+																		</f7-row>
+																	</f7-col>
+																</f7-row>
+															</f7-col>
+														</f7-row>
 
-											<f7-row class="calc-row no-margin">
-												<div
-													class="display-flex justify-content-center flex-direction-column tender-buttons-bg no-padding-bottom"
-												>
-													<f7-row class="tender-rows">
-														<p class="no-margin" style="font-size: 1em;">Tender</p>
+														<f7-row class="full-width no-margin">
+															<f7-col width="100">
+																<f7-row class="tender-rows no-margin">
+																	<p class="no-margin">Tender</p>
+																</f7-row>
+																<f7-row class="full-width">
+																	<f7-col class="display-flex justify-content-space-around flex-direction-row">
+																		<f7-button fill popup-open=".cash-popup" class="bg-color blue calc-button">Cash</f7-button>
+																		<cash-payment-popup-component :sharedData="sharedData" :formData="orderForm"></cash-payment-popup-component>
+																		<f7-button
+																			fill
+																			popup-open=".credit-card-popup"
+																			class="bg-color blue calc-button"
+																		>Credit</f7-button>
+																		<credit-card-popup-component :sharedData="sharedData" :formData="orderForm"></credit-card-popup-component>
+																		<f7-button fill popup-open=".gift-card-popup" class="bg-color blue calc-button">Gift</f7-button>
+																		<gift-card-popup-component :sharedData="sharedData" :formData="orderForm"></gift-card-popup-component>
+																	</f7-col>
+																</f7-row>
+															</f7-col>
+														</f7-row>
 													</f7-row>
-													<f7-row class="full-width">
-														<f7-col class="display-flex">
-															<f7-button fill popup-open=".cash-popup" class="bg-color blue calc-button">Cash</f7-button>
-															<cash-payment-popup-component :sharedData="sharedData" :formData="orderForm"></cash-payment-popup-component>
-															<f7-button
-																fill
-																popup-open=".credit-card-popup"
-																class="bg-color blue calc-button"
-															>Credit</f7-button>
-															<credit-card-popup-component :sharedData="sharedData" :formData="orderForm"></credit-card-popup-component>
-															<f7-button fill popup-open=".gift-card-popup" class="bg-color blue calc-button">Gift</f7-button>
-															<gift-card-popup-component :sharedData="sharedData" :formData="orderForm"></gift-card-popup-component>
-														</f7-col>
-													</f7-row>
+											</f7-col>
 												</div>
-											</f7-row>
+												<!-- Backside Card -->
+												<div v-else key="backSide" class="cardBack">
+													<f7-col width="100" class="cardBack">
+														<f7-row class="full-width">
+															<order-notifications-component></order-notifications-component>
+															<order-status-component></order-status-component>
+														</f7-row>
+													</f7-col>
+												</div>
+											</transition>
 										</f7-row>
-
-										<!-- Flip Side View -->
-										<f7-row v-show="!showCalc" class="full-width">
-											<f7-list>
-												<f7-col width="100">
-													<f7-row>
-														<f7-col width="100" style="border: 2px solid black;">
-															<p>barcode scanner field</p>
-														</f7-col>
-													</f7-row>
-													<div class="no-padding no-margin">
-														<p>User Notifications Go here</p>
-													</div>
-													<f7-row>
-														<f7-col width="100" style="border: 2px solid black;">
-															<p>Order Information Here</p>
-															<p>Order is Open / Paid / On Hold / Voided</p>
-															<p>Amount Paid / Amount Remaining</p>
-														</f7-col>
-													</f7-row>
-												</f7-col>
-											</f7-list>
-										</f7-row>
+				
 									</f7-col>
 									<!-- End Calculator -->
 									<!-- Begin Till -->
 									<f7-col resizable class="thirdbox-middle mbox-3 elevation-10">
+										<f7-row class="full-width padding-half till-header">
+											<f7-col width="5" class="display-flex justify-content-start">
+												<div class="text-align-center">QTY</div>
+											</f7-col>
+											<f7-col width="50" class="display-flex justify-content-center">
+												<div class="text-align-center">ITEM</div>
+											</f7-col>
+											<f7-col width="20" class="display-flex justify-content-center">
+												<div class="text-align-center">EACH</div>
+											</f7-col>
+											<f7-col width="15" class="display-flex justify-content-center">
+												<div class="text-align-center">TOTAL</div>
+											</f7-col>
+											<f7-col width="10" class="display-flex justify-content-center">
+												<div class="text-align-center"></div>
+											</f7-col>
+										</f7-row>
 										<div class="till justify-content-space-evenly">
-											<f7-row class="full-width padding-half till-header">
-												<f7-col width="5" class="display-flex justify-content-start">
-													<div class="text-align-center">QTY</div>
-												</f7-col>
-												<f7-col width="50" class="display-flex justify-content-center">
-													<div class="text-align-center">ITEM</div>
-												</f7-col>
-												<f7-col width="20" class="display-flex justify-content-center">
-													<div class="text-align-center">EACH</div>
-												</f7-col>
-												<f7-col width="15" class="display-flex justify-content-center">
-													<div class="text-align-center">TOTAL</div>
-												</f7-col>
-												<f7-col width="10" class="display-flex justify-content-center">
-													<div class="text-align-center"></div>
-												</f7-col>
-											</f7-row>
 											<!--Till Content Rows-->
 											<f7-row class="align-content-flex-start till-container">
 												<f7-col width="100" class="no-padding no-margin display-flex flex-direction-column">
@@ -550,7 +476,7 @@
 							<f7-col width="33" class="thirdbox-bottom margin-left-half full-width elevation-10">
 								<f7-block-header>Orders</f7-block-header>
 								<f7-row class="full-width display-flex justify-content-space-between">
-									<f7-button class="bottom-button padding-half" style="width:23%;" fill>Find</f7-button>
+									<f7-button @click="clearBarcodeInterval"class="bottom-button padding-half" style="width:23%;" fill>Find</f7-button>
 									<f7-button class="bottom-button padding-half" style="width:23%;" fill>Reprint</f7-button>
 									<f7-button class="bottom-button padding-half" style="width:23%;" fill>Hold</f7-button>
 									<f7-button class="bottom-button padding-half" style="width:23%;" fill>Resume</f7-button>
@@ -603,6 +529,11 @@ import cashPaymentPopupComponent from "@/pages/pos/components/cash-payment-popup
 import giftCardPopupComponent from "@/pages/pos/components/gift-card-popup-component.vue";
 import creditCardPopupComponent from "@/pages/pos/components/credit-card-popup-component.vue";
 import retailPOSSettingsComponent from "@/pages/pos/components/retail-pos-settings-component.vue"
+import calculatorComponent from "@/pages/pos/components/calculator-component.vue";
+import orderStatusComponent from "@/pages/pos/components/order-status-component.vue";
+import orderNotificationsComponent from "@/pages/pos/components/order-notifications-component.vue";
+import gratuityPopupComponent from "@/pages/pos/components/gratuity-popup-component.vue";
+import managerLoginPopupComponent from "@/pages/pos/components/manager-login-popup-component.vue";
 
 export default {
 	name: "retailPOS",
@@ -614,7 +545,12 @@ export default {
 		"cash-payment-popup-component": cashPaymentPopupComponent,
 		"gift-card-popup-component": giftCardPopupComponent,
 		"credit-card-popup-component": creditCardPopupComponent,
-		"retail-POS-settings-component": retailPOSSettingsComponent
+		"retail-POS-settings-component": retailPOSSettingsComponent,
+		"calculator-component": calculatorComponent,
+		"order-status-component": orderStatusComponent,
+		"order-notifications-component": orderNotificationsComponent,
+		"gratuity-popup-component": gratuityPopupComponent,
+		"manager-login-popup-component": managerLoginPopupComponent
 	},
 	data() {
 		return {
@@ -651,12 +587,22 @@ export default {
 				DiscountpopupOpened: false,
 				activeStepDiscount: 0,
 			},
+			//Calculate Settings
+			showCalc: true,
+			calc: {
+				value: 0,
+				id: null
+			},
+
 
 			//Main Settings and Variables
 			isOnLine: navigator.onLine,
 			
 			printReport: false,
 			openCashDrawer: null,
+
+			
+
 
 			//Selected Item
 			selectedItem: {
@@ -719,18 +665,13 @@ export default {
 				total: 0,
 			},
 
-			//Calculator
-			showCalc: true,
-			calc: {
-				value: 0,
-				id: null
-			},
-			logs: [],
+
 			//Input Selectors
 			inputFocusList: {
 				"pos-login": "this.$refs.barcodeInput.$el.querySelector('input').focus()",
 				CashPayment: "this.$refs.barcodeInput.$el.querySelector('input').focus()"
 			},
+			barcodeInterval: null,
 			//Login Data
 			loginBarcode: {
 				barcode: "",
@@ -742,7 +683,13 @@ export default {
 
 	methods: {
 		testButton() {
-			console.log("this.$refs", this.$refs);
+			// console.log("this.Auth.user", this.Auth.user);
+			// console.log("this.Auth.userLoginProfile", this.Auth.userLoginProfile);
+			this.startTimer();
+
+			
+
+			// console.log("element", element);
 		},
 		//Reset View
 		resetView() {
@@ -758,8 +705,21 @@ export default {
 		},
 		//Initiate Sale
 		initSale() {
+			if(this.orderForm.isReturn) {
+				this.$f7.dialog.confirm("Do you want to cancel the current return?", "Order Change", () => {
+					//User clicked OK
+					console.log("User clicked OK");
+					this.resetView();
+					this.orderForm.isSale = true;
+				}, () => {
+					//User clicked Cancel
+					console.log("User clicked Cancel");
+					return
+				}).open();
+			}
 			this.resetView();
 			this.orderForm.isSale = true;
+			
 		},
 		//Initiate Void
 		initVoid() {
@@ -768,6 +728,18 @@ export default {
 		},
 		//Initiate Return
 		initReturn() {
+			if(this.orderForm.isSale) {
+				this.$f7.dialog.confirm("Do you want to cancel the current sale?", "Order Change", () => {
+					//User clicked OK
+					console.log("User clicked OK");
+					this.resetView();
+					this.orderForm.isReturn = true;
+				}, () => {
+					//User clicked Cancel
+					console.log("User clicked Cancel");
+					return
+				}).open();
+			}
 			this.resetView();
 			this.orderForm.isReturn = true;
 		},
@@ -892,41 +864,8 @@ export default {
 			this.calc.value = 0;
 		},
 
-		//Calculator
-		addExpresion(e) {
-			if (Number.isInteger(this.calc.value)) this.calc.value = "";
-			this.calc.value += e;
-		},
-		//Calculator
-		getResult() {
-			let log = this.calc.value;
-			this.calc.value = eval(this.calc.value);
-			this.logs.push(log + `=${this.calc.value}`);
-		},
-		//Calculator
-		clear() {
-			this.calc.value = 0;
-		},
-		//Calculator
-		del() {
-			this.calc.value = this.calc.value.slice(0, -1);
-		},
-		//Input Focus Change
-		changeFocus(fromBox, toBox) {
-			console.log("fromBox", fromBox);
-			console.log("this toBox", toBox);
-			var length = this.$refs[fromBox].$el.querySelector("input").value.length;
-			console.log("length", length);
-			var maxLength = this.$refs[fromBox].$el.querySelector("input").getAttribute("maxlength");
-			console.log("maxLength", maxLength);
 
-			var nextField = document.getElementById(toBox);
-			console.log("nextField", nextField);
 
-			if (length == maxLength) {
-				nextField.focus();
-			}
-		},
 
 		//LogOut
 		logout() {
@@ -935,7 +874,17 @@ export default {
 		logon(credentials) {
 			console.log(credentials);
 			this.$store.dispatch("signIn", credentials);
-		}
+		},
+		clearBarcodeInterval() {
+			console.log('clearBarcodeInterval');
+			clearInterval(this.barcodeInterval);
+		},
+		startTimer() {
+			this.barcodeInterval = setInterval(() => {
+					this.$refs.barcodeInput.$el.querySelector('input').focus();
+					// console.log("this", this);			
+			}, 2000);
+		},
 	},
 	computed: {
 		...mapState(["Auth", "Users", "Inventory", "Orders", "Static", "Errors"]),
@@ -948,10 +897,9 @@ export default {
 
 		grandTotal() {
 			//Calculate Grand Total
-			var newTotal =
-				parseFloat(this.orderForm.subtotal) - parseFloat(this.orderForm.gratuity) + parseFloat(this.orderForm.tax);
+			var newTotal = parseFloat(this.orderForm.subtotal) + parseFloat(this.orderForm.gratuity) + 
+				parseFloat(this.orderForm.tax) - parseFloat(this.orderForm.totalDiscounts);
 			console.log("newTotal", newTotal);
-			this.orderForm.total = newTotal;
 
 			return newTotal;
 		},
@@ -966,6 +914,9 @@ export default {
 	},
 	mounted() {
 
+		
+
+		
 	}
 };
 </script>
@@ -1130,138 +1081,17 @@ export default {
 	height: 90%;
 }
 
-//  CALCULATOR  \\
-$darker: #1c1c1d;
-$dark: #474849;
-$gray: #838383;
-$white: #fff;
-$light: rgb(180, 180, 180);
-$accent: #d47f24;
-
-#calculator {
-	// height:97%;
-	margin: 10px;
-	display: flex;
-	padding: 0;
-	max-width: 100%;
-	min-width: 250px;
-	flex-direction: column;
-	background-color: $light;
-	border: 5px solid rgb(65, 64, 64);
-
-	.calculator-logs {
-		display: flex;
-		position: relative;
-		overflow: hidden;
-		align-items: flex-end;
-		flex-direction: column;
-		justify-content: flex-end;
-		&:before {
-			top: 0;
-			left: 0;
-			right: 0;
-			height: 48px;
-			content: "";
-			z-index: 5;
-			position: absolute;
-			background: linear-gradient(to bottom, $darker, rgba($darker, 0));
-		}
-		span {
-			color: $light;
-			opacity: 0.75;
-			display: block;
-			font-size: 0.8rem;
-			text-align: right;
-			margin-top: 0.4rem;
-			line-height: 1;
-			font-weight: lighter;
-		}
-	}
-
-	.calculator-input {
-		color: black;
-		height: 4.5rem;
-		width: 90%;
-		border: none;
-		padding: 0.8rem;
-		padding-bottom: 1rem;
-		display: block;
-		font-size: 3.5rem;
-		background: none;
-		text-align: right;
-		font-weight: lighter;
-		&:focus,
-		&:active {
-			outline: none;
-		}
-	}
-
-	.calculator-row {
-		display: flex;
-		padding: 0;
-		justify-content: space-around;
-		.calculator-col {
-			width: 25%;
-			box-shadow: 0 0 0 2px $darker;
-			&.wide {
-				flex: 2;
-			}
-		}
-	}
-
-	.calculator-btn {
-		width: 100%;
-		height: 3.5rem;
-		color: $darker;
-		border: none;
-		cursor: pointer;
-		padding: 0.8rem;
-		outline: none;
-		font-size: 1.6rem;
-		transition: all 0.3s ease-in-out;
-		font-weight: 200;
-		justify-content: center;
-		background-color: $light;
-		&.accent {
-			background-color: $accent;
-			color: $white;
-		}
-		&.gray {
-			background-color: $gray;
-		}
-		&.action {
-		}
-		&:active {
-			background-color: $darker;
-		}
-	}
-}
-.calc-row {
-	margin: 4px;
-	width: 100%;
-
-	.calc-button {
-		display: flex;
-		justify-content: center;
-		margin: 3px;
-		width: 100%;
-		height: 50px;
-	}
-	.tender-buttons-bg {
-		p {
-			color: white;
-			text-align: center;
-		}
-		background: rgb(175, 177, 177);
-		width: 100%;
-	}
-}
 .tender-rows {
+	width: 100%;
 	background: rgb(68, 68, 68);
 	border-radius: 8px;
 	padding-left: 20px;
 	margin-left: 20px;
 	margin-right: 20px;
+	p {
+		color: white;
+		font-size: 0.8em;
+	}
 }
 .order-buttons-bg {
 	padding-top: 0px;
@@ -1274,27 +1104,25 @@ $accent: #d47f24;
 	}
 }
 
-.till {
-	background: white;
-	margin: 10px;
-	height: 95%;
 
-	.till-header {
-		font-family: OpenSans-Bold;
-		font-weight: 500;
-		background: lightgrey;
-	}
-	.qtyButton {
-		display: flex;
-		justify-content: center;
-		background: rgb(216, 246, 244);
-		height: 2.5em;
-		cursor: pointer;
-		border: 2px solid rgb(126, 124, 124);
-		border-radius: 15px;
-		width: 75%;
-	}
+
+.till-header {
+	font-family: OpenSans-Bold;
+	font-weight: 500;
+	background: rgb(9, 52, 59);
+	color: white;
 }
+.qtyButton {
+	display: flex;
+	justify-content: center;
+	background: rgb(216, 246, 244);
+	height: 2.5em;
+	cursor: pointer;
+	border: 2px solid rgb(126, 124, 124);
+	border-radius: 15px;
+	width: 75%;
+}
+
 .till-container {
 	height: 96%;
 }
@@ -1318,10 +1146,6 @@ div .till-text {
 	// background: green;
 }
 
-
-
-
-
 //Checkout Popups Totals
 .checkout-text {
 	font-size: 2em;
@@ -1334,16 +1158,43 @@ div .till-text {
 .checkout-text-paid {
 	font-size: 1.5em;
 }
-.checkout-text-bold-paid {
-	font-size: 1.5em;
-	font-family: OpenSans-SemiBold;
-}
+
 .time-box {
 	background-image: linear-gradient(rgb(255, 255, 255), rgb(212, 212, 212));
 }
 .selected-item {
 	background: rgb(235, 192, 192);
 }
+.calc-button{
+	margin: 2px;
+	width:100%;
+	height: 50px;
+}
 
 
+//Calculator and Backside Card Transition
+.calc-transition-enter,
+.calc-transition-leave-to {
+	transform: rotateY(180deg);
+	opacity: 0;
+}
+.calc-transition-enter-active,
+.calc-transition-leave-active {
+  transition: all 0.5s;
+}
+.flip-card {
+	position: relative;
+}
+.cardFront {
+	position:absolute;
+	width: 100%;
+	height: 100%;
+	perspective: 1000px;
+}
+.cardBack {
+	position:absolute;
+	width: 100%;
+	height: 100%;
+	perspective: 1000px;
+}
 </style>

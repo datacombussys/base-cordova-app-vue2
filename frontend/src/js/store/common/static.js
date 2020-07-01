@@ -110,7 +110,7 @@ export const Static = {
       
       commit('SET_TIME', timeNow);
       
-      setTimeout(() => {dispatch('initTime');}, 1000);
+      setTimeout(() => {dispatch('initTime');}, 30000);
     },
     initDate({ dispatch, commit }) {
       var date = new Date;

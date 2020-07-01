@@ -10,10 +10,10 @@ from companies.models import Company
 from vendors.models import Vendor
 from users.models import User
 
-from partners.serializers import PartnerSerializer, SimplePartnerSerializer
-from datacom.serializers import DatacomSerializer, SimpleDatacomSerializer
+from partners.serializers import PartnerSerializer, PartnerListSerializer
+from datacom.serializers import DatacomSerializer, DatacomListSerializer
 from companies.serializers import CompanySerializer, SimpleCompanySerializer
-from users.serializers import UserSerializer, SimpleUserSerializer
+from users.serializers import UserSerializer, UserListSerializer
 
 class CountrySerializer(serializers.ModelSerializer):
   class Meta:
@@ -43,9 +43,9 @@ class TimezoneSerializer(serializers.ModelSerializer):
 
     
 class HolidaySerializer(serializers.ModelSerializer):
-  datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
+  datacom_obj = DatacomListSerializer(read_only=True, source='datacom')
   datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
-  partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
+  partner_obj = PartnerListSerializer(read_only=True, source='partner')
   partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
   company_obj = SimpleCompanySerializer(read_only=True, source='company')
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
@@ -57,10 +57,10 @@ class HolidaySerializer(serializers.ModelSerializer):
     # def to_representation(self, value):
     #     data = super().to_representation(value)  
     #     if data['datacom']:
-    #         datacom_data_serializer = SimpleDatacomSerializer(value.datacom)
+    #         datacom_data_serializer = DatacomListSerializer(value.datacom)
     #         data['datacom'] = datacom_data_serializer.data
     #     if data['partner']:
-    #         partner_data_serializer = SimplePartnerSerializer(value.partner)
+    #         partner_data_serializer = PartnerListSerializer(value.partner)
     #         data['partner'] = partner_data_serializer.data
     #     if data['company']:
     #         company_data_serializer = SimpleCompanySerializer(value.company)
@@ -69,13 +69,13 @@ class HolidaySerializer(serializers.ModelSerializer):
     #     return data
 
 class ShippingSerializer(serializers.ModelSerializer):
-  datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
+  datacom_obj = DatacomListSerializer(read_only=True, source='datacom')
   datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
-  partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
+  partner_obj = PartnerListSerializer(read_only=True, source='partner')
   partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
   company_obj = SimpleCompanySerializer(read_only=True, source='company')
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
-  user_obj = SimpleUserSerializer(read_only=True, source='user')
+  user_obj = UserListSerializer(read_only=True, source='user')
   user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True) 
 
   class Meta:
@@ -99,9 +99,9 @@ class ShippingSerializer(serializers.ModelSerializer):
   #   return data
 
 class DepartmentSerializer(serializers.ModelSerializer):
-  datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
+  datacom_obj = DatacomListSerializer(read_only=True, source='datacom')
   datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
-  partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
+  partner_obj = PartnerListSerializer(read_only=True, source='partner')
   partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
   company_obj = SimpleCompanySerializer(read_only=True, source='company')
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
@@ -111,9 +111,9 @@ class DepartmentSerializer(serializers.ModelSerializer):
     fields = ('__all__')
 
 class GeneralSettingsSerializer(serializers.ModelSerializer):
-  datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
+  datacom_obj = DatacomListSerializer(read_only=True, source='datacom')
   datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
-  partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
+  partner_obj = PartnerListSerializer(read_only=True, source='partner')
   partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
   company_obj = SimpleCompanySerializer(read_only=True, source='company')
   company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)

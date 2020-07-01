@@ -90,7 +90,7 @@ export const Users = {
 				// 	dispatch('updateNotification', error);
 				// 	return reject(error);
 				// }
-				axios.post("/django/employees/", form).then(response => {
+				axios.post("/django/employee/", form).then(response => {
 					console.log("response data", response);
 					if (response.status === 200 ||response.status === 201) {
 						response.type = "Create Employee";
@@ -128,7 +128,7 @@ export const Users = {
 				if(payload != undefined) {
 					url = payload.url;
 				}
-				axios.get('/django/employees/' + url).then(response => {
+				axios.get('/django/employee-list/' + url).then(response => {
 					if (response.status === 200) {
 						console.log("getEmployeeList", response);
 						commit('SET_EMPLOYEE_LIST', response.data);
@@ -152,7 +152,7 @@ export const Users = {
 		//Filter Employee Profile based on User ID
 		getEmployeeProfileByUserID({ dispatch, commit }, userID) {
 			return new Promise(async (resolve, reject) => {
-				const url = '/django/employees/?user__id=' + userID;
+				const url = '/django/employee/?user__id=' + userID;
 				axios.get(url).then(response => {
 					console.log("getEmployeeProfileByUserID response", response);
 					if (response.status === 200) {
@@ -177,7 +177,7 @@ export const Users = {
 		PATCHUser({ dispatch, commit }, form) {
 			return new Promise((resolve, reject) => {
 				console.log("PATCH User in Store", form);
-				axios.patch("/django/employees/" + form.id + "/", form).then(response => {
+				axios.patch("/django/employee/" + form.id + "/", form).then(response => {
 					console.log("Patch User Response Data", response);
 					if (response.status === 200) {
 						response.type = "Update User Profile";
@@ -199,7 +199,7 @@ export const Users = {
 		PATCHEmployee({ dispatch, commit }, form) {
 			return new Promise((resolve, reject) => {
 				console.log("PATCH Employee Info", form);
-				axios.patch("/django/employees/" + form.id + "/", form).then(response => {
+				axios.patch("/django/employee/" + form.id + "/", form).then(response => {
 					console.log("PUT Employee Response Data", response);
 					if (response.status === 200) {
 						dispatch('getEmployeeList');

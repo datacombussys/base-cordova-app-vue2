@@ -1,3 +1,5 @@
+import { mapGetters } from 'vuex';
+
 export const LocaleMixin = {
   data() {
     return {
@@ -172,6 +174,11 @@ export const LocaleMixin = {
       }
     },
 
+  },
+  computed: {
+		...mapGetters(["GET_PRIMARY_COUNTRY_LIST", "GET_PRIMARY_STATE_LIST", "GET_PRIMARY_CITY_LIST", 
+										"GET_BILLING_COUNTRY_LIST", "GET_BILLING_STATE_LIST", "GET_BILLING_CITY_LIST", 
+										"GET_SHIPPING_COUNTRY_LIST", "GET_SHIPPING_STATE_LIST", "GET_SHIPPING_CITY_LIST"]),
   },
   mounted() {
 

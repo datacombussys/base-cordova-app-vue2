@@ -1992,7 +1992,7 @@ import navBarComponent from "@/components/universal/navbar-component.vue";
 import setupSheetComponent from "@/components/business/setup-sheet-component.vue";
 import profileCardComponent from "@/components/layout-elements/profile-card-component.vue";
 import parentComponent from "@/components/business/parent-company-component.vue";
-import billingInvoiceComponent from "@/components/universal/billing-invoice-component.vue";
+import receiptDatatableComponent from '@/components/financial/receipt-datatable-component.vue';
 import f7DatePickerComponent from '@/components/layout-elements/date-and-time/f7-datepicker-component.vue';
 import positionsComponent from "@/components/business/positions-component.vue";
 
@@ -2011,7 +2011,7 @@ export default {
 		"setup-sheet-component": setupSheetComponent,
 		"profile-card-component": profileCardComponent,
 		"parent-component": parentComponent,
-		"billing-component": billingInvoiceComponent,
+		"invoice-datatable-component": receiptDatatableComponent,
 		"f7-date-picker-component": f7DatePickerComponent,
 		//Popups
 		"positions-popup-component": positionsComponent,

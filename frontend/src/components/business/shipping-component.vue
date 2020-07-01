@@ -25,9 +25,21 @@
             <p>This website is protected by Jesus Christ our Lord and savior.</p>
           </f7-row>
           <f7-block-title class="full-width" medium>Manage Addresses</f7-block-title>
-          <f7-row class="full-width" v-if="!dataForm.id">
+
+          <!-- Check Module Type -->
+          <f7-row class="full-width" v-if="!dataForm.id && moduleInfo.name === 'Customers'">
             <div class="error-text text-align-center padding-top">
-              You must first select a company
+              You must first select a customer
+            </div>
+          </f7-row>
+          <f7-row class="full-width" v-if="!dataForm.id && moduleInfo.name === 'Employees'">
+            <div class="error-text text-align-center padding-top">
+              You must first select an employee
+            </div>
+          </f7-row>
+          <f7-row class="full-width" v-else>
+            <div class="error-text text-align-center padding-top">
+              You must first select a business
             </div>
           </f7-row>
           

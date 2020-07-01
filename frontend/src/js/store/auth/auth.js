@@ -120,6 +120,7 @@ export const Auth = {
 			if(user) {
 				let EEUSerID = await dispatch('getEmployeeProfileByUserID', user.id);
 				console.log("EEUSerID", EEUSerID);
+				commit("SET_LOGIN_PROFILE", EEUSerID[0].user_obj);
 				await dispatch('loadCompanySpecificData');
 				await dispatch('loadUserSpecificData');
 				f7.dialog.close();
@@ -483,22 +484,23 @@ export const Auth = {
 			loadCompanySpecificData({ commit, dispatch, state, rootState }) {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
 				return new Promise((resolve, reject) => {
-					console.log('loadCompanyData rootState', rootState);
+					// console.log('loadCompanyData rootState', rootState);
 					dispatch("getEmployeeList", state.platformInfo);
-					dispatch("getEmployeePositions", state.platformInfo);
-					dispatch("getCompanyDepartments", state.platformInfo);
-					dispatch("getHolidays", state.platformInfo);
-					dispatch("GETBusinessHours", state.platformInfo);
-					dispatch("GETAttendanceSettings", state.platformInfo);
-					dispatch("getCompanyShifts", state.platformInfo);
+					// dispatch("getEmployeePositions", state.platformInfo);
+					// dispatch("getCompanyDepartments", state.platformInfo);
+					// dispatch("getHolidays", state.platformInfo);
+					// dispatch("GETBusinessHours", state.platformInfo);
+					// dispatch("GETAttendanceSettings", state.platformInfo);
+					// dispatch("getCompanyShifts", state.platformInfo);
 					dispatch("GETSalesTaxes", state.platformInfo);
 					dispatch("GETGeneralSettings", state.platformInfo);
-					dispatch("getSalesOfficeList", state.platformInfo);
-					dispatch("getWarehouseList", state.platformInfo);
+					// dispatch("getSalesOfficeList", state.platformInfo);
+					// dispatch("getWarehouseList", state.platformInfo);
 					dispatch("GETInventoryList", state.platformInfo);
 					dispatch("GETInventoryCategories", state.platformInfo);
+					dispatch("GETCustomerList", state.platformInfo);
 					//Not Completed Yet
-					// this.$store.dispatch("getInventoryLabels", state.platformInfo);
+					// dispatch("getInventoryLabels", state.platformInfo);
 
 					return resolve();
 
@@ -514,10 +516,10 @@ export const Auth = {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
 				return new Promise((resolve, reject) => {
 					console.log('loadUserata rootState', rootState);
-					dispatch("getCreditCardList", state.platformInfo);
-					dispatch("getACHAccountList", state.platformInfo);
-					dispatch("getNewShippingList", state.platformInfo);
-					dispatch("getNotifications", state.platformInfo);
+					// dispatch("getCreditCardList", state.platformInfo);
+					// dispatch("getACHAccountList", state.platformInfo);
+					// dispatch("getNewShippingList", state.platformInfo);
+					// dispatch("getNotifications", state.platformInfo);
 
 					return resolve();
 

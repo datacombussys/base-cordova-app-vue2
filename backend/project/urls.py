@@ -5,9 +5,55 @@ from rest_framework import routers
 from django.conf.urls.static import static
 import project.settings.base as settings
 
-from blog.views import BlogViewset
-from datacom.views import DatacomViewset
+from datacom.views import (DatacomViewset, 
+                        DatacomListViewset,
+                        DatacomPrimaryContactViewset, 
+                        DatacomShippingContactViewset, 
+                        DatacomBillingContactViewset, 
+                        DatacomTechnicalContactViewset, )
+from partners.views import (PartnerViewset, 
+                            PartnerListViewset, 
+                            PartnerPrimaryContactViewset, 
+                            PartnerShippingContactViewset, 
+                            PartnerBillingContactViewset, 
+                            PartnerTechnicalContactViewset, )
+from companies.views import (CompanyViewset, 
+                            CompanyListViewset, 
+                            CompanyPrimaryContactViewset, 
+                            CompanyShippingContactViewset, 
+                            CompanyBillingContactViewset, 
+                            CompanyTechnicalContactViewset, )
+from vendors.views import (VendorViewset, 
+                            VendorListViewset, 
+                            VendorPrimaryContactViewset, 
+                            VendorShippingContactViewset, 
+                            VendorBillingContactViewset, 
+                            VendorTechnicalContactViewset, )
+                            
+from salesoffices.views import (SalesOfficeViewset, 
+                                SalesOfficeListViewset, 
+                                SalesOfficePrimaryContactViewset, 
+                                SalesOfficeShippingContactViewset, 
+                                SalesOfficeBillingContactViewset, 
+                                SalesOfficeTechnicalContactViewset, 
+                                SalesOfficeEmployeesViewset, )
+from warehouses.views import (WarehouseViewset, 
+                            WarehouseListViewset, 
+                            WarehousePrimaryContactViewset, 
+                            WarehouseShippingContactViewset, 
+                            WarehouseBillingContactViewset, 
+                            WarehouseTechnicalContactViewset, 
+                            WarehouseEmployeesViewset, 
+                            WarehouseSalesOfficesViewset, )
+
+from customers.views import CustomerViewset, CustomerListViewset
+from employees.views import (EmployeeViewset, 
+                            PositionsViewset, 
+                            EmployeeListViewset, 
+                            EmployeeModulesManagerViewset, )
+
 from users.views import (UserProfileViewset, 
+                        UserListViewset, 
                         UserLoginAPIView, 
                         UserLogOutAPIView, 
                         UserBarcodeViewSet, 
@@ -15,13 +61,13 @@ from users.views import (UserProfileViewset,
                         ChangePasswordAPI,
                         ManagerBarcodeApprovalAPIView, 
                         ContentTypeViewSet, 
-                        GroupViewSet,
-                        UserGroupViewSet,
-                        UserPermissionsViewSet, 
-                        BasePermissionsViewSet, )
-from companies.views import CompanyViewset
-from customers.views import CustomerViewset
-from employees.views import EmployeeViewset, PositionsViewset
+                        BaseGroupViewSet,
+                        ExtendedGroupViewSet,
+                        BasePermissionsViewSet, 
+                        ExtendedPermissionsViewSet, 
+                        UserGroupsViewSet, )
+
+from blog.views import BlogViewset
 from financial.views import SalesTaxViewset
 from inventory.views import (InventoryViewset, 
                             InvBarcodesViewset, 
@@ -48,10 +94,6 @@ from attendance.views import (ShiftViewset,
                             PayCycleRecurrenceView, )
 from calendars.views import CalendarViewset
 from leads.views import LeadViewset
-from partners.views import PartnerViewset
-from salesoffices.views import SalesOfficeViewset
-from warehouses.views import WarehouseViewset
-from vendors.views import VendorViewset
 from vthpp.views import (CardProcessingAccountViewset, 
                             CreditCardViewset, 
                             ACHAccountViewset, )
@@ -74,18 +116,40 @@ router.register(r'django/cardprocessingacct', CardProcessingAccountViewset)
 router.register(r'django/calendars', CalendarViewset)
 router.register(r'django/city', CityViewset)
 router.register(r'django/contenttype', ContentTypeViewSet)
-router.register(r'django/companies', CompanyViewset)
+
+router.register(r'django/companies', CompanyViewset, basename="companies")
+router.register(r'django/company-list', CompanyListViewset, basename="company-list")
+router.register(r'django/company-primary-contacts', CompanyPrimaryContactViewset, basename="company-primary-contacts")
+router.register(r'django/company-shipping-contacts', CompanyShippingContactViewset, basename="company-shipping-contacts")
+router.register(r'django/company-billing-contacts', CompanyBillingContactViewset, basename="company-billing-contacts")
+router.register(r'django/company-technical-contacts', CompanyTechnicalContactViewset, basename="company-technical-contacts")
+
 router.register(r'django/company-docs', CompanyDocumentsViewset)
 router.register(r'django/countries', CountryViewset)
 router.register(r'django/creditcard', CreditCardViewset)
-router.register(r'django/customers', CustomerViewset)
-router.register(r'django/datacom', DatacomViewset)
+router.register(r'django/customer-list', CustomerListViewset, basename="customers-list")
+router.register(r'django/customers', CustomerViewset, basename="customers")
+
+router.register(r'django/datacom', DatacomViewset, basename="datacom")
+router.register(r'django/datacom-list', DatacomListViewset, basename="datacom-list")
+router.register(r'django/datacom-primary-contacts', DatacomPrimaryContactViewset, basename="datacom-primary-contacts")
+router.register(r'django/datacom-shipping-contacts', DatacomShippingContactViewset, basename="datacom-shipping-contacts")
+router.register(r'django/datacom-billing-contacts', DatacomBillingContactViewset, basename="datacom-billing-contacts")
+router.register(r'django/datacom-technical-contacts', DatacomTechnicalContactViewset, basename="datacom-technical-contacts")
+
 router.register(r'django/departments', DepartmentViewset)
-router.register(r'django/employees', EmployeeViewset)
+
+router.register(r'django/employee', EmployeeViewset, basename="employee")
+router.register(r'django/employee-list', EmployeeListViewset, basename="employee-list")
+router.register(r'django/employee-modules', EmployeeModulesManagerViewset, basename="employee-modules")
 router.register(r'django/employee-docs', EmployeeDocumentsViewset)
+
 router.register(r'django/general-settings', GeneralSettingsViewset)
-router.register(r'django/groups', GroupViewSet)
-router.register(r'django/groups-users', UserGroupViewSet)
+
+router.register(r'django/base-groups', BaseGroupViewSet, basename="base-groups")
+router.register(r'django/groups-extended', ExtendedGroupViewSet, basename="groups-extended")
+router.register(r'django/groups-users', UserGroupsViewSet, basename="groups-users")
+
 router.register(r'django/holidays', HolidayViewset)
 router.register(r'django/industries', IndustryViewset)
 router.register(r'django/invbarcodes', InvBarcodesViewset)
@@ -101,15 +165,30 @@ router.register(r'django/mileage', MileageReimbursementViewset)
 router.register(r'django/notifications', NotificationViewset)
 router.register(r'django/operating-hours', BusinessOperatingHoursViewset)
 router.register(r'django/pay-cycles', PayCyclesViewset)
-router.register(r'django/partners', PartnerViewset)
+
+router.register(r'django/partners', PartnerViewset, basename="partner")
+router.register(r'django/partner-list', PartnerListViewset, basename="partner-list")
+router.register(r'django/partner-primary-contacts', PartnerPrimaryContactViewset, basename="partner-primary-contacts")
+router.register(r'django/partner-shipping-contacts', PartnerShippingContactViewset, basename="partner-shipping-contacts")
+router.register(r'django/partner-billing-contacts', PartnerBillingContactViewset, basename="partner-billing-contacts")
+router.register(r'django/partner-technical-contacts', PartnerTechnicalContactViewset, basename="partner-technical-contacts")
+
 router.register(r'django/permission', BasePermissionsViewSet)
-router.register(r'django/permissions', UserPermissionsViewSet)
+router.register(r'django/permissions', ExtendedPermissionsViewSet)
+
 router.register(r'django/positions', PositionsViewset)
 router.register(r'django/postal-code', PostalCodeViewset)
 router.register(r'django/receipts', ReceiptViewset)
 router.register(r'django/region', RegionViewset)
 router.register(r'django/shipping', ShippingViewSet)
+
 router.register(r'django/sales-offices', SalesOfficeViewset)
+router.register(r'django/salesoffice-list', SalesOfficeListViewset, basename="salesoffice-list")
+router.register(r'django/salesoffice-primary-contacts', SalesOfficePrimaryContactViewset, basename="salesoffice-primary-contacts")
+router.register(r'django/salesoffice-shipping-contacts', SalesOfficeShippingContactViewset, basename="salesoffice-shipping-contacts")
+router.register(r'django/salesoffice-billing-contacts', SalesOfficeBillingContactViewset, basename="salesoffice-billing-contacts")
+router.register(r'django/salesoffice-technical-contacts', SalesOfficeTechnicalContactViewset, basename="salesoffice-technical-contacts")
+
 router.register(r'django/sales-tax', SalesTaxViewset)
 router.register(r'django/shifts', ShiftViewset)
 router.register(r'django/open-till', OpenAndCloseTillViewset)
@@ -117,10 +196,27 @@ router.register(r'django/timezones', TimezonesViewset)
 router.register(r'django/time-cards', TimeCardViewset)
 router.register(r'django/uom-weight', UOMWeightViewset)
 router.register(r'django/uom-dimension', UOMDimensionViewset)
-router.register(r'django/users', UserProfileViewset)
+
+router.register(r'django/users-profile', UserProfileViewset, basename="users-profile")
+router.register(r'django/users-list', UserListViewset, basename="users-list")
+
 router.register(r'django/user-barcodes', UserBarcodeViewSet)
+
 router.register(r'django/vendors', VendorViewset)
+router.register(r'django/vendor-list', VendorListViewset, basename="vendor-list")
+router.register(r'django/vendor-primary-contacts', VendorPrimaryContactViewset, basename="vendor-primary-contacts")
+router.register(r'django/vendor-shipping-contacts', VendorShippingContactViewset, basename="vendor-shipping-contacts")
+router.register(r'django/vendor-billing-contacts', VendorBillingContactViewset, basename="vendor-billing-contacts")
+router.register(r'django/vendor-technical-contacts', VendorTechnicalContactViewset, basename="vendor-technical-contacts")
+
 router.register(r'django/warehouses', WarehouseViewset)
+router.register(r'django/warehouse-list', WarehouseListViewset, basename="warehouse-list")
+router.register(r'django/warehouse-primary-contacts', WarehousePrimaryContactViewset, basename="warehouse-primary-contacts")
+router.register(r'django/warehouse-shipping-contacts', WarehouseShippingContactViewset, basename="warehouse-shipping-contacts")
+router.register(r'django/warehouse-billing-contacts', WarehouseBillingContactViewset, basename="warehouse-billing-contacts")
+router.register(r'django/warehouse-technical-contacts', WarehouseTechnicalContactViewset, basename="warehouse-technical-contacts")
+router.register(r'django/warehouse-employees', WarehouseEmployeesViewset, basename="warehouse-employees")
+router.register(r'django/wwarehouse-sales-offices', WarehouseSalesOfficesViewset, basename="warehouse-sales-offices")
 
 
 urlpatterns = [

@@ -150,11 +150,11 @@ class MainUserManager(BaseUserManager):
 
 # User Model
 class User(CommonUserBase):
-	barcode 			 	= models.ForeignKey(UserBarcode, on_delete=models.CASCADE, null=True, blank=True)
-	pin 						= models.CharField(max_length=4, null=True, 
-									blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
-	fax 						= models.CharField(max_length=10, null=True, 
-									blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
+	barcode 		= models.ForeignKey(UserBarcode, on_delete=models.CASCADE, null=True, blank=True)
+	pin 				= models.CharField(max_length=4, null=True, 
+							blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
+	fax 				= models.CharField(max_length=10, null=True, 
+							blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
 	
 	class Meta:
 		ordering = ['last_name', 'first_name', 'date_added']

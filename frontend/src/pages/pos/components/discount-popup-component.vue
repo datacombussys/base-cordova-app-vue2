@@ -12,20 +12,17 @@
 			<f7-page>
 				<f7-row class="popup-header">
 					<f7-col width="90" class="margin-left">
-						<f7-block-title large class="margin-top text-color-white">Discounts</f7-block-title>
+						<f7-block-title class="margin-top text-color-white">Discounts</f7-block-title>
 					</f7-col>
 					<f7-col width="10">
 						<f7-link
-							class="level-right margin-right margin-top-half"
-							@click="popupCloseDiscount($event)"
-							icon-size="50"
+							class="level-right margin-right"
+							popup-close
+							icon-size="40"
 							icon-color="white"
 							icon="mdi mdi-close"
 						></f7-link>
 					</f7-col>
-				</f7-row>
-				<f7-row class="full-width margin-bottom">
-					<f7-button class="full-width" @click="resetDiscounts">Start Over</f7-button>
 				</f7-row>
 				<b-steps
 					v-model="discountSettings.activeStepDiscount"
@@ -33,6 +30,7 @@
 					:has-navigation="hasNavigation"
 					:icon-prev="prevIcon"
 					:icon-next="nextIcon"
+					class="margin-top"
 				>
 					<!-- Enter Manager Approval -->
 					<b-step-item
@@ -40,14 +38,14 @@
 						label="Manager Approval"
 						:clickable="isStepsClickable"
 					>
-						<f7-card v-show="discountData.allItemsInTill.length === 0">
+						<f7-card v-show="sharedData.allItemsInTill.length === 0">
 							<f7-card-content>
 								<p>There are no items in your till.</p>
 								<p>Click on Sale" or to get started.</p>
 							</f7-card-content>
 						</f7-card>
 						<f7-card
-							v-show="!discounts.managerApproved && !manager.invalidCredentials && discountData.allItemsInTill.length != 0"
+							v-show="!discounts.managerApproved && !manager.invalidCredentials && sharedData.allItemsInTill.length != 0"
 						>
 							<f7-card-content>
 								<f7-row>
@@ -187,13 +185,13 @@
 						label="Individual Item"
 						:clickable="isStepsClickable"
 					>
-						<f7-card v-if="discountData.allItemsInTill.length === 0">
+						<f7-card v-if="sharedData.allItemsInTill.length === 0">
 							<f7-card-content>
 								<p>There are no items in your till.</p>
 								<p>Click on Sale" or "Refund" to get started.</p>
 							</f7-card-content>
 						</f7-card>
-						<f7-card v-if="discountData.allItemsInTill.length != 0">
+						<f7-card v-if="sharedData.allItemsInTill.length != 0">
 							<f7-card-content>
 								<f7-list>
 									<!-- Select Item to Discount -->
@@ -202,7 +200,7 @@
 											<f7-list-item class="checkout-text" title="Select Item"></f7-list-item>
 										</f7-col>
 										<f7-col
-											v-if="discountData.allItemsInTill.length != 0"
+											v-if="sharedData.allItemsInTill.length != 0"
 											width="50"
 											class="display-flex justify-content-center"
 										>
@@ -214,7 +212,7 @@
 												@input="selectDiscountItem"
 												style="background: rgb(216,252,253)"
 											>
-												<option v-for="discountItem in discountData.allItemsInTill" :key="discountItem.id">
+												<option v-for="discountItem in sharedData.allItemsInTill" :key="discountItem.id">
 													{{
 													discountItem.name
 													}}
@@ -243,7 +241,7 @@
 											<f7-list-item class="checkout-text-paid" title="Select Qty"></f7-list-item>
 										</f7-col>
 										<f7-col
-											v-if="discountData.allItemsInTill.length != 0"
+											v-if="sharedData.allItemsInTill.length != 0"
 											width="50"
 											class="display-flex justify-content-center"
 										>
@@ -369,13 +367,13 @@
 						label="Entire Order"
 						:clickable="isStepsClickable"
 					>
-						<f7-card v-if="discountData.allItemsInTill.length === 0">
+						<f7-card v-if="sharedData.allItemsInTill.length === 0">
 							<f7-card-content>
 								<p>There are no items in your till.</p>
 								<p>Click on Sale" or to get started.</p>
 							</f7-card-content>
 						</f7-card>
-						<f7-card v-if="discountData.allItemsInTill.length != 0">
+						<f7-card v-if="sharedData.allItemsInTill.length != 0">
 							<f7-card-content>
 								<f7-list>
 									<!-- Show Selected item -->
@@ -575,7 +573,7 @@ export default {
 		managerLoginMixin
 		],
 	props: {
-		discountData: {
+		sharedData: {
 			type: Object,
 			required: true
 		},
@@ -665,15 +663,15 @@ export default {
 			console.log("this.discounts.newItemTotal", this.discounts.newItemTotal);
 			var discountedPrice = this.discounts.newItemTotal;
 
-			var finTillItemIndex = this.discountData.allItemsInTill.findIndex(
+			var finTillItemIndex = this.sharedData.allItemsInTill.findIndex(
 				(elem) => elem.name === this.discounts.individualItem
 			);
 			console.log("finTillItemIndex", finTillItemIndex);
-			this.discountData.allItemsInTill[finTillItemIndex]["is_discounted"] = true;
-			this.discountData.allItemsInTill[finTillItemIndex]["discount"] =
-				this.discountData.allItemsInTill[finTillItemIndex]["price"] - discountedPrice;
-			this.discountData.allItemsInTill[finTillItemIndex]["discounted_price"] = discountedPrice;
-			console.log("this.discountData.allItemsInTill", this.discountData.allItemsInTill);
+			this.sharedData.allItemsInTill[finTillItemIndex]["is_discounted"] = true;
+			this.sharedData.allItemsInTill[finTillItemIndex]["discount"] =
+				this.sharedData.allItemsInTill[finTillItemIndex]["price"] - discountedPrice;
+			this.sharedData.allItemsInTill[finTillItemIndex]["discounted_price"] = discountedPrice;
+			console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);
 			this.resetDiscounts();
 			this.calculateTotals();
 
@@ -699,6 +697,7 @@ export default {
 			console.log("this.formData.discounts", this.formData.discounts);
 			this.showDiscountType = true;
 		},
+		
 
 
 	},

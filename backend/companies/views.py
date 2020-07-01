@@ -14,14 +14,15 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework import status, filters, exceptions, viewsets
 
-
-from .serializers import CompanySerializer
+from .serializers import (CompanySerializer, 
+                        CompanyListSerializer, 
+                        CompanyPrimaryContactSerializer, 
+                        CompanyShippingContactSerializer, 
+                        CompanyBillingContactSerializer, 
+                        CompanyTechnicalContactSerializer, )
 from .models import Company
 
 class CompanyViewset(viewsets.ModelViewSet):
-    """Handle CRUD Operations.
-    Methods: list, create, retrieve, 
-    update, partial_update, destroy"""
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -29,6 +30,28 @@ class CompanyViewset(viewsets.ModelViewSet):
     search_fields = ['datacom__id', 'partner__id', 'created_by__id', 'id']
     ordering_fields = '__all__'
     ordering = ['legal_name']
+
+
+class CompanyListViewset(viewsets.ModelViewSet):
+    serializer_class = CompanyListSerializer
+    queryset = Company.objects.all()
+
+class CompanyPrimaryContactViewset(viewsets.ModelViewSet):
+    serializer_class = CompanyPrimaryContactSerializer
+    queryset = Company.objects.all()
+
+class CompanyShippingContactViewset(viewsets.ModelViewSet):
+    serializer_class = CompanyShippingContactSerializer
+    queryset = Company.objects.all()
+
+class CompanyBillingContactViewset(viewsets.ModelViewSet):
+    serializer_class = CompanyBillingContactSerializer
+    queryset = Company.objects.all()
+
+class CompanyTechnicalContactViewset(viewsets.ModelViewSet):
+    serializer_class = CompanyTechnicalContactSerializer
+    queryset = Company.objects.all()
+
 
 
 

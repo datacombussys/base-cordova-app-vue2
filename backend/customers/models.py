@@ -23,14 +23,12 @@ class Customer(models.Model):
   dob               = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
   ssn               = models.CharField(max_length=9, null=True, 
 									    blank=True, validators=[RegexValidator(r'^\d{1,9}$')])
-  mailing_address 	= models.CharField(max_length=200, null=True, blank=True)
-  mailing_city 	  	= models.CharField(max_length=200, null=True, blank=True)
-  mailing_state 		= models.CharField(max_length=50, null=True, blank=True)
-  mailing_zip 			= models.CharField(max_length=5, null=True, 
-                      blank=True, validators=[RegexValidator(r'^\d{1,5}$')])
   resale_id         = models.CharField(max_length=20, null=True, 
 									    blank=True, validators=[RegexValidator(r'^\d{1,20}$')])
   customer_type     = models.CharField(max_length=100, null=True, blank=True)
+  is_member         = models.BooleanField(default=False, null=True, blank=True)
+  is_paid_member    = models.BooleanField(default=False, null=True, blank=True)
+  subscription_fee  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
   profile_img 	    = models.ImageField(max_length=100, upload_to='customers/profile', null=True, blank=True)
 
 

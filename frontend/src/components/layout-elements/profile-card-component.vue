@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Businesses Card -->
     <f7-card v-if="cardSettings.type == 'business'" class="margin-top">
       <f7-card-header 
         class="no-border"
@@ -7,36 +8,38 @@
         style="background-color: lightgrey;">
         <f7-block-title class="full-width no-margin-bottom">{{cardSettings.title}}</f7-block-title>
       </f7-card-header>
-        <f7-card-content class="padding-half text-align-center">
-          <f7-row>
-            <div class="error-text" v-if="!profileForm.id">
-              Please load a location
-            </div>
-            <f7-col v-else>
-              <f7-block-title medium class="margin-top-half">{{ profileForm.warehouse_name }}</f7-block-title>
-              <p class="text-align-center">{{ profileForm.primary_mailing_address }}</p>
-              <p class="text-align-center">{{ profileForm.primary_mailing_city }}, {{ profileForm.primary_mailing_state }}. {{ profileForm.primary_mailing_zip }}</p>
-              <p class="text-align-center">{{ profileForm.primary_phone }}</p>
-            </f7-col>
-          </f7-row>
-          <f7-row class="full-width display-flex justify-content-stretch">
-            <f7-col width="100">
-              <f7-list>
-                <f7-list-item title="Date Added" :after="profileForm.date_added | moment('MMM, Do, YYYY')"></f7-list-item>
-                <f7-list-item title="Business Type" after="Warehouse"></f7-list-item>
-                <f7-list-item title="Status">
-                    <b-tag slot="content" 
-                    size="is-medium" 
-                    class="margin-right"
-                    :type="`${profileForm.is_active && profileForm.id? 'is-success' : 'is-danger'}`">
-                    {{ profileForm.is_active && profileForm.id? "Active" : "Inactive" }}
-                    </b-tag>
-                </f7-list-item>
-              </f7-list>
-            </f7-col>
-          </f7-row>
-        </f7-card-content>
+      <f7-card-content class="padding-half text-align-center">
+        <f7-row>
+          <div class="error-text" v-if="!profileForm.id">
+            Please load a location
+          </div>
+          <f7-col v-else>
+            <f7-block-title medium class="margin-top-half">{{ profileForm.warehouse_name }}</f7-block-title>
+            <p class="text-align-center">{{ profileForm.primary_mailing_address }}</p>
+            <p class="text-align-center">{{ profileForm.primary_mailing_city }}, {{ profileForm.primary_mailing_state }}. {{ profileForm.primary_mailing_zip }}</p>
+            <p class="text-align-center">{{ profileForm.primary_phone }}</p>
+          </f7-col>
+        </f7-row>
+        <f7-row class="full-width display-flex justify-content-stretch">
+          <f7-col width="100">
+            <f7-list>
+              <f7-list-item title="Date Added" :after="profileForm.date_added | moment('MMM, Do, YYYY')"></f7-list-item>
+              <f7-list-item title="Business Type" after="Warehouse"></f7-list-item>
+              <f7-list-item title="Status">
+                  <b-tag slot="content" 
+                  size="is-medium" 
+                  class="margin-right"
+                  :type="`${profileForm.is_active && profileForm.id? 'is-success' : 'is-danger'}`">
+                  {{ profileForm.is_active && profileForm.id? "Active" : "Inactive" }}
+                  </b-tag>
+              </f7-list-item>
+            </f7-list>
+          </f7-col>
+        </f7-row>
+      </f7-card-content>
     </f7-card>
+    <!-- END Businesses Card -->
+    <!-- Employee Card -->
     <f7-card v-if="cardSettings.type == 'employee'" class="margin-top">
       <f7-card-header 
         class="no-border"
@@ -74,6 +77,45 @@
           </f7-row>
         </f7-card-content>
     </f7-card>
+    <!-- END Employee Card -->
+
+    <!-- Customer Card -->
+    <f7-card v-if="cardSettings.type == 'customer'" class="margin-top">
+      <f7-card-header class="no-border" valign="bottom" style="background-color: lightgrey;">
+        <f7-block-title class="full-width no-margin-bottom">{{cardSettings.title}}</f7-block-title>
+      </f7-card-header>
+      <f7-card-content class="padding-half text-align-center">
+        <f7-row>
+          <div class="error-text" v-if="!profileForm.id">
+            Please load an customer
+          </div>
+          <f7-col v-else>
+            <f7-block-title medium class="margin-top-half">{{ profileForm.user.full_name }}</f7-block-title>
+            <p class="text-align-center">{{ profileForm.user.street_address }}</p>
+            <p class="text-align-center">{{ profileForm.user.city }}, {{ profileForm.user.state }}. {{ profileForm.user.zip }}</p>
+            <p class="text-align-center">{{ profileForm.user.mobile_phone }}</p>
+          </f7-col>
+        </f7-row>
+
+        <f7-row class="full-width display-flex justify-content-stretch">
+          <f7-col width="100">
+            <f7-list>
+              <f7-list-item
+                title="Active Since"
+                :after="profileForm.user.date_added | moment('MMM, Do, YYYY') || new Date() | moment('MMM, Do, YYYY') "
+              ></f7-list-item>
+              <f7-row class="display-flex">
+                <f7-list-item checkbox :checked="profileForm.is_member" title="Free Member" name="free-paid"></f7-list-item>
+                <f7-list-item checkbox :checked="profileForm.is_paid_member" title="Paid-Member" name="free-paid"></f7-list-item>
+              </f7-row>
+            </f7-list>
+          </f7-col>
+        </f7-row>
+      </f7-card-content>
+    </f7-card>
+    <!-- END Customer Card -->
+
+    <!-- Inventory Card -->
     <f7-card v-if="cardSettings.type == 'inventory'" class="margin-top">
       <f7-card-header 
         class="no-border"
@@ -111,6 +153,8 @@
           </f7-row>
         </f7-card-content>
     </f7-card>
+    <!-- END Inventory Card -->
+
   </div>
 </template>
 

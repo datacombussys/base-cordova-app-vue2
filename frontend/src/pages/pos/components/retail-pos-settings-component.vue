@@ -22,7 +22,7 @@
 						<f7-card-content>
 							<f7-list>
 								<f7-row>
-									<f7-list accordion-list inset>
+									<f7-list accordion-list inset class="full-width">
 										<!-- Accordion #1 -->
 										<f7-list-item accordion-item title="General Settings">
 											<f7-accordion-content>
@@ -71,14 +71,17 @@
 										<f7-list-item accordion-item title="Tax Settings">
 											<f7-accordion-content>
 												<f7-block class="padding-top">
-
+													<f7-row>
+														<f7-col width="50">
+															<p class="field-title">Have you set up your tax profile?</p>
+															<f7-list-item checkbox :checked="Object.keys(Financial.salesTaxProfile).length!= 0" value="has_tax" title="Local Taxes"></f7-list-item>
+														</f7-col>
+														<f7-col width="50">
+															<p class="field-title">Setup Now</p>
+															<f7-button fill>Go</f7-button>
+														</f7-col>
+													</f7-row>
 												</f7-block>
-												<f7-list>
-													<f7-list-item title="Item 1"></f7-list-item>
-													<f7-list-item title="Item 2"></f7-list-item>
-													<f7-list-item title="Item 3"></f7-list-item>
-													<f7-list-item title="Item 4"></f7-list-item>
-												</f7-list>
 											</f7-accordion-content>
 										</f7-list-item>
 										<!-- END Accordion #2 -->
@@ -86,9 +89,71 @@
 										<f7-list-item accordion-item title="Offline Settings">
 											<f7-accordion-content>
 												<f7-block class="padding-top">
-													<p>
-														Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean elementum id neque nec commodo. Sed vel justo at turpis laoreet pellentesque quis sed lorem. Integer semper arcu nibh, non mollis arcu tempor vel. Sed pharetra tortor vitae est rhoncus, vel congue dui sollicitudin. Donec eu arcu dignissim felis viverra blandit suscipit eget ipsum.
-													</p>
+													<f7-row>
+														<f7-col width="50">
+															<p class="field-title">Enable Offline Transactions</p>
+															
+															<f7-list-item>
+																<f7-toggle 
+																	:checked="enableOfflineTransactions" 
+																	@change="enableOfflineTransactions = $event.target.checked"
+																>
+																</f7-toggle>
+															<f7-icon class="tooltip-init"
+																icon="mdi mdi-information" 
+																size="30" 
+																slot="media"
+																data-tooltip="In the event of disconnected internet, the system will capture all required information to process credit card and gift card transactions after the internet has been restored.
+																Do NOT power off this machine while there are still transaction in memory as they will be deleted.">
+															</f7-icon>
+															</f7-list-item>
+														</f7-col>
+														<f7-col width="50">
+															<p class="field-title">View Offline Transactions</p>
+															<f7-button>View</f7-button>
+														</f7-col>
+														
+													</f7-row>
+													<f7-row class="display-flex justify-content-space-between">
+														<f7-col width="30">
+															<p class="field-title">Process attempts</p>
+																<f7-list-input
+																	type="number"
+																	step="0.01"
+																	error-message="Numbers only. 2 decimal places."
+																	required
+																	validate
+																	style="background: rgb(216,252,253)"
+																	:value="processDeclinedAttempts"
+																	@input="processDeclinedAttempts = $event.target.value"
+																	>
+																	<f7-icon class="tooltip-init"
+																		icon="mdi mdi-information" 
+																		size="30" 
+																		slot="media"
+																		data-tooltip="What is the maximum amount of attempts to process declined transactions?">
+																	</f7-icon>
+																</f7-list-input>
+															
+														</f7-col>
+														<f7-col width="30">
+															<p class="field-title">Process Frequency</p>
+																<f7-list-input
+																	
+																	type="select"
+																	style="background: rgb(216,252,253)"
+																	:value="processDeclinedAttempts"
+																	@input="processDeclinedAttempts = $event.target.value"
+																>
+																<option 
+																	v-for="freq in RetailPOS.processDeclinedFrequency"
+																	:key="freq.id" 
+																	:value="freq">
+																	{{ freq }}
+																</option>
+															</f7-list-input>
+														</f7-col>
+													</f7-row>
 												</f7-block>
 											</f7-accordion-content>
 										</f7-list-item>
@@ -97,9 +162,20 @@
 										<f7-list-item accordion-item title="Discounts">
 											<f7-accordion-content>
 												<f7-block class="padding-top"> 
-													<p>
-														Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean elementum id neque nec commodo. Sed vel justo at turpis laoreet pellentesque quis sed lorem. Integer semper arcu nibh, non mollis arcu tempor vel. Sed pharetra tortor vitae est rhoncus, vel congue dui sollicitudin. Donec eu arcu dignissim felis viverra blandit suscipit eget ipsum.
-													</p>
+													<f7-row>
+														<f7-col width="50">
+															<p class="field-title">Enable Discounts</p>
+															<f7-list-item>
+																<f7-toggle :checked="enableDiscounts" @change="enableDiscounts = $event.target.checked"></f7-toggle>
+															</f7-list-item>
+														</f7-col>
+														<f7-col width="50">
+															<p class="field-title">Require Manager Approval</p>
+															<f7-list-item>
+																<f7-toggle :checked="requireApproval" @change="enableDiscounts = $event.target.checked"></f7-toggle>
+															</f7-list-item>
+														</f7-col>
+													</f7-row>
 												</f7-block>
 											</f7-accordion-content>
 										</f7-list-item>
@@ -150,20 +226,24 @@ export default {
 			retailPOSsheetOpened: false,
 			orderSettings: {
 				enableCashDisocunt: true,
-			}
+			},
+			enableDiscounts: false,
+			requireApproval: false,
+			enableOfflineTransactions: false,
+			processDeclinedAttempts: 0,
 
 
 		};
 	},
 	methods: {
 		testingMethod(e) {
-			console.log('this.Attendance.holidayList', this.Attendance.holidayList);
+			console.log();
 		},
 
 
 	},
 	computed: {
-		...mapState(["Auth", "RetailPOS"]),
+		...mapState(["Auth", "RetailPOS", "Financial"]),
 		...mapGetters([])
 
 	},

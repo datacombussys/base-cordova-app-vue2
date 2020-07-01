@@ -24,7 +24,7 @@
 									panel-close
 									title="Super User"
 								>
-									<f7-icon size="40" icon="mdi mdi-account-tie" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-account-tie" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item
 									v-if="Auth.authLevel <= 2"
@@ -33,7 +33,7 @@
 									panel-close
 									title="Partners"
 								>
-									<f7-icon size="40" icon="mdi mdi-office-building" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-office-building" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item
 									v-if="Auth.authLevel <= 3"
@@ -42,7 +42,7 @@
 									panel-close
 									title="Merchants"
 								>
-									<f7-icon size="40" icon="mdi mdi-office-building" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-office-building" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item
 									v-if="Auth.authLevel <= 4"
@@ -51,105 +51,105 @@
 									panel-close
 									title="Vendors"
 								>
-									<f7-icon size="40" icon="mdi mdi-office-building" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-office-building" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/employeeprofile/" panel-close title="Employees">
-									<f7-icon size="40" icon="mdi mdi-account-group" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-account-group" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/customerprofile/" panel-close title="Customers">
-									<f7-icon size="40" icon="mdi mdi-account-group" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-account-group" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								
 								<!-- <f7-list-item view=".view-main" link="/leadprofile/" panel-close title="Leads">
-                <f7-icon size="40" icon="mdi mdi-office-building" slot="media"></f7-icon>
+                <f7-icon size="40" icon="mdi mdi-office-building" color="datacom" slot="media"></f7-icon>
               </f7-list-item> -->
 							</f7-list>
 							<f7-block-title class="small">Locations</f7-block-title>
 							<f7-list>
 								<f7-list-item view=".view-main" link="/salesoffice/" panel-close title="Sales Offices">
-									<f7-icon size="40" f7="building_2_fill" slot="media"></f7-icon>
+									<f7-icon size="40" f7="building_2_fill" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/warehouse/" panel-close title="Warehouses">
-									<f7-icon size="40" icon="mdi mdi-warehouse" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-warehouse" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 							</f7-list>
 							<f7-block-title class="small">Applications</f7-block-title>
 							<f7-list>
 								<f7-list-item view=".view-main" link="/work-schedule/" panel-close title="Attendance">
-									<f7-icon size="40" icon="mdi mdi-timer" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-timer" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/vt/" panel-close title="Virtual Terminal">
-									<f7-icon size="40" icon="mdi mdi-cash-register" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-cash-register" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 							</f7-list>
 							<f7-block-title class="small">Point of Sale</f7-block-title>
 							<f7-list>
 								<f7-list-item view=".view-main" link="/inventory/" panel-close title="Inventory">
-									<f7-icon size="40" icon="mdi mdi-package-variant" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-package-variant" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/retailpos/" panel-close title="Retail POS">
-									<f7-icon size="40" icon="mdi mdi-cash-register" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-cash-register" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/restaurantpos/" panel-close title="Restaurant POS">
-									<f7-icon size="40" icon="mdi mdi-cash-register" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-cash-register" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/kitchen-screen/" panel-close title="Kitchen Monitor">
-									<f7-icon size="40" icon="mdi mdi-desktop-mac" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-desktop-mac" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/floorplan/" panel-close title="Floorplan Maker">
-									<f7-icon size="40" icon="mdi mdi-map" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-map" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/signature/" panel-close title="Signature Pad">
-									<f7-icon size="40" icon="mdi mdi-lead-pencil" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-lead-pencil" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/hpp/" panel-close title="Hosted Payment Page">
-									<f7-icon size="40" icon="mdi mdi-web" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-web" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/contracts/" panel-close title="Recurring Contracts">
-									<f7-icon size="40" icon="mdi mdi-refresh" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-refresh" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 							</f7-list>
 							<f7-block-title class="small">Utilities</f7-block-title>
 							<f7-list>
 								<f7-list-item view=".view-main" link="/drag-n-drop/" panel-close title="Drag-N-Drop">
-									<f7-icon size="40" icon="mdi mdi-drag-variant" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-drag-variant" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/labelmaker/" panel-close title="Label Maker">
-									<f7-icon size="40" icon="mdi mdi-label" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-label" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/merge-labels/" panel-close title="Label Merger">
-									<f7-icon size="40" icon="mdi mdi-label" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-label" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/email/" panel-close title="Email">
-									<f7-icon size="40" icon="mdi mdi-email" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-email" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/lobby/" panel-close title="Chat Lobby">
-									<f7-icon size="40" icon="mdi mdi-chat" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-chat" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/textmessage/" panel-close title="Text Messaging">
-									<f7-icon size="40" icon="mdi mdi-comment-text" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-comment-text" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/usercalendar/" panel-close title="Calendar">
-									<f7-icon size="40" icon="mdi mdi-calendar" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-calendar" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" panel-close title="PDF Maker">
-									<f7-icon size="40" icon="mdi mdi-file-pdf" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-file-pdf" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/setup/" panel-close title="Setup">
-									<f7-icon size="40" icon="mdi mdi-cogs" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-cogs" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="/kanban/" panel-close title="Kanban">
-									<f7-icon size="40" icon="mdi mdi-rotate-90 mdi-swap-vertical-circle" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-rotate-90 mdi-swap-vertical-circle" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 							</f7-list>
 
 							<f7-block-title class="small">Administration</f7-block-title>
 							<f7-list>
 								<f7-list-item view=".view-main" link="/admin/" panel-close title="Admin">
-									<f7-icon size="40" icon="mdi mdi-lock" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-lock" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 								<f7-list-item view=".view-main" link="#" panel-close title="Help Desk">
-									<f7-icon size="40" icon="mdi mdi-help-rhombus" slot="media"></f7-icon>
+									<f7-icon size="40" icon="mdi mdi-help-rhombus" color="datacom" slot="media"></f7-icon>
 								</f7-list-item>
 							</f7-list>
 						</div>

@@ -204,10 +204,9 @@ export default {
 	},
 	methods: {
 		testMethods() {
-			// console.log("this.Attendance.hoursOfOperation", this.Attendance.hoursOfOperation);
-			// console.log("this.Attendance.holidayProfile", this.Attendance.holidayProfile);
-			console.log("this.Auth.userLoginProfile", this.Auth.userLoginProfile);
-			console.log("this.Common.notificationList", this.Common.notificationList);
+			// console.log("this.Auth.userLoginProfile", this.Auth.userLoginProfile);
+			// console.log("this.Users.employeeProfile", this.Users.employeeProfile);
+			this.$store.dispatch('GETCustomerList');
 			
 		},
 

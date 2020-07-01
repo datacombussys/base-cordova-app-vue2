@@ -29,7 +29,10 @@
 											<f7-link sheet-open=".inventory-image">
 												<b-icon class="edit-icon" icon="pencil"></b-icon>
 											</f7-link>
-											<profile-image-popup-component :profileData="invForm"></profile-image-popup-component>
+											<profile-image-popup-component 
+												:profileData="invForm"
+												ref="profileComponent">
+											</profile-image-popup-component>
 										</f7-col>
 									</f7-row>
 								</f7-card-header>
@@ -1986,11 +1989,9 @@ export default {
 			this.hideCreateItem = false;
 			this.hideSaveItem = true;
 			this.activeTab = 0;
-			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
-			this.file = "";
-			this.cropped = "";
-			this.fileURL = "";
+			this.$refs.profileComponent.resetFields;
+
 		},
 		async createItemandNew() {
 			console.log("createInventoryandNew Start");
@@ -2209,37 +2210,6 @@ export default {
 					return reject("clearForm Failed");
 				}
 			});
-		},
-
-		// Parsing CSV for Django storage
-		parseDataHistory() {
-			console.log("csv", this.csv);
-			var djangoInvObj = [];
-			let mappedData = this.csv.map((data) => {
-				"Name", "Model", "Manufacturer", "Category", "Category Class", "List Price", "Purchase Price";
-				var objOfData = {
-					name: data["Name"],
-					model: data["Model"],
-					category: data["Category"],
-					category_class: data["Category Class"],
-					purchase_price: data["Purchase Price"]
-				};
-				djangoInvObj.push(objOfData);
-			});
-			console.log("csv data from mapping function", djangoInvObj);
-
-			//Place code here to split the array and dispatch each separately in chunks
-			let count = djangoInvObj.length / 1;
-			let i = 0;
-			while (i < count + 1) {
-				((i) => {
-					setTimeout(() => {
-						let chunk = djangoInvObj.splice(0, 1);
-						console.log("chunk", chunk);
-						this.$store.dispatch("POSTInventory", chunk);
-					}, 2000 * i);
-				})(i++);
-			}
 		},
 	
 		calcWholesaleMargin(e) {

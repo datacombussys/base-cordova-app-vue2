@@ -568,9 +568,6 @@ export default {
 	},
 	computed: {
 		...mapState(["Locale"]),
-		...mapGetters(["GET_PRIMARY_COUNTRY_LIST", "GET_PRIMARY_STATE_LIST", "GET_PRIMARY_CITY_LIST", 
-										"GET_BILLING_COUNTRY_LIST", "GET_BILLING_STATE_LIST", "GET_BILLING_CITY_LIST", 
-										"GET_SHIPPING_COUNTRY_LIST", "GET_SHIPPING_STATE_LIST", "GET_SHIPPING_CITY_LIST"]),
 	},
 	created() {},
 	async mounted() {

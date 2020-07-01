@@ -43,7 +43,7 @@ import { mapGetters } from 'vuex';
 import f7DataTableComponent from "@/components/layout-elements/f7-datatable-component.vue";
 
 export default {
-	name: "billingInvoiceComponent",
+	name: "receiptDatatableComponent",
 	mixins: [],
 	components: {
 		"f7-datatable-component": f7DataTableComponent

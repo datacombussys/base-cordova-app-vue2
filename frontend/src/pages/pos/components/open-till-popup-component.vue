@@ -7,16 +7,15 @@
 		:opened="OpenTillPopup"
 		@popup:closed="OpenTillPopup = false">
 			<f7-page>
-				<f7-row class="popup-header">
+				<f7-row class="display-flex align-items-center light-popup-header">
 					<f7-col width="90" class="margin-left">
-						<f7-block-title large class="no-margin text-color-white">Open Till</f7-block-title>
+						<f7-block-title>Open Till</f7-block-title>
 					</f7-col>
 					<f7-col width="10">
 						<f7-link
-							class="level-right margin-right margin-top-half"
+							class="level-right margin-right"
 							popup-close
-							icon-size="50"
-							icon-color="white"
+							icon-size="40"
 							icon="mdi mdi-close"
 						></f7-link>
 					</f7-col>
@@ -28,7 +27,7 @@
 					}"
 					style="height: 100%;">
 					<div>
-						<f7-block>
+						<f7-block class="margin-top-half">
 							<f7-card>
 								<f7-card-content>
 									<f7-list>
@@ -60,11 +59,11 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.coins.pennies * 0.01"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.coins.pennies * 0.01 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
-													<f7-col width="50">
+													<f7-col width="50" class="left-border">
 														<f7-row class="display-flex justify-content-space-around full-width">
 															<f7-col width="30">
 																<f7-list-item class="open-till-text" title="Nickles"></f7-list-item>
@@ -82,7 +81,7 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.coins.nickels * 0.5"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.coins.nickels * 0.5 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
@@ -105,11 +104,11 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.coins.dimes * 0.1"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.coins.dimes * 0.1 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
-													<f7-col width="50">
+													<f7-col width="50" class="left-border">
 														<f7-row class="display-flex justify-content-space-around full-width">
 															<f7-col width="30">
 																<f7-list-item class="open-till-text" title="Quarters"></f7-list-item>
@@ -127,7 +126,7 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.coins.quarters * 0.30"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.coins.quarters * 0.30 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
@@ -150,11 +149,11 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.coins.halfDollars * 0.5"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.coins.halfDollars * 0.5 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
-													<f7-col width="50">
+													<f7-col width="50" class="left-border">
 														<f7-row class="display-flex justify-content-space-around full-width">
 															<f7-col width="30">
 																<f7-list-item class="open-till-text" title="Dollar Coins"></f7-list-item>
@@ -172,7 +171,7 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.coins.dollarCoins"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.coins.dollarCoins | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
@@ -209,11 +208,11 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.bills.ones"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.bills.ones | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
-													<f7-col width="50">
+													<f7-col width="50" class="left-border">
 														<f7-row class="display-flex justify-content-space-around full-width">
 															<f7-col width="30">
 																<f7-list-item class="open-till-text" title="$5's"></f7-list-item>
@@ -231,7 +230,7 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.bills.fives * 5"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.bills.fives * 5 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
@@ -254,11 +253,11 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.bills.tens * 10"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.bills.tens * 10 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
-													<f7-col width="50">
+													<f7-col width="50" class="left-border">
 														<f7-row class="display-flex justify-content-space-around full-width">
 															<f7-col width="30">
 																<f7-list-item class="open-till-text" title="$20's"></f7-list-item>
@@ -276,7 +275,7 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.bills.twenties * 20"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.bills.twenties * 20 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
@@ -299,11 +298,11 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.bills.fiftys * 50"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.bills.fiftys * 50 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
-													<f7-col width="50">
+													<f7-col width="50" class="left-border">
 														<f7-row class="display-flex justify-content-space-around full-width">
 															<f7-col width="30">
 																<f7-list-item class="open-till-text" title="$100's"></f7-list-item>
@@ -321,7 +320,7 @@
 																></f7-list-input>
 															</f7-col>
 															<f7-col width="30">
-																<f7-list-item class="open-till-text" :title="cashDrawer.bills.hundreds * 100"></f7-list-item>
+																<f7-list-item class="open-till-text" :title="cashDrawer.bills.hundreds * 100 | formatDollar"></f7-list-item>
 															</f7-col>
 														</f7-row>
 													</f7-col>
@@ -346,11 +345,6 @@
 													</f7-block>
 												</f7-row>
 											</f7-list>
-										</f7-row>
-										<f7-row>
-											<f7-col>
-												<f7-button @click="testButton">Test</f7-button>
-											</f7-col>
 										</f7-row>
 										<f7-row>
 											<f7-block class="padding margin"></f7-block>
@@ -485,5 +479,8 @@ export default {
 	font-family: OpenSans-SemiBold;
 	font-size: @standard-font*1.5;
 
+}
+.left-border {
+	border-left: 5px solid gray;
 }
 </style>

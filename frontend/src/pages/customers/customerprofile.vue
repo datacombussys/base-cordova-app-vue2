@@ -40,7 +40,7 @@
 									<f7-row v-if="customerForm.profile_img" class="display-flex justify-content-center">
 										<img :src="customerForm.profile_img" style="width:170px;height:170px;" alt="" />
 									</f7-row>
-									<div v-if="customerForm.user.barcode != undefined">
+									<div v-if="customerForm.user">
 										<f7-row v-if="Object.keys(customerForm.user.barcode).length != 0">
 											<f7-col class="text-align-center margin-top">
 												<img :src="customerForm.user.barcode.image" style="width:75px;" alt="Please Load User" />
@@ -58,43 +58,7 @@
 								</f7-card-footer>
 							</f7-card>
 
-							<f7-card class="margin-top">
-								<f7-card-header class="no-border" valign="bottom" style="background-color: lightgrey;">
-									<f7-block-title class="full-width no-margin-bottom">Contact Details</f7-block-title>
-								</f7-card-header>
-								<f7-card-content class="padding-half text-align-center">
-									<!-- Show Company Data -->
-									<f7-row v-show="!editProfile">
-										<f7-col>
-											<f7-block-title medium class="margin-top-half">Sales Rep</f7-block-title>
-											<p>Mike Jones</p>
-										</f7-col>
-									</f7-row>
-									<!-- Edit Company Data -->
-									<f7-row v-show="editProfile">
-										<f7-col>
-											<f7-block-title medium class="margin-top-half">ABC Company Ltd.</f7-block-title>
-											<p>Company Name:</p>
-										</f7-col>
-									</f7-row>
-									<f7-row class="full-width display-flex justify-content-stretch">
-										<f7-col width="100">
-											<f7-list>
-												<f7-list-item
-													title="Active Since"
-													:after="customerForm.user.date_added | moment('MMM, Do, YYYY')"
-												></f7-list-item>
-												<f7-list-item title="Trial Period" after="Yes"></f7-list-item>
-												<f7-list-item title="Expiration Date" after="2/25/2020"></f7-list-item>
-												<f7-row class="display-flex">
-													<f7-list-item checkbox title="Member" name="free-paid"></f7-list-item>
-													<f7-list-item checkbox title="Non-Member" name="free-paid"></f7-list-item>
-												</f7-row>
-											</f7-list>
-										</f7-col>
-									</f7-row>
-								</f7-card-content>
-							</f7-card>
+							<profile-card-component :profileForm="customerForm" :cardSettings="profileCardSettings"></profile-card-component>
 
 							<f7-card class="margin-top">
 								<f7-card-content class="padding-half text-align-center">
@@ -103,10 +67,10 @@
 											<f7-button @click="newUserButton" fill class="bg-color-red">Add New User</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!hideSaveItem">
+									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button fill @click.prevent="createCustomerandClose" class="bg-color-green trans-btn-left"
-												><span>Save User</span></f7-button
+												><span>Save Customer</span></f7-button
 											>
 											<f7-button
 												fill
@@ -250,7 +214,7 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 								<parent-component
@@ -278,7 +242,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!editProfile">
+											<f7-list v-show="!parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width margin-top-half" medium>Your Information</f7-block-title>
 													<f7-col width="50">
@@ -338,7 +302,7 @@
 											</f7-list>
 											<!-- END Profile Display List -->
 											<!-- Begin Profile Edit List -->
-											<f7-list simple-list v-show="editProfile">
+											<f7-list simple-list v-show="parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width margin-top-half" medium>Your Information</f7-block-title>
 													<f7-col width="50">
@@ -404,6 +368,18 @@
 												</f7-row>
 												<f7-row>
 													<f7-col width="50">
+														<p class="field-title">Customer Number:</p>
+														<f7-list-item
+															:title="customerForm.customer_number"
+														></f7-list-item>
+													</f7-col>
+													<f7-col width="50">
+														<p class="field-title">Date of Birth:</p>
+														<f7-date-picker-component @receiveDate="receiveDobDate"></f7-date-picker-component>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
 														<p class="field-title">SSN:</p>
 														<f7-list-input
 															validate
@@ -417,13 +393,9 @@
 														></f7-list-input>
 													</f7-col>
 													<f7-col width="50">
-														<p class="field-title">Date of Birth:</p>
-														<f7-date-picker-component @receiveDate="receiveDobDate"></f7-date-picker-component>
-													</f7-col>
-												</f7-row>
-												<f7-row>
-													<f7-col width="50">
-														<p class="field-title">Mobile Phone:</p>
+														<p class="field-title">Mobile Phone:
+															<span style="color: red;">*</span>
+														</p>
 														<f7-list-input
 															validate
 															class="datacom-input"
@@ -435,23 +407,72 @@
 															type="text"
 														></f7-list-input>
 													</f7-col>
-													<f7-col width="50">
-														<p class="field-title">Fax Number:</p>
+												</f7-row>
+												<f7-row>
+													<f7-col width="30">
+														<p class="field-title">
+															Country:
+															<span style="color: red;">*</span>
+														</p>
 														<f7-list-input
-															validate
-															placeholder="(800) 555-1234"
-															pattern="[0-9]{1,10}"
-															error-message='Format "##########"'
-															:value="customerForm.user.fax"
-															@input="customerForm.user.fax = $event.target.value"
-															type="text"
+															required
+															:value="localeCities.primary_country_id"
+															@input="getPrimaryStates($event, 'primary')"
+															type="select"
 															style="background: rgb(216,252,253)"
-														></f7-list-input>
+														>
+															<option
+																v-for="country in GET_PRIMARY_COUNTRY_LIST"
+																:key="country.id"
+																:value="country.id">
+																{{ country.name }}
+															</option>
+														</f7-list-input>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">
+															State:
+															<span style="color: red;">*</span>
+														</p>
+														<f7-list-input
+															required
+															:value="localeCities.primary_state_id"
+															@input="getPrimaryCities($event, 'primary')"
+															type="select"
+															style="background: rgb(216,252,253)"
+														>
+															<option
+																v-for="mailing_state in GET_PRIMARY_STATE_LIST"
+																:key="mailing_state.id"
+																:value="mailing_state.id"
+															>{{ mailing_state.name }}</option>
+														</f7-list-input>
+													</f7-col>
+													<f7-col width="30">
+															<p class="field-title">
+																City:
+																<span style="color: red;">*</span>
+															</p>
+															<f7-list-input
+																required
+																:value="customerForm.user.city"
+																@input="customerForm.user.city = $event.target.value"
+																type="select"
+																style="background: rgb(216,252,253)"
+															>
+																<option
+																	v-for="mailing_city in GET_PRIMARY_CITY_LIST"
+																	:key="mailing_city.id"
+																	:value="mailing_city.name"
+																>{{ mailing_city.name }}</option>
+															</f7-list-input>
 													</f7-col>
 												</f7-row>
 												<f7-row>
 													<f7-col width="70">
-														<p class="field-title">Street Address:</p>
+														<p class="field-title">Street Address:
+															<span style="color: red;">*</span>
+														</p>
 														<f7-list-input
 															:value="customerForm.user.street_address"
 															@input="customerForm.user.street_address = $event.target.value"
@@ -461,35 +482,9 @@
 														</f7-list-input>
 													</f7-col>
 													<f7-col width="30">
-														<p class="field-title">State:</p>
-														<f7-list-input
-															:value="customerForm.user.state"
-															@input="getCities"
-															type="select"
-															style="background: rgb(216,252,253)"
-														>
-															<option v-for="state in GET_STATE_LIST" :key="state.id" :value="state.id">{{
-																state.name
-															}}</option>
-														</f7-list-input>
-													</f7-col>
-												</f7-row>
-												<f7-row>
-													<f7-col width="50">
-														<p class="field-title">City:</p>
-														<f7-list-input
-															:value="customerForm.user.city"
-															@input="customerForm.user.city = $event.target.value"
-															type="select"
-															style="background: rgb(216,252,253)"
-														>
-															<option v-for="city in Locale.cities" :key="city.id" :value="city.id">{{
-																city.name
-															}}</option>
-														</f7-list-input>
-													</f7-col>
-													<f7-col width="50">
-														<p class="field-title">Zip:</p>
+															<p class="field-title">Zip:
+																<span style="color: red;">*</span>
+															</p>
 														<f7-list-input
 															validate
 															placeholder="90210"
@@ -502,129 +497,152 @@
 														></f7-list-input>
 													</f7-col>
 												</f7-row>
+											
 												<f7-row class="full-width">
 													<f7-block-title class="full-width" medium>About Me</f7-block-title>
 													<f7-col width="100">
 														<f7-text-editor ref="userBio" style="background: rgb(216,252,253)" />
 													</f7-col>
 												</f7-row>
+											</f7-list>
 
 												<f7-row>
 													<f7-block-title class="full-width" medium>Login Information</f7-block-title>
-													<f7-row>
+													<f7-row class="full-width">
 														<f7-col>
-															<p>
-																Password requirements: 1 Alpha, 1 Numeric, 1 Special Character, Minimum 6 characters.
-															</p>
+															<table class="password-requirements-table">
+																<p>	Password requirements:</p>
+																<tbody>
+																	<tr>
+																		<td>
+																			<ul>
+																				<li>Minimum of One Letter: a, b c, d, e</li>
+																				<li>Minimum of One Number: 1234567890</li>
+																				<li>Minimum of One Special Character: #@*^&!</li>
+																			</ul>
+																		</td>
+																		<td>
+																			<ul>
+																				<li>Minimum 6 characters</li>
+																				<li>Cannot use your name in password</li>
+																				<li>No common words such as 'password'</li>
+																			</ul>
+																		</td>
+																	</tr>
+																</tbody>
+															</table>
+
 														</f7-col>
 													</f7-row>
-													<f7-row v-if="showPasswordRest" class="full-width no-margin-top">
-														<f7-col>
-															<f7-button fill>Password Reset</f7-button>
-														</f7-col>
-													</f7-row>
-													<f7-row v-if="!showPasswordRest" class="margin-top">
-														<f7-col width="50">
-															<p class="field-title">Email:<span style="color: red;"> *</span></p>
-															<f7-list-input
-																validate
-																required
-																error-message="Email is required"
-																:value="customerForm.user.email"
-																@input="customerForm.user.email = $event.target.value"
-																type="email"
-																style="background: rgb(216,252,253)"
-															>
-															</f7-list-input>
-															<div v-if="Errors.customerErrorData.length != 0">
-																<div
-																	class="full-width"
-																	v-for="errorArray in Errors.customerErrorData"
-																	:key="errorArray.id"
+													<f7-list simple-list v-show="parentSettings.editProfile">
+														<f7-row v-if="showPasswordRest" class="full-width no-margin-top">
+															<f7-col>
+																<f7-button fill>Password Reset</f7-button>
+															</f7-col>
+														</f7-row>
+														<f7-row v-if="!showPasswordRest" class="margin-top">
+															<f7-col width="50">
+																<p class="field-title">Email:<span style="color: red;"> *</span></p>
+																<f7-list-input
+																	validate
+																	required
+																	error-message="Email is required"
+																	:value="customerForm.user.email"
+																	@input="customerForm.user.email = $event.target.value"
+																	type="email"
+																	style="background: rgb(216,252,253)"
 																>
+																</f7-list-input>
+																<div v-if="Errors.customerErrorData.length != 0">
 																	<div
-																		class="display-flex justify-content-center"
-																		:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
+																		class="full-width"
+																		v-for="errorArray in Errors.customerErrorData"
+																		:key="errorArray.id"
 																	>
-																		<div v-show="errorArray[0] === 'email'" class="message-body">
-																			{{ errorArray[1][0] }}
+																		<div
+																			class="display-flex justify-content-center"
+																			:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
+																		>
+																			<div v-show="errorArray[0] === 'email'" class="message-body">
+																				{{ errorArray[1][0] }}
+																			</div>
 																		</div>
 																	</div>
 																</div>
-															</div>
-														</f7-col>
-														<f7-col width="50">
-															<p class="field-title">PIN:<span style="color: red;"> *</span></p>
-															<f7-list-input
-																validate
-																required
-																pattern="[0-9]{1,4}"
-																error-message="4-Digit Numerical PIN is required"
-																:value="customerForm.user.pin"
-																@input="customerForm.user.pin = $event.target.value"
-																type="password"
-																style="background: rgb(216,252,253)"
-															>
-															</f7-list-input>
-															<div v-if="Errors.customerErrorData.length != 0">
-																<div
-																	class="full-width"
-																	v-for="errorArray in Errors.customerErrorData"
-																	:key="errorArray.id"
+															</f7-col>
+															<f7-col width="50">
+																<p class="field-title">PIN:<span style="color: red;"> *</span></p>
+																<f7-list-input
+																	validate
+																	required
+																	pattern="[0-9]{1,4}"
+																	error-message="4-Digit Numerical PIN is required"
+																	:value="customerForm.user.pin"
+																	@input="customerForm.user.pin = $event.target.value"
+																	type="password"
+																	style="background: rgb(216,252,253)"
 																>
+																</f7-list-input>
+																<div v-if="Errors.customerErrorData.length != 0">
 																	<div
-																		class="display-flex justify-content-center"
-																		:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
+																		class="full-width"
+																		v-for="errorArray in Errors.customerErrorData"
+																		:key="errorArray.id"
 																	>
-																		<div v-show="errorArray[0] === 'pin'" class="message-body">
-																			{{ errorArray[1][0] }}
+																		<div
+																			class="display-flex justify-content-center"
+																			:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
+																		>
+																			<div v-show="errorArray[0] === 'pin'" class="message-body">
+																				{{ errorArray[1][0] }}
+																			</div>
 																		</div>
 																	</div>
 																</div>
-															</div>
-														</f7-col>
-														<f7-col width="50">
-															<p class="field-title">Password:<span style="color: red;"> *</span></p>
-															<f7-list-input
-																validate
-																required
-																error-message="Password is required"
-																:value="customerForm.user.password"
-																@input="customerForm.user.password = $event.target.value"
-																type="password"
-																style="background: rgb(216,252,253)"
-															>
-															</f7-list-input>
-															<div v-if="Errors.customerErrorData.length != 0">
-																<div
-																	class="full-width"
-																	v-for="errorArray in Errors.customerErrorData"
-																	:key="errorArray.id"
+															</f7-col>
+															<f7-col width="50">
+																<p class="field-title">Password:<span style="color: red;"> *</span></p>
+																<f7-list-input
+																	validate
+																	required
+																	error-message="Password is required"
+																	:value="customerForm.user.password"
+																	@input="customerForm.user.password = $event.target.value"
+																	type="password"
+																	style="background: rgb(216,252,253)"
 																>
+																</f7-list-input>
+																<div v-if="Errors.customerErrorData.length != 0">
 																	<div
-																		class="display-flex justify-content-center"
-																		:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
+																		class="full-width"
+																		v-for="errorArray in Errors.customerErrorData"
+																		:key="errorArray.id"
 																	>
-																		<div v-show="errorArray[0] === 'password'" class="message-body">
-																			{{ errorArray[1][0] }}
+																		<div
+																			class="display-flex justify-content-center"
+																			:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
+																		>
+																			<div v-show="errorArray[0] === 'password'" class="message-body">
+																				{{ errorArray[1][0] }}
+																			</div>
 																		</div>
 																	</div>
 																</div>
-															</div>
-														</f7-col>
-														<f7-col width="50">
-															<p class="field-title">Verify PW:<span style="color: red;"> *</span></p>
-															<f7-list-input
-																validate
-																required
-																error-message="You must verify password"
-																:value="customerForm.user.verify_pw"
-																@input="customerForm.user.verify_pw = $event.target.value"
-																type="password"
-																style="background: rgb(216,252,253)"
-															></f7-list-input>
-														</f7-col>
-													</f7-row>
+															</f7-col>
+															<f7-col width="50">
+																<p class="field-title">Verify PW:<span style="color: red;"> *</span></p>
+																<f7-list-input
+																	validate
+																	required
+																	error-message="You must verify password"
+																	:value="customerForm.user.verify_pw"
+																	@input="customerForm.user.verify_pw = $event.target.value"
+																	type="password"
+																	style="background: rgb(216,252,253)"
+																></f7-list-input>
+															</f7-col>
+														</f7-row>
+													</f7-list>
 													<!-- Password Error Handling-->
 													<div
 														class="left full-width"
@@ -644,15 +662,55 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!hideSaveItem">
+													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
-															<f7-col width="25">
-																<f7-button fill @click="activeTab = 1" class="bg-color-deeporange">Next -></f7-button>
+															<f7-col width="25" class="display-flex justify-content-end margin">
+																<f7-button
+																	fill
+																	@click.prevent="createCustomerandClose"
+																	class="bg-color-green trans-btn-left"
+																>
+																	<span>Save Customer</span>
+																</f7-button>
+																<f7-button
+																	fill
+																	popover-open=".new-transaction"
+																	:disabled="canSubmitUserForm"
+																	class="bg-color-green trans-btn-right"
+																	icon-color="white"
+																	icon-size="40"
+																	icon="mdi mdi-menu-down"
+																></f7-button>
+																<f7-popover class="new-transaction">
+																	<f7-list>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createCustomerandNew"
+																			popover-close
+																			title="Save and New"
+																		></f7-list-item>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createCustomerandEdit"
+																			popover-close
+																			title="Save and Edit"
+																		></f7-list-item>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createCustomerandClose"
+																			popover-close
+																			title="Save and Close"
+																		></f7-list-item>
+																	</f7-list>
+																</f7-popover>
 															</f7-col>
 														</f7-row>
 													</f7-block>
 												</f7-row>
-											</f7-list>
+											
 											<!-- END profile Edit List -->
 										</f7-card-content>
 									</f7-card>
@@ -681,16 +739,11 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Receipts Display List -->
-											<f7-list v-show="!editProfile">
-												<f7-row class="margin-top display-flex justify-content-center">
-													<billing-component></billing-component>
-							
-												</f7-row>
-												<f7-row class="margin-top display-flex justify-content-center">
-													<receipt-component></receipt-component>
-			
-												</f7-row>
-											</f7-list>
+	
+											<invoice-datatable-component></invoice-datatable-component>
+
+											<receipt-datatable-component></receipt-datatable-component>
+		
 											<!-- END Receipts Display -->
 										</f7-card-content>
 									</f7-card>
@@ -779,7 +832,7 @@
 															<div class="profile-thumb-img">
 																<img
 																	:src="props.row.profile_img"
-																	:class="{ 'inactive-item': !props.row.user.is_active }"
+																	:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 																/>
 															</div>
 														</b-table-column>
@@ -787,7 +840,7 @@
 															field="id"
 															:visible="columnsVisible['id'].display"
 															:label="columnsVisible['id'].title"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															sortable
 															searchable
 															centered
@@ -799,37 +852,37 @@
 
 														<b-table-column
 															field="date_hired"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															:visible="columnsVisible['date_added'].display"
 															:label="columnsVisible['date_added'].title"
 															sortable
 															searchable
 															centered
 														>
-															{{ props.row.user.date_added | moment("M/D/Y h:m:s") }}
+															{{ props.row.user_obj.date_added | moment("M/D/Y h:m:s") }}
 														</b-table-column>
 
 														<b-table-column
 															field="full_name"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															:visible="columnsVisible['full_name'].display"
 															:label="columnsVisible['full_name'].title"
 															sortable
 															searchable
 														>
 															<template v-if="showDetailIcon">
-																{{ props.row.user.full_name }}
+																{{ props.row.user_obj.full_name }}
 															</template>
 															<template v-else>
 																<a @click="toggle(props.row)">
-																	{{ props.row.user.full_name }}
+																	{{ props.row.user_obj.full_name }}
 																</a>
 															</template>
 														</b-table-column>
 
 														<b-table-column
 															field="customer_type"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															:visible="columnsVisible['customer_type'].display"
 															:label="columnsVisible['customer_type'].title"
 															sortable
@@ -841,7 +894,7 @@
 
 														<b-table-column
 															field="is_active"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															:visible="columnsVisible['is_active'].display"
 															:label="columnsVisible['is_active'].title"
 															sortable
@@ -850,8 +903,8 @@
 														>
 															<b-tag
 																size="is-medium"
-																:type="`${props.row.user.is_active ? 'is-success' : 'is-danger'}`"
-																>{{ props.row.user.is_active ? "Active" : "Inactive" }}</b-tag
+																:type="`${props.row.user_obj.is_active ? 'is-success' : 'is-danger'}`"
+																>{{ props.row.user_obj.is_active ? "Active" : "Inactive" }}</b-tag
 															>
 															<!-- {{ props.row.user.is_active }} -->
 														</b-table-column>
@@ -864,6 +917,9 @@
 								</b-tab-item>
 								<!-- END Database Tab -->
 							</b-tabs>
+							<f7-row>
+								<f7-block class="margin"></f7-block>
+							</f7-row>
 						</f7-block>
 					</div>
 				</div>
@@ -871,280 +927,7 @@
 				<!-- END Right Column -->
 
 		</f7-row>
-		<!-- END Main Container Row -->
-
-		<!-- ****************************************** Sheets and Modals *********************************************-->
-			<!-- Product Bulk Upload Sheet -->
-		<f7-sheet
-			class="uploadInventory image-sheet"
-			:opened="userBulkUploadSheet"
-			@sheet:closed="userBulkUploadSheet = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content>
-				<!-- Store to Django Database -->
-				<f7-block-title medium>Store History</f7-block-title>
-				<f7-card>
-					<f7-card-content class="no-margin-top">
-						<f7-block-title class="margin-top-half" medium>Use the following format</f7-block-title>
-						<f7-row>
-							<f7-col>
-								<a href="/static/InventoryCSVFormat.csv" class="external" download="sample">Download Sample</a>
-							</f7-col>
-						</f7-row>
-						<f7-block-title medium>Please select a file to upload</f7-block-title>
-						<!--UPLOAD-->
-						<csv-import
-							v-model="csv"
-							:map-fields="[
-								'Name',
-								'Category',
-								'Manufacturer',
-								'Model',
-								'Model Number',
-								'Service?',
-								'Variation?',
-								'Tracked?',
-								'Downloadable?',
-								'On Website?',
-								'On Sale?',
-								'Taxable?',
-								'Parent Item',
-								'Product ID',
-								'SKU',
-								'Product Type',
-								'ISBN',
-								'Tags',
-								'Sales Notes',
-								'Vendor Notes',
-								'Product Description',
-								'List Price',
-								'Purchase Price',
-								'Sale Price',
-								'Wholesale Price',
-								'Discount %',
-								'Sale Expiration',
-								'Income Account',
-								'Expense Account',
-								'Reorder Level',
-								'Weight',
-								'Weight UOM',
-								'Width',
-								'Height',
-								'Length',
-								'Dimensions UOM'
-							]"
-						>
-							<template slot="hasHeaders" slot-scope="{ headers, toggle }">
-								<label hidden>
-									<f7-checkbox id="hasHeaders" :value="headers" checked @change="toggle"></f7-checkbox>
-									Headers?
-								</label>
-							</template>
-
-							<template slot="error">
-								File type is invalid
-							</template>
-
-							<template slot="thead">
-								<tr>
-									<th>Database Fields</th>
-									<th>CSV Column</th>
-								</tr>
-							</template>
-							<!-- Large preloaders -->
-							<template slot="next" slot-scope="{ load }">
-								<f7-row class="display-flex justify-content-left">
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="load">Map Data Fields</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="parseDataHistory">Execute</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="testingMethod">Test</f7-button>
-									</f7-col>
-								</f7-row>
-							</template>
-						</csv-import>
-					</f7-card-content>
-				</f7-card>
-				<!-- END Store to Django Database -->
-				<f7-row class="margin">
-					<f7-col>
-						<f7-block>
-							{{ csv }}
-						</f7-block>
-					</f7-col>
-				</f7-row>
-			</f7-page-content>
-			<!-- END Bulk Upload Sheet Content -->
-		</f7-sheet>
-		<!-- END Bulk Upload Sheet -->
-
-		<!-- User Image Upload Sheet -->
-		<f7-sheet class="inventory-image image-sheet" :opened="userImageSheet" @sheet:closed="userImageSheet = false">
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content class="padding-bottom">
-				<section>
-					<f7-block v-show="!customerForm.id">
-						<f7-block-header>
-							You must first select a user to add a profile image
-						</f7-block-header>
-					</f7-block>
-				</section>
-
-				<section>
-					<f7-block v-show="customerForm.id">
-						<div class="block">
-							<button class="button" @click="activeStep = 0">Start Over</button>
-						</div>
-						<b-steps
-							v-model="activeStep"
-							:animated="isAnimated"
-							:has-navigation="hasNavigation"
-							:icon-prev="prevIcon"
-							:icon-next="nextIcon"
-						>
-							<b-step-item label="Choose Image" :clickable="isStepsClickable">
-								<div class="left" v-if="uploadMessage" :class="`message ${error ? 'is-danger' : 'is-success'}`">
-									<div class="message-body">{{ uploadMessage }}</div>
-								</div>
-								<f7-block>
-									<form enctype="multipart/form-data">
-										<f7-row class="justify-content-center">
-											<div class="dropzone">
-												<input type="file" name="invArray" @change="selectFile" ref="invFile" class="input-field" />
-
-												<p v-if="!uploading" class="call-to-action">
-													Drop file here
-												</p>
-												<p v-if="uploading" class="progress-bar is-primary" :value="progress" max="100">
-													<progress class="progress"> </progress>
-													{{ progress }} %
-												</p>
-											</div>
-											<f7-row>
-												<f7-col width="100">
-													<div v-if="file" class="file-name" style="font-size:3rem;">{{ file.name }}</div>
-												</f7-col>
-											</f7-row>
-										</f7-row>
-									</form>
-								</f7-block>
-							</b-step-item>
-
-							<b-step-item
-								label="Resize Image"
-								:clickable="isStepsClickable"
-								:type="{ 'is-success': isProfileSuccess }"
-							>
-								<template>
-									<f7-row>
-										<f7-col width="50">
-											<!-- Note that 'ref' is important here (value can be anything). read the description about `ref` below. -->
-											<vue-croppie
-												ref="croppieRefUser"
-												:enableOrientation="true"
-												:boundary="{ width: 500, height: 500 }"
-												:viewport="{ width: 300, height: 300, type: 'circle' }"
-												@result="result"
-												@update="update"
-											>
-											</vue-croppie>
-											<f7-button fill @click="crop()">Crop</f7-button>
-										</f7-col>
-										<f7-col width="50">
-											<!-- the result -->
-											<f7-row v-if="cropped">
-												<f7-col class="display-flex justify-content-center">
-													<img v-bind:src="cropped" />
-												</f7-col>
-											</f7-row>
-										</f7-col>
-									</f7-row>
-								</template>
-							</b-step-item>
-
-							<b-step-item label="Upload Image" :clickable="isStepsClickable" disabled>
-								<!-- the result -->
-								<f7-row v-if="cropped">
-									<f7-col class="display-flex justify-content-center">
-										<img v-bind:src="cropped" />
-									</f7-col>
-								</f7-row>
-								<f7-row v-if="!cropped">
-									<f7-col class="display-flex justify-content-center">
-										<p style="font-size: 30px;">You have not cropped an image. Please go back and click "Cropped".</p>
-									</f7-col>
-								</f7-row>
-							</b-step-item>
-
-							<!-- navigation Links -->
-							<template v-if="customNavigation" slot="navigation" slot-scope="{ previous, next }">
-								<f7-row class="display-flex justify-content-space-around">
-									<f7-col width="25" class="imageNavButtons">
-										<b-button
-											v-if="!previous.disabled"
-											class="display-flex justify-content-center"
-											outlined
-											type="is-danger"
-											icon-pack="mdi"
-											icon-left="arrow-left-box"
-											size="is-large"
-											:disabled="previous.disabled"
-											@click.prevent="previous.action"
-										>
-											<span>Previous</span>
-										</b-button>
-									</f7-col>
-									<f7-col width="25" class="imageNavButtons">
-										<b-button
-											v-if="!next.disabled"
-											class="display-flex justify-content-center"
-											outlined
-											type="is-success"
-											icon-pack="mdi"
-											size="is-large"
-											icon-left="arrow-right-box"
-											:disabled="next.disabled"
-											@click.prevent="next.action"
-										>
-											<span>Next</span>
-										</b-button>
-										<f7-button
-											class="display-flex justify-content-center"
-											v-if="next.disabled"
-											large
-											fill
-											sheet-close
-											@click.prevent="sendFile"
-											>Submit</f7-button
-										>
-									</f7-col>
-								</f7-row>
-							</template>
-							<!-- END navigation Links -->
-						</b-steps>
-					</f7-block>
-				</section>
-				<f7-block class="margin-bottom"></f7-block>
-			</f7-page-content>
-			<!-- END User Sheet Content -->
-		</f7-sheet>
-		<!-- END User Image Upload Sheet -->
+		<!-- END Main Container Row -->		
 
 	</f7-page>
 </template>
@@ -1168,8 +951,9 @@ import f7DatePickerComponent from '@/components/layout-elements/date-and-time/f7
 import shippingComponent from "../../components/business/shipping-component.vue";
 import creditCardComponent from "../../components/business/creditcard-ach-component.vue";
 import parentComponent from "@/components/business/parent-company-component.vue";
-import billingInvoiceComponent from '@/components/universal/billing-invoice-component.vue';
-import receiptsComponent from '@/components/universal/receipt-component.vue';
+import invoiceDatatableComponent from '@/components/financial/invoice-datatable-component.vue';
+import receiptDatatableComponent from '@/components/financial/receipt-datatable-component.vue';
+import profileCardComponent from "../../components/layout-elements/profile-card-component.vue";
 
 export default {
 	name: "customerProfile",
@@ -1183,18 +967,19 @@ export default {
 		"shipping-component": shippingComponent,
 		"credit-card-component": creditCardComponent,
 		"parent-component": parentComponent,
-		"billing-component": billingInvoiceComponent,
-		"receipt-component": receiptsComponent
+		"invoice-datatable-component": invoiceDatatableComponent,
+		"receipt-datatable-component": receiptDatatableComponent,
+		"profile-card-component": profileCardComponent,
 
 	},
 	data() {
 		return {
 			pageSettings: {
-				leftNavDrawer: ".employee-panel",
-				pageTitle: "Employee Profile"
+				leftNavDrawer: ".customer-panel",
+				pageTitle: "Customer Profile"
 			},
 			moduleInfo: {
-				name: "Employees",
+				name: "Customers",
 				type: "profile",
 				level: 5
 			},
@@ -1210,6 +995,11 @@ export default {
 					is_vendor: false
 				},
 			},
+			//Profile Card
+			profileCardSettings: {
+				title: "Profile Details",
+				type: "customer"
+			},
 
 			//Error Handling
 			showPasswordRest: false,
@@ -1219,36 +1009,14 @@ export default {
 			settings: {
 				maxScrollbarLength: 60
 			},
-			//Buefy Tabs
-			activeTab: 0,
 			//Page Setting for CRUD Display
-			editProfile: false,
 			hideUpdateUserButtons: false,
 			hideCreateUser: false,
-			hideSaveItem: true,
-			//V-IF Blocks
-			isPrimaryCreditCard: false,
+
 			//Popups and Sheets
 			catPopupOpened: false,
-			userImageSheet: false,
 			gallerySheetOpened: false,
-			userBulkUploadSheet: false,
-			// CSV Upload
-			csv: [],
-			//Image Cropping
-			cropped: null,
-			image: null,
-			altIMage: "/static/test.png",
-			//Image Uploading
-			fileURL: null,
-			file: "",
-			files: [],
-			uploadFiles: [],
-			uploadedFiles: [],
-			progress: 0,
-			uploading: false,
-			uploadMessage: "",
-			error: false,
+
 			//Begin DataTable Info
 			showDetailIcon: true,
 			checkedRows: [],
@@ -1280,7 +1048,6 @@ export default {
 			isStepsClickable: false,
 			isProfileSuccess: false,
 			//User / Customer Form Items
-			customerDOBDate: [],
 			customerForm: {
 				id: null,
 				datacom: null,
@@ -1292,39 +1059,44 @@ export default {
 				company_name: null,
 				dob: null,
 				ssn: null,
-				mailing_address: null,
-				mailing_city: null,
-				mailing_state: null,
-				mailing_zip: null,
 				resale_id: null,
 				customer_type: null,
+				is_member: null,
+				is_paid_member: null,
+				subscription_fee: null,
 				profile_img: null,
 				user: {
 					id: null,
-					email: null,
-					password: null,
-					verify_pw: null,
-					username: null,
 					date_added: null,
+					global_id: null,
 					last_login: null,
-					is_admin: null,
-					is_active: true,
-					is_staff: false,
-					is_superuser: null,
-					full_name: null,
 					first_name: null,
 					last_name: null,
+					full_name: null,
+					password: null,
+					verify_pw: null,
+					pin: null,
+					email: null,
+					username: null,
 					mobile_phone: null,
+					fax: null,
 					street_address: null,
 					city: null,
 					state: null,
 					zip: null,
+					country: null,
 					bio: null,
-					global_id: null,
-					groups: [],
+					is_active: true,
+					is_admin: false,
+					is_staff: false,
+					is_superuser: false,
+					is_cutomer: true,
+					is_vendor: false,
+					is_sales_rep: false,
+					is_warehouse_ee: false,
 					barcode: {},
-					pin: null,
-					fax: null
+					groups: [],
+					permissions: [],
 				}
 			}
 		}
@@ -1335,29 +1107,27 @@ export default {
 			console.log("this.customerForm", this.customerForm);
 		},
 		showEditProfile() {
-			this.editProfile = true;
+			this.parentSettings.editProfile = true;
 			this.hideUpdateUserButtons = true;
 			this.hideCreateUser = true;
-			this.hideSaveItem = true;
+			this.parentSettings.hideSaveItem = true;
 		},
 		toggleEditProfile() {
-			this.editProfile = !this.editProfile;
+			this.parentSettings.editProfile = !this.parentSettings.editProfile;
 			this.hideUpdateUserButtons = !this.hideUpdateUserButtons;
 			this.hideCreateUser = !this.hideCreateUser;
-			this.hideSaveItem = true;
+			this.parentSettings.hideSaveItem = true;
 		},
 		async newUserButton() {
 			//Show/Hide Edit Fields and buttons
 			let response = await this.clearUserFormData();
 			console.log("addNewuserButton response", response);
-			if (this.Customers.customerProfile.company) {
-				this.customerForm.company_id = this.Customers.customerProfile.company.id;
-			}
-			this.editProfile = true;
+
+			this.parentSettings.editProfile = true;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = true;
-			this.hideSaveItem = false;
-			this.activeTab = 0;
+			this.parentSettings.hideSaveItem = false;
+			this.parentSettings.activeTab = 0;
 			this.showPasswordRest = false;
 		},
 		async clearandResetButton() {
@@ -1365,11 +1135,11 @@ export default {
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.editProfile = false;
+			this.parentSettings.editProfile = false;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = false;
-			this.hideSaveItem = true;
-			this.activeTab = 0;
+			this.parentSettings.hideSaveItem = true;
+			this.parentSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -1415,13 +1185,11 @@ export default {
 				this.$f7.preloader.show();
 				// Await addUser then await AddCustomer using email address to find user in Django
 				this.customerForm.user.bio = this.$refs.userBio.f7TextEditor.contentEl.innerHTML;
-				this.customerForm.dob = new Date(this.customerForm.user.dob);
 
 				console.log("Create User this.customerForm.user", this.customerForm.user);
 				//Create UnLinked Copy of Form
 				var customerFormCopy = JSON.parse(JSON.stringify(this.customerForm));
-				delete customerFormCopy.user.groups;
-				delete customerFormCopy.user.barcode;
+
 				console.log("customerFormCopy", customerFormCopy);
 				let response = await this.$store.dispatch("createUser", customerFormCopy.user);
 				console.log("createCustomer createUser response: ", response);
@@ -1430,9 +1198,12 @@ export default {
 					console.log("Response 201");
 					newUserForm = response.data;
 				} else {
+					this.$f7.preloader.hide();
 					response.type = "Create User";
-					response.status = 401;
-					this.$store.dispatch("updateNotification", response);
+					if (!response.status) {
+						response.status = 401;
+						this.$store.dispatch("updateNotification", response);
+					} 
 					return reject(response.message);
 				}
 
@@ -1441,42 +1212,43 @@ export default {
 
 				//-------------------------------------------------------------------------------------//
 
-				//Get Company ID (from each company type) and UserID add to Employee Form
-				console.log("this.Auth.platformInfo", this.Auth.platformInfo);
+				//Get Company ID (from each company type) and UserID add to Customer Form
+				console.log("this.customerForm", this.customerForm);
 				var companyOBJ = {};
 				if (this.parentSettings.accountParent.is_datacom) {
-					companyOBJ = this.Datacom.datacomList.find((elem) => elem.legal_name == this.parentSettings.accountParent.company_name);
+					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
 					console.log("is_datacom companyOBJ", companyOBJ);
 					this.customerForm["datacom"] = companyOBJ.id;
 				} else if (this.parentSettings.accountParent.is_partner) {
-					companyOBJ = this.Partners.partnerList.find((elem) => elem.legal_name == this.parentSettings.accountParent.company_name);
+					companyOBJ = this.Partners.partnerList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
 					console.log("is_partner companyOBJ", companyOBJ);
 					this.customerForm["partner"] = companyOBJ.id;
 				} else if (this.parentSettings.accountParent.is_merchant) {
-					companyOBJ = this.Companies.companyList.find((elem) => elem.legal_name == this.parentSettings.accountParent.company_name);
+					companyOBJ = this.Companies.companyList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
 					console.log("is_merchant companyOBJ", companyOBJ);
 					this.customerForm["company"] = companyOBJ.id;
 				} else {
 					this.$f7.preloader.hide();
 					console.log("You must select a Company");
-					response.type = "Create Employee";
+					this.$f7.dialog.alert("You must first select a Company").open();
+					response.type = "Create Customer";
 					response.status = 400;
 					this.$store.dispatch("updateNotification", response);
 					return "You must select a Company";
 				}
 
 				console.log("this.customerForm", this.customerForm);
-				let eeResponse = await this.$store.dispatch("createCustomer", this.customerForm);
-				console.log("Create Customer Promise eeResponse", eeResponse);
-				if (response.status === 200 || response.status === 201) {
-					this.$store.dispatch("getCustomerList");
+				let custResponse = await this.$store.dispatch("createCustomer", this.customerForm);
+				console.log("Create Customer Promise custResponse", custResponse);
+				if (custResponse.status === 200 || custResponse.status === 201) {
 					this.$f7.preloader.hide();
-					return resolve(eeResponse);
+					return resolve(custResponse);
 				} else {
-					response.type = "Create Customer";
-					response.status = 401;
-					this.$store.dispatch("updateNotification", response);
-					return reject(response.message);
+					this.$f7.preloader.hide();
+					custResponse.type = "Create Customer";
+					custResponse.status = 401;
+					this.$store.dispatch("updateNotification", custResponse);
+					return reject(custResponse.message);
 				}
 			}).catch((error) => {
 				console.log("Caught Promise error:", error);
@@ -1484,13 +1256,13 @@ export default {
 			});
 		},
 		refreshCustomers() {
-			this.$store.dispatch("getCustomerList");
+			this.$store.dispatch("GETCustomerList");
 		},
 		// Populate Fields for editing in browser
 		async showUserData(customerID) {
 			console.log("showUserData customerID", customerID);
 			this.showPasswordRest = true;
-			this.activeTab = 0;
+			this.parentSettings.activeTab = 0;
 			//Get User ID and object and map to fields
 			var customerListID = null;
 			if (this.checkedRows.length != 0) {
@@ -1568,7 +1340,6 @@ export default {
 
 					//Call other methods to clear
 					this.clearCustomerFormData();
-					this.clearDOBDate();
 					console.log("clearUserFormData End", this.customerForm);
 
 					return resolve("ClearUserForms Promise Returned");
@@ -1645,240 +1416,11 @@ export default {
 			}
 			await this.clearUserFormData();
 		},
-		addCreditCard() {
-			console.log("addCreditCard");
-		},
-		deleteCreditCard(card) {
-			console.log("deletingPosition card", card);
-			//Find Position form store and send that ID value
-			var cardObj = this.Customers.customerCreditCardList.find((elem) => elem.name === pos);
-			console.log("cardObj", cardObj);
-			this.$store.dispatch("deleteCustomerPosition", cardObj.id);
-		},
-		// Parsing CSV for Django storage
-		parseDataHistory() {
-			// this.$store.dispatch('firePreloader');
-			console.log("csv", this.csv);
-			var djangoInvObj = [];
-			let mappedData = this.csv.map((data) => {
-				"Name", "Model", "Manufacturer", "Category", "Category Class", "List Price", "Purchase Price";
-				var objOfData = {
-					name: data["Name"],
-					model: data["Model"],
-					category: data["Category"],
-					category_class: data["Category Class"],
-					purchase_price: data["Purchase Price"]
-				};
-				djangoInvObj.push(objOfData);
-			});
-			console.log("csv data from mapping function", djangoInvObj);
 
-			//Place code here to split the array and dispatch each separately in chunks
-			let count = djangoInvObj.length / 1;
-			let i = 0;
-			while (i < count + 1) {
-				((i) => {
-					setTimeout(() => {
-						let chunk = djangoInvObj.splice(0, 1);
-						console.log("chunk", chunk);
-						this.$store.dispatch("createUser", chunk);
-					}, 2000 * i);
-				})(i++);
-			}
-			// this.$store.dispatch('closePreloader');
-		},
-		selectFile(e) {
-			//Get image URL and send to bind method
-			console.log("Event", e);
-			let newImageFile = e.target.files[0];
-			var reader = new FileReader();
-			reader.readAsDataURL(newImageFile);
-			reader.onload = (e) => {
-				this.fileURL = e.target.result;
-				this.bind();
-			};
-			//Get Image object and validate then send
-			this.file = this.$refs.invFile.files[0];
-			const allowedFileTypes = ["image/jpeg", "image/png", "image/gif"];
-			const MAX_SIZE = 2000000;
-			const tooLarge = this.file.size > MAX_SIZE;
-
-			if (allowedFileTypes.includes(this.file.type) && !tooLarge) {
-				this.error = false;
-				this.uploadMessage = "";
-			} else {
-				this.error = true;
-				this.uploadMessage = toolarge ? `Too large, Max size is ${MAX_SIZE / 1000}kb` : "Only Images are allowed";
-			}
-		},
-
-		async sendFile() {
-			this.customerForm.profile_img = this.cropped;
-			var formdata = this.customerForm.user;
-			console.log("this.customerForm.user", this.customerForm.user);
-
-			try {
-				await axios.patch("/django/users/" + formdata.id + "/", formdata).then((response) => {
-					console.log("Django Image PATCH response", response);
-					this.$store.dispatch("getCustomerList");
-				});
-				this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-		//Find out which Platform Customer belongs to
-		getCustomerPlatform(inForm) {
-			return new Promise(async (resolve, reject) => {
-				var payload = {};
-				if (inForm != undefined) {
-					payload = inForm;
-				}
-				console.log("this.Customers.customerProfile", this.Customers.customerProfile);
-				console.log("getCustomerPlatform payload", payload);
-				if (this.Customers.customerProfile.datacom != null) {
-					let platform = {
-						platform: "datacom",
-						url: "?datacom__id=" + this.Customers.customerProfile.datacom.id,
-						domain: this.Auth.domain
-					};
-					payload["datacom"] = this.Customers.customerProfile.datacom.id;
-					let newForm = { ...payload, ...platform };
-					console.log("newForm", newForm);
-					return resolve(newForm);
-				} else if (this.Customers.customerProfile.partner != null) {
-					let platform = {
-						platform: "partner",
-						url: "?partner__id=" + this.Customers.customerProfile.partner.id,
-						domain: this.Auth.domain
-					};
-					payload.partner = this.Customers.customerProfile.partner.id;
-					let newForm = { ...payload, ...platform };
-					console.log("newForm", newForm);
-					return resolve(newForm);
-				} else if (this.Customers.customerProfile.company != null) {
-					let platform = {
-						platform: "company",
-						url: "?company__id=" + this.Customers.customerProfile.company.id,
-						domain: this.Auth.domain
-					};
-					payload.company = this.Customers.customerProfile.company.id;
-					let newForm = { ...payload, ...platform };
-					console.log("newForm", newForm);
-					return resolve(newForm);
-				} else if (this.Customers.customerProfile.vendor != null) {
-					let platform = {
-						platform: "vendor",
-						url: "?vendor__id=" + this.Customers.customerProfile.vendor.id,
-						domain: this.Auth.domain
-					};
-					payload.vendor = this.Customers.customerProfile.vendor.id;
-					let newForm = { ...payload, ...platform };
-					console.log("newForm", newForm);
-					return resolve(newForm);
-				} else {
-					return reject("No Match Found");
-				}
-			}).catch((error) => {
-				return error;
-			});
-		},
-
-		//Image Cropper
-		bind() {
-			var $$ = this.Dom7;
-			// Bind image to Cropper
-			console.log("this.fileURL from bind()", this.fileURL);
-			this.$refs.croppieRefUser
-				.bind({
-					url: this.fileURL
-				})
-				.then(() => {
-					$$(".cr-slider").attr({ min: 0.15, max: 3 });
-				});
-		},
-
-		// CALLBACK USAGE
-		crop() {
-			// Here we are getting the result via callback function
-			// and set the result to this.cropped which is being
-			// used to display the result above.
-			let options = {
-				format: "png",
-				circle: true
-			};
-			this.$refs.croppieRefUser.result(options, (output) => {
-				this.cropped = output;
-			});
-		},
-		// EVENT USAGE
-		cropViaEvent() {
-			this.$refs.croppieRefUser.result(options);
-		},
-		result(output) {
-			this.cropped = output;
-		},
-		update(val) {
-			console.log(val);
-		},
-		rotate(rotationAngle) {
-			// Rotates the image
-			this.$refs.croppieRefUser.rotate(rotationAngle);
-		},
 		logout() {
 			this.$store.dispatch("signOut");
 		},
-		getCities(e) {
-			this.customerForm.user.state = e.target.value;
-			// console.log("this.customerForm.user.state", this.customerForm.user.state);
-			this.$store.dispatch("getCities", this.customerForm.user.state);
-		},
-		clearDOBDate() {
-			// console.log('this.$refs.customerDOBDate', this.$refs.customerDOBDate);
-			this.$refs.customerDOBDate.$refs.inputEl.value = "";
-		},
-		resetCompanyToggles(name) {
-			this.parentSettings.accountParent.is_datacom = name === "datacom";
-			this.parentSettings.accountParent.is_partner = name === "partner";
-			this.parentSettings.accountParent.is_merchant = name === "merchant";
-			this.parentSettings.accountParent.is_vendor = name === "vendor";
-		},
-		companyTypeToggle(e) {
-			console.log("Toggle e", e);
-			if (e.target.name === "datacom") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.parentSettings.accountParent.is_datacom = false;
-				}
-			}
-			if (e.target.name === "partner") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.parentSettings.accountParent.is_partner = false;
-				}
-			}
-			if (e.target.name === "merchant") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.parentSettings.accountParent.is_merchant = false;
-				}
-			}
-			if (e.target.name === "vendor") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.parentSettings.accountParent.is_vendor = false;
-				}
-			}
-		},
+
 		//Verified Methods
 		receiveDobDate(date) {
 			console.log('receiveDate date', date);
@@ -1903,40 +1445,37 @@ export default {
 				//I cant seem to figure out how to set vartiables with the computed
 				this.passwordMessage = "New Message";
 			},
-			canSubmitUserForm() {
-				if (this.Auth.isAuthenticated) {
-					if (this.parentSettings.accountParent.is_datacom) {
-						if ((this.requiredFieldsDone = 6)) {
-							return false;
-						}
-					}
-					if (this.parentSettings.accountParent.is_partner) {
-						if ((this.requiredFieldsDone = 6)) {
-							return false;
-						}
-					}
-					if (this.parentSettings.accountParent.is_merchant) {
-						if ((this.requiredFieldsDone = 6)) {
-							return false;
-						}
-					}
-					if (this.parentSettings.accountParent.is_vendor) {
-						if ((this.requiredFieldsDone = 6)) {
-							return false;
-						}
+		},
+		canSubmitUserForm() {
+			if (this.Auth.isAuthenticated) {
+				if (this.parentSettings.accountParent.is_datacom) {
+					if ((this.requiredFieldsDone = 6)) {
+						return false;
 					}
 				}
-				return true;
+				if (this.parentSettings.accountParent.is_partner) {
+					if ((this.requiredFieldsDone = 6)) {
+						return false;
+					}
+				}
+				if (this.parentSettings.accountParent.is_merchant) {
+					if ((this.requiredFieldsDone = 6)) {
+						return false;
+					}
+				}
+				if (this.parentSettings.accountParent.is_vendor) {
+					if ((this.requiredFieldsDone = 6)) {
+						return false;
+					}
+				}
 			}
+			return true;
 		}
+
 	},
 	beforeMount() {},
 	async mounted() {
 
-		// Method to put an initial image on the canvas for Croppie.js.
-		// this.$refs.croppieRefUser.bind({
-		// 	url: "http://datacom.localhost.mydataboxx.com:9000/static/UserProfileGrey170x170.png"
-		// });
 	},
 	on: {}
 };

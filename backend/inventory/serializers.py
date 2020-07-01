@@ -12,11 +12,11 @@ from warehouses.models import Warehouse
 
 from commons.models import UOMWeight, UOMDimensions
 from commons.serializers import UOMWeightSerializer, UOMDimensionsSerializer
-from partners.serializers import PartnerSerializer, SimplePartnerSerializer
-from datacom.serializers import DatacomSerializer, SimpleDatacomSerializer
+from partners.serializers import PartnerSerializer, PartnerListSerializer
+from datacom.serializers import DatacomSerializer, DatacomListSerializer
 from companies.serializers import CompanySerializer, SimpleCompanySerializer
 from vendors.serializers import VendorSerializer, SimpleVendorSerializer
-from warehouses.serializers import WarehouseSerializer, SimpleWarehouseSerializer
+from warehouses.serializers import WarehouseSerializer, WarehouseListSerializer
 
 
 class InventoryBarcodeSerializer(serializers.ModelSerializer):
@@ -38,15 +38,15 @@ class InvCategorySerializer(serializers.ModelSerializer):
         
 
 class InventorySerializer(serializers.ModelSerializer):
-    datacom_obj = SimpleDatacomSerializer(read_only=True, source='datacom')
+    datacom_obj = DatacomListSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
-    partner_obj = SimplePartnerSerializer(read_only=True, source='partner')
+    partner_obj = PartnerListSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
     company_obj = SimpleCompanySerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
     vendor_obj = SimpleVendorSerializer(read_only=True, source='vendor')
     vendor = serializers.PrimaryKeyRelatedField(queryset=Vendor.objects.all(), required=False, allow_null=True)
-    warehouse_loc_obj = SimpleWarehouseSerializer(read_only=True, source='warehouse_loc')
+    warehouse_loc_obj = WarehouseListSerializer(read_only=True, source='warehouse_loc')
     warehouse_loc = serializers.PrimaryKeyRelatedField(queryset=Warehouse.objects.all(), required=False, allow_null=True)
     category_obj = InvCategorySerializer(read_only=True, source='category')
     category = serializers.PrimaryKeyRelatedField(queryset=InvCategory.objects.all(), required=False, allow_null=True)

@@ -5,7 +5,7 @@ from users.models import User
 from attendance.models import LeaveRequest
 from humanresources.models import MileageReimbursement
 
-from users.serializers import SimpleUserSerializer
+from users.serializers import UserListSerializer
 from attendance.serializers import LeaveRequestSerializer
 from humanresources.serializers import MileageReimbursementSerializer
 
@@ -23,13 +23,13 @@ class NotificationSerializer(serializers.ModelSerializer):
   def to_representation(self, value):
     data = super().to_representation(value) 
     if data['sender']:
-      sender_data_serializer = SimpleUserSerializer(value.sender)
+      sender_data_serializer = UserListSerializer(value.sender)
       data['sender'] = sender_data_serializer.data
     if data['approved_declined_by']:
-      approved_declined_by_data_serializer = SimpleUserSerializer(value.approved_declined_by)
+      approved_declined_by_data_serializer = UserListSerializer(value.approved_declined_by)
       data['approved_declined_by'] = approved_declined_by_data_serializer.data
     if data['receiver']:
-      receiver_data_serializer = SimpleUserSerializer(value.receiver)
+      receiver_data_serializer = UserListSerializer(value.receiver)
       data['receiver'] = receiver_data_serializer.data
     if data['mileage_reimbursement']:
       mileage_reimbursement_data_serializer = MileageReimbursementSerializer(value.mileage_reimbursement)

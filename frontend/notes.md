@@ -2,7 +2,7 @@
 <f7-icon material="menu"></f7-icon> Material Design
 <f7-icon f7="menu">airplane</f7-icon> F7
 <f7-icon icon="icon-back" color="white"></f7-icon> Custom
-<f7-icon fa-icon="fa-cc-visa" icon-color="white"></f7-icon> Custom
+<f7-icon fa-icon="fa-cc-visa" color="white"></f7-icon> Custom
 <f7-icon size="40" icon="mdi mdi-calendar" slot="media"></f7-icon>
 <b-icon icon="home" size="is-large"></b-icon> Buefy Icons Material Design
 <b-button
@@ -65,7 +65,7 @@ watch: {
     this.loading = false;
   }
 
-***************************************Lazy Load Comonents with PreLoader *********************************************
+***************************************Lazy Load Comonents with PreLoader*********************************************
 <script>
   const notificationMessagesComponent = import("@/components/universal/notification-messages-component.vue");
   import LoadingState from '@/components/universal/loading-state-component.vue';
@@ -81,6 +81,9 @@ watch: {
     })
   }
 </script>
+
+**************************** AutoFocus ***********************************
+this.$refs.barcodeInput.$el.querySelector('input').focus();
 
 
 
@@ -241,6 +244,18 @@ methods() {
     this.$emit("receiveOpenTimes", this.timeOpenList);
   },
 }
+
+***********************Animation Transition Between two Elements ********************************
+<f7-row class="full-width">
+  <transition name="calc-transition" class="flip-card" mode="out-in">
+    <div v-if="showCalc" key="firstText" class="cardFront"><p>This is the first text</p></div>
+    <div v-else key="secondText" class="cardBack"><p>Sorry, no items found.</p></div>
+  </transition>
+</f7-row>
+
+<f7-row class="full-width">
+  <f7-button @click="showCalc = !showCalc">Click</f7-button>
+</f7-row>
 
 ***** Get Dates from f7 Datefiled *****
 this.holidayForm.date = this.$refs.holidayDatePicker.$refs.inputEl.value;
@@ -487,5 +502,16 @@ I cannot return a promise from an Action.
 merging Objects in Javascript
 Use spread operator
 let merged = {...obj1, ...obj2};
+
+****************************Django-Rest To Representaiton() ********************************
+
+# def to_representation(self, value):
+#     data = super().to_representation(value)  
+#     if data['barcode']:
+#         barcode_data_serializer = UserBarcodeSerializer(value.barcode)
+#         data['barcode'] = barcode_data_serializer.data
+
+#     return data
+
 
 

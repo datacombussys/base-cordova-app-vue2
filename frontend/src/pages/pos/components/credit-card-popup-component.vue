@@ -3,15 +3,16 @@
 			<!-- Credit Card Payment Page Popup -->
 		<f7-popup class="credit-card-popup" :opened="sharedData.CCpopupOpened" @popup:closed="sharedData.CCpopupOpened = false">
 			<f7-page>
-				<f7-row>
+				<f7-row class="popup-header">
 					<f7-col width="90" class="margin-left">
-						<f7-block-title large>Credit Card Payment</f7-block-title>
+						<f7-block-title class="margin-top text-color-white">MCredit Card Payment</f7-block-title>
 					</f7-col>
 					<f7-col width="10">
 						<f7-link
-							class="level-right text-color-grey margin-right"
+							class="level-right margin-right"
 							popup-close
-							icon-size="50"
+							icon-size="40"
+							icon-color="white"
 							icon="mdi mdi-close"
 						></f7-link>
 					</f7-col>

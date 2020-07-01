@@ -1,71 +1,6 @@
 /* Font Variables */
 @standard-font: 1.1em;
 
-/* Media Queries */
-body {
-	font-size: 0.7em;
-	background: rgb(218, 218, 218);
-}
-.button {
-	font-size: 0.7em;
-}
-.button-large{
-	font-size: 0.7em;
-}
-
-@media (min-width:400px) {
-	@standard-font: 0.8em;
-  body {
-    font-size: 0.8em;
-	}
-	.button {
-		font-size: 0.8em;
-	}
-	.button-large {
-	font-size: 0.8em;
-	}
-}
-
-@media (min-width:600px) {
-	@standard-font: 0.8em;
-  body {
-    font-size: 0.9em;
-	}
-	.button {
-		font-size: 0.9em;
-	}
-	.button-large {
-	font-size: 0.9em;
-	}
-}
-
-@media (min-width:900px) {
-	@standard-font: 1em;
-  body {
-    font-size: 1em;
-	}
-	.button {
-		font-size: 1em;
-	}
-	.button-large {
-	font-size: 1em;
-	}
-}
-
-@media (min-width:1200px) {
-	@standard-font: 1.1em;
-  body {
-    /* Never get larger than this */
-    font-size: @standard-font;
-	}
-	.button {
-		font-size: @standard-font;
-	}
-	.button-large {
-	font-size: @standard-font;
-	}
-}
-
 
 /* iOS Cordova Tweak */
 .device-cordova.device-ios {
@@ -385,19 +320,19 @@ body {
 	--f7-theme-color-ripple-color: rgba(255, 59, 48, 0.3);
 }
 .color-green {
-	--f7-theme-color: #4cd964;
+	--f7-theme-color: #09811d;
 	--f7-theme-color-rgb: 76, 217, 100;
-	--f7-theme-color-shade: #2cd048;
+	--f7-theme-color-shade: #055513;
 	--f7-theme-color-tint: #6ee081;
 }
 .text-color-green {
-	--f7-theme-color-text-color: #4cd964;
+	--f7-theme-color-text-color: #09811d;
 }
 .bg-color-green {
-	--f7-theme-color-bg-color: #4cd964;
+	--f7-theme-color-bg-color: #09811d;
 }
 .border-color-green {
-	--f7-theme-color-border-color: #4cd964;
+	--f7-theme-color-border-color: #055513;
 }
 .ripple-color-green,
 .ripple-green {
@@ -689,9 +624,27 @@ body {
 
 //Popup Options
 .popup-header {
-	background: rgb(2, 41, 51);
+	background-image: linear-gradient(45deg, rgba(0, 55, 87, 1) 0%, rgba(23, 122, 143, 1) 100%);
 	display: flex;
 	align-items: center;
+	.block-title {
+		margin-top: 7px;
+		margin-bottom: 12px;
+		border-bottom: none;
+		font-family: OpenSans-Regular;
+	}
+}
+.light-popup-header {
+	display: flex;
+	align-items: center;
+	border-bottom: 3px solid rgba(32, 32, 32, 0.2);
+
+	.block-title {
+		margin-top: 7px;
+		margin-bottom: 10px;
+		border-bottom: none;
+		font-family: OpenSans-Regular;
+	}
 }
 
 //Icons
@@ -822,6 +775,7 @@ button {
 	box-sizing: border-box;
 	align-items: center;
 	border: var(--f7-button-border-width, 0px) solid var(--f7-button-border-color, var(--f7-theme-color));
+	border-color: black;
 	font-size: @standard-font * 1.1;
 	color: var(--f7-button-text-color, var(--f7-theme-color));
 	height: calc(var(--f7-button-height) * 1.3);
@@ -875,7 +829,7 @@ button {
 .button-active,
 .button.tab-link-active {
 	--f7-button-bg-color: var(--f7-button-fill-bg-color, var(--f7-theme-color));
-	--f7-button-text-color: var(--f7-button-fill-text-color, #fff);
+	--f7-button-text-color: var(red, #fff);
 	--f7-touch-ripple-color: var(--f7-touch-ripple-white);
 }
 .button-fill,
@@ -1275,7 +1229,7 @@ div.list {
 
 //F7-block-title
 .block-title {
-	font-size: @standard-font * 1.4;
+	font-size: @standard-font * 1.65;
 	width: 100%;
 	margin-top: 15px;
 	font-family: OpenSans-SemiBold;
@@ -1288,7 +1242,7 @@ div.list {
 	color: rgb(6, 64, 97);
 }
 .block-title.block-title-medium {
-	font-size: @standard-font * 1.65;
+	font-size: @standard-font * 1.4;
 	border-bottom: none;
 	color: rgb(7, 49, 73);
 }
@@ -1300,7 +1254,7 @@ div.list {
 	margin-bottom: 0px;
 }
 .block-title.classy {
-	font-size: @standard-font * 2.2;
+	font-size: @standard-font * 1.8;
 	font-family: OpenSans-Light;
 	line-height: 0.75em;
 	border: none;
@@ -1324,10 +1278,47 @@ div.list {
 	font-family: OpenSans-Regular;
 	text-align: center;
 }
+.block-header.small {
+	font-size: @standard-font * 1.45;
+	color: rgb(3, 56, 70);
+	width: 100%;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+	margin-top: 10px;
+	font-family: OpenSans-Regular;
+	text-align: center;
+}
+.login-screen-title.customer {
+	font-size: @standard-font*2;
+	font-family: OpenSans-Bold;
+	color: white;
+}
 .field-title {
 	font-size: @standard-font * 1.1;
 	font-family: OpenSans-Regular;
 	margin-right: 10px;
+}
+.password-requirements-table {
+	width: 100%;
+	p {
+		font-family: OpenSans-Bold;
+		font-size: @standard-font*1.2;
+	}
+	tbody {
+		tr {
+			td {
+				ul {
+					li {
+						font-size: @standard-font*0.8;
+						list-style: disc inside;
+					}
+				}
+				
+
+			}
+		}
+	}
+	
+
 }
 .card-header {
 	.block-title {
@@ -1438,7 +1429,8 @@ h2 {
 }
 // Inline Icons in Media for f7-list-input
 .md .item-input .item-media {
-	align-self: center;
+	justify-content: center;
+	align-items: center;
 }
 i.icon {
 	display: flex;
@@ -2051,3 +2043,72 @@ label.item-checkbox > .icon-checkbox {
 	}
 }
 
+
+
+
+
+
+/* Media Queries */
+body {
+	font-size: 0.7em;
+	background: rgb(218, 218, 218);
+}
+.button {
+	font-size: 0.7em;
+}
+.button-large{
+	font-size: 0.7em;
+}
+
+@media (min-width:400px) {
+	@standard-font: 0.8em;
+  body {
+    font-size: 0.8em;
+	}
+	.button {
+		font-size: 0.8em;
+	}
+	.button-large {
+	font-size: 0.8em;
+	}
+}
+
+@media (min-width:600px) {
+	@standard-font: 0.8em;
+  body {
+    font-size: 0.9em;
+	}
+	.button {
+		font-size: 0.9em;
+	}
+	.button-large {
+	font-size: 0.9em;
+	}
+}
+
+@media (min-width:900px) {
+	@standard-font: 1em;
+  body {
+    font-size: 1em;
+	}
+	.button {
+		font-size: 1em;
+	}
+	.button-large {
+	font-size: 1em;
+	}
+}
+
+@media (min-width:1200px) {
+	@standard-font: 1.1em;
+  body {
+    /* Never get larger than this */
+    font-size: @standard-font;
+	}
+	.button {
+		font-size: @standard-font;
+	}
+	.button-large {
+	font-size: @standard-font;
+	}
+}

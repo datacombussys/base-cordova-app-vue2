@@ -85,7 +85,7 @@
 											:disabled="canSubmitUserForm"
 											class="bg-color-green trans-btn-left"
 										>
-											<span>Save User</span>
+											<span>Save Employee</span>
 										</f7-button>
 										<f7-button
 											fill
@@ -1653,7 +1653,7 @@
 															<div class="profile-thumb-img">
 																<img
 																	:src="props.row.profile_img"
-																	:class="{ 'inactive-item': !props.row.user.is_active }"
+																	:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 																/>
 															</div>
 														</b-table-column>
@@ -1661,7 +1661,7 @@
 															field="employee_number"
 															:visible="columnsVisible['employee_number'].display"
 															:label="columnsVisible['employee_number'].title"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															sortable
 															searchable
 															centered
@@ -1671,7 +1671,7 @@
 
 														<b-table-column
 															field="date_hired"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															:visible="columnsVisible['hire_date'].display"
 															:label="columnsVisible['hire_date'].title"
 															sortable
@@ -1681,21 +1681,21 @@
 
 														<b-table-column
 															field="full_name"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															:visible="columnsVisible['full_name'].display"
 															:label="columnsVisible['full_name'].title"
 															sortable
 															searchable
 														>
-															<template v-if="showDetailIcon">{{ props.row.user.full_name }}</template>
+															<template v-if="showDetailIcon">{{ props.row.user_obj.full_name }}</template>
 															<template v-else>
-																<a @click="toggle(props.row)">{{ props.row.user.full_name }}</a>
+																<a @click="toggle(props.row)">{{ props.row.user_obj.full_name }}</a>
 															</template>
 														</b-table-column>
 
 														<b-table-column
 															field="position"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															:visible="columnsVisible['position_title'].display"
 															:label="columnsVisible['position_title'].title"
 															sortable
@@ -1705,7 +1705,7 @@
 
 														<b-table-column
 															field="is_active"
-															:class="{ 'inactive-item': !props.row.user.is_active }"
+															:class="{ 'inactive-item': !props.row.user_obj.is_active }"
 															:visible="columnsVisible['is_active'].display"
 															:label="columnsVisible['is_active'].title"
 															sortable
@@ -1714,9 +1714,9 @@
 														>
 															<b-tag
 																size="is-medium"
-																:type="`${props.row.user.is_active ? 'is-success' : 'is-danger'}`"
-															>{{ props.row.user.is_active ? "Active" : "Inactive" }}</b-tag>
-															<!-- {{ props.row.user.is_active }} -->
+																:type="`${props.row.user_obj.is_active ? 'is-success' : 'is-danger'}`"
+															>{{ props.row.user_obj.is_active ? "Active" : "Inactive" }}</b-tag>
+															<!-- {{ props.row.user_obj.is_active }} -->
 														</b-table-column>
 													</template>
 												</b-table>
@@ -1741,284 +1741,6 @@
 		</f7-row>
 		<!-- END Main Container Row -->
 
-		<!-- ********************************* Popups and Sheets ***************************************-->
-			<!-- Product Bulk Upload Sheet -->
-		<f7-sheet
-			class="uploadInventory image-sheet"
-			:opened="userBulkUploadSheet"
-			@sheet:closed="userBulkUploadSheet = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content>
-				<!-- Store to Django Database -->
-				<f7-block-title medium>Store History</f7-block-title>
-				<f7-card>
-					<f7-card-content class="no-margin-top">
-						<f7-block-title class="margin-top-half" medium>Use the following format</f7-block-title>
-						<f7-row>
-							<f7-col>
-								<a href="/static/InventoryCSVFormat.csv" class="external" download="sample">Download Sample</a>
-							</f7-col>
-						</f7-row>
-						<f7-block-title medium>Please select a file to upload</f7-block-title>
-						<!--UPLOAD-->
-						<csv-import
-							v-model="csv"
-							:map-fields="[
-								'Name',
-								'Category',
-								'Manufacturer',
-								'Model',
-								'Model Number',
-								'Service?',
-								'Variation?',
-								'Tracked?',
-								'Downloadable?',
-								'On Website?',
-								'On Sale?',
-								'Taxable?',
-								'Parent Item',
-								'Product ID',
-								'SKU',
-								'Product Type',
-								'ISBN',
-								'Tags',
-								'Sales Notes',
-								'Vendor Notes',
-								'Product Description',
-								'List Price',
-								'Purchase Price',
-								'Sale Price',
-								'Wholesale Price',
-								'Discount %',
-								'Sale Expiration',
-								'Income Account',
-								'Expense Account',
-								'Reorder Level',
-								'Weight',
-								'Weight UOM',
-								'Width',
-								'Height',
-								'Length',
-								'Dimensions UOM'
-							]"
-						>
-							<template slot="hasHeaders" slot-scope="{ headers, toggle }">
-								<label hidden>
-									<f7-checkbox id="hasHeaders" :value="headers" checked @change="toggle"></f7-checkbox>Headers?
-								</label>
-							</template>
-
-							<template slot="error">File type is invalid</template>
-
-							<template slot="thead">
-								<tr>
-									<th>Database Fields</th>
-									<th>CSV Column</th>
-								</tr>
-							</template>
-							<!-- Large preloaders -->
-							<template slot="next" slot-scope="{ load }">
-								<f7-row class="display-flex justify-content-left">
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="load">Map Data Fields</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="parseDataHistory">Execute</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="testingMethod">Test</f7-button>
-									</f7-col>
-								</f7-row>
-							</template>
-						</csv-import>
-					</f7-card-content>
-				</f7-card>
-				<!-- END Store to Django Database -->
-				<f7-row class="margin">
-					<f7-col>
-						<f7-block>{{ csv }}</f7-block>
-					</f7-col>
-				</f7-row>
-			</f7-page-content>
-			<!-- END Bulk Upload Sheet Content -->
-		</f7-sheet>
-		<!-- END Bulk Upload Sheet -->
-
-		<!-- User Image Upload Sheet -->
-		<f7-sheet
-			class="inventory-image image-sheet"
-			:opened="userImageSheet"
-			@sheet:closed="userImageSheet = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content class="padding-bottom">
-				<section>
-					<f7-block v-show="!employeeForm.id">
-						<f7-block-header>You must first select a user to add a profile image</f7-block-header>
-					</f7-block>
-				</section>
-
-				<section>
-					<f7-block v-show="employeeForm.id">
-						<div class="block">
-							<button class="button" @click="activeStep = 0">Start Over</button>
-						</div>
-						<b-steps
-							v-model="activeStep"
-							:animated="isAnimated"
-							:has-navigation="hasNavigation"
-							:icon-prev="prevIcon"
-							:icon-next="nextIcon"
-						>
-							<b-step-item label="Choose Image" :clickable="isStepsClickable">
-								<div
-									class="left"
-									v-if="uploadMessage"
-									:class="`message ${error ? 'is-danger' : 'is-success'}`"
-								>
-									<div class="message-body">{{ uploadMessage }}</div>
-								</div>
-								<f7-block>
-									<form enctype="multipart/form-data">
-										<f7-row class="justify-content-center">
-											<div class="dropzone">
-												<input
-													type="file"
-													name="invArray"
-													@change="selectFile"
-													ref="invFile"
-													class="input-field"
-												/>
-
-												<p v-if="!uploading" class="call-to-action">Drop file here</p>
-												<p v-if="uploading" class="progress-bar is-primary" :value="progress" max="100">
-													<progress class="progress"></progress>
-													{{ progress }} %
-												</p>
-											</div>
-											<f7-row>
-												<f7-col width="100">
-													<div v-if="file" class="file-name" style="font-size:3rem;">{{ file.name }}</div>
-												</f7-col>
-											</f7-row>
-										</f7-row>
-									</form>
-								</f7-block>
-							</b-step-item>
-
-							<b-step-item
-								label="Resize Image"
-								:clickable="isStepsClickable"
-								:type="{ 'is-success': isProfileSuccess }"
-							>
-								<template>
-									<f7-row>
-										<f7-col width="50">
-											<!-- Note that 'ref' is important here (value can be anything). read the description about `ref` below. -->
-											<vue-croppie
-												ref="croppieRefUser"
-												:enableOrientation="true"
-												:boundary="{ width: 500, height: 500 }"
-												:viewport="{ width: 300, height: 300, type: 'circle' }"
-												@result="result"
-												@update="update"
-											></vue-croppie>
-											<f7-button fill @click="crop()">Crop</f7-button>
-										</f7-col>
-										<f7-col width="50">
-											<!-- the result -->
-											<f7-row v-if="cropped">
-												<f7-col class="display-flex justify-content-center">
-													<img v-bind:src="cropped" />
-												</f7-col>
-											</f7-row>
-										</f7-col>
-									</f7-row>
-								</template>
-							</b-step-item>
-
-							<b-step-item label="Upload Image" :clickable="isStepsClickable" disabled>
-								<!-- the result -->
-								<f7-row v-if="cropped">
-									<f7-col class="display-flex justify-content-center">
-										<img v-bind:src="cropped" />
-									</f7-col>
-								</f7-row>
-								<f7-row v-if="!cropped">
-									<f7-col class="display-flex justify-content-center">
-										<p
-											style="font-size: 30px;"
-										>You have not cropped an image. Please go back and click "Cropped".</p>
-									</f7-col>
-								</f7-row>
-							</b-step-item>
-
-							<!-- navigation Links -->
-							<template v-if="customNavigation" slot="navigation" slot-scope="{ previous, next }">
-								<f7-row class="display-flex justify-content-space-around">
-									<f7-col width="25" class="imageNavButtons">
-										<b-button
-											v-if="!previous.disabled"
-											class="display-flex justify-content-center"
-											outlined
-											type="is-danger"
-											icon-pack="mdi"
-											icon-left="arrow-left-box"
-											size="is-large"
-											:disabled="previous.disabled"
-											@click.prevent="previous.action"
-										>
-											<span>Previous</span>
-										</b-button>
-									</f7-col>
-									<f7-col width="25" class="imageNavButtons">
-										<b-button
-											v-if="!next.disabled"
-											class="display-flex justify-content-center"
-											outlined
-											type="is-success"
-											icon-pack="mdi"
-											size="is-large"
-											icon-left="arrow-right-box"
-											:disabled="next.disabled"
-											@click.prevent="next.action"
-										>
-											<span>Next</span>
-										</b-button>
-										<f7-button
-											class="display-flex justify-content-center"
-											v-if="next.disabled"
-											large
-											fill
-											sheet-close
-											@click.prevent="sendFile"
-										>Submit</f7-button>
-									</f7-col>
-								</f7-row>
-							</template>
-							<!-- END navigation Links -->
-						</b-steps>
-					</f7-block>
-				</section>
-				<f7-block class="margin-bottom"></f7-block>
-			</f7-page-content>
-			<!-- END User Sheet Content -->
-		</f7-sheet>
-		<!-- END User Image Upload Sheet -->
-
 		<!-- Popups -->
 		<positions-popup-component :moduleInfo="moduleInfo"></positions-popup-component>
 
@@ -2041,9 +1763,8 @@ import { UniversalMixins } from "../../mixins/universal-mixins";
 //Components
 import navBarComponent from "../../components/universal/navbar-component.vue";
 import profileCardComponent from "../../components/layout-elements/profile-card-component.vue";
-import businessContactFormComponent from "@/components/business/contact-form-component.vue";
 import parentComponent from "@/components/business/parent-company-component.vue";
-import billingInvoiceComponent from "@/components/universal/billing-invoice-component.vue";
+import invoiceDatatableComponent from '@/components/financial/invoice-datatable-component.vue';
 import f7DatePickerComponent from '@/components/layout-elements/date-and-time/f7-datepicker-component.vue';
 import positionsComponent from "@/components/business/positions-component.vue";
 import timeOffRequestFormComponent from '@/components/layout-elements/notifications/time-off-request-form-component.vue';
@@ -2057,9 +1778,8 @@ export default {
 	components: {
 		"nav-bar-component": navBarComponent,
 		"profile-card-component": profileCardComponent,
-		"business-contact-form-component": businessContactFormComponent,
 		"parent-component": parentComponent,
-		"billing-component": billingInvoiceComponent,
+		"invoice-datatable-component": invoiceDatatableComponent,
 		"f7-date-picker-component": f7DatePickerComponent,
 		//Popups
 		"positions-popup-component": positionsComponent,
@@ -2258,9 +1978,7 @@ export default {
 			//Show/Hide Edit Fields and buttons
 			let response = await this.clearUserFormData();
 			console.log("addNewuserButton response", response);
-			if (this.Users.employeeProfile.company) {
-				this.employeeForm.company_id = this.Users.employeeProfile.company.id;
-			}
+
 			this.parentSettings.editProfile = true;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = true;
@@ -2332,6 +2050,7 @@ export default {
 					console.log("Response 201");
 					newUserForm = response.data;
 				} else {
+					this.$f7.preloader.hide();
 					response.type = "Create User";
 					if (!response.status) {
 						response.status = 401;
@@ -2368,6 +2087,7 @@ export default {
 				} else {
 					this.$f7.preloader.hide();
 					console.log("You must select a Company");
+					this.$f7.dialog.alert("You must first select a Company").open();
 					response.type = "Create Employee";
 					response.status = 400;
 					this.$store.dispatch("updateNotification", response);
@@ -2398,7 +2118,6 @@ export default {
 						}
 					}
 					
-					// this.$store.dispatch("getEmployeeList");
 					this.$f7.preloader.hide();
 					return resolve(eeResponse);
 				} else {
@@ -2586,128 +2305,8 @@ export default {
 		deleteChip() {
 			console.log("deleting Chip");
 		},
-		// Parsing CSV for Django storage
-		parseDataHistory() {
-			// this.$store.dispatch('firePreloader');
-			console.log("csv", this.csv);
-			var djangoInvObj = [];
-			let mappedData = this.csv.map((data) => {
-				"Name", "Model", "Manufacturer", "Category", "Category Class", "List Price", "Purchase Price";
-				var objOfData = {
-					name: data["Name"],
-					model: data["Model"],
-					category: data["Category"],
-					category_class: data["Category Class"],
-					purchase_price: data["Purchase Price"]
-				};
-				djangoInvObj.push(objOfData);
-			});
-			console.log("csv data from mapping function", djangoInvObj);
-
-			//Place code here to split the array and dispatch each separately in chunks
-			let count = djangoInvObj.length / 1;
-			let i = 0;
-			while (i < count + 1) {
-				((i) => {
-					setTimeout(() => {
-						let chunk = djangoInvObj.splice(0, 1);
-						console.log("chunk", chunk);
-						this.$store.dispatch("createUser", chunk);
-					}, 2000 * i);
-				})(i++);
-			}
-			// this.$store.dispatch('closePreloader');
-		},
-		selectFile(e) {
-			//Get image URL and send to bind method
-			console.log("Event", e);
-			let newImageFile = e.target.files[0];
-			var reader = new FileReader();
-			reader.readAsDataURL(newImageFile);
-			reader.onload = (e) => {
-				this.fileURL = e.target.result;
-				this.bind();
-			};
-			//Get Image object and validate then send
-			this.file = this.$refs.invFile.files[0];
-			const allowedFileTypes = ["image/jpeg", "image/png", "image/gif"];
-			const MAX_SIZE = 2000000;
-			const tooLarge = this.file.size > MAX_SIZE;
-
-			if (allowedFileTypes.includes(this.file.type) && !tooLarge) {
-				this.error = false;
-				this.uploadMessage = "";
-			} else {
-				this.error = true;
-				this.uploadMessage = toolarge ? `Too large, Max size is ${MAX_SIZE / 1000}kb` : "Only Images are allowed";
-			}
-		},
-
-		async sendFile() {
-			this.employeeForm.profile_img = this.cropped;
-			var formdata = this.employeeForm.user;
-			console.log("this.employeeForm.user", this.employeeForm.user);
-
-			try {
-				this.$store.dispatch("PATCHUser", formdata);
-				// await axios.patch('/django/users/'+ formdata.id + '/', formdata).then(response => {
-				//   console.log("Django Image PATCH response", response);
-				//   response.type = "Update User Profile Image";
-				//   this.$store.dispatch("updateNotification", response);
-				//   this.$store.dispatch('getEmployeeList');
-				// });
-				this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-
-		//Image Cropper
-		bind() {
-			var $$ = this.Dom7;
-			// Bind image to Cropper
-			console.log("this.fileURL from bind()", this.fileURL);
-			this.$refs.croppieRefUser
-				.bind({
-					url: this.fileURL
-				})
-				.then(() => {
-					$$(".cr-slider").attr({ min: 0.15, max: 3 });
-				});
-		},
-
-		// CALLBACK USAGE
-		crop() {
-			// Here we are getting the result via callback function
-			// and set the result to this.cropped which is being
-			// used to display the result above.
-			let options = {
-				format: "png",
-				circle: true
-			};
-			this.$refs.croppieRefUser.result(options, (output) => {
-				this.cropped = output;
-			});
-		},
-		// EVENT USAGE
-		cropViaEvent() {
-			this.$refs.croppieRefUser.result(options);
-		},
-		result(output) {
-			this.cropped = output;
-		},
-		update(val) {
-			console.log(val);
-		},
-		rotate(rotationAngle) {
-			// Rotates the image
-			this.$refs.croppieRefUser.rotate(rotationAngle);
-		},
+	
+		
 		clearTermDate() {
 			this.employeeForm.termination_date = null;
 		},
@@ -2733,6 +2332,19 @@ export default {
 			this.employeeForm.user.country = this.localeCities.user_country_name;
 			this.employeeForm.user.state = this.localeCities.user_state_name;
 
+		},
+		//Callback function from Child Component
+		syncWithMixin(payload) {
+			console.log("Must emit information from child component to parent");
+			console.log('syncWithMixin payload', payload);
+			return new Promise((resolve, reject) => {
+				this.employeeForm.user.country = payload.primary_country_name;
+				this.employeeForm.user.state = payload.primary_state_name;
+				console.log('this.employeeForm', this.employeeForm);
+				console.log('this.localeCities', this.localeCities);
+
+				return resolve(payload.primary_state_name);
+			});
 		},
 	},
 	computed: {
@@ -2790,11 +2402,6 @@ export default {
 	},
 	beforeMount() {},
 	async mounted() {
-
-		// Method to put an initial image on the canvas for Croppie.js.
-		// this.$refs.croppieRefUser.bind({
-		// 	url: "http://datacom.localhost.mydataboxx.com:9000/static/UserProfileGrey170x170.png"
-		// });
 	},
 	on: {}
 }

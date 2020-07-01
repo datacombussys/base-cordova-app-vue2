@@ -27,34 +27,41 @@ from .serializers import (UserSerializer,
                         ManagerApprovalBarcodeSerializer, 
                         ContentTypeSerializer, 
                         BasePermissionSeializer, 
-                        UserPermissionsSerializer, 
+                        ExtendedPermissionsSerializer, 
                         BaseGroupSerializer, 
-                        UserGroupSerializer, )
+                        ExtendedGroupSerializer, 
+                        UserListSerializer, 
+                        UsersGroupsSerializer, )
 from .permissions import AdminSuperAdmin
 from .models import User, UserBarcode, UserPermission, UserGroup
+
+
+class ContentTypeViewSet(viewsets.ModelViewSet):
+  serializer_class = ContentTypeSerializer
+  queryset = ContentType.objects.all()
 
 class BasePermissionsViewSet(viewsets.ModelViewSet):
   serializer_class = BasePermissionSeializer
   queryset = Permission.objects.all()
 
-class UserPermissionsViewSet(viewsets.ModelViewSet):
-  serializer_class = UserPermissionsSerializer
+class ExtendedPermissionsViewSet(viewsets.ModelViewSet):
+  serializer_class = ExtendedPermissionsSerializer
   queryset = UserPermission.objects.all()
         
-class ContentTypeViewSet(viewsets.ModelViewSet):
-  serializer_class = ContentTypeSerializer
-  queryset = ContentType.objects.all()
-
-class GroupViewSet(viewsets.ModelViewSet):
+class BaseGroupViewSet(viewsets.ModelViewSet):
   serializer_class = BaseGroupSerializer
   queryset = Group.objects.all()
 
-class UserGroupViewSet(viewsets.ModelViewSet):
-  serializer_class = UserGroupSerializer
+class ExtendedGroupViewSet(viewsets.ModelViewSet):
+  serializer_class = ExtendedGroupSerializer
+  queryset = UserGroup.objects.all()
+
+#Use this class when assigneing users to groups
+class UserGroupsViewSet(viewsets.ModelViewSet):
+  serializer_class = UsersGroupsSerializer
   queryset = UserGroup.objects.all()
 
 class UserProfileViewset(viewsets.ModelViewSet):
-    """Handles CRUD for User Profile"""
     serializer_class = UserSerializer
     queryset = User.objects.all()
     authentication_classes = (TokenAuthentication, )
@@ -65,6 +72,9 @@ class UserProfileViewset(viewsets.ModelViewSet):
     ordering_fields = '__all__'
     ordering = ['id']
 
+class UserListViewset(viewsets.ModelViewSet):
+  serializer_class = UserSerializer
+  queryset = User.objects.all()
 
 class UserLoginAPIView(ObtainAuthToken):
     """Handles creating user auth tokens"""

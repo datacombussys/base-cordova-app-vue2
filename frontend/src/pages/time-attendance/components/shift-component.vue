@@ -313,7 +313,8 @@
 														class="tooltip-init"
 														:checked="newShiftForm.require_clock_out"
 														@change="newShiftForm.require_clock_out = $event.target.checked"
-														data-tooltip="Defaults to shift start time" slot="media"></f7-toggle>
+														data-tooltip="Defaults to shift start time" slot="media">
+													</f7-toggle>
 												</f7-list-item>
 											</f7-col>
 										</f7-row>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { f7 } from 'framework7-vue';
-
+import apiRoutes from '@/js/api-routes';
 
 export const Customers = {
 	namespace: true,
@@ -39,7 +39,7 @@ export const Customers = {
 						commit('PUSH_NEW_CUSTOMER', response.data);
 						dispatch('updateNotification', response);
 
-						return resolve(response.data);
+						return resolve(response);
 					}
 				}).catch(error => {
 						error.response.type = "Create Customer";
@@ -54,33 +54,15 @@ export const Customers = {
 			});
 		},
     //GET and LIST Methods
-    getCustomerList({commit, dispatch, rootState}, payload) {
-      return new Promise((resolve, reject) => {
-        console.log('getCustomerList payload', payload);
-				if(!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				} 
-				var url = "";
-				if(payload != undefined) {
-					url = payload.url;
-				}
-        axios.get("/django/customers/").then(response => {
-          if (response.status === 200) {
-            response.type = "Retrieve Customer List";
-            commit('SET_CUSTOMER_LIST', response.data);
-            // dispatch('updateNotification', response);
-          }
-        }).catch(error => {
-          if (error.response) {
-            error.type = "Retrieve Customer List";
-            dispatch('updateNotification', error.response);
-          }
-        });
-      });
+    async GETCustomerList({commit, dispatch, rootState}, payload) {
+			let endpoint = 'customers/';
+			let type = "Get Customers";
+
+			let response = await apiRoutes.get(dispatch, rootState, endpoint, payload, type);
+
+			console.log('GETCustomerList response', response);
+			commit('SET_CUSTOMER_LIST', response.data);
+			
     },
     //Update Methods Need to finish
     PATCHCustomer({ dispatch, commit, rootState }, form) {

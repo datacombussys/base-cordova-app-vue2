@@ -25,8 +25,7 @@ class BasePermissionSeializer(serializers.ModelSerializer):
         model = Permission
         fields = ('__all__')
 
-    
-class UserPermissionsSerializer(serializers.ModelSerializer):
+class ExtendedPermissionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPermission
         fields = ('__all__')
@@ -34,20 +33,14 @@ class UserPermissionsSerializer(serializers.ModelSerializer):
 class BaseGroupSerializer(serializers.ModelSerializer):
     permissions_list = BasePermissionSeializer(many=True, read_only=True, source='permissions')
     permissions = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Permission.objects.all(), many=True, allow_null=True), allow_null=True)
-
     class Meta:
         model = Group
         fields = ('__all__')
 
-    # def __init__(self, *args, **kwargs):
-    #     kwargs['allow_null'] = True
-    #     super(BaseGroupSerializer, self).__init__(*args, **kwargs)
-
-class UserGroupSerializer(serializers.ModelSerializer):
+class ExtendedGroupSerializer(serializers.ModelSerializer):
     # This requires a custom validate() method
     permissions_list = BasePermissionSeializer(many=True, read_only=True, source='permissions')
     permissions = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Permission.objects.all(), many=True, allow_null=True), allow_null=True)
-
     class Meta:
         model = UserGroup
         fields = ('__all__')
@@ -64,27 +57,14 @@ class UserGroupSerializer(serializers.ModelSerializer):
 
 
 class UserBarcodeSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only=True)
-    # user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
-    #         write_only=True, required=False, allow_null=True)
     class Meta:
         model = UserBarcode
         fields = ('__all__')
 
-class SimpleUserBarcodeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = UserBarcode
-        fields = ['barcode_number', 'image']
-
-
 class UserSerializer(serializers.ModelSerializer):
     barcode_obj = UserBarcodeSerializer(read_only=True, source='barcode')
     barcode = serializers.PrimaryKeyRelatedField(queryset=UserBarcode.objects.all(), required=False, allow_null=True)
-    
-    groups_list = BaseGroupSerializer(many=True, read_only=True, source='groups')
-    groups = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), many=True, allow_null=True), allow_null=True)
-    
+        
     profile_img = Base64ImageField( max_length=None,
                                     use_url=True,
                                     required=False,
@@ -103,16 +83,11 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        """Create and Return a new user uses this method
-        The request comes from Views then to Serializers, then to models.
-        This is where I can call custom model methods"""
         user = User.objects.create_user(**validated_data)
-        # print("User instance self", self)
 
         return user 
 
     def update(self, instance, validated_data):
-        """Update Instance"""
         print("User instance", instance)
         print("User validated_data", validated_data)
         if 'password' in validated_data:
@@ -141,30 +116,18 @@ class UserSerializer(serializers.ModelSerializer):
             
         return data
 
-    # def to_representation(self, value):
-    #     data = super().to_representation(value)  
-    #     if data['barcode']:
-    #         barcode_data_serializer = UserBarcodeSerializer(value.barcode)
-    #         data['barcode'] = barcode_data_serializer.data
-    
-    #     return data
-
-
-class SimpleUserSerializer(serializers.ModelSerializer):
-
+class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'id', 'date_added', 'full_name', 'mobile_phone', 'groups', 'barcode']
+        fields = ['id', 'full_name', 'email', 'date_added', 'mobile_phone', 'last_login', 'is_active']
 
-    def to_representation(self, value):
-        data = super().to_representation(value)  
-        if data['barcode']:
-            barcode_data_serializer = SimpleUserBarcodeSerializer(value.barcode)
-            data['barcode'] = barcode_data_serializer.data
-    
-        return data
-
-
+class UsersGroupsSerializer(serializers.ModelSerializer):
+    groups_list = BaseGroupSerializer(many=True, read_only=True, source='groups')
+    groups = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), many=True, allow_null=True)
+    class Meta:
+        model = User
+        read_only_fields = ['full_name']
+        fields = ['id', 'full_name', 'groups_list', 'groups']
 
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:

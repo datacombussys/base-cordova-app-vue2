@@ -7,7 +7,7 @@
 			@popup:closed="sharedData.GiftpopupOpened = false"
 		>
 			<f7-page>
-				<f7-row>
+				<f7-row class="display-flex align-items-center">
 					<f7-col width="90" class="margin-left">
 						<f7-block-title large>Gift Card Payment</f7-block-title>
 					</f7-col>
