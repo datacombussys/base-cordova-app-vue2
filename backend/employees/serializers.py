@@ -14,8 +14,8 @@ from warehouses.models import Warehouse
 from commons2.models import Department
 from partners.serializers import PartnerSerializer, PartnerListSerializer
 from datacom.serializers import DatacomSerializer, DatacomListSerializer
-from companies.serializers import CompanySerializer, SimpleCompanySerializer
-from vendors.serializers import VendorSerializer, SimpleVendorSerializer
+from companies.serializers import CompanySerializer, CompanyListSerializer
+from vendors.serializers import VendorSerializer, VendorListSerializer
 from users.serializers import UserSerializer, UserListSerializer
 from humanresources.models import Benefits, EmployeeDocuments
 from humanresources.serializers import BenefitsSerializer, EmployeeDocumentsSerializer
@@ -28,7 +28,7 @@ class PositionsSerializer(serializers.ModelSerializer):
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
     partner_obj = PartnerListSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
-    company_obj = SimpleCompanySerializer(read_only=True, source='company')
+    company_obj = CompanyListSerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
 
     class Meta:
@@ -40,9 +40,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
     partner_obj = PartnerListSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
-    company_obj = SimpleCompanySerializer(read_only=True, source='company')
+    company_obj = CompanyListSerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
-    vendor_obj = SimpleVendorSerializer(read_only=True, source='company')
+    vendor_obj = VendorListSerializer(read_only=True, source='company')
     vendor = serializers.PrimaryKeyRelatedField(queryset=Vendor.objects.all(), required=False, allow_null=True)
     user_obj = UserListSerializer(read_only=True, source='user')
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
@@ -78,10 +78,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return instance
 
 class EmployeeListSerializer(serializers.ModelSerializer):
+    user_obj = UserListSerializer(read_only=True, source='user')
     class Meta:
         model = Employee
         read_only_fields = ['id', 'user']
-        fields = ['id', 'position', 'salary', 'reporting_manager','hire_date', 'termination_date', 'user', 'profile_img']
+        fields = ['id', 'position', 'salary', 'reporting_manager','hire_date', 'termination_date', 'user', 'profile_img', 'user_obj']
 
 class EmployeeModulesManagerSerializer(serializers.ModelSerializer):
     modules_managed_list = ContentTypeSerializer(many=True, read_only=True, source='modules_managed')

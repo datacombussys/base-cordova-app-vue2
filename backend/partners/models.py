@@ -46,13 +46,22 @@ class PartnerManager(models.Manager):
     partner.account_number = newPartnerID
 
     partner.save(using=self._db)
+    print('partner', partner.id)
 
-    partner.primary_contacts.set(primary_contacts_var)
-    partner.billing_contacts.set(billing_contacts_var)
-    partner.technical_contacts.set(technical_contacts_var)
-    partner.shipping_contacts.set(shipping_contacts_var)
+    if primary_contacts_var:
+      partner.primary_contacts.set(primary_contacts_var)
+    if billing_contacts_var:
+      partner.billing_contacts.set(billing_contacts_var)
+    if technical_contacts_var:
+      partner.technical_contacts.set(technical_contacts_var)
+    if shipping_contacts_var:
+      partner.shipping_contacts.set(shipping_contacts_var)
 
-    partner.save()
+    barcode = CommonBarcode.objects.create_barcode(partner.id, **kwargs)
+    print('Partner barcode', barcode)
+    partner.barcode = barcode
+
+    partner.save(using=self._db)
 
     return partner
 

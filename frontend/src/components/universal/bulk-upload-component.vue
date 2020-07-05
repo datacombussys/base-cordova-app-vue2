@@ -163,7 +163,7 @@ export default {
 					setTimeout(() => {
 						let chunk = djangoInvObj.splice(0, 1);
 						console.log("chunk", chunk);
-						this.$store.dispatch("createUser", chunk);
+						this.$store.dispatch("POSTUser", chunk);
 					}, 2000 * i);
 				})(i++);
 			}

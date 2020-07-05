@@ -8,7 +8,7 @@
 import { mapState } from "vuex";
 
 export default {
-	name: "Template",
+	name: "newPurchaseOrderComponent",
 	mixins: [],
 	components: {},
 	props: {

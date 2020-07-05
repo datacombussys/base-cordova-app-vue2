@@ -54,7 +54,7 @@ import { UniversalMixins } from "@/mixins/universal-mixins";
 import { DataTableMixins } from "@/mixins/components/table-mixins";
 
 //Components
-import f7DataTableComponent from "@/components/layout-elements/f7-datatable-component.vue";
+import f7DataTableComponent from "@/components/layout-elements/datatables/f7-datatable-component.vue";
 
 export default {
 	name: "tillCountDatabaseComponent",

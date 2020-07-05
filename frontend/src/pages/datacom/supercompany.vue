@@ -30,9 +30,13 @@
 											<f7-block-title class="full-width no-margin-bottom">Company</f7-block-title>
 										</f7-col>
 										<f7-col width="50" class="text-align-right">
-											<f7-link sheet-open=".company-image">
+											<f7-link sheet-open=".edit-profile-image">
 												<b-icon class="edit-icon" icon="pencil"></b-icon>
 											</f7-link>
+											<profile-image-popup-component
+												:profileImageSettings="profileImageSettings"
+												:profileData="datacomForm">
+											</profile-image-popup-component>
 										</f7-col>
 									</f7-row>
 								</f7-card-header>
@@ -47,18 +51,19 @@
 									<f7-row v-if="datacomForm.profile_img" class="display-flex justify-content-center">
 										<img :src="datacomForm.profile_img" style="width:170px;height:170px;" alt />
 									</f7-row>
-									<f7-row>
-										<f7-col class="text-align-center margin-top">
-											<img :src="barcode.image" style="width:150px;" alt="Please load item" />
-											<div>{{ barcode.barcode_number }}</div>
-										</f7-col>
-									</f7-row>
+									<div v-if="datacomForm.barcode != undefined">
+										<f7-row v-if="Object.keys(datacomForm.barcode).length != 0">
+											<f7-col class="text-align-center margin-top">
+												<img :src="datacomForm.barcode.image" style="width:150px;" alt="Please load item" />
+												<div>{{ datacomForm.barcode.barcode_number }}</div>
+											</f7-col>
+										</f7-row>
+									</div>
+										
 								</f7-card-content>
 								<f7-card-footer class="display-flex justify-content-center">
 									<f7-block-title medium class="margin-top-half text-align-center">
-										{{
-										datacomForm.legal_name
-										}}
+										{{datacomForm.legal_name}}
 									</f7-block-title>
 								</f7-card-footer>
 							</f7-card>
@@ -117,7 +122,7 @@
 										</f7-col>
 									</f7-row>
 									<f7-row class="full-width display-flex justify-content-center" v-if="hideCreateItem">
-										<f7-col width="90">
+										<f7-col width="100">
 											<f7-button @click="clearFormData" fill class="bg-color-red">Clear Data</f7-button>
 										</f7-col>
 									</f7-row>
@@ -149,14 +154,29 @@
 					<div>
 						<!-- el2 -->
 						<f7-block class="margin-top-half">
-							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.companyErrorHandle" class="left message is-danger">
+							<f7-row>
+								<article v-if="errorHandle" class="message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
+								</article>
 							</f7-row>
+							<!-- Error Handling -->
+							<f7-row 
+								v-for="errorArray in errorData" 
+								:key="errorArray.id">	
+								<article
+									v-if="errorArray[0] === 'non_field_errors'"
+									class="has-background-white margin-top-half"
+									:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+									<div 
+										class="message-body">
+										{{ errorArray[1][0] }}
+									</div>
+								</article>
+							</f7-row>
+							<!-- END Error Handling -->
 							<f7-card>
 								<f7-card-content>
 									<f7-block-title medium class="no-margin-top">Dashboard</f7-block-title>
@@ -338,23 +358,23 @@
 															@input="datacomForm.legal_name = $event.target.value"
 															style="background: rgb(216,252,253)"
 														></f7-list-input>
-														<div v-if="Errors.companyErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.companyErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.companyErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div
-																		v-show="errorArray[0] === 'legal_name'"
-																		class="message-body"
-																	>{{ errorArray[1][0] }}</div>
+
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'legal_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
+
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">
@@ -370,23 +390,22 @@
 															@input="datacomForm.dba_name = $event.target.value"
 															style="background: rgb(216,252,253)"
 														></f7-list-input>
-														<div v-if="Errors.companyErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.companyErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.companyErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div
-																		v-show="errorArray[0] === 'dba_name'"
-																		class="message-body"
-																	>{{ errorArray[1][0] }}</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'dba_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
+												
 													</f7-col>
 												</f7-row>
 
@@ -433,7 +452,9 @@
 												<business-contact-form-component 
 													:contactForm="datacomForm"
 													:formSettings="primaryContactSettings"
-													@updateLocaleInfo="syncWithMixin">
+													@updateLocaleInfo="syncWithMixin"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 												
 												<f7-row>
@@ -454,6 +475,21 @@
 															type="text"
 															style="background: rgb(216,252,253)"
 														></f7-list-input>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'domain'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
+																</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Website Address:</p>
@@ -520,7 +556,7 @@
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
 											<f7-list v-show="!editProfile">
-												<f7-row>
+											<f7-row>
 													<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<f7-col width="50">
 														<p class="field-title">First Name:</p>
@@ -542,23 +578,33 @@
 													</f7-col>
 												</f7-row>
 												<f7-row>
-													<f7-col width="70">
-														<p class="field-title">Street Address:</p>
-														<f7-list-item :title="datacomForm.billing_address"></f7-list-item>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="datacomForm.billing_mailing_country"></f7-list-item>
 													</f7-col>
 													<f7-col width="30">
 														<p class="field-title">State:</p>
-														<f7-list-item :title="datacomForm.billing_state"></f7-list-item>
+														<f7-list-item :title="datacomForm.billing_mailing_state"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">City:</p>
+														<f7-list-item :title="datacomForm.billing_mailing_city"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="datacomForm.billing_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">Zip:</p>
+														<f7-list-item :title="datacomForm.billing_mailing_zip"></f7-list-item>
 													</f7-col>
 												</f7-row>
 												<f7-row>
 													<f7-col width="50">
-														<p class="field-title">City:</p>
-														<f7-list-item :title="datacomForm.billing_city"></f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p class="field-title">Zip:</p>
-														<f7-list-item :title="datacomForm.billing_zip"></f7-list-item>
+														<p class="field-title">Email:</p>
+														<f7-list-item :title="datacomForm.billing_email"></f7-list-item>
 													</f7-col>
 												</f7-row>
 
@@ -584,23 +630,33 @@
 													</f7-col>
 												</f7-row>
 												<f7-row>
-													<f7-col width="70">
-														<p class="field-title">Street Address:</p>
-														<f7-list-item :title="datacomForm.shipping_address"></f7-list-item>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="datacomForm.shipping_mailing_country"></f7-list-item>
 													</f7-col>
 													<f7-col width="30">
 														<p class="field-title">State:</p>
-														<f7-list-item :title="datacomForm.shipping_state"></f7-list-item>
+														<f7-list-item :title="datacomForm.shipping_mailing_state"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">City:</p>
+														<f7-list-item :title="datacomForm.shipping_mailing_city"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="datacomForm.shipping_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">Zip:</p>
+														<f7-list-item :title="datacomForm.shipping_mailing_zip"></f7-list-item>
 													</f7-col>
 												</f7-row>
 												<f7-row>
 													<f7-col width="50">
-														<p class="field-title">City:</p>
-														<f7-list-item :title="datacomForm.shipping_city"></f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p class="field-title">Zip:</p>
-														<f7-list-item :title="datacomForm.shipping_zip"></f7-list-item>
+														<p class="field-title">Email:</p>
+														<f7-list-item :title="datacomForm.shipping_email"></f7-list-item>
 													</f7-col>
 												</f7-row>
 											</f7-list>
@@ -610,13 +666,17 @@
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="datacomForm"
-													:formSettings="billingContactSettings">
+													:formSettings="billingContactSettings"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 
 												<f7-block-title class="full-width" medium>Primary Shipping Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="datacomForm"
-													:formSettings="shippingContactSettings">
+													:formSettings="shippingContactSettings"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 											
 												<f7-row class="margin-top">
@@ -712,7 +772,10 @@
 
 								<!-- Begin Employees Tab -->
 								<b-tab-item label="Employees" icon="account-group" class="no-padding">
-									<employee-database-component></employee-database-component>
+									<employee-database-component 
+										ref="employeeDatabaseRef"
+										:moduleInfo="moduleInfo">
+									</employee-database-component>
 								</b-tab-item>
 								<!-- END Employees Tab -->
 
@@ -750,7 +813,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Database Section -->
-											<f7-row v-if="Datacom.datacomList.length === 0">
+											<f7-row v-if="GET_DATACOM_LIST.length === 0">
 												<f7-col>
 													<p class="text-align-center">There are no companies to display.</p>
 													<p class="text-align-center">Please create a new company.</p>
@@ -761,9 +824,9 @@
 													</f7-row>
 												</f7-col>
 											</f7-row>
-											<f7-row v-if="Datacom.datacomList.length != 0">
+											<f7-row v-if="GET_DATACOM_LIST.length != 0">
 												<b-table
-													:data="Datacom.datacomList"
+													:data="GET_DATACOM_LIST"
 													:paginated="isPaginated"
 													:per-page="perPage"
 													:current-page.sync="currentPage"
@@ -1018,6 +1081,7 @@ import profileCardComponent from "../../components/layout-elements/profile-card-
 import employeeDatabaseComponent from "../../components/business/employees-database-component.vue";
 import reportingChartsComponent from "../../components/business/reporting-component.vue";
 import businessContactFormComponent from "@/components/business/contact-form-component.vue";
+import profileImagePopupComponent from "@/components/universal/profile-image/profile-image-sheet-component.vue";
 
 export default {
 	name: "datacomSuperUser",
@@ -1035,7 +1099,8 @@ export default {
 		"profile-card-component": profileCardComponent,
 		"employee-database-component": employeeDatabaseComponent,
 		"reporting-charts-component": reportingChartsComponent,
-		"business-contact-form-component": businessContactFormComponent
+		"business-contact-form-component": businessContactFormComponent,
+		"profile-image-popup-component": profileImagePopupComponent
 	},
 	data() {
 		return {
@@ -1051,7 +1116,7 @@ export default {
 				title: "Profile Details"
 			},
 			moduleInfo: {
-				name: "datacom",
+				name: "Datacom",
 				type: "profile",
 				level: 1
 			},
@@ -1063,6 +1128,12 @@ export default {
 			},
 			billingContactSettings: {
 				type: "billing"
+			},
+			//Edit Profile Image
+			profileImageSettings: {
+				url: 'datacom/',
+				module: 'Datacom',
+				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
 
 			//Popups and Modals
@@ -1127,12 +1198,14 @@ export default {
 				domain: null,
 				profile_img: null,
 				barcode: null,
+				logo: null,
 				//Arrays
 				primary_contacts: [],
 				billing_contacts: [],
 				technical_contacts: [],
 				shipping_contacts: [],
 				//Common Company Fields
+				id: null,
 				dba_name: null,
 				legal_name: null,
 				description: null,
@@ -1192,11 +1265,6 @@ export default {
 				closure_reason: null
 			},
 			is_company_loaded: false,
-			barcode: {
-				title: null,
-				image: null,
-				barcode_number: null
-			},
 			isPrimaryCreditCard: false,
 			creditCardCalcForm: {
 				billing_state: null
@@ -1210,13 +1278,12 @@ export default {
 	},
 	methods: {
 		async testingMethod(e) {
-			console.log("this.Auth.userLoginProfile", this.Auth.userLoginProfile);
+			console.log("this.Auth.userProfile", this.Auth.userProfile);
 			console.log("this.datacomForm", this.datacomForm);
 			console.log("this.Users.employeeList", this.Users.employeeList);
 			console.log("this.Users.employeeProfile", this.Users.employeeProfile);
-			console.log("this.localeCities", this.localeCities);
-			// let response = await this.syncWithMixin();
-			// console.log('response', response);
+			console.log("this.Users.selectedEmployeeList", this.Users.selectedEmployeeList);
+
 
 		},
 		menudropdown(UserID) {
@@ -1263,14 +1330,16 @@ export default {
 		},
 		//Create Company and Edit Current Company
 		async createCompanyandEdit() {
+			this.$store.commit("RESET_ERRORS");
 			let createCompanyRes = await this.createCompany();
 			//Populate Fields with Created Instance
-			this.editDatacom(createCompanyRes.id);
+			this.editDatacomById(createCompanyRes.id);
 			console.log("createCompanyandEdit All Done", createCompanyRes);
 		},
 
 		//Create Company and Clear form for entering a new company
 		async createCompanyandNew() {
+			this.$store.commit("RESET_ERRORS");
 			await this.createCompany();
 			//Clear Form and Reset to Starting Editing Position
 			console.log("createCompanyandNew All Done");
@@ -1278,37 +1347,44 @@ export default {
 		},
 		//Create Company and Clear form for Viewing Data
 		async createCompanyandClose() {
+			this.$store.commit("RESET_ERRORS");
 			let createCompanyRes = await this.createCompany();
 			//Clear Form and Reset to Starting Viewing Position
 			console.log("createCompanyandClose All Done", createCompanyRes);
-			await this.clearFormData();
-			this.resetViewtoHome();
-		},
-		async createCompany() {
-			this.$store.commit("RESET_ERRORS");
-
-			try {
-				this.$f7.preloader.show();
-
-				console.log("createDatacom, this.datacomForm", this.datacomForm);
-				var newDatacomForm = JSON.parse(JSON.stringify(this.datacomForm));
-				console.log("newDatacomForm", newDatacomForm);
-
-				newDatacomForm.description = this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML;
-
-				var companyResponse = await this.$store.dispatch("addDatacom", newDatacomForm);
-				console.log("companyResponse", companyResponse);
-
-				this.$f7.preloader.hide();
-
-				return companyResponse;
-			} catch (error) {
-				console.error("Promise Response Error creating Company", error);
+			if(createCompanyRes != undefined) {
+				await this.clearFormData();
+				this.resetViewtoHome();
+			} else {
+				this.$f7.dialog.alert("You had some errors on your submission").open();
 			}
 		},
+		createCompany() {
+			return new Promise( async (resolve, reject) => {
+				try {
+					this.$f7.preloader.show();
+
+					console.log("createDatacom, this.datacomForm", this.datacomForm);
+					var newDatacomForm = JSON.parse(JSON.stringify(this.datacomForm));
+					console.log("newDatacomForm", newDatacomForm);
+
+					newDatacomForm.description = this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML;
+
+					var companyResponse = await this.$store.dispatch("POSTDatacom", newDatacomForm);
+					console.log("companyResponse", companyResponse);
+
+					this.$f7.preloader.hide();
+
+					return resolve(companyResponse);
+				} catch (error) {
+					console.error("Promise Response Error creating Company", error);
+					return reject(error);
+				}
+			});
+			
+		},
 		refreshDatacom() {
-			console.log("getDatacomList");
-			this.$store.dispatch("getDatacomList");
+			console.log("GETDatacomList");
+			this.$store.dispatch("GETDatacomList");
 		},
 		//Clear Form Data
 		clearFormData() {
@@ -1325,62 +1401,65 @@ export default {
 			//Reset Datacom Variables
 			this.datacomForm.is_datacom = true;
 			this.datacomForm.is_active = true;
+			this.datacomForm.primary_contacts= [];
+			this.datacomForm.	billing_contacts= [];
+			this.datacomForm.technical_contacts= [];
+			this.datacomForm.shipping_contacts= [];
 			//Reset the view
 			this.resetViewtoHome();
 		},
 		// Populate Fields for editing in browser
-		editDatacom(companyID) {
+		async editDatacom() {
+			this.clearFormData();
+			this.activeTab = 1;
+			if (this.checkedRows.length != 0) {
+				this.$refs.employeeDatabaseRef.clearData();
+				console.log("this.checkedRows != 0", this.checkedRows);
+				var rowID = this.checkedRows.slice(-1)[0].id;
+
+				var getSelectedDatacomObj = await this.$store.dispatch("GETDatacomSelectedProfile", {id: rowID});
+				console.group('getSelectedDatacomObj', getSelectedDatacomObj);
+
+				for (let key in this.datacomForm) {
+					this.datacomForm[key] = this.GET_SELECTED_DATACOM_PROFILE[key];
+				}
+				this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
+				//get employee List for specified company
+				let response = await this.getObjectQueryFilter(getSelectedDatacomObj);
+				console.log('editDatacom response', response);
+				this.$store.dispatch("GETSelectedEmployeeList", {id: response.id, filterURL: response.filterURL});
+				console.log('this.$refs', this.$refs);
+				this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
+			} 
+			this.showEditProfile();
+		},
+		async editDatacomById(companyID) {
 			console.log("editDatacom");
 			this.clearFormData();
 			this.activeTab = 0;
-			//There are 2 ways to populate fields 1) from Datacom Profile on Intial Load 2) Selection from Database Table 3) Another Method Call
-			//1) Populate Fields Initallly with Datacom Profile (companID will === undefined)
-			if (companyID === undefined && Object.keys(this.Datacom.datacomProfile).length != 0) {
-				for (let key in this.datacomForm) {
-					this.datacomForm[key] = this.Datacom.datacomProfile[key];
-				}
-				this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
-				this.$store.dispatch("getDatacomEmployees", this.Datacom.datacomProfile.id);
-				this.resetViewtoHome();
-			}
-			//Company ID Passed in as a Parameter
-			var companyListID = null;
-			if (companyID) {
-				this.showEditProfile();
-				//2) Get User ID and object and map to fields from database table
-				if (this.checkedRows.length != 0) {
-					console.log("this.checkedRows != 0", this.checkedRows);
-					var rowID = this.checkedRows.slice(-1)[0].id;
-					var findIndexPos = this.Datacom.datacomList.findIndex((elem) => {
-						return elem.id === rowID;
-					});
-					console.log("editDatacom findIndexPos", findIndexPos);
-					companyListID = findIndexPos;
-					console.log("IF companyListID", companyListID);
-				} else {
-					//Passed in by another Mehtod
-					var findIndexPos = this.Datacom.datacomList.findIndex((elem) => {
-						return elem.id === companyID;
-					});
-					companyListID = findIndexPos;
-					console.log("Then companyListID", companyListID);
-				}
-				//Is there a list of Datacom to lookup?
-				if (this.Datacom.datacomList.length === 0) {
-					return "There are no items available";
-				}
+			//2) Get User ID and object and map to fields from database table
+			var getSelectedDatacomObj = await this.$store.dispatch("GETDatacomSelectedProfile", {id: companyID});
+			console.group('getSelectedDatacomObj', getSelectedDatacomObj);
 
-				if (this.Datacom.datacomList.length != 0) {
-					console.log("this.Datacom.datacomListings", this.Datacom.datacomList);
-					console.log("Then companyListID", companyListID);
-					var companyItem = this.Datacom.datacomList[companyListID];
-					console.log("editDatacom companyItem", companyItem);
-					for (let key in this.datacomForm) {
-						this.datacomForm[key] = companyItem[key];
-					}
-					this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
-				}
+			for (let key in this.datacomForm) {
+				this.datacomForm[key] = this.GET_SELECTED_DATACOM_PROFILE[key];
 			}
+			this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
+			this.showEditProfile();
+		},
+		//Load Datacom On itnitial render
+		async loadDatacomProfile() {
+			for (let key in this.datacomForm) {
+				this.datacomForm[key] = this.GET_DATACOM_PROFILE[key];
+			}
+			this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
+
+			let response = await this.getObjectQueryFilter(this.GET_DATACOM_PROFILE);
+			console.log('editDatacom response', response);
+			this.$store.dispatch("GETSelectedEmployeeList", {id: response.id, filterURL: response.filterURL});
+			console.log('this.$refs', this.$refs);
+			this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
+			this.resetViewtoHome();
 		},
 		//Make the PUT request to update datebase instance from updated form Data
 		async updateDatacomPATCH() {
@@ -1389,7 +1468,7 @@ export default {
 			newDatacomForm.description = this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML;
 			delete newDatacomForm.profile_img;
 			console.log("updateCompanyPATCH newDatacomForm", newDatacomForm);
-			this.$store.dispatch("updateDatacom", newDatacomForm);
+			this.$store.dispatch("PATCHDatacomProfile", newDatacomForm);
 			this.resetViewtoHome();
 		},
 		//Set inventory item to inactive instead of deleting instance
@@ -1397,15 +1476,15 @@ export default {
 			// Is item Selected in table?
 			if (this.checkedRows[0].id) {
 				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexID = this.Datacom.datacomList.findIndex((elem) => {
+				var findIndexID = this.GET_DATACOM_LIST.findIndex((elem) => {
 					return elem.id == rowID;
 				});
 				console.log("deleteDatacom findIndexID", findIndexID);
-				if (this.Datacom.datacomList.length === 0) {
+				if (this.GET_DATACOM_LIST.length === 0) {
 					this.$store.commit("updateNotification", "There are no items available");
 				}
-				if (this.Datacom.datacomList.length != 0) {
-					let companyItem = this.Datacom.datacomList[findIndexID];
+				if (this.GET_DATACOM_LIST.length != 0) {
+					let companyItem = this.GET_DATACOM_LIST[findIndexID];
 					console.log("deleteDatacom != 0 companyItem", companyItem);
 					for (let key in this.datacomForm) {
 						this.datacomForm[key] = companyItem[key];
@@ -1456,10 +1535,18 @@ export default {
 	computed: {
 		...mapState(["Auth", "Common", "VTHPP", "Static", "Locale", "Errors", "Warehouses", "SalesOffices"]),
 		...mapState(["Users", "Companies", "Datacom", "Partners", "Vendors", "Inventory"]),
-		...mapGetters(["GET_COMPANY_LIST", "GET_DEPARTMENTS_LIST", "GET_POSITIONS_LIST"])
+		...mapGetters(["GET_DATACOM_LIST", "GET_DATACOM_PROFILE", "GET_SELECTED_DATACOM_PROFILE", "GET_COMPANY_LIST"]),
+		...mapGetters(["GET_DATACOM_ERRORS_LIST", "GET_DATACOM_ERROR_HANDLE"]),
+		errorData() {
+			return this.GET_DATACOM_ERRORS_LIST
+		},
+		errorHandle() {
+			return this.GET_DATACOM_ERROR_HANDLE
+		}
 	},
 	async mounted() {
-		this.editDatacom();
+		this.loadDatacomProfile();
+
 	},
 	on: {}
 };

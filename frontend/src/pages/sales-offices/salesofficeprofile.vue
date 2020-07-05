@@ -116,7 +116,7 @@
 										</f7-col>
 									</f7-row>
 									<f7-row class="full-width display-flex justify-content-center" v-if="hideCreateItem">
-										<f7-col width="90">
+										<f7-col width="100">
 											<f7-button @click="clearFormData" fill class="bg-color-red">Clear Data</f7-button>
 										</f7-col>
 									</f7-row>
@@ -149,24 +149,14 @@
 						<!-- el2 -->
 						<f7-block class="margin-top-half">
 							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.salesOfficeErrorHandle" class="left message is-danger">
+								<article v-if="Errors.salesOfficeErrorHandle" class="left message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
+								</article>
 							</f7-row>
-							<f7-card>
-								<f7-card-content class="padding-half">
-									<f7-row class="full-width display-flex justify-content-center">
-										<div class="open-arrow">Quotes</div>
-										<div class="approved-quote-arrow">Approved</div>
-										<div class="invoices-arrow">Invoices</div>
-										<div class="past-due-arrow">Past Due</div>
-										<div class="paid">Paid</div>
-									</f7-row>
-								</f7-card-content>
-							</f7-card>
+							
 							<f7-card>
 								<f7-card-content class="padding-top-half">
 									<f7-block-title medium class="no-margin-top no-padding-top">Dashboard</f7-block-title>
@@ -230,10 +220,12 @@
 								<!-- Begin Parent Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 									<parent-component
-											:toggleEditProfile="toggleEditProfile"
-											:parentSettings="parentSettings"
-											:moduleInfo="moduleInfo">
-										</parent-component>
+										ref="parentComponentRef"
+										:toggleEditProfile="toggleEditProfile"
+										:parentSettings="parentSettings"
+										:moduleInfo="moduleInfo"
+										:formData="salesOfficeForm">
+									</parent-component>
 								</b-tab-item>
 								<!-- END Parent Company Tab -->
 
@@ -406,7 +398,9 @@
 												<f7-block-title class="full-width" medium>Primary Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="salesOfficeForm"
-													:formSettings="primaryContactSettings">
+													:formSettings="primaryContactSettings"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 								
 												<f7-row>
@@ -463,27 +457,55 @@
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
 											<f7-list v-show="!parentSettings.editProfile">
-												<f7-row>
+													<f7-row>
 													<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<f7-col width="50">
 														<p class="field-title">First Name:</p>
 														<f7-list-item :title="salesOfficeForm.billing_first_name"></f7-list-item>
-														<p class="field-title">Phone:</p>
-														<f7-list-item :title="salesOfficeForm.billing_phone"></f7-list-item>
-														<p class="field-title">Street Address:</p>
-														<f7-list-item :title="salesOfficeForm.billing_address"></f7-list-item>
-														<p class="field-title">City:</p>
-														<f7-list-item :title="salesOfficeForm.billing_city"></f7-list-item>
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Last Name:</p>
 														<f7-list-item :title="salesOfficeForm.billing_last_name"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
+														<p class="field-title">Phone:</p>
+														<f7-list-item :title="salesOfficeForm.billing_phone"></f7-list-item>
+													</f7-col>
+													<f7-col width="50">
 														<p class="field-title">Fax:</p>
 														<f7-list-item :title="salesOfficeForm.billing_fax"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="salesOfficeForm.billing_mailing_country"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">State:</p>
-														<f7-list-item :title="salesOfficeForm.billing_state"></f7-list-item>
+														<f7-list-item :title="salesOfficeForm.billing_mailing_state"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">City:</p>
+														<f7-list-item :title="salesOfficeForm.billing_mailing_city"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="salesOfficeForm.billing_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">Zip:</p>
-														<f7-list-item :title="salesOfficeForm.billing_zip"></f7-list-item>
+														<f7-list-item :title="salesOfficeForm.billing_mailing_zip"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
+														<p class="field-title">Email:</p>
+														<f7-list-item :title="salesOfficeForm.billing_email"></f7-list-item>
 													</f7-col>
 												</f7-row>
 
@@ -492,22 +514,50 @@
 													<f7-col width="50">
 														<p class="field-title">First Name:</p>
 														<f7-list-item :title="salesOfficeForm.shipping_first_name"></f7-list-item>
-														<p class="field-title">Phone:</p>
-														<f7-list-item :title="salesOfficeForm.shipping_phone"></f7-list-item>
-														<p class="field-title">Street Address:</p>
-														<f7-list-item :title="salesOfficeForm.shipping_address"></f7-list-item>
-														<p class="field-title">City:</p>
-														<f7-list-item :title="salesOfficeForm.shipping_city"></f7-list-item>
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Last Name:</p>
 														<f7-list-item :title="salesOfficeForm.shipping_last_name"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
+														<p class="field-title">Phone:</p>
+														<f7-list-item :title="salesOfficeForm.shipping_phone"></f7-list-item>
+													</f7-col>
+													<f7-col width="50">
 														<p class="field-title">Fax:</p>
 														<f7-list-item :title="salesOfficeForm.shipping_fax"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="salesOfficeForm.shipping_mailing_country"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">State:</p>
-														<f7-list-item :title="salesOfficeForm.shipping_state"></f7-list-item>
+														<f7-list-item :title="salesOfficeForm.shipping_mailing_state"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">City:</p>
+														<f7-list-item :title="salesOfficeForm.shipping_mailing_city"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="salesOfficeForm.shipping_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">Zip:</p>
-														<f7-list-item :title="salesOfficeForm.shipping_zip"></f7-list-item>
+														<f7-list-item :title="salesOfficeForm.shipping_mailing_zip"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
+														<p class="field-title">Email:</p>
+														<f7-list-item :title="salesOfficeForm.shipping_email"></f7-list-item>
 													</f7-col>
 												</f7-row>
 											</f7-list>
@@ -517,13 +567,17 @@
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<business-contact-form-component 
 														:contactForm="salesOfficeForm"
-														:formSettings="billingContactSettings">
+														:formSettings="billingContactSettings"
+														:errorData="errorData"
+													:errorHandle="errorHandle">
 													</business-contact-form-component>
 
 													<f7-block-title class="full-width" medium>Primary Shipping Information</f7-block-title>
 													<business-contact-form-component 
 														:contactForm="salesOfficeForm"
-														:formSettings="shippingContactSettings">
+														:formSettings="shippingContactSettings"
+														:errorData="errorData"
+													:errorHandle="errorHandle">
 													</business-contact-form-component>
 
 												<f7-row class="margin-top">
@@ -620,11 +674,8 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Sales Orders Display List -->
-											<f7-list simple-list>
-												<f7-row class="margin-top">
-													<f7-block-title class="full-width" medium>Sales Orders</f7-block-title>
-												</f7-row>
-											</f7-list>
+											<sales-orders-home-component></sales-orders-home-component>
+											
 											<!-- END Sales Orders Display -->
 										</f7-card-content>
 									</f7-card>
@@ -703,7 +754,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Database Section -->
-											<f7-row v-if="SalesOffices.salesOfficeList.length === 0">
+											<f7-row v-if="GET_SALES_OFFICE_LIST.length === 0">
 												<f7-col>
 													<p class="text-align-center">There are no companies to display.</p>
 													<p class="text-align-center">Please create a new salesOffice.</p>
@@ -716,9 +767,9 @@
 													</f7-row>
 												</f7-col>
 											</f7-row>
-											<f7-row v-if="SalesOffices.salesOfficeList.length != 0">
+											<f7-row v-if="GET_SALES_OFFICE_LIST.length != 0">
 												<b-table
-													:data="SalesOffices.salesOfficeList"
+													:data="GET_SALES_OFFICE_LIST"
 													:paginated="isPaginated"
 													:per-page="perPage"
 													:current-page.sync="currentPage"
@@ -848,347 +899,6 @@
 		</f7-row>
 		<!-- END Main Container -->
 
-		<!-- Product Bulk Upload Sheet -->
-		<f7-sheet
-			class="uploadInventory image-sheet"
-			:opened="salesOfficeBulkUploadSheet"
-			@sheet:closed="salesOfficeBulkUploadSheet = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content>
-				<!-- Store to Django Database -->
-				<f7-block-title medium>Store History</f7-block-title>
-				<f7-card>
-					<f7-card-content class="no-margin-top">
-						<f7-block-title class="margin-top-half" medium>Use the following format</f7-block-title>
-						<f7-row>
-							<f7-col>
-								<a href="/static/InventoryCSVFormat.csv" class="external" download="sample">Download Sample</a>
-							</f7-col>
-						</f7-row>
-						<f7-block-title medium>Please select a file to upload</f7-block-title>
-						<!--UPLOAD-->
-						<csv-import
-							v-model="csv"
-							:map-fields="[
-								'Name',
-								'Category',
-								'Manufacturer',
-								'Model',
-								'Model Number',
-								'Service?',
-								'Variation?',
-								'Tracked?',
-								'Downloadable?',
-								'On Website?',
-								'On Sale?',
-								'Taxable?',
-								'Parent Item',
-								'Product ID',
-								'SKU',
-								'Product Type',
-								'ISBN',
-								'Tags',
-								'Sales Notes',
-								'Vendor Notes',
-								'Product Description',
-								'List Price',
-								'Purchase Price',
-								'Sale Price',
-								'Wholesale Price',
-								'Discount %',
-								'Sale Expiration',
-								'Income Account',
-								'Expense Account',
-								'Reorder Level',
-								'Weight',
-								'Weight UOM',
-								'Width',
-								'Height',
-								'Length',
-								'Dimensions UOM'
-							]"
-						>
-							<template slot="hasHeaders" slot-scope="{ headers, toggle }">
-								<label hidden>
-									<f7-checkbox id="hasHeaders" :value="headers" checked @change="toggle"></f7-checkbox>
-									Headers?
-								</label>
-							</template>
-
-							<template slot="error">
-								File type is invalid
-							</template>
-
-							<template slot="thead">
-								<tr>
-									<th>Database Fields</th>
-									<th>CSV Column</th>
-								</tr>
-							</template>
-							<!-- Large preloaders -->
-							<template slot="next" slot-scope="{ load }">
-								<f7-row class="display-flex justify-content-left">
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="load">Map Data Fields</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="parseDataHistory">Execute</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="testingMethod">Test</f7-button>
-									</f7-col>
-								</f7-row>
-							</template>
-						</csv-import>
-					</f7-card-content>
-				</f7-card>
-				<!-- END Store to Django Database -->
-				<f7-row class="margin">
-					<f7-col>
-						<f7-block>
-							{{ csv }}
-						</f7-block>
-					</f7-col>
-				</f7-row>
-			</f7-page-content>
-			<!-- END Bulk Upload Sheet Content -->
-		</f7-sheet>
-		<!-- END Bulk Upload Sheet -->
-
-		<!-- Sales Office Image Upload Sheet -->
-		<f7-sheet
-			class="salesOffice-image image-sheet"
-			:opened="salesOfficeImageSheet"
-			@sheet:closed="salesOfficeImageSheet = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content class="padding-bottom">
-				<section>
-					<f7-block v-show="!salesOfficeForm.id">
-						<f7-block-header>
-							You must first select a salesOffice to add a profile image
-						</f7-block-header>
-					</f7-block>
-				</section>
-
-				<section>
-					<f7-block v-show="salesOfficeForm.id">
-						<div class="block">
-							<button class="button" fill @click="activeStep = 0">Start Over</button>
-						</div>
-						<div>
-							<b-steps
-								v-model="activeStep"
-								:animated="isAnimated"
-								:has-navigation="hasNavigation"
-								:icon-prev="prevIcon"
-								:icon-next="nextIcon"
-							>
-								<b-step-item label="Choose Image" :clickable="isStepsClickable">
-									<div class="left" v-if="uploadMessage" :class="`message ${error ? 'is-danger' : 'is-success'}`">
-										<div class="message-body">{{ uploadMessage }}</div>
-									</div>
-									<f7-block>
-										<form enctype="multipart/form-data">
-											<f7-row class="justify-content-center">
-												<div class="dropzone">
-													<input type="file" name="invArray" @change="selectFile" ref="invFile" class="input-field" />
-
-													<p v-if="!uploading" class="call-to-action">
-														Drop file here
-													</p>
-													<p v-if="uploading" class="progress-bar is-primary" :value="progress" max="100">
-														<progress class="progress"> </progress>
-														{{ progress }} %
-													</p>
-												</div>
-												<f7-row>
-													<f7-col width="100">
-														<div v-if="file" class="file-name" style="font-size:3rem;">{{ file.name }}</div>
-													</f7-col>
-												</f7-row>
-											</f7-row>
-										</form>
-									</f7-block>
-								</b-step-item>
-
-								<b-step-item
-									label="Resize Image"
-									:clickable="isStepsClickable"
-									:type="{ 'is-success': isProfileSuccess }"
-								>
-									<template>
-										<f7-row>
-											<f7-col width="50">
-												<!-- Note that 'ref' is important here (value can be anything). read the description about `ref` below. -->
-												<vue-croppie
-													ref="croppieRefSalesOffice"
-													:enableOrientation="true"
-													:boundary="{ width: 300, height: 300 }"
-													:viewport="{ width: 250, height: 250, type: 'circle' }"
-													@result="result"
-													@update="update"
-												>
-												</vue-croppie>
-												<f7-button fill @click="crop()">Crop</f7-button>
-											</f7-col>
-											<f7-col width="50">
-												<!-- the result -->
-												<f7-row v-if="cropped">
-													<f7-col class="display-flex justify-content-center">
-														<img v-bind:src="cropped" />
-													</f7-col>
-												</f7-row>
-											</f7-col>
-										</f7-row>
-									</template>
-								</b-step-item>
-
-								<b-step-item label="Upload Image" :clickable="isStepsClickable" disabled>
-									<!-- the result -->
-									<f7-row v-if="cropped">
-										<f7-col class="display-flex justify-content-center">
-											<img v-bind:src="cropped" />
-										</f7-col>
-									</f7-row>
-									<f7-row v-if="!cropped">
-										<f7-col class="display-flex justify-content-center">
-											<p style="font-size: 30px;">You have not cropped an image. Please go back and click "Cropped".</p>
-										</f7-col>
-									</f7-row>
-								</b-step-item>
-
-								<!-- navigation Links -->
-								<template v-if="customNavigation" slot="navigation" slot-scope="{ previous, next }">
-									<f7-row class="display-flex justify-content-space-around">
-										<f7-col width="25" class="imageNavButtons">
-											<b-button
-												v-if="!previous.disabled"
-												class="display-flex justify-content-center"
-												outlined
-												type="is-danger"
-												icon-pack="mdi"
-												icon-left="arrow-left-box"
-												size="is-large"
-												:disabled="previous.disabled"
-												@click.prevent="previous.action"
-											>
-												<span>Previous</span>
-											</b-button>
-										</f7-col>
-										<f7-col width="25" class="imageNavButtons">
-											<b-button
-												v-if="!next.disabled"
-												class="display-flex justify-content-center"
-												outlined
-												type="is-success"
-												icon-pack="mdi"
-												size="is-large"
-												icon-left="arrow-right-box"
-												:disabled="next.disabled"
-												@click.prevent="next.action"
-											>
-												<span>Next</span>
-											</b-button>
-											<f7-button
-												class="display-flex justify-content-center"
-												v-if="next.disabled"
-												large
-												fill
-												sheet-close
-												@click.prevent="sendFile"
-												>Submit</f7-button
-											>
-										</f7-col>
-									</f7-row>
-								</template>
-								<!-- END navigation Links -->
-							</b-steps>
-						</div>
-					</f7-block>
-				</section>
-				<f7-block class="margin-bottom"></f7-block>
-			</f7-page-content>
-			<!-- END Sales Office Sheet Content -->
-		</f7-sheet>
-		<!-- END Sales Office Image Upload Sheet -->
-
-		<!-- Setup Sheet -->
-		<f7-sheet class="setup-sheet" :opened="setupSheetOpened" @sheet:closed="setupSheetOpened = false">
-			<f7-toolbar>
-				<div class="left padding-left">Sales Office Setup</div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content>
-				<!-- Vue Scrollbar (dragger) -->
-				<div
-					v-bar="{
-						preventParentScroll: true,
-						scrollThrottle: 30
-					}"
-					style="height: 100vh;"
-				>
-					<!-- el1 -->
-					<div>
-						<!-- el2 -->
-
-						<f7-card class="margin">
-							<f7-card-content class="margin-half">
-								<f7-list>
-									<!-- Begin Employees Display List -->
-
-									<f7-row>
-										<f7-block-title class="classy margin-top">Sales Office Details</f7-block-title>
-										<b-progress class="full-width" :value="60" show-value format="percent">Progress</b-progress>
-										<f7-col width="50">
-											<p class="field-title">Create Departments:</p>
-											<f7-row class="display-flex justify-content-start align-items-center">
-												<f7-col width="20">
-													<f7-list-item checkbox disabled></f7-list-item>
-												</f7-col>
-												<f7-col width="40">
-													<f7-button outline active small popup-open=".departments-popup">Create Now</f7-button>
-												</f7-col>
-											</f7-row>
-										</f7-col>
-										<f7-col width="50">
-											<p class="field-title">Create Employee Positions:</p>
-											<f7-row class="display-flex justify-content-start align-items-center">
-												<f7-col width="20">
-													<f7-list-item checkbox disabled></f7-list-item>
-												</f7-col>
-												<f7-col width="40">
-													<f7-button outline active small popup-open=".positions-popup">Create Now</f7-button>
-												</f7-col>
-											</f7-row>
-										</f7-col>
-									</f7-row>
-								</f7-list>
-								<!-- END Employees Display -->
-							</f7-card-content>
-						</f7-card>
-					</div>
-				</div>
-				<!-- END Vue Scrollbar (dragger) -->
-			</f7-page-content>
-		</f7-sheet>
-		<!-- END Setup Sheet -->
 	</f7-page>
 </template>
 
@@ -1211,6 +921,7 @@ import profileCardComponent from "../../components/layout-elements/profile-card-
 import reportingChartsComponent from "../../components/business/reporting-component.vue";
 import parentComponent from "../../components/business/parent-company-component.vue";
 import businessContactFormComponent from "@/components/business/contact-form-component.vue";
+import salesOrdersHomeComponent from "@/components/business/sales-orders/sales-orders-home-component.vue";
 
 export default {
 	name: "SalesOffices",
@@ -1223,7 +934,8 @@ export default {
 		"profile-card-component": profileCardComponent,
 		"reporting-charts-component": reportingChartsComponent,
 		"parent-component": parentComponent,
-		"business-contact-form-component": businessContactFormComponent
+		"business-contact-form-component": businessContactFormComponent,
+		"sales-orders-home-component": salesOrdersHomeComponent
 	},
 	data() {
 		return {
@@ -1325,8 +1037,12 @@ export default {
 				partner: null,
 				datacom: null,
 				primary_contact: null,
-				warehouses: [],
+				//Arrays
+				primary_contacts: [],
 				billing_contacts: [],
+				technical_contacts: [],
+				shipping_contacts: [],
+				warehouses: [],
 				employees: [],
 				salesoffice_name: null,
 				salesoffice_number: null,
@@ -1375,7 +1091,7 @@ export default {
 	methods: {
 		testingMethod(e) {
 			console.log("this.salesOfficeForm", this.salesOfficeForm);
-			console.log("this.SalesOffices.salesOfficeList", this.SalesOffices.salesOfficeList);
+			console.log("this.GET_SALES_OFFICE_LIST", this.GET_SALES_OFFICE_LIST);
 			console.log("this.localeCities", this.localeCities);
 
 		},
@@ -1423,96 +1139,102 @@ export default {
 		},
 		//Create Sales Office and Edit Current Sales Office
 		async createSalesOfficeandEdit() {
-			let createSalesOfficeRes = await this.createSalesOffice();
+			this.$store.commit("RESET_ERRORS");
+			let createSalesOfficeRes = await this.POSTSalesOffice();
 			//Populate Fields with Created Instance
-			this.editSalesOffice(createSalesOfficeRes.id);
+			this.editSalesOfficeFormById(createSalesOfficeRes.id);
 			console.log("createSalesOfficeandEdit All Done", createSalesOfficeRes);
 		},
 
 		//Create Sales Office and Clear form for entering a new salesOffice
 		async createSalesOfficeandNew() {
-			await this.createSalesOffice();
+			this.$store.commit("RESET_ERRORS");
+			await this.POSTSalesOffice();
 			//Clear Form and Reset to Starting Editing Position
 			console.log("createSalesOfficeandNew All Done");
 			this.newItemButton();
 		},
 		//Create Sales Office and Clear form for Viewing Data
 		async createSalesOfficeandClose() {
-			let createSalesOfficeRes = await this.createSalesOffice();
+			this.$store.commit("RESET_ERRORS");
+			let createSalesOfficeRes = await this.POSTSalesOffice();
 			//Clear Form and Reset to Starting Viewing Position
 			console.log("createSalesOfficeandClose All Done", createSalesOfficeRes);
-			await this.clearFormData();
-		},
-		async createSalesOffice() {
-			this.$store.commit("RESET_ERRORS");
-			await this.syncWithMixin();
-			try {
-				this.$f7.preloader.show();
-				//Create Unlinked Copy of Form for Manipulation
-				console.log("this.salesOfficeForm", this.salesOfficeForm);
-				var salesOfficeFormCopy = JSON.parse(JSON.stringify(this.salesOfficeForm));
-				console.log("salesOfficeFormCopy", salesOfficeFormCopy);
-
-				//Dispatch creation method and update Fields with latest Object
-				console.log("createSalesOffice, this.salesOfficeForm", this.salesOfficeForm);
-				salesOfficeFormCopy.description = this.$refs.salesOfficeDescription.f7TextEditor.contentEl.innerHTML;
-
-				// Get Parent Company Info to add the Sales Office
-				let newSalesOfficeForm = await this.setUserPlatformPOST(salesOfficeFormCopy);
-				console.log("newSalesOfficeForm", newSalesOfficeForm);
-
-				var salesOfficeResponse = await this.$store.dispatch("createSalesOffice", newSalesOfficeForm);
-				console.log("salesOfficeResponse", salesOfficeResponse);
-				this.$f7.preloader.hide();
-
-				return salesOfficeResponse;
-			} catch (error) {
-				console.error("Promise Response Error creating Sales Office", error);
+			if(createSalesOfficeRes != undefined) {
+				await this.clearFormData();
+				this.resetViewtoHome();
+			} else {
+				this.$f7.dialog.alert("You had some errors on your submission").open();
 			}
+		},
+		async POSTSalesOffice() {
+			return new Promise( async (resolve, reject) => {
+				try {
+					this.$f7.preloader.show();
+					//Create Unlinked Copy of Form for Manipulation
+					console.log("this.salesOfficeForm", this.salesOfficeForm);
+					var salesOfficeFormCopy = JSON.parse(JSON.stringify(this.salesOfficeForm));
+					console.log("salesOfficeFormCopy", salesOfficeFormCopy);
+
+					//Dispatch creation method and update Fields with latest Object
+					console.log("POSTSalesOffice, this.salesOfficeForm", this.salesOfficeForm);
+					salesOfficeFormCopy.description = this.$refs.salesOfficeDescription.f7TextEditor.contentEl.innerHTML;
+
+					// Get Parent Company Info to add the Sales Office
+					let newSalesOfficeForm = await this.setUserPlatformPOST(salesOfficeFormCopy);
+					console.log("newSalesOfficeForm", newSalesOfficeForm);
+
+					var salesOfficeResponse = await this.$store.dispatch("POSTSalesOffice", newSalesOfficeForm);
+					console.log("salesOfficeResponse", salesOfficeResponse);
+					this.$f7.preloader.hide();
+
+					return resolve(salesOfficeResponse);
+				} catch (error) {
+					console.error("Promise Response Error creating Sales Office", error);
+					return reject(error);
+				}
+			});
+			
 		},
 		refreshSalesOffice() {
-			console.log("getSalesOfficeList");
-			this.$store.dispatch("getSalesOfficeList");
+			console.log("GETSalesOfficeList");
+			this.$store.dispatch("GETSalesOfficeList");
 		},
 		// Populate Fields for editing in browser
-		editSalesOffice(salesOfficeID) {
+		async editSalesOffice() {
+			//I still need to handle the Parent Company Field. I ti snot updating properly
 			this.clearFormData();
-			this.parentSettings.activeTab = 0;
-			this.showEditProfile();
-			//Get User ID and object and map to fields
-			var salesOfficeListID = null;
+			this.parentSettings.activeTab = 1;
 			if (this.checkedRows.length != 0) {
-				console.log("this.checkedRows", this.checkedRows);
+				console.log("this.checkedRows != 0", this.checkedRows);
 				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexPos = this.SalesOffices.salesOfficeList.findIndex((elem) => {
-					return elem.id === rowID;
-				});
-				console.log("editSalesOffice findIndexPos", findIndexPos);
-				salesOfficeListID = findIndexPos;
-				console.log("IF salesOfficeListID", salesOfficeListID);
-			} else {
-				var findIndexPos = this.SalesOffices.salesOfficeList.findIndex((elem) => {
-					return elem.id === salesOfficeID;
-				});
-				salesOfficeListID = findIndexPos;
-				console.log("Then salesOfficeListID", salesOfficeListID);
-			}
-			//Is there a list of SalesOffices to lookup?
-			if (this.SalesOffices.salesOfficeList.length === 0) {
-				return "There are no items available";
-			}
 
-			if (this.SalesOffices.salesOfficeList.length != 0) {
-				console.log("this.SalesOffices.salesOfficeListings", this.SalesOffices.salesOfficeList);
-				console.log("Then salesOfficeListID", salesOfficeListID);
-				var salesOfficeItem = this.SalesOffices.salesOfficeList[salesOfficeListID];
-				console.log("editSalesOffice salesOfficeItem", salesOfficeItem);
+				var getSelectedInvObj = await this.$store.dispatch("GETSalesOfficeSelectedProfile", {id: rowID});
+				console.group('getSelectedInvObj', getSelectedInvObj);
+
 				for (let key in this.salesOfficeForm) {
-					this.salesOfficeForm[key] = salesOfficeItem[key];
+					console.log("key", key);
+					console.log("this.salesOfficeForm[key]", this.salesOfficeForm[key]);
+					console.log("getSelectedInvObj.data[key]", getSelectedInvObj[key]);
+					this.salesOfficeForm[key] = getSelectedInvObj[key];
 				}
 				this.$refs.salesOfficeDescription.f7TextEditor.contentEl.innerHTML = this.salesOfficeForm.description;
-				this.$store.dispatch("getEmployeeFilter", salesOfficeListID);
+			} 
+			this.showEditProfile();
+		},
+		async editSalesOfficeFormById(companyID) {
+			console.log("editSO");
+			this.clearFormData();
+			this.parentSettings.activeTab = 0;
+			//2) Get User ID and object and map to fields from database table
+			var getSelectedInvObj = await this.$store.dispatch("GETSalesOfficeSelectedProfile", {id: companyID});
+			console.group('getSelectedInvObj', getSelectedInvObj);
+
+			for (let key in this.salesOfficeForm) {
+				this.salesOfficeForm[key] = this.GET_SELECTED_SALES_OFFICE_PROFILE[key];
 			}
+			this.$refs.salesOfficeDescription.f7TextEditor.contentEl.innerHTML = this.salesOfficeForm.description;
+			this.showEditProfile();
 		},
 		//Make the PUT request to update datebase instance from updated form Data
 		updateSalesOfficePATCH() {
@@ -1539,15 +1261,15 @@ export default {
 			// Is item Selected in table?
 			if (this.checkedRows[0].id) {
 				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexID = this.SalesOffices.salesOfficeList.findIndex((elem) => {
+				var findIndexID = this.GET_SALES_OFFICE_LIST.findIndex((elem) => {
 					return elem.id == rowID;
 				});
 				console.log("deleteSalesOffice findIndexID", findIndexID);
-				if (this.SalesOffices.salesOfficeList.length === 0) {
+				if (this.GET_SALES_OFFICE_LIST.length === 0) {
 					this.$store.commit("updateNotification", "There are no items available");
 				}
-				if (this.SalesOffices.salesOfficeList.length != 0) {
-					let salesOfficeItem = this.SalesOffices.salesOfficeList[findIndexID];
+				if (this.GET_SALES_OFFICE_LIST.length != 0) {
+					let salesOfficeItem = this.GET_SALES_OFFICE_LIST[findIndexID];
 					console.log("deleteSalesOffice != 0 salesOfficeItem", salesOfficeItem);
 					for (let key in this.salesOfficeForm) {
 						this.salesOfficeForm[key] = salesOfficeItem[key];
@@ -1589,178 +1311,33 @@ export default {
 			}
 			//Reset Sales Office Variables
 			this.salesOfficeForm.is_active = true;
+			this.salesOfficeForm.primary_contacts = [];
 			this.salesOfficeForm.billing_contacts = [];
+			this.salesOfficeForm.technical_contacts = [];
+			this.salesOfficeForm.shipping_contacts = [];
 			this.salesOfficeForm.employees = [];
 			//Reset the view
 			this.resetViewtoHome();
 		},
 
-		// Parsing CSV for Django storage
-		parseDataHistory() {
-			// this.$store.dispatch('firePreloader');
-			console.log("csv", this.csv);
-			var djangoInvObj = [];
-			let mappedData = this.csv.map((data) => {
-				"Name", "Model", "Manufacturer", "Category", "Category Class", "List Price", "Purchase Price";
-				var objOfData = {
-					name: data["Name"],
-					model: data["Model"],
-					category: data["Category"],
-					category_class: data["Category Class"],
-					purchase_price: data["Purchase Price"]
-				};
-				djangoInvObj.push(objOfData);
-			});
-			console.log("csv data from mapping function", djangoInvObj);
-
-			//Place code here to split the array and dispatch each separately in chunks
-			let count = djangoInvObj.length / 1;
-			let i = 0;
-			while (i < count + 1) {
-				((i) => {
-					setTimeout(() => {
-						let chunk = djangoInvObj.splice(0, 1);
-						console.log("chunk", chunk);
-						this.$store.dispatch("createInventory", chunk);
-					}, 2000 * i);
-				})(i++);
-			}
-			// this.$store.dispatch('closePreloader');
-		},
-		selectFile(e) {
-			//Get image URL and send to bind method
-			console.log("Event", e);
-			let newImageFile = e.target.files[0];
-			var reader = new FileReader();
-			reader.readAsDataURL(newImageFile);
-			reader.onload = (e) => {
-				this.fileURL = e.target.result;
-				this.bind();
-			};
-			//Get Image object and validate then send
-			this.file = this.$refs.invFile.files[0];
-			const allowedFileTypes = ["image/jpeg", "image/png", "image/gif"];
-			const MAX_SIZE = 2000000;
-			const tooLarge = this.file.size > MAX_SIZE;
-
-			if (allowedFileTypes.includes(this.file.type) && !tooLarge) {
-				this.error = false;
-				this.uploadMessage = "";
-			} else {
-				this.error = true;
-				this.uploadMessage = toolarge ? `Too large, Max size is ${MAX_SIZE / 1000}kb` : "Only Images are allowed";
-			}
-		},
-		async sendFile() {
-			this.salesOfficeForm.profile_img = this.cropped;
-			var formdata = this.salesOfficeForm;
-			console.log("this.salesOfficeForm", this.salesOfficeForm);
-			try {
-				await axios.put("/django/companies/" + formdata.id + "/", formdata).then((response) => {
-					console.log("Sales Office Image PUT response", response);
-					this.$store.dispatch("getSalesOfficeList");
-					response.type = "Sales Office Profile Image";
-					this.$store.dispatch("updateNotification", response);
-				});
-				// this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-				this.activeStep = 0;
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-		// Croppie JS Image Cropper
-		bind() {
-			var $$ = this.Dom7;
-			// Bind image to Cropper
-			console.log("this.fileURL from bind()", this.fileURL);
-			this.$refs.croppieRefSalesOffice
-				.bind({
-					url: this.fileURL
-				})
-				.then(() => {
-					$$(".cr-slider").attr({ min: 0.15, max: 3 });
-				});
-		},
-
-		// Croppie JS CALLBACK USAGE
-		crop() {
-			// Here we are getting the result via callback function
-			// and set the result to this.cropped which is being
-			// used to display the result above.
-			let options = {
-				format: "png",
-				circle: true
-			};
-			this.$refs.croppieRefSalesOffice.result(options, (output) => {
-				this.cropped = output;
-			});
-		},
-		// Croppie JS EVENT USAGE
-		cropViaEvent() {
-			this.$refs.croppieRefSalesOffice.result(options);
-		},
-		result(output) {
-			this.cropped = output;
-		},
-		update(val) {
-			console.log(val);
-		},
-		rotate(rotationAngle) {
-			this.$refs.croppieRefSalesOffice.rotate(rotationAngle);
-		},
-		//END Croppie JS
 
 		logout() {
 			this.$store.dispatch("signOut");
 		},
-		resetCompanyToggles(name) {
-			this.merchantParent.is_datacom = name === "datacom";
-			this.merchantParent.is_partner = name === "partner";
-			this.merchantParent.is_merchant = name === "merchant";
-			this.merchantParent.is_vendor = name === "vendor";
-		},
-		companyTypeToggle(e) {
-			console.log("Toggle e", e);
-			if (e.target.name === "datacom") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.merchantParent.is_datacom = false;
-				}
-			}
-			if (e.target.name === "partner") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.merchantParent.is_partner = false;
-				}
-			}
-			if (e.target.name === "merchant") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.merchantParent.is_merchant = false;
-				}
-			}
-			if (e.target.name === "vendor") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.merchantParent.is_vendor = false;
-				}
-			}
-		}
+	
+	
 	},
 	computed: {
 		...mapState(["Auth", "Users", "SalesOffices", "Locale", "Errors", "Warehouses"]),
 		...mapState(["Datacom", "Partners", "Companies"]),
-		...mapGetters(["getRegionList"]),
-
+		...mapGetters(["GET_SALES_OFFICE_LIST", "GET_SALES_OFFICE_LIST.length", "GET_SELECTED_SALES_OFFICE_PROFILE"]),
+		...mapGetters(["GET_SALESOFFICE_ERRORS_LIST", "GET_SALESOFFICE_ERROR_HANDLE"]),
+		errorData() {
+			return this.GET_SALESOFFICE_ERRORS_LIST;
+		},
+		errorHandle() {
+			return this.GET_SALESOFFICE_ERROR_HANDLE;
+		},
 		canSubmitSalesOfficeForm() {
 			if (this.Auth.isAuthenticated) {
 				return false;
@@ -1772,12 +1349,9 @@ export default {
 		let response = await this.setUserPlatformGET();
 		console.log("Sales Office Mounted setUserPlatformGET response", response);
 		this.$store.dispatch("getStates");
-		this.$store.dispatch("getSalesOfficeList", response);
+		this.$store.dispatch("GETSalesOfficeList", response);
 
-		// function to put an initial image on the canvas for Croppie.js.
-		this.$refs.croppieRefSalesOffice.bind({
-			url: ""
-		});
+
 	},
 	on: {}
 };
@@ -1794,80 +1368,7 @@ span.icon {
 	font-size: 48px;
 	color: grey;
 }
-.open-arrow {
-	cursor: pointer;
-	text-align: center;
-	font-size: 1.3em;
-	font-family: OpenSans-SemiBold;
-	width: 20%;
-	height: 75px;
-	padding: 20px;
-	background: rgba(2, 90, 114, 0.6);
-	clip-path: polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%);
-}
-.approved-quote-arrow {
-	cursor: pointer;
-	text-align: center;
-	font-size: 1.3em;
-	font-family: OpenSans-SemiBold;
-	width: 20%;
-	height: 75px;
-	padding: 20px;
-	padding-left: 40px;
-	margin-left: -20px;
-	background: rgba(4, 143, 69, 0.3);
-	clip-path: polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%);
-}
-.invoices-arrow {
-	cursor: pointer;
-	text-align: center;
-	font-size: 1.3em;
-	font-family: OpenSans-SemiBold;
-	width: 20%;
-	height: 75px;
-	padding: 20px;
-	padding-left: 40px;
-	margin-left: -20px;
-	background: rgba(4, 81, 95, 0.3);
-	clip-path: polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%);
-}
-.past-due-arrow {
-	cursor: pointer;
-	text-align: center;
-	font-size: 1.3em;
-	font-family: OpenSans-SemiBold;
-	width: 20%;
-	height: 75px;
-	padding: 20px;
-	padding-left: 40px;
-	margin-left: -20px;
-	background: rgba(117, 6, 6, 0.3);
-	clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 15% 50%);
-}
-.paid {
-	cursor: pointer;
-	text-align: center;
-	font-size: 1.3em;
-	font-family: OpenSans-SemiBold;
-	width: 20%;
-	height: 75px;
-	padding-top: 20px;
-	padding-bottom: 20px;
-	margin-left: 5px;
-	background: rgba(0, 0, 0, 0.3);
-}
-.cancelled {
-	cursor: pointer;
-	text-align: center;
-	font-size: 1.3em;
-	font-family: OpenSans-SemiBold;
-	width: 20%;
-	height: 75px;
-	padding-top: 20px;
-	padding-bottom: 20px;
-	margin-left: 5px;
-	background: rgba(65, 65, 65, 0.3);
-}
+
 .about-me-box {
 	width: 100%;
 	border: 1px solid rgb(182, 181, 181);

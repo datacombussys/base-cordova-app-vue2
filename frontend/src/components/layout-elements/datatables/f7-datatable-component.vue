@@ -96,12 +96,7 @@
 										<td colspan="8">
 											<!-- Authenticated AND no Records -->
 											<f7-row class="display-flex justify-content-center full-width" v-if="Auth.isAuthenticated">
-												<div class="text-align-center error-text margin display-block">
-													<div>No records to display</div>
-													<f7-col width="50"class="display-flex justify-content-center align-content-center margin-top-half">
-														<f7-button fill :popup-open="tableSettings.popupLink">Add New Item</f7-button>
-													</f7-col>
-												</div>
+												<slot name="button"/>
 											</f7-row>
 											<!-- END Authenticated AND no Records -->
 										</td>
@@ -181,9 +176,9 @@
 import { mapState } from "vuex";
 
 //Mixins
-import { UniversalMixins } from "../../mixins/universal-mixins";
-import { DataTableMixins } from "../../mixins/components/table-mixins";
-import { StoreModuleMixins } from "../../mixins/components/module-store-data-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
+import { DataTableMixins } from "@/mixins/components/table-mixins";
+import { StoreModuleMixins } from "@/mixins/components/module-store-data-mixins";
 
 export default {
 	name: "f7DatatableComponent",

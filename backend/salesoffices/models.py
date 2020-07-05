@@ -32,15 +32,15 @@ class SalesOfficeManager(models.Manager):
     print('Modified salesoffice kwargs', kwargs)
     newSOID = CompanyIDs.newCompanyID(self, **kwargs)
 
-    primary_contacts_var = kwargs['primary_contacts']
-    billing_contacts_var = kwargs['billing_contacts']
-    technical_contacts_var = kwargs['technical_contacts']
-    shipping_contacts_var = kwargs['shipping_contacts']
+    # primary_contacts_var = kwargs['primary_contacts']
+    # billing_contacts_var = kwargs['billing_contacts']
+    # technical_contacts_var = kwargs['technical_contacts']
+    # shipping_contacts_var = kwargs['shipping_contacts']
 
-    del kwargs['primary_contacts']
-    del kwargs['billing_contacts']
-    del kwargs['technical_contacts']
-    del kwargs['shipping_contacts']
+    # del kwargs['primary_contacts']
+    # del kwargs['billing_contacts']
+    # del kwargs['technical_contacts']
+    # del kwargs['shipping_contacts']
     
     salesoffice = self.model(**kwargs)
     salesoffice.is_active = True
@@ -48,12 +48,20 @@ class SalesOfficeManager(models.Manager):
 
     salesoffice.save(using=self._db)
 
-    salesoffice.primary_contacts.set(primary_contacts_var)
-    salesoffice.billing_contacts.set(billing_contacts_var)
-    salesoffice.technical_contacts.set(technical_contacts_var)
-    salesoffice.shipping_contacts.set(shipping_contacts_var)
+    # if primary_contacts_var:
+    #   salesoffice.primary_contacts.set(primary_contacts_var)
+    # if billing_contacts_var:
+    #   salesoffice.billing_contacts.set(billing_contacts_var)
+    # if technical_contacts_var:
+    #   salesoffice.technical_contacts.set(technical_contacts_var)
+    # if shipping_contacts_var:
+    #   salesoffice.shipping_contacts.set(shipping_contacts_var)
 
-    salesoffice.save()
+    barcode = CommonBarcode.objects.create_barcode(salesoffice.id, **kwargs)
+    print('Sales Office barcode', barcode)
+    salesoffice.barcode = barcode
+
+    salesoffice.save(using=self._db)
 
     return salesoffice
 

@@ -10,7 +10,7 @@ from users.serializers import User
 from users.serializers import UserListSerializer
 from partners.serializers import PartnerSerializer, PartnerListSerializer
 from datacom.serializers import DatacomSerializer, DatacomListSerializer
-from companies.serializers import CompanySerializer, SimpleCompanySerializer
+from companies.serializers import CompanySerializer, CompanyListSerializer
 from employees.serializers import EmployeeSerializer, EmployeeListSerializer
 from commons.serializers import CommonBarcodeSerializer, SimpleBarcodeSerializer
 
@@ -19,11 +19,20 @@ class SalesOfficeSerializer(serializers.ModelSerializer):
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
     partner_obj = PartnerListSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
-    company_obj = SimpleCompanySerializer(read_only=True, source='company')
+    company_obj = CompanyListSerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
     barcode_obj = CommonBarcodeSerializer(read_only=True, source='barcode')
     barcode = serializers.PrimaryKeyRelatedField(queryset=CommonBarcode.objects.all(), required=False, allow_null=True)
 
+    primary_contacts_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')
+    primary_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    shipping_contacts_list = UserListSerializer(many=True, read_only=True, source='shipping_contacts')
+    shipping_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    billing_contact_list = UserListSerializer(many=True, read_only=True, source='billing_contacts')
+    billing_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    technical_contacts_list = UserListSerializer(many=True, read_only=True, source='technical_contacts')
+    technical_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    
     profile_img = Base64ImageField(max_length=None,
                                     use_url=True,
                                     required=False,

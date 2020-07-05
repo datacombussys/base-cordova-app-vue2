@@ -7,11 +7,12 @@ export const Auth = {
 	name: "auth",
 	state: {
 		isAuthenticated: false,
-		userLoginProfile: {},
+		user: null,
+		userProfile: {},
 		authLevel: 1,
 		userCompanyParent: null,
 		userCompanyName: null,
-		user: null,
+		
 		preLoginPagePath: null,
 		platformInfo: {},
 		webdomain: '',
@@ -25,7 +26,7 @@ export const Auth = {
 		},
 		SET_LOGIN_PROFILE(state, payload) {
 				console.log("SET_LOGIN_PROFILE", payload);
-				state.userLoginProfile = payload;
+				state.userProfile = payload;
 		},
 		SET_LOGIN_DETAILS(state, payload) {
 			console.log("SET_LOGIN_DETAILS Payload", payload);
@@ -38,7 +39,7 @@ export const Auth = {
 		},
 		LOGOUT_USER(state, payload) {
 			state.isAuthenticated = false;
-			state.userLoginProfile = {};
+			state.userProfile = {};
 			state.user = null;
 			console.log("REMOVE_TOKEN Payload");
 			localStorage.removeItem("expiration");
@@ -116,11 +117,11 @@ export const Auth = {
 			f7.dialog.progress("Please wait while we load your data").open();
 			const user = await dispatch('getIndexedDb');
 			console.log('preFetchProfile from IndexedDb user', user);
-			await dispatch('loadAllData');
 			if(user) {
-				let EEUSerID = await dispatch('getEmployeeProfileByUserID', user.id);
+				let EEUSerID = await dispatch('GETEmployeeOwnProfile', user);
 				console.log("EEUSerID", EEUSerID);
-				commit("SET_LOGIN_PROFILE", EEUSerID[0].user_obj);
+				commit("SET_LOGIN_PROFILE", EEUSerID.user_obj);
+				await dispatch('loadAllData');
 				await dispatch('loadCompanySpecificData');
 				await dispatch('loadUserSpecificData');
 				f7.dialog.close();
@@ -143,8 +144,9 @@ export const Auth = {
 						console.log("Login response.data", response.data);
 						// commit("SET_LOGIN_DETAILS", response.data);	
 						response.data['signin'] = true;					
-						dispatch('setIndexedDb', response.data);
-						let EEUSerID = await dispatch('getEmployeeProfileByUserID', response.data.id);
+						let indexedUser = await dispatch('setIndexedDb', response.data);
+						console.log("indexedUser", indexedUser);
+						let EEUSerID = await dispatch('GETEmployeeOwnProfile', {id: response.data.id});
 						console.log("EEUSerID", EEUSerID);
 						commit("SET_LOGIN_PROFILE", EEUSerID.data);
 
@@ -193,7 +195,7 @@ export const Auth = {
 						commit("SET_LOGIN_PROFILE", response[0].user);
 						// commit("SET_LOGIN_DETAILS", response.data);
 						console.log("Login response.data", response.data);
-						dispatch('getEmployeeProfileByUserID', response.data.user_id);
+						dispatch('GETEmployeeOwnProfile', response.data.user_id);
 						//Set Notification
 						response.type = "User Logged In";
 						dispatch('updateNotification', response);
@@ -257,93 +259,103 @@ export const Auth = {
 			},
 			//************************************************  Set IndexedDB Storage   *********************************************************/
 			setIndexedDb({state, commit}, payload) {
-				console.log("setIndexedDb payload", payload);
-				//Global Variabes
-				const dbName = "UserDB";
-				const dbVersion = 2;
-				const indexDB = indexedDB.open(dbName, dbVersion);
-				const tableName = "UsersData";
-	
-				//onUpgradeNeeded
-				indexDB.onupgradeneeded = (e) => {
-					console.log("Upgrade was called");
-					console.log("this", this);
-					f7.dialog.alert("Database Upgrade was called.").open();
+				return new Promise((resolve, reject) => {
+					console.log("setIndexedDb payload", payload);
+					//Global Variabes
+					const dbName = "UserDB";
+					const dbVersion = 2;
+					const indexDB = indexedDB.open(dbName, dbVersion);
+					const tableName = "UsersData";
 		
-					const db = e.target.result;
-					console.log("Success db", db);
+					//onUpgradeNeeded
+					indexDB.onupgradeneeded = (e) => {
+						console.log("Upgrade was called");
+						console.log("this", this);
+						f7.dialog.alert("Database Upgrade was called.").open();
+			
+						const db = e.target.result;
+						console.log("Success db", db);
+			
+						//Can Only create on Upgrade
+						var objectStore = db.createObjectStore(tableName, {
+							keyPath: "id"
+						});
+						objectStore.createIndex("id", "id", { unique: true });
 		
-					//Can Only create on Upgrade
-					var objectStore = db.createObjectStore(tableName, {
-						keyPath: "id"
-					});
-					objectStore.createIndex("id", "id", { unique: true });
-	
-					objectStore.transaction.oncomplete = (event) => {
-						console.log("objectStore.transaction.oncomplete, event", event);
-					}
-				};
-	
-				//On Success
-				indexDB.onsuccess = (e) => {
-					console.log("Success was called setIndexedDb");
-					// f7.dialog.alert("Success was called.").open();
-					const db = e.target.result;
+						objectStore.transaction.oncomplete = (event) => {
+							console.log("objectStore.transaction.oncomplete, event", event);
+						}
+					};
 		
-					//Add info to DB User
-					console.log("payload", payload);
-					var token = null;
-					var id = null;
-					var email = null;
-					var employee = null;
-	
-					if(payload.signin) {
-						id = payload.id;
-						email = payload.email;
-						employee = payload.employee;
-						token = payload.token;
-					} else {
-						token = payload.user.token;
-						id = payload.user.id;
-						email = payload.user.email;
-						employee = payload.id;
-					}
-					const user = {
-						token: token,
-						id: id,
-						email: email,
-						employee: employee,
-					};
-					console.log("user", user);
-					const tx = db.transaction(tableName, "readwrite");
-					console.log("tx", tx);
-					//Transaction Success
-					tx.oncomplete = (event) => {
-						console.log("TX All done!", event);
-						commit('SET_INDEXEDDB_USER', user);
-					};
-					//Transaciton Error
-					tx.onerror = (event)  =>{
-						// Don't forget to handle errors!
-						console.log("TX had an error", event);
-					};
+					//On Success
+					indexDB.onsuccess = (e) => {
+						console.log("Success was called setIndexedDb");
+						// f7.dialog.alert("Success was called.").open();
+						const db = e.target.result;
+			
+						//Add info to DB User
+						console.log("payload", payload);
+						var token = null;
+						var id = null;
+						var email = null;
+						var employee = null;
+		
+						if(payload.signin) {
+							id = payload.id;
+							email = payload.email;
+							employee = payload.employee;
+							token = payload.token;
+						} else {
+							token = payload.user.token;
+							id = payload.user.id;
+							email = payload.user.email;
+							employee = payload.id;
+						}
+						const user = {
+							token: token,
+							id: id,
+							email: email,
+							employee: employee,
+						};
+						console.log("user", user);
+						const tx = db.transaction(tableName, "readwrite");
+						console.log("tx", tx);
+						//Transaction Success
+						tx.oncomplete = (event) => {
+							console.log("TX All done!", event);
+							commit('SET_INDEXEDDB_USER', user);
+							console.log("BBBBBB");
 
-					//Actually Store the User Object Here
-					var newUserRequest = tx.objectStore(tableName);
-					console.log("newUserRequest",newUserRequest);
-					var request = newUserRequest.put(user);
-					request.onsuccess = evt => {
-						console.log('evt', evt);
-						console.log('evt.target.result', evt.target.result);
-					}
-		
-				};
-				//On Error
-				indexDB.onerror = (e) => {
-					f7.dialog.alert("Error was called.").open();
-					console.log("Error was called");
-					console.log(`Error: ${e.target.error} was found`);
-				};
+							return resolve(event);
+
+						};
+						//Transaction Error
+						tx.onerror = (event)  =>{
+							// Don't forget to handle errors!
+							console.log("TX had an error", event);
+						};
+
+						console.log("AAAAAA");
+						//Actually Store the User Object Here
+						var newUserRequest = tx.objectStore(tableName);
+						console.log("newUserRequest",newUserRequest);
+						var request = newUserRequest.put(user);
+						request.onsuccess = evt => {
+							console.log('evt', evt);
+							console.log('evt.target.result', evt.target.result);
+
+						}
+						
+			
+					};
+					//On Error
+					indexDB.onerror = (e) => {
+						f7.dialog.alert("Error was called.").open();
+						console.log("Error was called");
+						console.log(`Error: ${e.target.error} was found`);
+					};
+				});
+				
 			},
 			//************************************************  Get IndexedDb   *********************************************************/
 			async getIndexedDb({state, commit}) {
@@ -454,23 +466,27 @@ export const Auth = {
 					console.log('loadAllData rootState', rootState);
 					
 					console.log('loadAllData state.platformInfo', state.platformInfo);
-					dispatch("getDatacomList");
-					if(state.platformInfo.datacom != null) {
-						dispatch("getPartnerList");
-						dispatch("getCompanyList");
-						dispatch("getVendorList");
+					dispatch("GETDatacomList");
+					if(state.platformInfo.platform === 'datacom') {
+						dispatch('GETDatacomOwnProfile', state.platformInfo);
+						dispatch("GETPartnerList");
+						dispatch("GETCompanyList");
+						dispatch("GETVendorList");
 						return resolve();
 					}
-					else if (state.platformInfo.partner != null) {
-						dispatch("getCompanyList", state.platformInfo);
-						dispatch("getVendorList", state.platformInfo);
+					else if (state.platformInfo.platform === 'partner') {
+						dispatch('GETPartnerOwnProfile', state.platformInfo);
+						dispatch("GETCompanyList", state.platformInfo);
+						dispatch("GETVendorList", state.platformInfo);
 						return resolve();
 					}
-					else if (state.platformInfo.company != null) {
-						dispatch("getVendorList", state.platformInfo);
+					else if (state.platformInfo.platform === 'company') {
+						dispatch('GETCompanyOwnProfile', state.platformInfo);
+						dispatch("GETVendorList", state.platformInfo);
 						return resolve();
 					}
-					else if (state.platformInfo.vendor != null) {
+					else if (state.platformInfo.platform === 'vendor') {
+						dispatch('GETVendorOwnProfile', state.platformInfo);
 						return resolve();
 					}
 					return resolve();
@@ -484,21 +500,22 @@ export const Auth = {
 			loadCompanySpecificData({ commit, dispatch, state, rootState }) {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
 				return new Promise((resolve, reject) => {
-					// console.log('loadCompanyData rootState', rootState);
-					dispatch("getEmployeeList", state.platformInfo);
-					// dispatch("getEmployeePositions", state.platformInfo);
-					// dispatch("getCompanyDepartments", state.platformInfo);
-					// dispatch("getHolidays", state.platformInfo);
-					// dispatch("GETBusinessHours", state.platformInfo);
-					// dispatch("GETAttendanceSettings", state.platformInfo);
-					// dispatch("getCompanyShifts", state.platformInfo);
-					dispatch("GETSalesTaxes", state.platformInfo);
-					dispatch("GETGeneralSettings", state.platformInfo);
-					// dispatch("getSalesOfficeList", state.platformInfo);
-					// dispatch("getWarehouseList", state.platformInfo);
+					console.log('loadCompanyData rootState', rootState);
+					dispatch("GETEmployeeList", state.platformInfo);
+					dispatch("GETSalesOfficeList", state.platformInfo);
+					dispatch("GETWarehouseList", state.platformInfo);
 					dispatch("GETInventoryList", state.platformInfo);
 					dispatch("GETInventoryCategories", state.platformInfo);
 					dispatch("GETCustomerList", state.platformInfo);
+					dispatch("getEmployeePositions", state.platformInfo);
+					dispatch("getCompanyDepartments", state.platformInfo);
+					dispatch("getHolidays", state.platformInfo);
+					dispatch("GETBusinessHours", state.platformInfo);
+					dispatch("GETAttendanceSettings", state.platformInfo);
+					dispatch("getCompanyShifts", state.platformInfo);
+					dispatch("GETSalesTaxes", state.platformInfo);
+					dispatch("GETGeneralSettings", state.platformInfo);
+
 					//Not Completed Yet
 					// dispatch("getInventoryLabels", state.platformInfo);
 
@@ -516,10 +533,10 @@ export const Auth = {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
 				return new Promise((resolve, reject) => {
 					console.log('loadUserata rootState', rootState);
-					// dispatch("getCreditCardList", state.platformInfo);
-					// dispatch("getACHAccountList", state.platformInfo);
-					// dispatch("getNewShippingList", state.platformInfo);
-					// dispatch("getNotifications", state.platformInfo);
+					dispatch("getCreditCardList", state.platformInfo);
+					dispatch("getACHAccountList", state.platformInfo);
+					dispatch("getNewShippingList", state.platformInfo);
+					dispatch("getNotifications", state.platformInfo);
 
 					return resolve();
 

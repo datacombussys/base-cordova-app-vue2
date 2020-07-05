@@ -1,5 +1,6 @@
 import axios from "axios";
 import { f7 } from 'framework7-vue';
+
 import apiRoutes from '@/js/api-routes';
 
 export const Customers = {
@@ -8,146 +9,119 @@ export const Customers = {
 	state: {
 		customerList: [],
 		customerProfile: {},
-		//Credit Cards and Banking
-		customerCreditCardList: [],
-		customerBankAccountList: [],
+    selectedCustomerProfile: {},
+
 	},
 	mutations: {
 		SET_CUSTOMER_LIST(state, payload) {
       state.customerList = payload;
     },
     PUSH_NEW_CUSTOMER(state, payload) {
+      state.customerList.push(payload);
+    },
+    SET_OWN_CUSTOMER_PROFILE(state, payload) {
       state.customerProfile = payload;
+    },
+    SET_SELECTED_CUSTOMER_PROFILE(state, payload) {
+      state.selectedPartnerProfile = payload;
+    },
+    UPDATE_CUSTOMER_PROFILE() {
+      console.log('payload', payload);
+      let listIndex = state.customerList.findIndex(elem => elem.id === payload.id);
+      state.customerList.slice(listIndex, 1);
+      state.customerList.splice(listIndex, 1, payload);
+      console.log('state.customerList', state.customerList);
+    },
+    PATCH_DELETE_CUSTOMER_PROFILE(state, payload) {
+      console.log('payload', payload);
+      let listIndex = state.customerList.findIndex(elem => elem.id === payload.id);
+      state.customerList.slice(listIndex, 1);
+      console.log('state.customerList', state.customerList);
     }
 	},
 	actions: {
-		//Create Methods
-		createCustomer({ dispatch, commit, rootState}, form) {
-			return new Promise((resolve, reject) => {
-				console.log("createCustomer form", form);
-				if(!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-				axios.post("/django/customers/", form).then(response => {
-					console.log("response data", response);
-					if (response.status === 200 ||response.status === 201) {
-						response.type = "Create Customer";
-						commit('PUSH_NEW_CUSTOMER', response.data);
-						dispatch('updateNotification', response);
-
-						return resolve(response);
-					}
-				}).catch(error => {
-						error.response.type = "Create Customer";
-						dispatch('updateNotification', error.response);
-						//Customer was not created, so we need to delete the User instance that was created.
-						dispatch("deleteUser", form.user_id);
-
-						return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		//Create Method
+		async POSTCustomer({commit, dispatch, rootState}, payload) {
+			let endpoint = 'customer/';
+			let type = 'Create New Customer';
+			let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+			console.log('POSTCustomer response', response);
+			commit('PUSH_NEW_CUSTOMER', response.data);
 		},
-    //GET and LIST Methods
-    async GETCustomerList({commit, dispatch, rootState}, payload) {
-			let endpoint = 'customers/';
-			let type = "Get Customers";
-
-			let response = await apiRoutes.get(dispatch, rootState, endpoint, payload, type);
-
+		//GET Partner LIST
+		async GETCustomerList({commit, dispatch, rootState}, payload) {
+			let endpoint = 'customer-list/';
+			let type = 'Get Customer List';
+			let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
 			console.log('GETCustomerList response', response);
 			commit('SET_CUSTOMER_LIST', response.data);
-			
-    },
-    //Update Methods Need to finish
-    PATCHCustomer({ dispatch, commit, rootState }, form) {
-      return new Promise((resolve, reject) => {
-        console.log("PATCH Customer Info", form);
-        if(!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-        axios.patch("/django/customers/" + form.id + "/", form).then(response => {
-          console.log("PUT Customer Response Data", response);
-          if (response.status === 200) {
-            dispatch('getCustomerList');
-            response.type = "Update Customer Profile";
-            dispatch('updateNotification', response);
-
-            return resolve(response.data);
-          }
-        }).catch(error => {
-          error.response.type = "Update Customer Profile";
-          dispatch('updateNotification', error.response);
-
-          return resolve(error);
-        });
-      
-      }).catch(error => {
-        return error;
-      });
-    },
-    //Filter Customer Profile based on User ID
-		getCustomerProfileByUserID({ dispatch, commit, rootState }, userID) {
-			return new Promise(async (resolve, reject) => {
-				const url = '/django/customers/?user__id=' + userID;
-				axios.get(url).then(response => {
-					console.log("getCustomerProfileByUserID response", response);
-					if (response.status === 200) {
-						commit('SET_EMPLOYEE_PROFILE', response.data);
-						response.type = "Retrieve Customer Profile by UserID";
-						// dispatch('updateNotification', response);
-						return resolve(response.data)
-					}
-				}).catch(error => {
-					error.response.type = "Retrieve Customer Profile";
-					dispatch('updateNotification', error.response);
-
-					return resolve(error);
-        });
-      }).catch(error => {
-        return error;
-      });
 		},
-    //Delete Methods Need to finish
-    deleteCustomer({ dispatch, commit }, payload) {
-      return new Promise((resolve, reject) => {
-        console.log("Make Customer Inactive:", payload);
-        axios.patch("/django/customers/"+ payload.id + "/", payload).then(response => {
-          console.log("Delete Django Company", response);
-          if (response.status === 200) {
-            dispatch('getCustomerList');
-            response.type = "Delete Customer";
-            dispatch('updateNotification', response);
+		async GETSelectedCustomerList({commit, dispatch, rootState}, payload) {
+			//filterURL is passed from the original call
+			let endpoint = 'customer-list/';
+			let type = 'Get Customer List';
+			let response = await apiRoutes.GETSelectedList(dispatch, rootState, endpoint, payload, type);
+			console.log('GETCustomerList response', response);
+			commit('SET_SELECTED_CUSTOMER_LIST', response.data);
+		},
+		//GET Own Customer Profile
+		GETCustomerOwnProfile({commit, dispatch, rootState}, payload) {
+			return new Promise( async (resolve, reject) => {
+				console.log('GETCustomerOwnProfile payload', payload);
+				let endpoint = 'customer/?user__id=';
+				let type = 'Get Customer Profile';
+				let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+				console.log('GETCustomerOwnProfile response', response);
+				commit('SET_CUSTOMER_PROFILE', response.data[0]);
+				commit('SET_PLATFORM_INFO', response.data[0]);
+				return resolve(response.data[0]);
+			});
+		},
+		//GET Selected Profile
+		async GETCustomerSelectedProfile({commit, dispatch, rootState}, payload) {
+			return new Promise( async (resolve, reject) => {
+				let endpoint = 'customer/';
+				let type = 'Get Customer Profile';
+				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+				console.log('GETCustomerSelectedProfile response', response);
+				commit('SET_SELECTED_CUSTOMER_PROFILE', response.data);
+				return resolve(response.data)
+			});
+		},
+		//PATCH Profile
+		async PATCHCustomerProfile({commit, dispatch, rootState}, payload) {
+			let endpoint = 'customer/';
+			let type = 'Update Customer Profile';
+			let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+			console.log('PATCHCustomerProfile response', response);
+			commit('UPDATE_CUSTOMER_PROFILE', response.data);
+		},
+		//PATCHDelete PROFILE
+		async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+			let endpoint = 'customer/';
+			let type = 'Delete Customer Profile';
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+			console.log('PATCHDeleteProfile response', response);
+			commit('PATCH_DELETE_CUSTOMER_PROFILE', payload);
+		},
+		//DELETE Item
+		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
+			let endpoint = 'customer/';
+			let type = 'Delete Customer Profile';
+			let response = await apiRoutes.DELETEItem(dispatch, rootState, endpoint, payload, type);
+			console.log('DELETEProfile response', response);
+		},
 
-            return resolve(response.data)
-          }
-        }).catch(error => {
-          error.type = "Delete Customer";
-          dispatch('updateNotification', error.response);
-
-          return resolve(error);
-
-        });
-      }).catch(error => {
-        return error;
-      });
-    }
 	},
 	getters: {
-		getCustomerCreditCardsList(state) {
-			return state.customerCreditCardList;
-    },
     GET_CUSTOMER_LIST(state) {
       return state.customerList;
+    },
+    GET_OWN_CUSTOMER_PROFILE(state) {
+      return state.customerProfile;
+    },
+    GET_SELECTED_CUSTOMER_PROFILE(state) {
+      return state.selectedCustomerProfile;
     }
 	}
 };

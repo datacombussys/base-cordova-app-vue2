@@ -19,7 +19,19 @@ class DatacomSerializer(serializers.ModelSerializer):
     company_docs = serializers.PrimaryKeyRelatedField(queryset=CompanyDocuments.objects.all(), required=False, allow_null=True)
     industry_obj = IndustrySerializer(read_only=True, source='industry')
     industry = serializers.PrimaryKeyRelatedField(queryset=Industry.objects.all(), required=False, allow_null=True)
+    
+    primary_contacts_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')
+    primary_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    shipping_contacts_list = UserListSerializer(many=True, read_only=True, source='shipping_contacts')
+    shipping_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    billing_contact_list = UserListSerializer(many=True, read_only=True, source='billing_contacts')
+    billing_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    technical_contacts_list = UserListSerializer(many=True, read_only=True, source='technical_contacts')
+    technical_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
 
+    # shipping_contacts_list = UserListSerializer(many=True, read_only=True, source='shipping_contacts')    
+    # shipping_contacts = serializers.ManyRelatedField(child_relation=serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True), allow_null=True)
+   
     profile_img = Base64ImageField(max_length=None,
                                     use_url=True,
                                     required=False,

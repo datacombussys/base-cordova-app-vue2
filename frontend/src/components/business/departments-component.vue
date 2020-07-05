@@ -26,7 +26,7 @@
                   </f7-col>
                   <f7-col width="50">
                     <p class="field-title">All Departments</p>
-                    <div class="full-width display-flex justify-content-space-around" v-for="(dept, index) in Companies.departmentList" :key="index">
+                    <div class="full-width display-flex justify-content-space-around" v-for="(dept, index) in GET_DEPARTMENTS_LIST" :key="index">
                       <div class="margin-half full-width"> {{dept.name}}</div>
                       <div class="delete" @click="deleteDepartment(dept.name)"></div>
                     </div>
@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     testMethod(e) {
-        console.log("this.Companies.departmentList", this.Companies.departmentList);
+        console.log("this.GET_DEPARTMENTS_LIST", this.GET_DEPARTMENTS_LIST);
         console.log("this.departmentForm", this.departmentForm);
 
         var x = moment().format();
@@ -118,14 +118,14 @@ export default {
       //I need to do a search for inventory items that already have a category attached to them that are being deleted
       //Ask the user if they want to delete the categories from the items first. Otherwise prevent deletion.
       console.log('deleteDepartment');
-      var departmentObj = this.Companies.departmentList.find(elem => elem.name === name);
+      var departmentObj = this.GET_DEPARTMENTS_LIST.find(elem => elem.name === name);
       console.log('departmentObj', departmentObj);
       this.$store.dispatch('deleteDepartment', departmentObj.id);
     },
   },
   computed: {
     ...mapState(["Common", "Locale", "Companies", "Auth"]),
-    // ...mapGetters([]),
+    ...mapGetters(["GET_DEPARTMENTS_LIST"]),
   },
   created() {
 

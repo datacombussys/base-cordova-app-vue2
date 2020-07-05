@@ -6,6 +6,8 @@ Vue.use(Vuex);
 //Import and Use Axios
 import axios from "axios";
 
+import apiRoutes from '@/js/api-routes';
+
 export const Inventory = {
 	namespace: true,
 	state: {

@@ -27,6 +27,10 @@
 										</f7-col>
 										<f7-col width="50" class="text-align-right">
 											<f7-link sheet-open=".vendor-image"> <b-icon class="edit-icon" icon="pencil"></b-icon> </f7-link>
+											<profile-image-popup-component
+												:profileImageSettings="profileImageSettings"
+												:profileData="vendorForm">
+											</profile-image-popup-component>
 										</f7-col>
 									</f7-row>
 								</f7-card-header>
@@ -41,19 +45,22 @@
 									<f7-row v-if="vendorForm.profile_img" class="display-flex justify-content-center">
 										<img :src="vendorForm.profile_img" style="width:170px;height:170px;" alt="" />
 									</f7-row>
-									<f7-row>
-										<f7-col class="text-align-center margin-top" v-if="vendorForm.barcode">
-											<img :src="vendorForm.barcode.image" style="width:150px;" alt="Please load item" />
-											<div>
-												{{ vendorForm.barcode.barcode_number }}
-											</div>
-										</f7-col>
-									</f7-row>
+									<div v-if="vendorForm.barcode != undefined">
+										<f7-row v-if="Object.keys(vendorForm.barcode).length != 0">
+											<f7-col class="text-align-center margin-top" v-if="vendorForm.barcode">
+												<img :src="vendorForm.barcode.image" style="width:150px;" alt="Please load item" />
+												<div>
+													{{ vendorForm.barcode.barcode_number }}
+												</div>
+											</f7-col>
+										</f7-row>
+									</div>
+
+										
 								</f7-card-content>
 								<f7-card-footer class="display-flex justify-content-center">
-									<f7-block-title medium class="margin-top-half text-align-center">{{
-										vendorForm.legal_name
-									}}</f7-block-title>
+									<f7-block-title medium class="margin-top-half text-align-center">
+										{{vendorForm.legal_name}}</f7-block-title>
 								</f7-card-footer>
 							</f7-card>
 
@@ -110,7 +117,7 @@
 										</f7-col>
 									</f7-row>
 									<f7-row class="full-width display-flex justify-content-center" v-if="hideCreateItem">
-										<f7-col width="90">
+										<f7-col width="100">
 											<f7-button @click="clearFormData" fill class="bg-color-red">Clear Data</f7-button>
 										</f7-col>
 									</f7-row>
@@ -142,14 +149,29 @@
 					<div>
 						<!-- el2 -->
 						<f7-block class="margin-top-half">
-							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.vendorErrorHandle" class="left message is-danger">
+							<f7-row>
+								<article v-if="errorHandle" class="message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
+								</article>
 							</f7-row>
+							<!-- Error Handling -->
+							<f7-row 
+								v-for="errorArray in errorData" 
+								:key="errorArray.id">	
+								<article
+									v-if="errorArray[0] === 'non_field_errors'"
+									class="has-background-white margin-top-half"
+									:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+									<div 
+										class="message-body">
+										{{ errorArray[1][0] }}
+									</div>
+								</article>
+							</f7-row>
+							<!-- END Error Handling -->
 							<f7-card>
 								<f7-card-content>
 									<f7-block-title medium class="no-margin-top">Dashboard</f7-block-title>
@@ -205,9 +227,11 @@
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" v-if="Auth.authLevel <= 3" icon="office-building" class="no-padding">
 										<parent-component
+										ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
 										:parentSettings="parentSettings"
-										:moduleInfo="moduleInfo">
+										:moduleInfo="moduleInfo"
+										:formData="vendorForm">
 									</parent-component>
 								</b-tab-item>
 								<!-- END Company Tab -->
@@ -245,8 +269,8 @@
 														<f7-list-item :title="vendorForm.global_id"></f7-list-item>
 													</f7-col>
 												</f7-row>
+												<!-- Vendor Details -->
 												<f7-row>
-													<!-- Vendor Details -->
 													<f7-block-title class="full-width" medium>Primary Information</f7-block-title>
 													<f7-col width="50">
 														<p class="field-title">First Name:</p>
@@ -268,21 +292,25 @@
 													</f7-col>
 												</f7-row>
 												<f7-row>
-													<f7-col width="70">
-														<p class="field-title">Address:</p>
-														<f7-list-item :title="vendorForm.primary_mailing_address"></f7-list-item>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="vendorForm.primary_mailing_country"></f7-list-item>
 													</f7-col>
 													<f7-col width="30">
 														<p class="field-title">State:</p>
 														<f7-list-item :title="vendorForm.primary_mailing_state"></f7-list-item>
 													</f7-col>
-												</f7-row>
-												<f7-row>
-													<f7-col width="50">
+													<f7-col width="30">
 														<p class="field-title">City:</p>
 														<f7-list-item :title="vendorForm.primary_mailing_city"></f7-list-item>
 													</f7-col>
-													<f7-col width="50">
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="vendorForm.primary_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">Zip:</p>
 														<f7-list-item :title="vendorForm.primary_mailing_zip"></f7-list-item>
 													</f7-col>
@@ -297,11 +325,12 @@
 														<f7-list-item :title="vendorForm.website"></f7-list-item>
 													</f7-col>
 												</f7-row>
+								
 
 												<f7-row>
-													<f7-block-title class="full-width" medium>About the Business</f7-block-title>
+													<f7-block-title class="full-width" medium>About the Vendor</f7-block-title>
 													<f7-col>
-														<p class="field-title">About The Business:</p>
+														<p class="field-title">Notes:</p>
 														<div class="about-me-box" v-html="vendorForm.description"></div>
 													</f7-col>
 												</f7-row>
@@ -321,21 +350,27 @@
 															validate
 															:value="vendorForm.legal_name"
 															@input="vendorForm.legal_name = $event.target.value"
-															style="background: rgb(216,252,253)"
+															class="datacom-input"
+															:class="errorHandle? 'item-input-invalid': ''"
 														>
 														</f7-list-input>
-														<div v-if="Errors.vendorErrorData.length != 0">
-															<div class="full-width" v-for="errorArray in Errors.vendorErrorData" :key="errorArray.id">
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.vendorErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div v-show="errorArray[0] === 'legal_name'" class="message-body">
-																		{{ errorArray[1][0] }}
-																	</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'legal_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
+															
+
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Vendor DBA:<span style="color: red;"> *</span></p>
@@ -346,21 +381,25 @@
 															validate
 															:value="vendorForm.dba_name"
 															@input="vendorForm.dba_name = $event.target.value"
-															style="background: rgb(216,252,253)"
+															class="datacom-input"
+															:class="errorHandle? 'item-input-invalid': ''"
 														>
 														</f7-list-input>
-														<div v-if="Errors.vendorErrorData.length != 0">
-															<div class="full-width" v-for="errorArray in Errors.vendorErrorData" :key="errorArray.id">
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.vendorErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div v-show="errorArray[0] === 'dba_name'" class="message-body">
-																		{{ errorArray[1][0] }}
-																	</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'dba_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 												</f7-row>
 												<f7-row>
@@ -379,16 +418,18 @@
 												<business-contact-form-component 
 													:contactForm="vendorForm"
 													:formSettings="primaryContactSettings"
-													@updateLocaleInfo="syncWithMixin">
+													@updateLocaleInfo="syncWithMixin"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 												
 												<f7-row>
-													<f7-block-title class="full-width" medium>About the Business</f7-block-title>
+													<f7-block-title class="full-width" medium>About the Vendor</f7-block-title>
 													<f7-col>
 														<f7-text-editor
 															id="vendorDescriptionEditor"
 															ref="vendorDescription"
-															style="background: rgb(216,252,253)"
+															class="datacom-input"
 														/>
 													</f7-col>
 												</f7-row>
@@ -399,7 +440,7 @@
 													<f7-block class="full-width" v-if="hideUpdateItemButtons">
 														<f7-row class="margin-top">
 															<f7-col width="25">
-																<f7-button fill class="bg-color-red" @click="deleteVendor">Delete</f7-button>
+																<f7-button fill class="bg-color-red" @click="PATCHDeleteProfile">Delete</f7-button>
 															</f7-col>
 															<f7-col width="25">
 																<f7-button fill class="bg-color-blue" @click="updateVendorPATCH">Update</f7-button>
@@ -409,7 +450,7 @@
 													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="parentSettings.activeTab = 1" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -461,23 +502,33 @@
 													</f7-col>
 												</f7-row>
 												<f7-row>
-													<f7-col width="70">
-														<p class="field-title">Street Address:</p>
-														<f7-list-item :title="vendorForm.billing_address"></f7-list-item>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="vendorForm.billing_mailing_country"></f7-list-item>
 													</f7-col>
 													<f7-col width="30">
 														<p class="field-title">State:</p>
-														<f7-list-item :title="vendorForm.billing_state"></f7-list-item>
+														<f7-list-item :title="vendorForm.billing_mailing_state"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">City:</p>
+														<f7-list-item :title="vendorForm.billing_mailing_city"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="vendorForm.billing_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">Zip:</p>
+														<f7-list-item :title="vendorForm.billing_mailing_zip"></f7-list-item>
 													</f7-col>
 												</f7-row>
 												<f7-row>
 													<f7-col width="50">
-														<p class="field-title">City:</p>
-														<f7-list-item :title="vendorForm.billing_city"></f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p class="field-title">Zip:</p>
-														<f7-list-item :title="vendorForm.billing_zip"></f7-list-item>
+														<p class="field-title">Email:</p>
+														<f7-list-item :title="vendorForm.billing_email"></f7-list-item>
 													</f7-col>
 												</f7-row>
 
@@ -503,25 +554,36 @@
 													</f7-col>
 												</f7-row>
 												<f7-row>
-													<f7-col width="70">
-														<p class="field-title">Street Address:</p>
-														<f7-list-item :title="vendorForm.shipping_address"></f7-list-item>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="vendorForm.shipping_mailing_country"></f7-list-item>
 													</f7-col>
 													<f7-col width="30">
 														<p class="field-title">State:</p>
-														<f7-list-item :title="vendorForm.shipping_state"></f7-list-item>
+														<f7-list-item :title="vendorForm.shipping_mailing_state"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">City:</p>
+														<f7-list-item :title="vendorForm.shipping_mailing_city"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="vendorForm.shipping_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">Zip:</p>
+														<f7-list-item :title="vendorForm.shipping_mailing_zip"></f7-list-item>
 													</f7-col>
 												</f7-row>
 												<f7-row>
 													<f7-col width="50">
-														<p class="field-title">City:</p>
-														<f7-list-item :title="vendorForm.shipping_city"></f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p class="field-title">Zip:</p>
-														<f7-list-item :title="vendorForm.shipping_zip"></f7-list-item>
+														<p class="field-title">Email:</p>
+														<f7-list-item :title="vendorForm.shipping_email"></f7-list-item>
 													</f7-col>
 												</f7-row>
+
 											</f7-list>
 											<!-- END Contacts Display List -->
 											<!-- Begin Contacts Edit List -->
@@ -529,13 +591,17 @@
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="vendorForm"
-													:formSettings="billingContactSettings">
+													:formSettings="billingContactSettings"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 
 												<f7-block-title class="full-width" medium>Primary Shipping Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="vendorForm"
-													:formSettings="shippingContactSettings">
+													:formSettings="shippingContactSettings"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 
 												<f7-row class="margin-top">
@@ -550,9 +616,9 @@
 														</f7-row>
 													</f7-block>
 													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
-														<f7-row class="margin-top level-right">
-															<f7-col width="40" class="display-flex justify-content-end margin">
-																<f7-button fill popover-open=".new-transaction" class="bg-color-green trans-btn-left"
+														<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
+															<f7-col width="25" class="display-flex margin">
+																<f7-button fill @click="createVendorandClose" class="bg-color-green trans-btn-left"
 																	><span>Save Vendor</span></f7-button
 																>
 																<f7-button
@@ -563,6 +629,31 @@
 																	icon-size="40"
 																	icon="mdi mdi-menu-down"
 																></f7-button>
+																<f7-popover class="new-transaction">
+																	<f7-list>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createVendorandNew"
+																			popover-close
+																			title="Save and New"
+																		></f7-list-item>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createVendorandEdit"
+																			popover-close
+																			title="Save and Edit"
+																		></f7-list-item>
+																		<f7-list-item
+																			link="#"
+																			no-chevron
+																			@click.prevent="createVendorandClose"
+																			popover-close
+																			title="Save and Close"
+																		></f7-list-item>
+																	</f7-list>
+																</f7-popover>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -576,7 +667,10 @@
 
 								<!-- Begin Employees Tab -->
 								<b-tab-item label="Employees" icon="account-group" class="no-padding">
-									<employee-database-component :moduleInfo="moduleInfo"></employee-database-component>
+									<employee-database-component 
+										ref="employeeDatabaseRef"
+										:moduleInfo="moduleInfo">
+									</employee-database-component>
 								</b-tab-item>
 								<!-- END Employees Tab -->
 
@@ -601,7 +695,7 @@
 								<b-tab-item label="Database" icon="database">
 									<f7-card class="mo-margin-top">
 										<f7-card-header class="no-border" valign="bottom" style="background: lightgray">
-											<f7-row class="full-width">
+											<f7-row class="full-width display-flex align-items-center">
 												<f7-col width="25">
 													<f7-block-title class="full-width">Database</f7-block-title>
 												</f7-col>
@@ -625,13 +719,13 @@
 														<f7-list-item link="#" popover-close title="Clear Checkbox"></f7-list-item>
 														<f7-list-item
 															link="#"
-															@click="editVendorData"
+															@click="editVendorForm"
 															popover-close
 															title="Edit Item"
 														></f7-list-item>
 														<f7-list-item
 															link="#"
-															@click="deleteVendor"
+															@click="PATCHDeleteProfile"
 															popover-close
 															title="Delete Item"
 														></f7-list-item>
@@ -654,9 +748,9 @@
 													</f7-row>
 												</f7-col>
 											</f7-row>
-											<f7-row v-if="Vendors.vendorList.length != 0">
+											<f7-row>
 												<b-table
-													:data="Vendors.vendorList"
+													:data="GET_VENDOR_LIST"
 													:paginated="isPaginated"
 													:per-page="perPage"
 													:current-page.sync="currentPage"
@@ -810,6 +904,7 @@ import employeeDatabaseComponent from "../../components/business/employees-datab
 import reportingChartsComponent from "../../components/business/reporting-component.vue";
 import parentComponent from "../../components/business/parent-company-component.vue";
 import businessContactFormComponent from "@/components/business/contact-form-component.vue";
+import profileImagePopupComponent from "@/components/universal/profile-image/profile-image-sheet-component.vue";
 
 export default {
 	name: "vendorProfile",
@@ -820,7 +915,8 @@ export default {
 		"employee-database-component": employeeDatabaseComponent,
 		"reporting-charts-component": reportingChartsComponent,
 		"parent-component": parentComponent,
-		"business-contact-form-component": businessContactFormComponent
+		"business-contact-form-component": businessContactFormComponent,
+		"profile-image-popup-component": profileImagePopupComponent
 	},
 	data() {
 		return {
@@ -859,6 +955,12 @@ export default {
 					is_partner: false,
 					is_merchant: false,
 				}
+			},
+			//Edit Profile IMage
+			profileImageSettings: {
+				url: 'vendor/',
+				module: 'Vendor',
+				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
 
 			//Popups and Modals
@@ -925,19 +1027,20 @@ export default {
 			vendorForm: {
 				datacom: null,
 				partner: null,
-				vendor: null,
+				company: null,
 				created_by: null,
 				account_number: 0,
-				domain: null,
 				profile_img: null,
 				barcode: null,
 				purchasing_terms: null,
 				vendor_type: null,
 				notes: null,
-				primary_contact_list: [],
-				billing_contact_list: [],
-				technical_contact_list: [],
-				shipping_contact_list: [],
+				logo: null,
+				//Arrays
+				primary_contacts: [],
+				billing_contacts: [],
+				technical_contacts: [],
+				shipping_contacts: [],
 				//Common Vendor Fields
 				id: 0,
 				dba_name: null,
@@ -998,8 +1101,9 @@ export default {
 	methods: {
 		testingMethod(e) {
 			console.log("this.vendorForm ", this.vendorForm);
-			console.log("this.Companaies.vendorList", this.Vendors.vendorList);
-			console.log("this.vendorForm.entity_type ", this.vendorForm.entity_type);
+			console.log("this.parentSettings", this.parentSettings);
+			console.log("this.Vendors.vendorList", this.Vendors.vendorList);
+
 		},
 		menudropdown(UserID) {
 			console.log("menudropdown UserID", UserID);
@@ -1045,88 +1149,107 @@ export default {
 		},
 		//Create Vendor and Edit Current Vendor
 		async createVendorandEdit() {
-			let createVendorRes = await this.createVendor();
+			let createVendorRes = await this.POSTVendor();
 			//Populate Fields with Created Instance
-			this.editVendorData(createVendorRes.id);
+			this.editVendorFormById(createVendorRes.id);
 			console.log("createVendorandEdit All Done", createVendorRes);
 		},
 
 		//Create Vendor and Clear form for entering a new vendor
 		async createVendorandNew() {
-			await this.createVendor();
+			await this.POSTVendor();
 			//Clear Form and Reset to Starting Editing Position
 			console.log("createVendorandNew All Done");
 			this.newItemButton();
 		},
 		//Create Vendor and Clear form for Viewing Data
 		async createVendorandClose() {
-			let createVendorRes = await this.createVendor();
+			let createVendorRes = await this.POSTVendor();
 			//Clear Form and Reset to Starting Viewing Position
 			console.log("createVendorandClose All Done", createVendorRes);
-			this.clearFormData();
-		},
-		async createVendor() {
-			this.$store.commit("RESET_ERRORS");
-			try {
-				this.$f7.preloader.show();
-				//Dispatch creation method and update Fields with latest Object
-				console.log("createVendor, this.vendorForm", this.vendorForm);
-				this.vendorForm.description = this.$refs.vendorDescription.f7TextEditor.contentEl.innerHTML;
-
-				//Get Details of the creator
-				var newVendorForm = await this.setUserPlatformPOST(this.vendorForm);
-				console.log("newVendorForm", newVendorForm);
-				var vendorResponse = await this.$store.dispatch("createVendor", newVendorForm);
-				console.log("vendorResponse", vendorResponse);
-
-				return vendorResponse;
-			} catch (error) {
-				console.error("Promise Response Error creating Vendor", error);
+			if(createVendorRes != undefined) {
+				await this.clearFormData();
+				this.resetViewtoHome();
+			} else {
+				this.$f7.dialog.alert("You had some errors on your submission").open();
 			}
+		},
+		POSTVendor() {
+			return new Promise( async (resolve, reject) => {
+				this.$store.commit("RESET_ERRORS");
+				try {
+					this.$f7.preloader.show();
+					//Dispatch creation method and update Fields with latest Object
+					console.log("POSTVendor, this.vendorForm", this.vendorForm);
+					this.vendorForm.description = this.$refs.vendorDescription.f7TextEditor.contentEl.innerHTML;
+
+					//If parentSettings then use that, if Not then use setUserPlatform
+					console.group('this.parentSettings.accountParent.company_name', this.parentSettings.accountParent.company_name);
+					if(this.parentSettings.accountParent.company_name) {
+						let response = await this.$refs.parentComponentRef.determineAccountOwner();
+						console.log("response", response);
+						var vendorResponse = await this.$store.dispatch("POSTVendor", this.vendorForm);
+					} else {
+						var newVendorForm = await this.setUserPlatformPOST(this.vendorForm);
+						console.log("newVendorForm", newVendorForm);
+						var vendorResponse = await this.$store.dispatch("POSTVendor", newVendorForm);
+					}
+					
+					console.log("vendorResponse", vendorResponse);
+					this.$f7.preloader.hide();
+
+					return resolve(vendorResponse);
+				} catch (error) {
+					this.$f7.preloader.hide();
+					console.error("Promise Response Error creating Vendor", error);
+					return reject(error);
+				}
+			});	
 		},
 		refreshVendor() {
 			console.log("this.getVendorLit", this.getVendors);
-			this.$store.dispatch("getVendorList");
+			this.$store.dispatch("GETVendorList");
 		},
 		// Populate Fields for editing in browser
-		editVendorData(vendorID) {
+		async editVendorForm() {
+			//I still need to handle the Parent Company Field. I ti snot updating properly
 			this.clearFormData();
-			this.parentSettings.activeTab = 0;
-			this.showEditProfile();
-			//Get User ID and object and map to fields
-			var vendorListID = null;
+			this.parentSettings.activeTab = 1;
 			if (this.checkedRows.length != 0) {
-				console.log("this.checkedRows", this.checkedRows);
+				console.log("this.checkedRows != 0", this.checkedRows);
 				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexPos = this.Vendors.vendorList.findIndex((elem) => {
-					return elem.id === rowID;
-				});
-				console.log("editVendors findIndexPos", findIndexPos);
-				vendorListID = findIndexPos;
-				console.log("IF vendorListID", vendorListID);
-			} else {
-				var findIndexPos = this.Vendors.vendorList.findIndex((elem) => {
-					return elem.id === vendorID;
-				});
-				vendorListID = findIndexPos;
-				console.log("Then vendorListID", vendorListID);
-			}
-			//Is there a list of vendors to lookup?
-			if (this.Vendors.vendorList.length === 0) {
-				return "There are no items available";
-			}
 
-			if (this.Vendors.vendorList.length != 0) {
-				console.log("this.Vendors.vendorListings", this.Vendors.vendorList);
-				console.log("Then vendorListID", vendorListID);
-				var vendorItem = this.Vendors.vendorList[vendorListID];
-				console.log("editVendors vendorItem", vendorItem);
+				var getSelectedVendorObj = await this.$store.dispatch("GETVendorSelectedProfile", {id: rowID});
+				console.group('getSelectedVendorObj', getSelectedVendorObj);
+
 				for (let key in this.vendorForm) {
-					this.vendorForm[key] = vendorItem[key];
+					this.vendorForm[key] = this.GET_SELECTED_VENDOR_PROFILE[key];
 				}
 				this.$refs.vendorDescription.f7TextEditor.contentEl.innerHTML = this.vendorForm.description;
-				this.$store.dispatch("getEmployeeFilter", vendorListID);
+			} 
+			this.showEditProfile();
+		},
+		async editVendorFormById(companyID) {
+			console.log("editVendor");
+			this.clearFormData();
+			this.parentSettings.activeTab = 0;
+			//2) Get User ID and object and map to fields from database table
+			var getSelectedVendorObj = await this.$store.dispatch("GETVendorSelectedProfile", {id: companyID});
+			console.group('getSelectedVendorObj', getSelectedVendorObj);
+
+			for (let key in this.vendorForm) {
+				this.vendorForm[key] = this.GET_SELECTED_VENDOR_PROFILE[key];
 			}
+			this.$refs.vendorDescription.f7TextEditor.contentEl.innerHTML = this.vendorForm.description;
+			this.showEditProfile();
+		},
+		//Load Vendor On itnitial render
+		loadVendorProfile() {
+			for (let key in this.vendorForm) {
+				this.vendorForm[key] = this.GET_OWN_VENDOR_PROFILE[key];
+			}
+			this.$refs.vendorDescription.f7TextEditor.contentEl.innerHTML = this.vendorForm.description;
+			this.resetViewtoHome();
 		},
 		//Make the PUT request to update datebase instance from updated form Data
 		updateVendorPATCH() {
@@ -1137,20 +1260,20 @@ export default {
 			this.resetViewtoHome();
 		},
 		//Set inventory item to inactive instead of deleting instance
-		async deleteVendor() {
+		async PATCHDeleteProfile() {
 			// Is item Selected in table?
 			if (this.checkedRows[0].id) {
 				var rowID = this.checkedRows.slice(-1)[0].id;
 				var findIndexID = this.Vendors.vendorList.findIndex((elem) => {
 					return elem.id == rowID;
 				});
-				console.log("deleteVendor findIndexID", findIndexID);
+				console.log("PATCHDeleteProfile findIndexID", findIndexID);
 				if (this.Vendors.vendorList.length === 0) {
 					this.$store.commit("updateNotification", "There are no items available");
 				}
 				if (this.Vendors.vendorList.length != 0) {
 					let vendorItem = this.Vendors.vendorList[findIndexID];
-					console.log("deleteVendor != 0 vendorItem", vendorItem);
+					console.log("PATCHDeleteProfile != 0 vendorItem", vendorItem);
 					for (let key in this.vendorForm) {
 						this.vendorForm[key] = vendorItem[key];
 					}
@@ -1162,8 +1285,8 @@ export default {
 					console.log("newDate", newDate.toISOString());
 					this.vendorForm.acct_closure_date = newDate;
 					try {
-						await this.$store.dispatch("deleteVendor", this.vendorForm).then((response) => {
-							console.log("response from deleteVendor method", response);
+						await this.$store.dispatch("PATCHDeleteProfile", this.vendorForm).then((response) => {
+							console.log("response from PATCHDeleteProfile method", response);
 							this.clearFormData();
 						});
 					} catch (error) {
@@ -1179,6 +1302,7 @@ export default {
 			console.log("deleting Chip");
 		},
 		clearFormData() {
+			this.$store.commit("RESET_ERRORS");
 			console.log("clearFormData this.vendorForm", this.vendorForm);
 			for (let key in this.vendorForm) {
 				console.log("key", this.vendorForm[key]);
@@ -1192,10 +1316,10 @@ export default {
 			//Reset Vendor Variables
 			this.vendorForm.is_vendor = true;
 			this.vendorForm.is_active = true;
-			this.vendorForm.primary_contact_list = [];
-			this.vendorForm.billing_contact_list = [];
-			this.vendorForm.technical_contact_list = [];
-			this.vendorForm.shipping_contact_list = [];
+			this.vendorForm.primary_contacts = [];
+			this.vendorForm.billing_contacts = [];
+			this.vendorForm.technical_contacts = [];
+			this.vendorForm.shipping_contacts = [];
 			//Reset the view
 			this.resetViewtoHome();
 		},
@@ -1225,7 +1349,14 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Users", "VTHPP", "Vendors", "Static", "Locale", "Errors"]),
-		...mapGetters(["getVendors", "getRegionList", "getVendorDepartments", "getVendorPositions"])
+		...mapGetters(["GET_VENDOR_LIST", "GET_VENDOR_LIST_LENGTH", "GET_OWN_VENDOR_PROFILE", "GET_SELECTED_VENDOR_PROFILE"]),
+		...mapGetters(["GET_VENDOR_ERRORS_LIST", "GET_VENDOR_ERROR_HANDLE"]),
+		errorData() {
+			return this.GET_VENDOR_ERRORS_LIST
+		},
+		errorHandle() {
+			return this.GET_VENDOR_ERROR_HANDLE
+		}
 	},
 	async mounted() {
 

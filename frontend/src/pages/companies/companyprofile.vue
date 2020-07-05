@@ -110,7 +110,7 @@
 										</f7-col>
 									</f7-row>
 									<f7-row class="full-width display-flex justify-content-center" v-if="hideCreateItem">
-										<f7-col width="90">
+										<f7-col width="100">
 											<f7-button @click="clearFormData" fill class="bg-color-red">Clear Data</f7-button>
 										</f7-col>
 									</f7-row>
@@ -142,13 +142,13 @@
 					<div>
 						<!-- el2 -->
 						<f7-block class="margin-top-half">
-							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.companyErrorHandle" class="left message is-danger">
+							<f7-row>
+								<article v-if="errorHandle" class="message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
+								</article>
 							</f7-row>
 							<f7-card>
 								<f7-card-content>
@@ -206,9 +206,11 @@
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" v-if="Auth.authLevel <= 2" icon="office-building" class="no-padding">
 									<parent-component
+									ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
 										:parentSettings="parentSettings"
-										:moduleInfo="moduleInfo">
+										:moduleInfo="moduleInfo"
+										:formData="companyForm">
 									</parent-component>
 								</b-tab-item>
 								<!-- END Company Tab -->
@@ -416,22 +418,21 @@
 															style="background: rgb(216,252,253)"
 														>
 														</f7-list-input>
-														<div v-if="Errors.companyErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.companyErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.companyErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div v-show="errorArray[0] === 'legal_name'" class="message-body">
-																		{{ errorArray[1][0] }}
-																	</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'legal_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Company DBA:<span style="color: red;"> *</span></p>
@@ -445,22 +446,21 @@
 															style="background: rgb(216,252,253)"
 														>
 														</f7-list-input>
-														<div v-if="Errors.companyErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.companyErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.companyErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div v-show="errorArray[0] === 'dba_name'" class="message-body">
-																		{{ errorArray[1][0] }}
-																	</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'dba_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 												</f7-row>
 												<f7-row>
@@ -536,7 +536,10 @@
 												<f7-block-title class="full-width" medium>Primary Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="companyForm"
-													:formSettings="primaryContactSettings">
+													:formSettings="primaryContactSettings"
+													@updateLocaleInfo="syncWithMixin"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 											
 												<!-- Type of Company -->
@@ -655,7 +658,7 @@
 													<f7-block class="full-width" v-if="hideUpdateItemButtons">
 														<f7-row class="margin-top">
 															<f7-col width="25">
-																<f7-button fill class="bg-color-red" @click="deleteCompany">Delete</f7-button>
+																<f7-button fill class="bg-color-red" @click="PATCHDeleteProfile">Delete</f7-button>
 															</f7-col>
 															<f7-col width="25">
 																<f7-button fill class="bg-color-blue" @click="updateCompanyPATCH">Update</f7-button>
@@ -744,14 +747,18 @@
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="companyForm"
-													:formSettings="billingContactSettings">
+													:formSettings="billingContactSettings"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 
 												<f7-block-title class="full-width" medium>Primary Shipping Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="companyForm"
 													:formSettings="shippingContactSettings"
-													@updateLocaleInfo="syncWithMixin">
+													@updateLocaleInfo="syncWithMixin"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 
 												<f7-row class="margin-top">
@@ -792,7 +799,10 @@
 
 								<!-- Begin Employees Tab -->
 								<b-tab-item label="Employees" icon="account-group" class="no-padding">
-									<employee-database-component :moduleInfo="moduleInfo"></employee-database-component>
+									<employee-database-component 
+										:moduleInfo="moduleInfo"
+										ref="employeeDatabaseRef">
+									</employee-database-component>
 								</b-tab-item>
 								<!-- END Employees Tab -->
 
@@ -901,13 +911,13 @@
 														<f7-list-item link="#" popover-close title="Clear Checkbox"></f7-list-item>
 														<f7-list-item
 															link="#"
-															@click="editCompanyData"
+															@click="editCompanyForm"
 															popover-close
 															title="Edit Item"
 														></f7-list-item>
 														<f7-list-item
 															link="#"
-															@click="deleteCompany"
+															@click="PATCHDeleteProfile"
 															popover-close
 															title="Delete Item"
 														></f7-list-item>
@@ -1380,7 +1390,7 @@ export default {
 				title: "Partner Details"
 			},
 			moduleInfo: {
-				name: "merchant",
+				name: "Merchant",
 				type: "profile",
 				level: 3
 			},
@@ -1400,7 +1410,8 @@ export default {
 				accountParent: {
 					company_name: null,
 					is_datacom: false,
-					is_partner: false
+					is_partner: false,
+					is_merchant: false,
 				}
 			},
 
@@ -1472,10 +1483,12 @@ export default {
 				domain: null,
 				profile_img: null,
 				barcode: null,
-				primary_contact_list: [],
-				billing_contact_list: [],
-				technical_contact_list: [],
-				shipping_contact_list: [],
+				logo: null,
+				//Arrays
+				primary_contacts: [],
+				billing_contacts: [],
+				technical_contacts: [],
+				shipping_contacts: [],
 				//Common Company Fields
 				id: 0,
 				dba_name: null,
@@ -1538,12 +1551,12 @@ export default {
 	},
 	methods: {
 		testingMethod(e) {
-			console.log("this.companyForm ", this.companyForm);
-			console.log("this.Users.employeeProfile", this.Users.employeeProfile);
-			console.log("this.Auth.userCompanyName ", this.Auth.userCompanyName);
-			console.log("this.Auth.userCompanyParent ", this.Auth.userCompanyParent);
-			console.log("this.Auth.platformInfo ", this.Auth.platformInfo);
-			console.log("this.parentSettings.accountParent", this.parentSettings.accountParent);
+			// console.log("this.companyForm ", this.companyForm);
+			// console.log("this.Users.employeeProfile", this.Users.employeeProfile);
+			console.log("this.GET_COMPANY_ERRORS_LIST", this.GET_COMPANY_ERRORS_LIST);
+			console.log("this.GET_COMPANY_ERROR_HANDLE", this.GET_COMPANY_ERROR_HANDLE);
+
+			
 		},
 		menudropdown(UserID) {
 			console.log("menudropdown UserID", UserID);
@@ -1589,160 +1602,109 @@ export default {
 		},
 		//Create Company and Edit Current Company
 		async createCompanyandEdit() {
-			let createCompanyRes = await this.createCompany();
+			this.$store.commit("RESET_ERRORS");
+			let createCompanyRes = await this.POSTCompany();
 			//Populate Fields with Created Instance
-			this.editCompanyData(createCompanyRes.id);
+			this.editCompanyFormById(createCompanyRes.id);
 			console.log("createCompanyandEdit All Done", createCompanyRes);
 		},
 
 		//Create Company and Clear form for entering a new company
 		async createCompanyandNew() {
-			await this.createCompany();
+			this.$store.commit("RESET_ERRORS");
+			await this.POSTCompany();
 			//Clear Form and Reset to Starting Editing Position
 			console.log("createCompanyandNew All Done");
 			this.newItemButton();
 		},
 		//Create Company and Clear form for Viewing Data
 		async createCompanyandClose() {
-			let createCompanyRes = await this.createCompany();
+			this.$store.commit("RESET_ERRORS");
+			let createCompanyRes = await this.POSTCompany();
 			//Clear Form and Reset to Starting Viewing Position
 			console.log("createCompanyandClose All Done", createCompanyRes);
-			this.clearFormData();
-		},
-		async createCompany() {
-			this.$store.commit("RESET_ERRORS");
-			try {
-				this.$f7.preloader.show();
-				//Dispatch creation method and update Fields with latest Object
-				console.log("createCompany, this.companyForm", this.companyForm);
-				this.companyForm.description = this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML;
-
-				//Get Company ID (from each platform) and add to Company Form
-				console.log("this.companyForm", this.companyForm);
-				var companyOBJ = {};
-				if (this.parentSettings.accountParent.is_datacom) {
-					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
-					console.log("is_datacom companyOBJ", companyOBJ);
-					this.companyForm["datacom"] = companyOBJ.id;
-				} else if (this.parentSettings.accountParent.is_partner) {
-					companyOBJ = this.Partners.partnerList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
-					console.log("is_partner companyOBJ", companyOBJ);
-					this.companyForm["partner"] = companyOBJ.id;
-				} else {
-					this.$f7.preloader.hide();
-					console.log("You must select a Company");
-					response.type = "Create Employee";
-					response.status = 400;
-					this.$store.dispatch("updateNotification", response);
-					return "You must select a Company";
-				}
-
-				//Get Details of the creator
-				var newCompanyForm = await this.setUserPlatformPOST(this.companyForm);
-				console.log("newCompanyForm", newCompanyForm);
-				var companyResponse = await this.$store.dispatch("createCompany", newCompanyForm);
-				console.log("companyResponse", companyResponse);
-
-				return companyResponse;
-			} catch (error) {
-				console.error("Promise Response Error creating Company", error);
+			if(createCompanyRes != undefined) {
+				await this.clearFormData();
+				this.resetViewtoHome();
+			} else {
+				this.$f7.dialog.alert("You had some errors on your submission").open();
 			}
+		},
+		POSTCompany() {
+			return new Promise( async (resolve, reject) => { 
+				try {
+					this.$f7.preloader.show();
+					//Dispatch creation method and update Fields with latest Object
+					console.log("POSTCompany, this.companyForm", this.companyForm);
+					this.companyForm.description = this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML;
+
+					var companyFormCopy = JSON.parse(JSON.stringify(this.companyForm));
+
+					//Get Company ID (from each platform) and add to Company Form
+					
+					//Get Details of the creator
+					//I only want to use setUserPlatformPOST when User cannot change the parent company
+					var newCompanyForm = await this.setUserPlatformPOST(companyFormCopy);
+					console.log("newCompanyForm", newCompanyForm);
+					var companyResponse = await this.$store.dispatch('POSTCompany', newCompanyForm);
+					console.log("companyResponse", companyResponse);
+					this.$f7.preloader.hide();
+
+					return resolve(companyResponse);
+				} catch (error) {
+					console.error("Promise Response Error creating Company", error);
+					return reject(error);
+				}
+			});
+			
 		},
 		refreshCompany() {
 			console.log("this.getCompanyLit", this.getCompanies);
-			this.$store.dispatch("getCompanyList");
+			this.$store.dispatch("GETCompanyList");
 		},
 		// Populate Fields for editing in browser
-		editCompanyData(companyID) {
+		async editCompanyForm() {
+			//I still need to handle the Parent Company Field. I ti snot updating properly
 			this.clearFormData();
-			this.parentSettings.activeTab = 0;
-			this.showEditProfile();
-			//Get User ID and object and map to fields
-			var companyListID = null;
+			this.parentSettings.activeTab = 1;
 			if (this.checkedRows.length != 0) {
-				console.log("this.checkedRows", this.checkedRows);
+				console.log("this.checkedRows != 0", this.checkedRows);
 				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexPos = this.Companies.companyList.findIndex((elem) => {
-					return elem.id === rowID;
-				});
-				console.log("editCompanies findIndexPos", findIndexPos);
-				companyListID = findIndexPos;
-				console.log("IF companyListID", companyListID);
-			} else {
-				var findIndexPos = this.Companies.companyList.findIndex((elem) => {
-					return elem.id === companyID;
-				});
-				companyListID = findIndexPos;
-				console.log("Then companyListID", companyListID);
-			}
-			//Is there a list of companies to lookup?
-			if (this.Companies.companyList.length === 0) {
-				return "There are no items available";
-			}
 
-			if (this.Companies.companyList.length != 0) {
-				console.log("this.Companies.companyListings", this.Companies.companyList);
-				console.log("Then companyListID", companyListID);
-				var companyItem = this.Companies.companyList[companyListID];
-				console.log("editCompanies companyItem", companyItem);
+				var getSelectedCompanyObj = await this.$store.dispatch("GETCompanySelectedProfile", {id: rowID});
+				console.group('getSelectedCompanyObj', getSelectedCompanyObj);
+
 				for (let key in this.companyForm) {
-					this.companyForm[key] = companyItem[key];
+					console.log("key", key);
+					console.log("this.companyForm[key]", this.companyForm[key]);
+					console.log("getSelectedCompanyObj.data[key]", getSelectedCompanyObj[key]);
+					this.companyForm[key] = getSelectedCompanyObj[key];
 				}
 				this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML = this.companyForm.description;
-				this.$store.dispatch("getCompanyEmployees", companyListID);
-			}
+			} 
+			this.showEditProfile();
 		},
-		//Make the PUT request to update datebase instance from updated form Data
-		async updateCompanyPATCH() {
-			var newCompanyForm = await this.setUserPlatformPOST(this.companyForm);
+		async editCompanyFormById(companyID) {
+			console.log("editCompany");
+			this.clearFormData();
+			this.parentSettings.activeTab = 0;
+			//2) Get User ID and object and map to fields from database table
+			var getSelectedCompanyObj = await this.$store.dispatch("GETCompanySelectedProfile", {id: companyID});
+			console.group('getSelectedCompanyObj', getSelectedCompanyObj);
 
-			newCompanyForm.description = this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML;
-			delete newCompanyForm.profile_img;
-			console.log("editCompanies companyForm", newCompanyForm);
-			this.$store.dispatch("updateCompany", newCompanyForm);
-			this.resetViewtoHome();
-		},
-		//Set inventory item to inactive instead of deleting instance
-		async deleteCompany() {
-			// Is item Selected in table?
-			if (this.checkedRows[0].id) {
-				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexID = this.Companies.companyList.findIndex((elem) => {
-					return elem.id == rowID;
-				});
-				console.log("deleteCompany findIndexID", findIndexID);
-				if (this.Companies.companyList.length === 0) {
-					this.$store.commit("updateNotification", "There are no items available");
-				}
-				if (this.Companies.companyList.length != 0) {
-					let companyItem = this.Companies.companyList[findIndexID];
-					console.log("deleteCompany != 0 companyItem", companyItem);
-					for (let key in this.companyForm) {
-						this.companyForm[key] = companyItem[key];
-					}
-					//Set Variables to make account inactive
-					delete this.companyForm.profile_img;
-					this.companyForm.is_active = false;
-					const date = Date.now();
-					const newDate = new Date(date);
-					console.log("newDate", newDate.toISOString());
-					this.companyForm.acct_closure_date = newDate;
-					try {
-						await this.$store.dispatch("deleteCompany", this.companyForm).then((response) => {
-							console.log("response from deleteCompany method", response);
-							this.clearFormData();
-						});
-					} catch (error) {
-						console.error("Promise Response Error", error);
-					}
-				}
-			} else {
-				this.$store.commit("updateNotification", "You must select an item first");
+			for (let key in this.companyForm) {
+				this.companyForm[key] = this.GET_SELECTED_COMPANY_PROFILE[key];
 			}
-			this.resetViewtoHome();
+			this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML = this.companyForm.description;
+			this.showEditProfile();
 		},
-		deleteChip() {
-			console.log("deleting Chip");
+		//Load Company On itnitial render
+		loadCompanyProfile() {
+			for (let key in this.companyForm) {
+				this.companyForm[key] = this.GET_OWN_COMPANY_PROFILE[key];
+			}
+			this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML = this.companyForm.description;
+			this.resetViewtoHome();
 		},
 		clearFormData() {
 			console.log("clearFormData this.companyForm", this.companyForm);
@@ -1758,14 +1720,66 @@ export default {
 			//Reset Vendor Variables
 			this.companyForm.is_merchant = true;
 			this.companyForm.is_active = true;
-			this.companyForm.primary_contact_list = [];
-			this.companyForm.billing_contact_list = [];
-			this.companyForm.technical_contact_list = [];
-			this.companyForm.shipping_contact_list = [];
+			this.companyForm.primary_contacts = [];
+			this.companyForm.	billing_contacts = [];
+			this.companyForm.technical_contacts = [];
+			this.companyForm.shipping_contacts = [];
 			//Reset the view
 			this.resetViewtoHome();
 		},
 
+		//Make the PUT request to update datebase instance from updated form Data
+		async updateCompanyPATCH() {
+			var newCompanyForm = await this.setUserPlatformPOST(this.companyForm);
+
+			newCompanyForm.description = this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML;
+			delete newCompanyForm.profile_img;
+			console.log("editCompanies companyForm", newCompanyForm);
+			this.$store.dispatch("PATCHCompanyProfile", newCompanyForm);
+			this.resetViewtoHome();
+		},
+		//Set inventory item to inactive instead of deleting instance
+		async PATCHDeleteProfile() {
+			// Is item Selected in table?
+			if (this.checkedRows[0].id) {
+				var rowID = this.checkedRows.slice(-1)[0].id;
+				var findIndexID = this.Companies.companyList.findIndex((elem) => {
+					return elem.id == rowID;
+				});
+				console.log("PATCHDeleteProfile findIndexID", findIndexID);
+				if (this.Companies.companyList.length === 0) {
+					this.$store.commit("updateNotification", "There are no items available");
+				}
+				if (this.Companies.companyList.length != 0) {
+					let companyItem = this.Companies.companyList[findIndexID];
+					console.log("PATCHDeleteProfile != 0 companyItem", companyItem);
+					for (let key in this.companyForm) {
+						this.companyForm[key] = companyItem[key];
+					}
+					//Set Variables to make account inactive
+					delete this.companyForm.profile_img;
+					this.companyForm.is_active = false;
+					const date = Date.now();
+					const newDate = new Date(date);
+					console.log("newDate", newDate.toISOString());
+					this.companyForm.acct_closure_date = newDate;
+					try {
+						await this.$store.dispatch("PATCHDeleteProfile", this.companyForm).then((response) => {
+							console.log("response from PATCHDeleteProfile method", response);
+							this.clearFormData();
+						});
+					} catch (error) {
+						console.error("Promise Response Error", error);
+					}
+				}
+			} else {
+				this.$store.commit("updateNotification", "You must select an item first");
+			}
+			this.resetViewtoHome();
+		},
+		deleteChip() {
+			console.log("deleting Chip");
+		},
 
 		syncWithMixin(payload) {
 			console.log("Must emit information from child component to parent");
@@ -1780,7 +1794,7 @@ export default {
 				console.log('this.companyForm', this.companyForm);
 				console.log('this.localeCities', this.localeCities);
 
-				return resolve(payload.primary_state_name);
+				return resolve();
 			});
 		},
 		logout() {
@@ -1791,10 +1805,17 @@ export default {
 	computed: {
 		...mapState(["Auth", "Users", "VTHPP", "Static", "Locale", "Errors"]),
 		...mapState(["Datacom", "Partners", "Companies"]),
-		...mapGetters(["GET_COMPANY_LIST", "GET_DEPARTMENTS_LIST", "GET_POSITIONS_LIST"])
+		...mapGetters(["GET_COMPANY_LIST", "GET_COMPANY_LIST_LENGTH", "GET_OWN_COMPANY_PROFILE", "GET_SELECTED_COMPANY_PROFILE"]),
+		...mapGetters(["GET_COMPANY_ERRORS_LIST", "GET_COMPANY_ERROR_HANDLE"]),
+		errorData() {
+			return this.GET_COMPANY_ERRORS_LIST;
+		},
+		errorHandle() {
+			return this.GET_COMPANY_ERROR_HANDLE;
+		}
 	},
 	async mounted() {
-
+		this.loadCompanyProfile();
 	},
 	on: {}
 };

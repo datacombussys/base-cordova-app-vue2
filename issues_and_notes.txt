@@ -23,7 +23,6 @@ When I create a credit card, The returned object does not include the modified f
 
 I need to start going through the documentation for the pinpad integration.
 
-
 How to submit custom queries to PayCycleRecurrence? -rrule field
 
 The Unique_together variable in Django only makes the fields unique e.g: company and HolidayName. That means that all companies cannot have the same holidayName. 
@@ -31,15 +30,16 @@ But Partners can use the same name. It is between 2 relationships and not 3 or 4
 
 How do I create a stack for the notifications?
 
+I am having issues with the reactivity of Vuex. the state is not updating in the Parent pages (Partner)
+
 I have a questions on Django permissions. When I add a permission to a user, it allows a user to perform that particular funciton. 
 Which means that it was disabled before? How do permissions grant access when access was already accessible?
 
-
-What does this mean:let PROD = process.env.NODE_ENV === 'production';
+let PROD = process.env.NODE_ENV === 'production';
 I have keditor up and running. Need to configure Database. Install Axios? Set up a Store, etc...
 Help me get it setup
 
-INgenico terminals require Windows and .NET
+Ingenico terminals require Windows and .NET
 
 I need to change to uplaod path to Amazon AWS for employees to /employee/name.
 I need to figure out how to delete the files from Amazon AWS using a CRON job. What script do I need to write

@@ -40,7 +40,7 @@ import { mapState } from "vuex";
 import { mapGetters } from 'vuex';
 
 //Components
-import f7DataTableComponent from "@/components/layout-elements/f7-datatable-component.vue";
+import f7DataTableComponent from "@/components/layout-elements/datatables/f7-datatable-component.vue";
 
 export default {
 	name: "receiptDatatableComponent",

@@ -2,7 +2,7 @@
 	<div>
 		<!-- Product Image Upload Sheet -->
 		<f7-sheet
-			class="inventory-image image-sheet"
+			class="edit-profile-image image-sheet"
 			:opened="profileImageSheetOpened"
 			@sheet:closed="profileImageSheetOpened = false"
 		>
@@ -134,7 +134,7 @@
 											large
 											fill
 											sheet-close
-											@click.prevent="sendInventoryFile"
+											@click.prevent="sendFile"
 											>Submit
 										</f7-button>
 									</div>
@@ -157,6 +157,8 @@
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 var moment = require("moment");
+// import axios from "axios";
+import VueAxios from "vue-axios";
 
 //Mixins
 import { UniversalMixins } from "@/mixins/universal-mixins";
@@ -177,6 +179,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+		profileImageSettings: {
+			type: Object,
+			required: true
+		}
 
 	},
 	data() {
@@ -243,75 +249,21 @@ export default {
 				this.uploadMessage = toolarge ? `Too large, Max size is ${MAX_SIZE / 1000}kb` : "Only Images are allowed";
 			}
 		},
-		//Send Profile Image
-		async sendInventoryFile() {
-			console.log("this.invForm", this.invForm);
-			console.log("this.cropped", this.cropped);
-			this.invForm.profile_img = this.cropped;
-			let newForm = await this.stripCompanyObject(this.invForm);
-			console.log("newForm from stripCompanyObject", newForm);
-			//I Need to add header information
-			var token = localStorage.getItem("token");
-			console.log("inventory token", token);
-			try {
-				let response = await axios({
-					method: "put",
-					headers: {
-						"Content-Type": "application/json;charset=UTF-8",
-						"Access-Control-Allow-Origin": "*",
-						Authorization: "Token " + token
-					},
-					url: "/django/inventory/" + newForm.id + "/",
-					data: newForm
-				}).then((response) => {
-					console.log("Django Image PUT response", response);
-					response.type = "Update Inventory Profile Image";
-					this.$store.dispatch("updateNotification", response);
-					this.$store.dispatch("GETInventoryList");
-				});
-				// this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-				this.activeStep = 0;
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-		//Send CustomerFile
-		async sendCustomerFile() {
-			this.customerForm.profile_img = this.cropped;
-			var formdata = this.customerForm.user;
-			console.log("this.customerForm.user", this.customerForm.user);
+
+		sendFile() {
+			this.profileData.profile_img = this.cropped;
+			console.log("this.profileData", this.profileData);
+			var formdata = this.profileData;
+			console.log("formdata", formdata);
+			var endpoint = this.profileImageSettings.url;
+			console.log("endpoint", endpoint);
+			
 
 			try {
-				await axios.patch("/django/users/" + formdata.id + "/", formdata).then((response) => {
-					console.log("Django Image PATCH response", response);
-					this.$store.dispatch("getCustomerList");
-				});
-				this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-		//Send Partner File
-		async sendFile() {
-			this.partnerForm.profile_img = this.cropped;
-			var formdata = this.partnerForm;
-			console.log("this.partnerForm", this.partnerForm);
-
-			try {
-				await axios.put("/django/companies/" + formdata.id + "/", formdata).then((response) => {
-					console.log("Partner Image PUT response", response);
-					this.$store.dispatch("getPartnerList");
-					response.type = "Partner Profile Image";
+				VueAxios.put("/django/" + endpoint + formdata.id + "/", this.profileData).then((response) => {
+					console.log(`${this.profileImageSettings.module} Image PUT response`, response);
+					// this.$store.dispatch("GETPartnerList");
+					response.type = this.profileImageSettings.module + "Profile Image";
 					this.$store.dispatch("updateNotification", response);
 				});
 				// this.uploadMessage = "File has been uploaded";
@@ -320,108 +272,23 @@ export default {
 				this.fileURL = "";
 				this.activeStep = 0;
 			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
+				if(err.response) {
+					this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
+					console.log("Error Uploading", err.response.data.error);
+				} else {
+					this.uploadMessage = `There was an error uploading ${err.data}`;
+					console.log("Error Uploading", err);
+					console.log("Error Uploading", err.response);
+					
+				}
+				// this.$f7.dialog.alert("There was an error uploading the image"),open();
 				console.log("Error Uploading", err);
+				console.log("Error Uploading", err.response);
+				// console.log("Error Uploading", err.data.error);
 				this.error = true;
 			}
 		},
-		//Send Datacom File
-		async sendFile() {
-			this.datacomForm.profile_img = this.cropped;
-			var formdata = this.datacomForm;
-			console.log("this.datacomForm", this.datacomForm);
-			try {
-				await axios.put("/django/companies/" + formdata.id + "/", formdata).then((response) => {
-					console.log("Company Image PUT response", response);
-					this.$store.dispatch("getCompanyList");
-					response.type = "Company Profile Image";
-					this.$store.dispatch("updateNotification", response);
-				});
-				// this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-				this.activeStep = 0;
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-		//Send Employee 
-		async sendFile() {
-			this.employeeForm.profile_img = this.cropped;
-			var formdata = this.employeeForm.user;
-			console.log("this.employeeForm.user", this.employeeForm.user);
-
-			try {
-				this.$store.dispatch("PATCHUser", formdata);
-				// await axios.patch('/django/users/'+ formdata.id + '/', formdata).then(response => {
-				//   console.log("Django Image PATCH response", response);
-				//   response.type = "Update User Profile Image";
-				//   this.$store.dispatch("updateNotification", response);
-				//   this.$store.dispatch('getEmployeeList');
-				// });
-				this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-		//Send Company File
-		async sendFile() {
-			this.companyForm.profile_img = this.cropped;
-			var formdata = this.companyForm;
-			console.log("this.companyForm", this.companyForm);
-
-			try {
-				await axios.put("/django/companies/" + formdata.id + "/", formdata).then((response) => {
-					console.log("Company Image PUT response", response);
-					this.$store.dispatch("getCompanyList");
-					response.type = "Company Profile Image";
-					this.$store.dispatch("updateNotification", response);
-				});
-				// this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-				this.activeStep = 0;
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-		//Send vendor File
-		async sendFile() {
-			this.vendorForm.profile_img = this.cropped;
-			var formdata = this.vendorForm;
-			console.log("this.vendorForm", this.vendorForm);
-
-			try {
-				await axios.put("/django/vendors/" + formdata.id + "/", formdata).then((response) => {
-					console.log("Vendor Image PUT response", response);
-					this.$store.dispatch("getVendorList");
-					response.type = "Vendor Profile Image";
-					this.$store.dispatch("updateNotification", response);
-				});
-				// this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-				this.activeStep = 0;
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-
-
+		
 		//Croppie JS Image Cropper
 		bind() {
 			var $$ = this.Dom7;

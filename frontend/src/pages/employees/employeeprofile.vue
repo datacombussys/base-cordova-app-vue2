@@ -161,25 +161,27 @@
 						<!-- el2 -->
 						<f7-block class="margin-top-half">
 							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.userErrorHandle" class="left message is-danger">
+								<article v-if="Errors.userErrorHandle" class="left message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
-								<div v-if="Errors.userErrorData.length != 0">
-									<div class="full-width" v-for="errorArray in Errors.userErrorData" :key="errorArray.id">
-										<div
-											class="display-flex justify-content-center"
-											:class="`message ${Errors.userErrorHandle ? 'is-danger' : 'is-success'}`"
-										>
-											<div
-												v-show="errorArray[0] === 'non_field_errors'"
-												class="message-body"
-											>{{ errorArray[1][0] }}</div>
-										</div>
+								</article>
+								<!-- Error Handling -->
+							<f7-row 
+								v-for="errorArray in errorData" 
+								:key="errorArray.id">	
+								<article
+									v-if="errorArray[0] === 'non_field_errors'"
+									class="has-background-white margin-top-half"
+									:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+									<div 
+										class="message-body">
+										{{ errorArray[1][0] }}
 									</div>
-								</div>
+								</article>
+							</f7-row>
+							<!-- END Error Handling -->
 							</f7-row>
 							<f7-card>
 								<f7-card-content>
@@ -234,9 +236,11 @@
 								<!-- Begin Parent Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 									<parent-component
+										ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
 										:parentSettings="parentSettings"
-										:moduleInfo="moduleInfo">
+										:moduleInfo="moduleInfo"
+										:formData="employeeForm">
 									</parent-component>
 								</b-tab-item>
 								<!-- END Parent Company Tab -->
@@ -348,23 +352,21 @@
 															@change="requiredFieldsDone += 1"
 															type="text"
 														></f7-list-input>
-														<div v-if="Errors.userErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.userErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.userErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div
-																		v-show="errorArray[0] === 'first_name'"
-																		class="message-body"
-																	>{{ errorArray[1][0] }}</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'first_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">
@@ -382,23 +384,21 @@
 															@change="requiredFieldsDone += 1"
 															type="text"
 														></f7-list-input>
-														<div v-if="Errors.userErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.userErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.userErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div
-																		v-show="errorArray[0] === 'last_name'"
-																		class="message-body"
-																	>{{ errorArray[1][0] }}</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'last_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 												</f7-row>
 												<f7-row>
@@ -550,143 +550,16 @@
 														<f7-text-editor ref="userBio" style="background: rgb(216,252,253)" />
 													</f7-col>
 												</f7-row>
+											</f7-list>
 
-												<f7-row>
-													<f7-block-title class="full-width" medium>Login Information</f7-block-title>
-													<f7-row>
-														<f7-col>
-															<p>Password requirements: 1 Alpha, 1 Numeric, 1 Special Character, Minimum 6 characters.</p>
-														</f7-col>
-													</f7-row>
-													<f7-row v-if="showPasswordRest" class="full-width no-margin-top">
-														<f7-col>
-															<f7-button fill>Password Reset</f7-button>
-														</f7-col>
-													</f7-row>
-													<f7-row v-if="!showPasswordRest" class="margin-top">
-														<f7-col width="50">
-															<p class="field-title">
-																Email:
-																<span style="color: red;">*</span>
-															</p>
-															<f7-list-input
-																validate
-																required
-																error-message="Email is required"
-																:value="employeeForm.user.email"
-																@input="employeeForm.user.email = $event.target.value"
-																@change="requiredFieldsDone += 1"
-																type="email"
-																style="background: rgb(216,252,253)"
-															></f7-list-input>
-															<div v-if="Errors.userErrorData.length != 0">
-																<div
-																	class="full-width"
-																	v-for="errorArray in Errors.userErrorData"
-																	:key="errorArray.id"
-																>
-																	<div
-																		class="display-flex justify-content-center"
-																		:class="`message ${Errors.userErrorHandle ? 'is-danger' : 'is-success'}`"
-																	>
-																		<div
-																			v-show="errorArray[0] === 'email'"
-																			class="message-body"
-																		>{{ errorArray[1][0] }}</div>
-																	</div>
-																</div>
-															</div>
-														</f7-col>
-														<f7-col width="50">
-															<p class="field-title">
-																PIN:
-																<span style="color: red;">*</span>
-															</p>
-															<f7-list-input
-																validate
-																required
-																pattern="[0-9]{1,4}"
-																error-message="4-Digit Numerical PIN is required"
-																:value="employeeForm.user.pin"
-																@input="employeeForm.user.pin = $event.target.value"
-																@change="requiredFieldsDone += 1"
-																type="password"
-																style="background: rgb(216,252,253)"
-															></f7-list-input>
-															<div v-if="Errors.userErrorData.length != 0">
-																<div
-																	class="full-width"
-																	v-for="errorArray in Errors.userErrorData"
-																	:key="errorArray.id"
-																>
-																	<div
-																		class="display-flex justify-content-center"
-																		:class="`message ${Errors.userErrorHandle ? 'is-danger' : 'is-success'}`"
-																	>
-																		<div v-show="errorArray[0] === 'pin'" class="message-body">{{ errorArray[1][0] }}</div>
-																	</div>
-																</div>
-															</div>
-														</f7-col>
-														<f7-col width="50">
-															<p class="field-title">
-																Password:
-																<span style="color: red;">*</span>
-															</p>
-															<f7-list-input
-																validate
-																required
-																error-message="Password is required"
-																:value="employeeForm.user.password"
-																@input="employeeForm.user.password = $event.target.value"
-																@change="requiredFieldsDone += 1"
-																type="password"
-																style="background: rgb(216,252,253)"
-															></f7-list-input>
-															<div v-if="Errors.userErrorData.length != 0">
-																<div
-																	class="full-width"
-																	v-for="errorArray in Errors.userErrorData"
-																	:key="errorArray.id"
-																>
-																	<div
-																		class="display-flex justify-content-center"
-																		:class="`message ${Errors.userErrorHandle ? 'is-danger' : 'is-success'}`"
-																	>
-																		<div
-																			v-show="errorArray[0] === 'password'"
-																			class="message-body"
-																		>{{ errorArray[1][0] }}</div>
-																	</div>
-																</div>
-															</div>
-														</f7-col>
-														<f7-col width="50">
-															<p class="field-title">
-																Verify PW:
-																<span style="color: red;">*</span>
-															</p>
-															<f7-list-input
-																validate
-																required
-																error-message="You must verify password"
-																:value="employeeForm.user.verify_pw"
-																@input="employeeForm.user.verify_pw = $event.target.value"
-																@change="requiredFieldsDone += 1"
-																type="password"
-																style="background: rgb(216,252,253)"
-															></f7-list-input>
-														</f7-col>
-													</f7-row>
-													<!-- Password Error Handling-->
-													<div
-														class="left full-width"
-														v-if="computedPasswords"
-														:class="`message ${computedPasswords ? 'is-danger' : 'is-success'}`"
-													>
-														<div class="message-body full-width no padding">{{ computedPasswords }}</div>
-													</div>
-												</f7-row>
+												<set-password-component 
+													:parentSettings="parentSettings"
+													:loginForm="employeeForm"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
+												</set-password-component>
+
+											<f7-list simple-list v-show="parentSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Business Unit</f7-block-title>
 													<f7-col width="50">
@@ -738,9 +611,9 @@
 												</f7-row>
 
 												<!-- Delete / Update Buttons-->
-												<f7-row class="full-width margin padding">
+												<f7-row>
 													<f7-block class="full-width" v-if="hideUpdateUserButtons">
-														<f7-row class="margin-top">
+														<f7-row class="margin">
 															<f7-col width="25">
 																<f7-button fill class="bg-color-red" @click="deleteEmployee">Delete</f7-button>
 															</f7-col>
@@ -749,16 +622,16 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width margin padding" v-if="!parentSettings.hideSaveItem">
-														<f7-row class="margin-top level-right">
+													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+														<f7-row class="margin level-right">
 															<f7-col width="25">
-																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="parentSettings.activeTab = 3" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
 												</f7-row>
 											</f7-list>
-											<!-- END profile Edit List -->
+											<!-- END Profile Edit List -->
 										</f7-card-content>
 									</f7-card>
 								</b-tab-item>
@@ -1099,7 +972,7 @@
 												<!-- Delete / Update -->
 												<f7-row>
 													<f7-block class="full-width" v-if="hideUpdateUserButtons">
-														<f7-row class="margin-top">
+														<f7-row class="margin">
 															<f7-col width="25">
 																<f7-button fill class="bg-color-red" @click="deleteEmployee">Delete</f7-button>
 															</f7-col>
@@ -1109,7 +982,7 @@
 														</f7-row>
 													</f7-block>
 													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
-														<f7-row class="margin-top level-right">
+														<f7-row class="margin level-right">
 															<f7-col width="25">
 																<f7-button fill @click="parentSettings.activeTab = 3" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
@@ -1768,6 +1641,7 @@ import invoiceDatatableComponent from '@/components/financial/invoice-datatable-
 import f7DatePickerComponent from '@/components/layout-elements/date-and-time/f7-datepicker-component.vue';
 import positionsComponent from "@/components/business/positions-component.vue";
 import timeOffRequestFormComponent from '@/components/layout-elements/notifications/time-off-request-form-component.vue';
+import setPasswordComponent from "../../components/universal/logging-in/set-password-component.vue";
 
 export default {
 	name: "employeeProfile",
@@ -1783,7 +1657,8 @@ export default {
 		"f7-date-picker-component": f7DatePickerComponent,
 		//Popups
 		"positions-popup-component": positionsComponent,
-		"time-off-request-form-component": timeOffRequestFormComponent
+		"time-off-request-form-component": timeOffRequestFormComponent,
+		"set-password-component": setPasswordComponent
 	},
 	data() {
 		return {
@@ -1806,6 +1681,7 @@ export default {
 				ref: "hireCalendarDate"
 			},
 			parentSettings: {
+				showPasswordReset: false,
 				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
@@ -1818,10 +1694,6 @@ export default {
 				},
 			},
 
-			//Error Handling
-			showPasswordRest: false,
-			passwordMessage: "",
-			error: false,
 			//Scrollbar Settings
 			settings: {
 				maxScrollbarLength: 60
@@ -1973,6 +1845,7 @@ export default {
 			this.hideUpdateUserButtons = !this.hideUpdateUserButtons;
 			this.hideCreateUser = !this.hideCreateUser;
 			this.parentSettings.hideSaveItem = true;
+			this.parentSettings.showPasswordReset = !this.parentSettings.showPasswordReset;
 		},
 		async newUserButton() {
 			//Show/Hide Edit Fields and buttons
@@ -1984,7 +1857,7 @@ export default {
 			this.hideCreateUser = true;
 			this.parentSettings.hideSaveItem = false;
 			this.parentSettings.activeTab = 0;
-			this.showPasswordRest = false;
+			this.parentSettings.showPasswordReset = false;
 		},
 		async clearandResetButton() {
 			await this.clearUserFormData();
@@ -2006,7 +1879,7 @@ export default {
 		async createUserandNew() {
 			console.log("createUserandNew");
 			//invoke the create user and create employee function
-			let createUserRes = await this.createEmployee();
+			let createUserRes = await this.POSTEmployee();
 			console.log("createUserRes", createUserRes);
 			//Populate Fields with Created Instance
 			this.resetViewtoHome();
@@ -2016,7 +1889,7 @@ export default {
 		async createUserandEdit() {
 			console.log("createUserandEdit");
 			//invoke the create user and create employee function
-			let createEmployeeRes = await this.createEmployee();
+			let createEmployeeRes = await this.POSTEmployee();
 			console.log("createEmployeeRes", createEmployeeRes);
 			await this.clearUserFormData();
 			//Populate Fields with Created Instance
@@ -2027,14 +1900,18 @@ export default {
 		async createUserandClose() {
 			console.log("createUserandClose");
 			//invoke the create user and create employee function
-			let response = await this.createEmployee();
+			let response = await this.POSTEmployee();
 			console.log("createUserandClose response", response);
-			this.resetViewtoHome();
-			//Load current users data next
+			if(response != undefined) {
+				await this.clearFormData();
+				this.resetViewtoHome();
+			} else {
+				this.$f7.dialog.alert("You had some errors on your submission").open();
+			}
 			console.log("createUserandClose All Done");
 		},
 
-		createEmployee() {
+		POSTEmployee() {
 			return new Promise(async (resolve, reject) => {
 				var newUserForm = {};
 				this.$f7.preloader.show();
@@ -2042,7 +1919,7 @@ export default {
 				this.employeeForm.user.bio = this.$refs.userBio.f7TextEditor.contentEl.innerHTML;
 
 				console.log("Create User this.employeeForm.user", this.employeeForm.user);
-				let response = await this.$store.dispatch("createUser", this.employeeForm.user);
+				let response = await this.$store.dispatch("POSTUser", this.employeeForm.user);
 				console.log("response: ", response);
 				this.employeeForm.user.barcode = {};
 
@@ -2095,7 +1972,7 @@ export default {
 				}
 
 				console.log("this.employeeForm", this.employeeForm);
-				let eeResponse = await this.$store.dispatch("createEmployee", this.employeeForm);
+				let eeResponse = await this.$store.dispatch("POSTEmployee", this.employeeForm);
 				console.log("Create Employee Promise eeResponse", eeResponse);
 
 				if (eeResponse.status === 200 || eeResponse.status === 201) {
@@ -2114,7 +1991,7 @@ export default {
 							}
 							console.log('eeObj', eeObj);
 							
-							this.$store.dispatch("PATCHSalesOffice", eeObj);
+							this.$store.dispatch("PATCHSalesOfficeProfile", eeObj);
 						}
 					}
 					
@@ -2136,12 +2013,12 @@ export default {
 			});
 		},
 		refreshEmployees() {
-			this.$store.dispatch("getEmployeeList");
+			this.$store.dispatch("GETEmployeeList");
 		},
 		// Populate Fields for editing in browser
 		async showUserData(employeeID) {
 			console.log("showUserData employeeID", employeeID);
-			this.showPasswordRest = true;
+			this.parentSettings.showPasswordReset = true;
 			this.parentSettings.activeTab = 0;
 			//Get User ID and object and map to fields
 			var emloyeeListID = null;
@@ -2203,11 +2080,11 @@ export default {
 			this.employeeForm.user.bio = this.$refs.userBio.f7TextEditor.contentEl.innerHTML;
 
 			try {
-				await this.$store.dispatch("PATCHUser", this.employeeForm.user).then((response) => {
+				await this.$store.dispatch("PATCHEmployeeProfile", this.employeeForm.user).then((response) => {
 					console.log("PATCH User Repsonse Update User", response);
 				});
 				delete this.employeeForm.user;
-				await this.$store.dispatch("PATCHEmployee", this.employeeForm).then((response) => {
+				await this.$store.dispatch("PATCHEmployeeProfile", this.employeeForm).then((response) => {
 					console.log("PATCH User Repsonse Update Employee", response);
 				});
 			} catch (error) {
@@ -2215,6 +2092,7 @@ export default {
 			}
 		},
 		clearUserFormData() {
+			this.$store.commit("RESET_ERRORS");
 			return new Promise((resolve, reject) => {
 				try {
 					console.log("clearUserFormData this.employeeForm", this.employeeForm);
@@ -2352,15 +2230,18 @@ export default {
 		...mapState(["Users", "Companies", "Datacom", "Partners", "Vendors"]),
 		...mapGetters(["GET_USER_LIST", "GET_COUNTRY_LIST", "GET_STATE_LIST", "GET_CITY_LIST", 
 									"GET_POSITIONS_LIST", "GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST", "GET_SALES_OFFICE_EMPLOYEE_IDS"]),
-		computedPasswords: {
-			get() {
-				console.log("this.passwordMessage", this.passwordMessage);
-				if (this.employeeForm.user.password != this.employeeForm.user.verify_pw) {
-					return "The passwords do not match";
-				} else {
-					return;
-				}
-			},
+		...mapGetters(["GET_USER_ERRORS_LIST", "GET_USER_ERROR_HANDLE", "GET_EMPLOYEE_ERRORS_LIST", "GET_EMPLOYEE_ERROR_HANDLE"]),
+		errorData() {
+			return this.GET_USER_ERRORS_LIST
+		},
+		errorHandle() {
+			return this.GET_USER_ERROR_HANDLE
+		},
+		errorEmployeeData() {
+			return this.GET_EMPLOYEE_ERRORS_LIST
+		},
+		errorEmployeeHandle() {
+			return this.GET_EMPLOYEE_ERROR_HANDLE
 		},
 		computedDates: {
 			get() {

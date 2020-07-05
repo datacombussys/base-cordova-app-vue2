@@ -26,7 +26,7 @@
                   </f7-col>
                   <f7-col width="50">
                     <p class="field-title">All Positions</p>
-                    <div class="full-width display-flex justify-content-space-around" v-for="(position, index) in Companies.positionList" :key="index">
+                    <div class="full-width display-flex justify-content-space-around" v-for="(position, index) in GET_POSITIONS_LIST" :key="index">
                       <div class="margin-half full-width"> {{position.name}}</div>
                       <div class="delete" @click="deletePosition(position.name)"></div>
                     </div>
@@ -103,14 +103,14 @@ export default {
     deletePosition(name) {
       console.log("deletingPosition name", name);
       //Find Position form store and send that ID value
-      var positonObj = this.Companies.positionList.find(elem => elem.name === name);
+      var positonObj = this.GET_POSITIONS_LIST.find(elem => elem.name === name);
       console.log("positonObj", positonObj);
       this.$store.dispatch('deletePosition', positonObj.id);
     },
   },
   computed: {
     ...mapState(["Common", "Locale", "Companies", "Auth"]),
-    // ...mapGetters([]),
+    ...mapGetters(["GET_POSITIONS_LIST"]),
   },
   created() {
 

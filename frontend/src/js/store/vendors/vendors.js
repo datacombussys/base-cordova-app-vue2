@@ -1,125 +1,111 @@
 import axios from "axios";
 import { f7 } from 'framework7-vue';
 
+import apiRoutes from '@/js/api-routes';
+
 
 export const Vendors = {
   namespace: true,
   name: "vendors",
   state: {
     vendorList: [],
-    vendorProfile: {}
+    vendorProfile: {},
+    selectedVendorProfile: {},
   },
   mutations: {
     SET_VENDOR_LIST(state, payload) {
       state.vendorList = payload;
     },
     PUSH_NEW_VENDOR(state, payload) {
+      state.vendorList.push(payload);
+    },
+    SET_OWN_VENDOR_PROFILE(state, payload) {
       state.vendorProfile = payload;
-    }
+    },
+    SET_SELECTED_VENDOR_PROFILE(state, payload) {
+      state.selectedVendorProfile = payload;
+    },
+    UPDATE_VENDOR_PROFILE() {
+      console.log('payload', payload);
+      let listIndex = state.vendorList.findIndex(elem => elem.id === payload.id);
+      state.vendorList.slice(listIndex, 1);
+      state.vendorList.splice(listIndex, 1, payload);
+      console.log('state.vendorList', state.vendorList);
+    },
+    PATCH_DELETE_VENDOR_PROFILE(state, payload) {
+      console.log('payload', payload);
+      let listIndex = state.vendorList.findIndex(elem => elem.id === payload.id);
+      state.vendorList.slice(listIndex, 1);
+      console.log('state.vendorList', state.vendorList);
+    },
+
   },
   actions: {
     //Create Methods
-    addVendor({ dispatch, commit }, form) {
-      return new Promise((resolve, reject) => {
-        console.log("createCompany form in Store", form);
-        axios.post("/django/vendors/", form).then(response => {
-          console.log("Django Company response data", response);
-          if (response.status === 201) {
-            response.type = "Create Vendor";
-            commit('PUSH_NEW_VENDOR', response.data);
-            dispatch('updateNotification', response);
-
-            return resolve(response.data)
-          }
-        }).catch(error => {
-          error.response.type = "Create Vendor";
-          dispatch('updateNotification', error.response);
-          return resolve(error);
-        });
-      }).catch(error => {
-
-        return error;
+    async POSTVendor({commit, dispatch, rootState}, payload) {
+      let endpoint = 'vendor/';
+      let type = 'Create New Vendor';
+      let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+      console.log('POSTVendor response', response);
+      commit('PUSH_NEW_VENDOR', response);
+    },
+    //GET Vendor LIST
+    async GETVendorList({commit, dispatch, rootState}, payload) {
+      let endpoint = 'vendor-list/';
+      let type = 'Get Vendor List';
+      let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+      console.log('GETVendorList response', response);
+      commit('SET_VENDOR_LIST', response.data);
+    },
+    //GET Own Vendor Profile
+    async GETVendorOwnProfile({commit, dispatch, rootState}, payload) {
+      let endpoint = 'vendor/';
+      let type = 'Get Vendor Profile';
+      let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+      console.log('GETVendorOwnProfile response', response);
+      commit('SET_OWN_VENDOR_PROFILE', response.data);
+    },
+    //GET Selected Profile
+    async GETVendorSelectedProfile({commit, dispatch, rootState}, payload) {
+      return new Promise( async (resolve, reject) => {
+        let endpoint = 'vendor/';
+        let type = 'Get Vendor Profile';
+        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+        console.log('GETVendorSelectedProfile response', response);
+        commit('SET_SELECTED_VENDOR_PROFILE', response.data);
+        return resolve(response.data);
       });
     },
-    //GET and LIST Methods
-    getVendorList({ commit, dispatch, rootState }, payload) {
-      return new Promise((resolve, reject) => {
-        if (!rootState.Auth.isAuthenticated) {
-          let error = {};
-          error.type = "Login Required";
-          error.status = 2000;
-          dispatch('updateNotification', error);
-          return reject(error);
-        }
-        console.log("getVendorList", payload);
-        var url = "";
-        if (payload != undefined) {
-          url = payload.url;
-        }
-        axios.get("/django/vendors/" + url, rootState.Auth.axiosHeader).then(response => {
-          // console.log("Django Company List", response);
-          if (response.status === 200) {
-            response.type = "Retrieve Vendor List";
-            commit('SET_VENDOR_LIST', response.data);
-            // dispatch('updateNotification', response);
-            return resolve(response.data);
-          }
-        }).catch(error => {
-          if (error.response) {
-            error.type = "Retrieve Vendor List";
-            error.response.status = 500;
-            dispatch('updateNotification', error.response);
-            return resolve(error);
-          }
-        });
-      }).catch(error => {
-        return error;
-      });
+    //PATCH Profile
+    async PATCHVendorProfile({commit, dispatch, rootState}, payload) {
+      let endpoint = 'vendor/';
+      let type = 'Update Vendor Profile';
+      let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+      console.log('PATCHVendorProfile response', response);
+      commit('UPDATE_VENDOR_PROFILE', response.data);
     },
-    //Update Methods Need to finish
-    updateVendor({ dispatch, commit }, form) {
-      console.log("updateVendorItem form", form);
-      axios.patch("/django/vendors/" + form.id + "/", form).then(response => {
-        console.log("Django Update Vendor Item", response);
-        if (response.status === 202) {
-          dispatch('getVendorList');
-          response.type = "Update Vendor";
-          dispatch('updateNotification', response);
-        }
-      }).catch(error => {
-        if (error.response) {
-          error.type = "Update Vendor";
-          dispatch('updateNotification', error.response);
-        }
-      })
+    //PATCHDelete PROFILE
+    async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+      let endpoint = 'vendor/';
+      let type = 'Delete Vendor Profile';
+      let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+      console.log('PATCHVendorProfile response', response);
+      commit('PATCH_DELETE_VENDOR_PROFILE', payload);
     },
-    //Delete Methods Need to finish
-    deleteVendor({ dispatch, commit }, payload) {
-      return new Promise((resolve, reject) => {
-        console.log("Make Vendor Inactive:", payload);
-        axios.patch("/django/vendors/" + payload.id + "/", payload).then(response => {
-          console.log("Delete Django Company", response);
-          if (response.status === 200) {
-            dispatch('getVendorList');
-            response.type = "Delete Vendor";
-            dispatch('updateNotification', response);
-
-            return resolve(response.data)
-          }
-        }).catch(error => {
-          error.type = "Delete Vendor";
-          dispatch('updateNotification', error.response);
-
-          return resolve(error);
-
-        });
-      }).catch(error => {
-        return error;
-      });
-    }
 
   },
   getters: {
-
+    GET_VENDOR_LIST(state) {
+			return state.vendorList;
+    },
+    GET_VENDOR_LIST_LENGTH(state) {
+			return state.vendorList.length;
+    },
+    GET_OWN_VENDOR_PROFILE(state) {
+      return state.vendorProfile;
+    },
+    GET_SELECTED_VENDOR_PROFILE(state) {
+      return state.selectedVendorProfile;
+    }
   }
 };

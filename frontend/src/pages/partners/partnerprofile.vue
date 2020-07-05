@@ -112,7 +112,7 @@
 										</f7-col>
 									</f7-row>
 									<f7-row class="full-width display-flex justify-content-center" v-if="hideCreateItem">
-										<f7-col width="90">
+										<f7-col width="100">
 											<f7-button @click="clearFormData" fill class="bg-color-red">Clear Data</f7-button>
 										</f7-col>
 									</f7-row>
@@ -120,7 +120,7 @@
 							</f7-card>
 
 							<f7-col class="no-margin no-padding">
-								<f7-button @click="testingMethod" fill class="bg-color-orange">test</f7-button>
+								<f7-button @click="testingFunction" fill class="bg-color-orange">test</f7-button>
 							</f7-col>
 							<f7-block class="margin padding"></f7-block>
 						</f7-block>
@@ -144,14 +144,29 @@
 					<div>
 						<!-- el2 -->
 						<f7-block class="margin-top-half">
-							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.partnerErrorHandle" class="left message is-danger">
+							<f7-row>
+								<article v-if="errorHandle" class="message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
+								</article>
 							</f7-row>
+							<!-- Error Handling -->
+							<f7-row 
+								v-for="errorArray in errorData" 
+								:key="errorArray.id">	
+								<article
+									v-if="errorArray[0] === 'non_field_errors'"
+									class="has-background-white margin-top-half"
+									:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+									<div 
+										class="message-body">
+										{{ errorArray[1][0] }}
+									</div>
+								</article>
+							</f7-row>
+							<!-- END Error Handling -->
 							<f7-card>
 								<f7-card-content>
 									<f7-block-title medium class="no-margin-top">Dashboard</f7-block-title>
@@ -208,9 +223,11 @@
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" v-if="Auth.authLevel === 1" icon="office-building" class="no-padding">
 									<parent-component
+										ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
 										:parentSettings="parentSettings"
-										:moduleInfo="moduleInfo">
+										:moduleInfo="moduleInfo"
+										:formData="partnerForm">
 									</parent-component>
 								</b-tab-item>
 								<!-- END Company Tab -->
@@ -425,22 +442,21 @@
 															style="background: rgb(216,252,253)"
 														>
 														</f7-list-input>
-														<div v-if="Errors.partnerErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.partnerErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.partnerErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div v-show="errorArray[0] === 'legal_name'" class="message-body">
-																		{{ errorArray[1][0] }}
-																	</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'legal_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Partner DBA:<span style="color: red;"> *</span></p>
@@ -454,22 +470,21 @@
 															style="background: rgb(216,252,253)"
 														>
 														</f7-list-input>
-														<div v-if="Errors.partnerErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.partnerErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.partnerErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div v-show="errorArray[0] === 'dba_name'" class="message-body">
-																		{{ errorArray[1][0] }}
-																	</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'dba_name'"
+																class="has-background-white no-margin-top"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 												</f7-row>
 												<f7-row>
@@ -546,7 +561,9 @@
 												<business-contact-form-component 
 													:contactForm="partnerForm"
 													:formSettings="primaryContactSettings"
-													@updateLocaleInfo="syncWithMixin">
+													@updateLocaleInfo="syncWithMixin"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 											
 												<!-- Type of Partner -->
@@ -638,6 +655,21 @@
 															type="text"
 															style="background: rgb(216,252,253)"
 														></f7-list-input>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'domain'"
+																class="has-background-white no-margin-top"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
+																</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Website:</p>
@@ -666,7 +698,7 @@
 													<f7-block class="full-width" v-if="hideUpdateItemButtons">
 														<f7-row class="margin-top">
 															<f7-col width="25">
-																<f7-button fill class="bg-color-red" @click="deletePartner">Delete</f7-button>
+																<f7-button fill class="bg-color-red" @click="PATCHDeleteProfile">Delete</f7-button>
 															</f7-col>
 															<f7-col width="25">
 																<f7-button fill class="bg-color-blue" @click="updatePartnerPATCH">Update</f7-button>
@@ -706,27 +738,55 @@
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
 											<f7-list v-show="!parentSettings.editProfile">
-												<f7-row>
+											<f7-row>
 													<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<f7-col width="50">
 														<p class="field-title">First Name:</p>
 														<f7-list-item :title="partnerForm.billing_first_name"></f7-list-item>
-														<p class="field-title">Phone:</p>
-														<f7-list-item :title="partnerForm.billing_phone"></f7-list-item>
-														<p class="field-title">Street Address:</p>
-														<f7-list-item :title="partnerForm.billing_address"></f7-list-item>
-														<p class="field-title">City:</p>
-														<f7-list-item :title="partnerForm.billing_city"></f7-list-item>
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Last Name:</p>
 														<f7-list-item :title="partnerForm.billing_last_name"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
+														<p class="field-title">Phone:</p>
+														<f7-list-item :title="partnerForm.billing_phone"></f7-list-item>
+													</f7-col>
+													<f7-col width="50">
 														<p class="field-title">Fax:</p>
 														<f7-list-item :title="partnerForm.billing_fax"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="partnerForm.billing_mailing_country"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">State:</p>
-														<f7-list-item :title="partnerForm.billing_state"></f7-list-item>
+														<f7-list-item :title="partnerForm.billing_mailing_state"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">City:</p>
+														<f7-list-item :title="partnerForm.billing_mailing_city"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="partnerForm.billing_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">Zip:</p>
-														<f7-list-item :title="partnerForm.billing_zip"></f7-list-item>
+														<f7-list-item :title="partnerForm.billing_mailing_zip"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
+														<p class="field-title">Email:</p>
+														<f7-list-item :title="partnerForm.billing_email"></f7-list-item>
 													</f7-col>
 												</f7-row>
 
@@ -735,22 +795,50 @@
 													<f7-col width="50">
 														<p class="field-title">First Name:</p>
 														<f7-list-item :title="partnerForm.shipping_first_name"></f7-list-item>
-														<p class="field-title">Phone:</p>
-														<f7-list-item :title="partnerForm.shipping_phone"></f7-list-item>
-														<p class="field-title">Street Address:</p>
-														<f7-list-item :title="partnerForm.shipping_address"></f7-list-item>
-														<p class="field-title">City:</p>
-														<f7-list-item :title="partnerForm.shipping_city"></f7-list-item>
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Last Name:</p>
 														<f7-list-item :title="partnerForm.shipping_last_name"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
+														<p class="field-title">Phone:</p>
+														<f7-list-item :title="partnerForm.shipping_phone"></f7-list-item>
+													</f7-col>
+													<f7-col width="50">
 														<p class="field-title">Fax:</p>
 														<f7-list-item :title="partnerForm.shipping_fax"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="30">
+														<p class="field-title">Country:</p>
+														<f7-list-item :title="partnerForm.shipping_mailing_country"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">State:</p>
-														<f7-list-item :title="partnerForm.shipping_state"></f7-list-item>
+														<f7-list-item :title="partnerForm.shipping_mailing_state"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
+														<p class="field-title">City:</p>
+														<f7-list-item :title="partnerForm.shipping_mailing_city"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="70">
+														<p class="field-title">Address:</p>
+														<f7-list-item :title="partnerForm.shipping_mailing_address"></f7-list-item>
+													</f7-col>
+													<f7-col width="30">
 														<p class="field-title">Zip:</p>
-														<f7-list-item :title="partnerForm.shipping_zip"></f7-list-item>
+														<f7-list-item :title="partnerForm.shipping_mailing_zip"></f7-list-item>
+													</f7-col>
+												</f7-row>
+												<f7-row>
+													<f7-col width="50">
+														<p class="field-title">Email:</p>
+														<f7-list-item :title="partnerForm.shipping_email"></f7-list-item>
 													</f7-col>
 												</f7-row>
 											</f7-list>
@@ -760,13 +848,17 @@
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="partnerForm"
-													:formSettings="billingContactSettings">
+													:formSettings="billingContactSettings"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 
 												<f7-block-title class="full-width" medium>Primary Shipping Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="partnerForm"
-													:formSettings="shippingContactSettings">
+													:formSettings="shippingContactSettings"
+													:errorData="errorData"
+													:errorHandle="errorHandle">
 												</business-contact-form-component>
 												
 												<f7-row class="margin-top">
@@ -782,7 +874,7 @@
 													</f7-block>
 													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="full-width">
-															<f7-col width="100" class="display-flex margin">
+															<f7-col width="50" class="display-flex margin">
 																<f7-button fill @click="createPartnerandClose" class="bg-color-green trans-btn-left"
 																	><span>Save Partner</span></f7-button
 																>
@@ -832,7 +924,10 @@
 
 								<!-- Begin Employees Tab -->
 								<b-tab-item label="Employees" icon="account-group" class="no-padding">
-									<employee-database-component :moduleInfo="moduleInfo"></employee-database-component>
+									<employee-database-component 
+										ref="employeeDatabaseRef"
+										:moduleInfo="moduleInfo">
+									</employee-database-component>
 								</b-tab-item>
 								<!-- END Employees Tab -->
 
@@ -941,13 +1036,13 @@
 														<f7-list-item link="#" popover-close title="Clear Checkbox"></f7-list-item>
 														<f7-list-item
 															link="#"
-															@click="editPartnerData"
+															@click="editPartnerForm"
 															popover-close
 															title="Edit Item"
 														></f7-list-item>
 														<f7-list-item
 															link="#"
-															@click="deletePartner"
+															@click="PATCHDeleteProfile"
 															popover-close
 															title="Delete Item"
 														></f7-list-item>
@@ -957,7 +1052,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Database Section -->
-											<f7-row v-if="Partners.partnerList.length === 0">
+											<f7-row v-if="GET_PARTNER_LIST.length === 0">
 												<f7-col>
 													<p class="text-align-center">There are no companies to display.</p>
 													<p class="text-align-center">Please create a new partner.</p>
@@ -970,9 +1065,9 @@
 													</f7-row>
 												</f7-col>
 											</f7-row>
-											<f7-row v-if="Partners.partnerList.length != 0">
+											<f7-row v-if="GET_PARTNER_LIST.length != 0">
 												<b-table
-													:data="Partners.partnerList"
+													:data="GET_PARTNER_LIST"
 													:paginated="isPaginated"
 													:per-page="perPage"
 													:current-page.sync="currentPage"
@@ -1420,7 +1515,7 @@ export default {
 				title: "Partner Details"
 			},
 			moduleInfo: {
-				name: "partner",
+				name: "Partner",
 				type: "profile",
 				level: 2
 			},
@@ -1439,7 +1534,9 @@ export default {
 				hideSaveItem: true,
 				accountParent: {
 					company_name: null,
-					is_datacom: false
+					is_datacom: false,
+					is_partner: false,
+					is_merchant: false
 				}
 			},
 			//Popups and Modals
@@ -1510,10 +1607,12 @@ export default {
 				products_sold: null,
 				profile_img: null,
 				barcode: null,
-				primary_contact_list: [],
-				billing_contact_list: [],
-				technical_contact_list: [],
-				shipping_contact_list: [],
+				logo: null,
+				//Arrays
+				primary_contacts: [],
+				billing_contacts: [],
+				technical_contacts: [],
+				shipping_contacts: [],
 				//Common Partner Fields
 				id: 0,
 				dba_name: null,
@@ -1576,12 +1675,16 @@ export default {
 		};
 	},
 	methods: {
-		testingMethod(e) {
-			console.log("this.partnerForm ", this.partnerForm);
-			console.log("this.Companaies.partnerList", this.Partners.partnerList);
-			console.log("this.partnerForm.entity_type ", this.partnerForm.entity_type);
-			console.log("this.parentSettings.accountParent ", this.parentSettings.accountParent);
-			console.log("this.Auth.platformInfo", this.Auth.platformInfo);
+		testingFunction(e) {
+			// console.log("this.partnerForm ", this.partnerForm);
+			// console.log("this.Companaies.partnerList", this.GET_PARTNER_LIST);
+			// console.log("this.partnerForm.entity_type ", this.partnerForm.entity_type);
+			// console.log("this.parentSettings.accountParent ", this.parentSettings.accountParent);
+			// console.log("this.Auth.platformInfo", this.Auth.platformInfo);
+			console.log("this.partnerData", this.partnerData);
+			console.log("this.GET_PARTNER_ERROR", this.GET_PARTNER_ERROR);
+			// console.log("this.Errors.partnerErrorHandle", this.Errors.partnerErrorHandle);
+			// console.log("this.Errors.partnerErrorData", this.Errors.partnerErrorData);
 		},
 		menudropdown(UserID) {
 			console.log("menudropdown UserID", UserID);
@@ -1627,163 +1730,110 @@ export default {
 		},
 		//Create Partner and Edit Current Partner
 		async createPartnerandEdit() {
-			let createPartnerRes = await this.createPartner();
+			this.$store.commit("RESET_ERRORS");
+			let createPartnerRes = await this.POSTPartner();
 			//Populate Fields with Created Instance
-			this.editPartnerData(createPartnerRes.id);
+			this.editPartnerFormById(createPartnerRes.id);
 			console.log("createPartnerandEdit All Done", createPartnerRes);
 		},
 
 		//Create Partner and Clear form for entering a new partner
 		async createPartnerandNew() {
-			await this.createPartner();
+			this.$store.commit("RESET_ERRORS");
+			await this.POSTPartner();
 			//Clear Form and Reset to Starting Editing Position
 			console.log("createPartnerandNew All Done");
 			this.newItemButton();
 		},
 		//Create Partner and Clear form for Viewing Data
 		async createPartnerandClose() {
-			let createPartnerRes = await this.createPartner();
+			this.$store.commit("RESET_ERRORS");
+			let createPartnerRes = await this.POSTPartner();
 			//Clear Form and Reset to Starting Viewing Position
 			console.log("createPartnerandClose All Done", createPartnerRes);
-			await this.clearFormData();
-			this.resetViewtoHome();
-		},
-		async createPartner() {
-			this.$store.commit("RESET_ERRORS");
-			try {
-				this.$f7.preloader.show();
-				//Dispatch creation method and update Fields with latest Object
-				console.log("createPartner, this.partnerForm", this.partnerForm);
-				this.partnerForm.description = this.$refs.partnerDescription.f7TextEditor.contentEl.innerHTML;
-
-				var partnerFormCopy = JSON.parse(JSON.stringify(this.partnerForm));
-
-				//Get Company ID (from each company type) and UserID add to Employee Form
-				var companyOBJ = {};
-				if (this.parentSettings.accountParent.is_datacom) {
-					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
-					console.log("is_datacom companyOBJ", companyOBJ);
-					partnerFormCopy["datacom"] = companyOBJ.id;
-				} else {
-					this.$f7.preloader.hide();
-					console.log("You must select a Company");
-					response.type = "Create Employee";
-					response.status = 400;
-					this.$store.dispatch("updateNotification", response);
-					return "You must select a Company";
-				}
-				console.log("this.partnerForm", this.partnerForm);
-				console.log("partnerFormCopy", partnerFormCopy);
-				var partnerResponse = await this.$store.dispatch("createPartner", partnerFormCopy);
-				console.log("partnerResponse", partnerResponse);
-				this.$f7.preloader.hide();
-
-				return partnerResponse;
-			} catch (error) {
-				console.error("Promise Response Error creating Partner", error);
+			if(createPartnerRes != undefined) {
+				await this.clearFormData();
+				this.resetViewtoHome();
+			} else {
+				this.$f7.dialog.alert("You had some errors on your submission").open();
 			}
+			
+		},
+		POSTPartner() {
+			return new Promise( async (resolve, reject) => {
+				try {
+					this.$f7.preloader.show();
+					//Dispatch creation method and update Fields with latest Object
+					console.log("POSTPartner, this.partnerForm", this.partnerForm);
+					this.partnerForm.description = this.$refs.partnerDescription.f7TextEditor.contentEl.innerHTML;
+
+					var partnerFormCopy = JSON.parse(JSON.stringify(this.partnerForm));
+
+					//Get Company ID (from each company type) and UserID add to Employee Form
+
+				
+					//I only want to use setUserPlatformPOST when User cannot change the parent company
+					// var newPartnerForm = await this.setUserPlatformPOST(partnerFormCopy);
+					// console.log("newPartnerForm", newPartnerForm);
+					var partnerResponse = await this.$store.dispatch("POSTPartner", partnerFormCopy);
+					console.log("partnerResponse", partnerResponse);
+					this.$f7.preloader.hide();
+
+					return resolve(partnerResponse);
+				} catch (error) {
+					console.error("Promise Response Error creating Partner", error);
+					return reject(error);
+				}
+			});
+			
 		},
 		refreshPartner() {
-			console.log("this.getPartnerList");
-			this.$store.dispatch("getPartnerList");
+			console.log("this.GETPartnerList");
+			this.$store.dispatch("GETPartnerList");
 		},
-		// Populate Fields for editing in browser
-		editPartnerData(partnerID) {
-			this.clearFormData();
-			this.parentSettings.activeTab = 0;
-			this.showEditProfile();
-			//Get User ID and object and map to fields
-			var partnerListID = null;
-			if (this.checkedRows.length != 0) {
-				console.log("this.checkedRows", this.checkedRows);
-				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexPos = this.Partners.partnerList.findIndex((elem) => {
-					return elem.id === rowID;
-				});
-				console.log("editPartners findIndexPos", findIndexPos);
-				partnerListID = findIndexPos;
-				console.log("IF partnerListID", partnerListID);
-			} else {
-				var findIndexPos = this.Partners.partnerList.findIndex((elem) => {
-					return elem.id === partnerID;
-				});
-				partnerListID = findIndexPos;
-				console.log("Then partnerListID", partnerListID);
-			}
-			//Is there a list of companies to lookup?
-			if (this.Partners.partnerList.length === 0) {
-				return "There are no items available";
-			}
 
-			if (this.Partners.partnerList.length != 0) {
-				console.log("this.Partners.partnerListings", this.Partners.partnerList);
-				console.log("Then partnerListID", partnerListID);
-				var partnerItem = this.Partners.partnerList[partnerListID];
-				console.log("editPartners partnerItem", partnerItem);
+		// Populate Fields for editing in browser
+		async editPartnerForm() {
+			//I still need to handle the Parent Company Field. I ti snot updating properly
+			this.clearFormData();
+			this.parentSettings.activeTab = 1;
+			if (this.checkedRows.length != 0) {
+				console.log("this.checkedRows != 0", this.checkedRows);
+				var rowID = this.checkedRows.slice(-1)[0].id;
+
+				var getSelectedPartnerObj = await this.$store.dispatch("GETPartnerSelectedProfile", {id: rowID});
+				console.group('getSelectedPartnerObj', getSelectedPartnerObj);
+
 				for (let key in this.partnerForm) {
-					this.partnerForm[key] = partnerItem[key];
+					this.partnerForm[key] = this.GET_SELECTED_PARTNER_PROFILE[key];
 				}
 				this.$refs.partnerDescription.f7TextEditor.contentEl.innerHTML = this.partnerForm.description;
-				this.$store.dispatch("getEmployeeFilter", partnerListID);
-			}
+			} 
+			this.showEditProfile();
 		},
-		//Make the PUT request to update datebase instance from updated form Data
-		updatePartnerPATCH() {
-			this.syncWithMixin();
-			this.partnerForm.description = this.$refs.partnerDescription.f7TextEditor.contentEl.innerHTML;
+		async editPartnerFormById(companyID) {
+			console.log("editPartner");
+			this.clearFormData();
+			this.parentSettings.activeTab = 0;
+			//2) Get User ID and object and map to fields from database table
+			var getSelectedPartnerObj = await this.$store.dispatch("GETPartnerSelectedProfile", {id: companyID});
+			console.group('getSelectedPartnerObj', getSelectedPartnerObj);
 
-			var partnerFormCopy = JSON.parse(JSON.stringify(this.partnerForm));
-
-			delete partnerFormCopy.profile_img;
-			delete partnerFormCopy.datacom;
-			console.log("editPartners partnerForm", this.partnerForm);
-			console.log("editPartners partnerFormCopy", partnerFormCopy);
-			this.$store.dispatch("updatePartner", partnerFormCopy);
-
+			for (let key in this.partnerForm) {
+				this.partnerForm[key] = this.GET_SELECTED_PARTNER_PROFILE[key];
+			}
+			this.$refs.partnerDescription.f7TextEditor.contentEl.innerHTML = this.partnerForm.description;
+			this.showEditProfile();
+		},
+		//Load Partner On itnitial render
+		loadPartnerProfile() {
+			for (let key in this.partnerForm) {
+				this.partnerForm[key] = this.GET_OWN_PARTNER_PROFILE[key];
+			}
+			this.$refs.partnerDescription.f7TextEditor.contentEl.innerHTML = this.partnerForm.description;
 			this.resetViewtoHome();
 		},
-		//Set inventory item to inactive instead of deleting instance
-		async deletePartner() {
-			// Is item Selected in table?
-			if (this.checkedRows[0].id) {
-				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexID = this.Partners.partnerList.findIndex((elem) => {
-					return elem.id == rowID;
-				});
-				console.log("deletePartner findIndexID", findIndexID);
-				if (this.Partners.partnerList.length === 0) {
-					this.$store.commit("updateNotification", "There are no items available");
-				}
-				if (this.Partners.partnerList.length != 0) {
-					let partnerItem = this.Partners.partnerList[findIndexID];
-					console.log("deletePartner != 0 partnerItem", partnerItem);
-					for (let key in this.partnerForm) {
-						this.partnerForm[key] = partnerItem[key];
-					}
-					//Set Variables to make account inactive
-					delete this.partnerForm.profile_img;
-					this.partnerForm.is_active = false;
-					const date = Date.now();
-					const newDate = new Date(date);
-					console.log("newDate", newDate.toISOString());
-					this.partnerForm.acct_closure_date = newDate;
-					try {
-						await this.$store.dispatch("deletePartner", this.partnerForm).then((response) => {
-							console.log("response from deletePartner method", response);
-							this.clearFormData();
-						});
-					} catch (error) {
-						console.error("Promise Response Error", error);
-					}
-				}
-			} else {
-				this.$store.commit("updateNotification", "You must select an item first");
-			}
-			this.resetViewtoHome();
-		},
-		deleteChip() {
-			console.log("deleting Chip");
-		},
+		//Clear Form
 		clearFormData() {
 			console.log("clearFormData this.partnerForm", this.partnerForm);
 			for (let key in this.partnerForm) {
@@ -1798,13 +1848,72 @@ export default {
 			//Reset Partner Variables
 			this.partnerForm.is_partner = true;
 			this.partnerForm.is_active = true;
-			this.partnerForm.primary_contact_list = [];
-			this.partnerForm.billing_contact_list = [];
-			this.partnerForm.technical_contact_list = [];
-			this.partnerForm.shipping_contact_list = [];
+			this.partnerForm.primary_contacts = [];
+			this.partnerForm.	billing_contacts = [];
+			this.partnerForm.technical_contacts = [];
+			this.partnerForm.shipping_contacts = [];
 			//Reset the view
 			this.resetViewtoHome();
 		},
+
+		//Make the PUT request to update datebase instance from updated form Data
+		updatePartnerPATCH() {
+			this.syncWithMixin();
+			this.partnerForm.description = this.$refs.partnerDescription.f7TextEditor.contentEl.innerHTML;
+
+			var partnerFormCopy = JSON.parse(JSON.stringify(this.partnerForm));
+
+			delete partnerFormCopy.profile_img;
+			delete partnerFormCopy.datacom;
+			console.log("editPartners partnerForm", this.partnerForm);
+			console.log("editPartners partnerFormCopy", partnerFormCopy);
+			this.$store.dispatch("PATCHPartnerProfile", partnerFormCopy);
+
+			this.resetViewtoHome();
+		},
+		//Set inventory item to inactive instead of deleting instance
+		async PATCHDeleteProfile() {
+			// Is item Selected in table?
+			if (this.checkedRows[0].id) {
+				var rowID = this.checkedRows.slice(-1)[0].id;
+				var findIndexID = this.GET_PARTNER_LIST.findIndex((elem) => {
+					return elem.id == rowID;
+				});
+				console.log("PATCHDeleteProfile findIndexID", findIndexID);
+				if (this.GET_PARTNER_LIST.length === 0) {
+					this.$store.commit("updateNotification", "There are no items available");
+				}
+				if (this.GET_PARTNER_LIST.length != 0) {
+					let partnerItem = this.GET_PARTNER_LIST[findIndexID];
+					console.log("PATCHDeleteProfile != 0 partnerItem", partnerItem);
+					for (let key in this.partnerForm) {
+						this.partnerForm[key] = partnerItem[key];
+					}
+					//Set Variables to make account inactive
+					delete this.partnerForm.profile_img;
+					this.partnerForm.is_active = false;
+					const date = Date.now();
+					const newDate = new Date(date);
+					console.log("newDate", newDate.toISOString());
+					this.partnerForm.acct_closure_date = newDate;
+					try {
+						await this.$store.dispatch("PATCHDeleteProfile", this.partnerForm).then((response) => {
+							console.log("response from PATCHDeleteProfile method", response);
+							this.clearFormData();
+						});
+					} catch (error) {
+						console.error("Promise Response Error", error);
+					}
+				}
+			} else {
+				this.$store.commit("updateNotification", "You must select an item first");
+			}
+			this.resetViewtoHome();
+		},
+		deleteChip() {
+			console.log("deleting Chip");
+		},
+		
 		//Callback function from Child Component
 		syncWithMixin(payload) {
 			console.log("Must emit information from child component to parent");
@@ -1829,12 +1938,19 @@ export default {
 		
 	},
 	computed: {
-		...mapState(["Auth", "Static", "Locale", "Errors"]),
+		...mapState(["Auth", "Static"]),
 		...mapState(["Users", "Companies", "Datacom", "Partners"]),
-		...mapGetters(["getPartners", "getPartnerDepartments", "getPartnerPositions"])
+		...mapGetters(["GET_PARTNER_LIST", "GET_OWN_PARTNER_PROFILE", "GET_SELECTED_PARTNER_PROFILE"]),
+		...mapGetters(["partnerData", "GET_PARTNER_ERROR"]),
+		errorData() {
+			return this.partnerData;
+		},
+		errorHandle() {
+			return this.GET_PARTNER_ERROR;
+		}
 	},
 	async mounted() {
-
+		this.loadPartnerProfile();
 	},
 	on: {}
 };

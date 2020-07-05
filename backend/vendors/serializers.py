@@ -9,18 +9,27 @@ from users.models import User
 from users.serializers import UserSerializer, UserListSerializer
 from partners.serializers import PartnerSerializer, PartnerListSerializer
 from datacom.serializers import DatacomSerializer, DatacomListSerializer, CommonBarcodeSerializer
-from companies.serializers import CompanySerializer, SimpleCompanySerializer
+from companies.serializers import CompanySerializer, CompanyListSerializer
 
 class VendorSerializer(serializers.ModelSerializer):
     datacom_obj = DatacomListSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
     partner_obj = PartnerListSerializer(read_only=True, source='partner')
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
-    company_obj = SimpleCompanySerializer(read_only=True, source='company')
+    company_obj = CompanyListSerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
     barcode = CommonBarcodeSerializer(read_only=True, source='barcode')
     barcode = serializers.PrimaryKeyRelatedField(queryset=CommonBarcode.objects.all(), required=False, allow_null=True)
 
+    primary_contacts_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')
+    primary_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    shipping_contacts_list = UserListSerializer(many=True, read_only=True, source='shipping_contacts')
+    shipping_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    billing_contact_list = UserListSerializer(many=True, read_only=True, source='billing_contacts')
+    billing_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    technical_contacts_list = UserListSerializer(many=True, read_only=True, source='technical_contacts')
+    technical_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    
     profile_img = Base64ImageField(max_length=None,
                                     use_url=True,
                                     required=False,
@@ -36,17 +45,29 @@ class VendorSerializer(serializers.ModelSerializer):
         vendor = Vendor.objects.create_vendor(**validated_data)
         return vendor 
 
-class SimpleVendorSerializer(serializers.ModelSerializer):
+    def validate(self, data):
+        print('data', data)
+        print('self', self)
+        datacom = data.get('datacom', "")
+        partner = data.get('partner', "")
+        company = data.get('company', "")
+        if datacom and partner:
+            msg = "You cannot assign datacom and a partner to the same vendor"
+            raise serializers.ValidationError(msg)
+        if datacom and company:
+            msg = "You cannot assign datacom and a company to the same vendor"
+            raise serializers.ValidationError(msg)
+        if partner and company:
+            msg = "You cannot assign partner and a company to the same vendor"
+            raise serializers.ValidationError(msg)
+        return data
 
-    class Meta:
-        model = Vendor
-        fields = ('id', 'dba_name', 'legal_name', 'datacom__id', 'partner__id','company__id')
 
 class VendorListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
         read_only_fields = ['id']
-        fields = ['id', 'date_added', 'account_number', 'domain', 'dba_name', 'is_active', 'profile_img']
+        fields = ['id', 'date_added', 'account_number', 'dba_name', 'is_active', 'profile_img']
 
 class VendorPrimaryContactSerializer(serializers.ModelSerializer):
     primary_contacts_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')

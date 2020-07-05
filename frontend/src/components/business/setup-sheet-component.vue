@@ -76,7 +76,7 @@
 													<f7-list-item
 														checkbox
 														disabled
-														:checked="Companies.departmentList.length != 0"
+														:checked="GET_DEPARTMENTS_LIST.length != 0"
 													></f7-list-item>
 												</f7-col>
 												<f7-col width="40">
@@ -91,7 +91,7 @@
 											<f7-block-title class="classy-small">Create Employee Positions:</f7-block-title>
 											<f7-row class="display-flex justify-content-start align-items-center">
 												<f7-col width="20">
-													<f7-list-item checkbox disabled :checked="Companies.positionList.length != 0"></f7-list-item>
+													<f7-list-item checkbox disabled :checked="GET_POSITIONS_LIST.length != 0"></f7-list-item>
 												</f7-col>
 												<f7-col width="40">
 													<f7-button outline small class="setup-button" popup-open=".positions-popup"
@@ -324,15 +324,15 @@ export default {
 	methods: {
 		testingMethod(e) {
 			console.log("this.Inventory.inventoryList", this.Inventory.inventoryList);
-			console.log("this.Companies.departmentList", this.Companies.departmentList);
-			console.log("this.Companies.positionList", this.Companies.positionList);
+			console.log("this.GET_DEPARTMENTS_LIST", this.GET_DEPARTMENTS_LIST);
+			console.log("this.GET_POSITIONS_LIST", this.GET_POSITIONS_LIST);
 			console.log("this.Users.employeeList", this.Users.employeeList);
 			console.log("this.GroupsPermissions.groupsList", this.GroupsPermissions.groupsList);
 		}
 	},
 	computed: {
-		...mapState(["Companies", "Users", "Attendance", "GroupsPermissions", "Inventory"])
-		// ...mapGetters([]),
+		...mapState(["Companies", "Users", "Attendance", "GroupsPermissions", "Inventory"]),
+		...mapGetters(["GET_DEPARTMENTS_LIST", "GET_POSITIONS_LIST"]),
 	},
 	created() {},
 	mounted() {
@@ -340,12 +340,12 @@ export default {
 		var percent = 0;
 		var count = 0;
 		var total = 6;
-		this.Companies.departmentList.length >= 1 ? (count = +1) : null;
-		this.Companies.positionList.length >= 1 ? (count = +1) : null;
+		this.GET_DEPARTMENTS_LIST.length >= 1 ? (count = +1) : null;
+		this.GET_POSITIONS_LIST.length >= 1 ? (count = +1) : null;
 		this.Users.employeeList.length >= 1 ? (count = +1) : null;
 		this.Inventory.inventoryList.length >= 1 ? (count = +1) : null;
 		this.GroupsPermissions.groupsList >= 1 ? (count = +1) : null;
-		// this.Companies.departmentList.length >= 1 ? count =+ 1: null;
+		// this.GET_DEPARTMENTS_LIST.length >= 1 ? count =+ 1: null;
 
 		console.log("total", total);
 		console.log("count", count);

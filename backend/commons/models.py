@@ -20,26 +20,36 @@ import treepoem
 
 class BarcodeManager(models.Manager):
   def create_barcode_number(self, id, **kwargs):
+
+    last_barcode = None
     if kwargs['is_datacom']:
       print("Datacom has been passed to generate a new barcode")
+      # last_barcode = CommonBarcode.objects.all().order_by('barcode_number').last()
+      last_barcode = CommonBarcode.objects.filter(datacom__id__gte=1).order_by().last()
+    if kwargs['is_partner']:
+      print("Partner has been passed to generate a new barcode")
+      last_barcode = CommonBarcode.objects.filter(partner__id__gte=1).order_by().last()
+    if kwargs['is_merchant']:
+      print("Partner has been passed to generate a new barcode")
+      last_barcode = CommonBarcode.objects.filter(company__id__gte=1).order_by().last()
+    if kwargs['is_vendor']:
+      print("Partner has been passed to generate a new barcode")
+      last_barcode = CommonBarcode.objects.filter(vendor__id__gte=1).order_by().last()
 
-      last_barcode = CommonBarcode.objects.all().order_by('barcode_number').last()
-      # last_barcode = UserBarcode.objects.filter(user__employee__datacom__id__gte=1).order_by().last()
-
-      print("last_barcode", last_barcode)
-      if not last_barcode:
-        return "1000000000"
+    print("last_barcode", last_barcode)
+    if not last_barcode:
+      return "1000000000"
+    else:
+      last_barcode_no = last_barcode.barcode_number
+      if type(last_barcode_no) is int:
+        last_barcode_no += 1
+        str_last_barcode = str(last_barcode_no)
+        return str_last_barcode
       else:
-        last_barcode_no = last_barcode.barcode_number
-        if type(last_barcode_no) is int:
-          last_barcode_no += 1
-          str_last_barcode = str(last_barcode_no)
-          return str_last_barcode
-        else:
-          int_last_barcode = int(last_barcode_no)
-          last_barcode_no += 1
-          str_last_barcode = str(last_barcode_no)
-          return str_last_barcode
+        int_last_barcode = int(last_barcode_no)
+        last_barcode_no += 1
+        str_last_barcode = str(last_barcode_no)
+        return str_last_barcode
 
   def create_barcode_image(self, barcode):
     '''Grab barcode number and create barcode instance and save'''

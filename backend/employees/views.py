@@ -28,7 +28,6 @@ class PositionsViewset(viewsets.ModelViewSet):
     ordering_fields = '__all__'
     ordering = ['name']
 
-    
 class EmployeeListViewset(viewsets.ModelViewSet):
     serializer_class = EmployeeListSerializer
     queryset = Employee.objects.all()

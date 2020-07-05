@@ -37,9 +37,19 @@
               You must first select an employee
             </div>
           </f7-row>
-          <f7-row class="full-width" v-else>
+          <f7-row class="full-width" v-if="!dataForm.id && moduleInfo.name === 'Datacom'">
             <div class="error-text text-align-center padding-top">
-              You must first select a business
+              You must first select a Datacom company
+            </div>
+          </f7-row>
+          <f7-row class="full-width" v-if="!dataForm.id && moduleInfo.name === 'Partner'">
+            <div class="error-text text-align-center padding-top">
+              You must first select a partner
+            </div>
+          </f7-row>
+          <f7-row class="full-width" v-if="!dataForm.id && moduleInfo.name === 'Merchant'">
+            <div class="error-text text-align-center padding-top">
+              You must first select a merchant
             </div>
           </f7-row>
           

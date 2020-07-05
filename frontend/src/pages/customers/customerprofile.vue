@@ -18,7 +18,7 @@
 						<f7-block class="display-block margin-top-half full-height">
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
-									<f7-row class="full-width">
+									<f7-row class="full-width display-flex align-items-center">
 										<f7-col width="50" class="align-self-flex-end">
 											<f7-block-title class="full-width no-margin-bottom">Profile</f7-block-title>
 										</f7-col>
@@ -143,26 +143,29 @@
 					<div>
 						<!-- el2 -->
 						<f7-block class="margin-top-half">
-							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.customerErrorHandle" class="left message is-danger">
+							<f7-row>
+								<article v-if="errorHandle" class="message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
-								<div v-if="Errors.customerErrorData.length != 0">
-									<div class="full-width" v-for="errorArray in Errors.customerErrorData" :key="errorArray.id">
-										<div
-											class="display-flex justify-content-center"
-											:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
-										>
-											<div v-show="errorArray[0] === 'non_field_errors'" class="message-body">
-												{{ errorArray[1][0] }}
-											</div>
-										</div>
-									</div>
-								</div>
+								</article>
 							</f7-row>
+							<!-- Error Handling -->
+							<f7-row 
+								v-for="errorArray in errorData" 
+								:key="errorArray.id">	
+								<article
+									v-if="errorArray[0] === 'non_field_errors'"
+									class="has-background-white margin-top-half"
+									:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+									<div 
+										class="message-body">
+										{{ errorArray[1][0] }}
+									</div>
+								</article>
+							</f7-row>
+							<!-- END Error Handling -->
 							<f7-card>
 								<f7-card-content>
 									<f7-block-title medium class="no-margin-top">Dashboard</f7-block-title>
@@ -218,9 +221,11 @@
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 								<parent-component
+									ref="parentComponentRef"
 									:toggleEditProfile="toggleEditProfile"
 									:parentSettings="parentSettings"
-									:moduleInfo="moduleInfo">
+									:moduleInfo="moduleInfo"
+									:formData="customerForm">
 								</parent-component>
 								</b-tab-item>
 								<!-- END Company Tab -->
@@ -229,7 +234,7 @@
 								<b-tab-item label="Profile" icon="cube-scan" class="no-padding">
 									<f7-card class="mo-margin-top">
 										<f7-card-header class="no-border hovering" valign="bottom" style="background: lightgray">
-											<f7-row class="full-width">
+											<f7-row class="full-width display-flex align-items-center">
 												<f7-col width="50" class="align-self-flex-end">
 													<f7-block-title class="full-width margin-bottom-half">Profile</f7-block-title>
 												</f7-col>
@@ -278,27 +283,6 @@
 														<f7-list-item class="about-me-box" v-html="customerForm.user.bio"></f7-list-item>
 													</f7-col>
 												</f7-row>
-												<f7-row>
-													<f7-block-title class="full-width" medium>Login Information</f7-block-title>
-													<f7-col width="50">
-														<p class="field-title">Email:</p>
-														<f7-list-item :title="customerForm.user.email"></f7-list-item>
-													</f7-col>
-													<f7-col width="50">
-														<p class="field-title">PIN:</p>
-														<f7-list-item :title="customerForm.user.pin"></f7-list-item>
-													</f7-col>
-												</f7-row>
-												<f7-row>
-													<f7-col>
-														<p>Password requirements: 1 Alpha, 1 Numeric, 1 Special Character, Minimum 6 characters.</p>
-													</f7-col>
-												</f7-row>
-												<f7-row class="full-width no-margin-top">
-													<f7-col>
-														<f7-button fill>Password Reset</f7-button>
-													</f7-col>
-												</f7-row>
 											</f7-list>
 											<!-- END Profile Display List -->
 											<!-- Begin Profile Edit List -->
@@ -316,24 +300,24 @@
 															:value="customerForm.user.first_name"
 															@input="customerForm.user.first_name = $event.target.value"
 															type="text"
+															:class="errorHandle? 'item-input-invalid': ''"
 														>
 														</f7-list-input>
-														<div v-if="Errors.customerErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.customerErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div v-show="errorArray[0] === 'first_name'" class="message-body">
-																		{{ errorArray[1][0] }}
-																	</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'first_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 													<f7-col width="50">
 														<p class="field-title">Last Name:<span style="color: red;"> *</span></p>
@@ -348,22 +332,21 @@
 															type="text"
 														>
 														</f7-list-input>
-														<div v-if="Errors.customerErrorData.length != 0">
-															<div
-																class="full-width"
-																v-for="errorArray in Errors.customerErrorData"
-																:key="errorArray.id"
-															>
-																<div
-																	class="display-flex justify-content-center"
-																	:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
-																>
-																	<div v-show="errorArray[0] === 'last_name'" class="message-body">
-																		{{ errorArray[1][0] }}
-																	</div>
+														<!-- Error Handling -->
+														<f7-row 
+															v-for="errorArray in errorData" 
+															:key="errorArray.id">	
+															<article
+																v-if="errorArray[0] === 'last_name'"
+																class="has-background-white margin-top-half"
+																:class="`message ${errorHandle ? 'is-danger' : 'is-success'}`">
+																<div 
+																	class="message-body">
+																	{{ errorArray[1][0] }}
 																</div>
-															</div>
-														</div>
+															</article>
+														</f7-row>
+														<!-- END Error Handling -->
 													</f7-col>
 												</f7-row>
 												<f7-row>
@@ -506,152 +489,12 @@
 												</f7-row>
 											</f7-list>
 
-												<f7-row>
-													<f7-block-title class="full-width" medium>Login Information</f7-block-title>
-													<f7-row class="full-width">
-														<f7-col>
-															<table class="password-requirements-table">
-																<p>	Password requirements:</p>
-																<tbody>
-																	<tr>
-																		<td>
-																			<ul>
-																				<li>Minimum of One Letter: a, b c, d, e</li>
-																				<li>Minimum of One Number: 1234567890</li>
-																				<li>Minimum of One Special Character: #@*^&!</li>
-																			</ul>
-																		</td>
-																		<td>
-																			<ul>
-																				<li>Minimum 6 characters</li>
-																				<li>Cannot use your name in password</li>
-																				<li>No common words such as 'password'</li>
-																			</ul>
-																		</td>
-																	</tr>
-																</tbody>
-															</table>
-
-														</f7-col>
-													</f7-row>
-													<f7-list simple-list v-show="parentSettings.editProfile">
-														<f7-row v-if="showPasswordRest" class="full-width no-margin-top">
-															<f7-col>
-																<f7-button fill>Password Reset</f7-button>
-															</f7-col>
-														</f7-row>
-														<f7-row v-if="!showPasswordRest" class="margin-top">
-															<f7-col width="50">
-																<p class="field-title">Email:<span style="color: red;"> *</span></p>
-																<f7-list-input
-																	validate
-																	required
-																	error-message="Email is required"
-																	:value="customerForm.user.email"
-																	@input="customerForm.user.email = $event.target.value"
-																	type="email"
-																	style="background: rgb(216,252,253)"
-																>
-																</f7-list-input>
-																<div v-if="Errors.customerErrorData.length != 0">
-																	<div
-																		class="full-width"
-																		v-for="errorArray in Errors.customerErrorData"
-																		:key="errorArray.id"
-																	>
-																		<div
-																			class="display-flex justify-content-center"
-																			:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
-																		>
-																			<div v-show="errorArray[0] === 'email'" class="message-body">
-																				{{ errorArray[1][0] }}
-																			</div>
-																		</div>
-																	</div>
-																</div>
-															</f7-col>
-															<f7-col width="50">
-																<p class="field-title">PIN:<span style="color: red;"> *</span></p>
-																<f7-list-input
-																	validate
-																	required
-																	pattern="[0-9]{1,4}"
-																	error-message="4-Digit Numerical PIN is required"
-																	:value="customerForm.user.pin"
-																	@input="customerForm.user.pin = $event.target.value"
-																	type="password"
-																	style="background: rgb(216,252,253)"
-																>
-																</f7-list-input>
-																<div v-if="Errors.customerErrorData.length != 0">
-																	<div
-																		class="full-width"
-																		v-for="errorArray in Errors.customerErrorData"
-																		:key="errorArray.id"
-																	>
-																		<div
-																			class="display-flex justify-content-center"
-																			:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
-																		>
-																			<div v-show="errorArray[0] === 'pin'" class="message-body">
-																				{{ errorArray[1][0] }}
-																			</div>
-																		</div>
-																	</div>
-																</div>
-															</f7-col>
-															<f7-col width="50">
-																<p class="field-title">Password:<span style="color: red;"> *</span></p>
-																<f7-list-input
-																	validate
-																	required
-																	error-message="Password is required"
-																	:value="customerForm.user.password"
-																	@input="customerForm.user.password = $event.target.value"
-																	type="password"
-																	style="background: rgb(216,252,253)"
-																>
-																</f7-list-input>
-																<div v-if="Errors.customerErrorData.length != 0">
-																	<div
-																		class="full-width"
-																		v-for="errorArray in Errors.customerErrorData"
-																		:key="errorArray.id"
-																	>
-																		<div
-																			class="display-flex justify-content-center"
-																			:class="`message ${Errors.customerErrorHandle ? 'is-danger' : 'is-success'}`"
-																		>
-																			<div v-show="errorArray[0] === 'password'" class="message-body">
-																				{{ errorArray[1][0] }}
-																			</div>
-																		</div>
-																	</div>
-																</div>
-															</f7-col>
-															<f7-col width="50">
-																<p class="field-title">Verify PW:<span style="color: red;"> *</span></p>
-																<f7-list-input
-																	validate
-																	required
-																	error-message="You must verify password"
-																	:value="customerForm.user.verify_pw"
-																	@input="customerForm.user.verify_pw = $event.target.value"
-																	type="password"
-																	style="background: rgb(216,252,253)"
-																></f7-list-input>
-															</f7-col>
-														</f7-row>
-													</f7-list>
-													<!-- Password Error Handling-->
-													<div
-														class="left full-width"
-														v-if="computedPasswords"
-														:class="`message ${computedPasswords ? 'is-danger' : 'is-success'}`"
-													>
-														<div class="message-body full-width no padding">{{ computedPasswords }}</div>
-													</div>
-												</f7-row>
+											<set-password-component 
+												:parentSettings="parentSettings"
+												:loginForm="customerForm"
+												:errorData="errorData"
+												:errorHandle="errorHandle">
+											</set-password-component>
 
 												<!-- Delete / Update Buttons-->
 												<f7-row>
@@ -664,7 +507,7 @@
 													</f7-block>
 													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
-															<f7-col width="25" class="display-flex justify-content-end margin">
+															<f7-col width="50" class="display-flex justify-content-end margin">
 																<f7-button
 																	fill
 																	@click.prevent="createCustomerandClose"
@@ -779,7 +622,7 @@
 														<f7-list-item link="#" @click="showUserData" popover-close title="Edit Item"></f7-list-item>
 														<f7-list-item
 															link="#"
-															@click="deleteCustomer"
+															@click="PATCHDeleteProfile"
 															popover-close
 															title="Delete Item"
 														></f7-list-item>
@@ -954,6 +797,8 @@ import parentComponent from "@/components/business/parent-company-component.vue"
 import invoiceDatatableComponent from '@/components/financial/invoice-datatable-component.vue';
 import receiptDatatableComponent from '@/components/financial/receipt-datatable-component.vue';
 import profileCardComponent from "../../components/layout-elements/profile-card-component.vue";
+import setPasswordComponent from "../../components/universal/logging-in/set-password-component.vue";
+
 
 export default {
 	name: "customerProfile",
@@ -970,6 +815,7 @@ export default {
 		"invoice-datatable-component": invoiceDatatableComponent,
 		"receipt-datatable-component": receiptDatatableComponent,
 		"profile-card-component": profileCardComponent,
+		"set-password-component": setPasswordComponent
 
 	},
 	data() {
@@ -984,6 +830,7 @@ export default {
 				level: 5
 			},
 			parentSettings: {
+				showPasswordReset: false,
 				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
@@ -1001,10 +848,6 @@ export default {
 				type: "customer"
 			},
 
-			//Error Handling
-			showPasswordRest: false,
-			passwordMessage: "",
-			error: false,
 			//Scrollbar Settings
 			settings: {
 				maxScrollbarLength: 60
@@ -1111,24 +954,25 @@ export default {
 			this.hideUpdateUserButtons = true;
 			this.hideCreateUser = true;
 			this.parentSettings.hideSaveItem = true;
+			
 		},
 		toggleEditProfile() {
 			this.parentSettings.editProfile = !this.parentSettings.editProfile;
 			this.hideUpdateUserButtons = !this.hideUpdateUserButtons;
 			this.hideCreateUser = !this.hideCreateUser;
 			this.parentSettings.hideSaveItem = true;
+			this.parentSettings.showPasswordReset = !this.parentSettings.showPasswordReset;
 		},
 		async newUserButton() {
 			//Show/Hide Edit Fields and buttons
 			let response = await this.clearUserFormData();
 			console.log("addNewuserButton response", response);
-
 			this.parentSettings.editProfile = true;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = true;
 			this.parentSettings.hideSaveItem = false;
 			this.parentSettings.activeTab = 0;
-			this.showPasswordRest = false;
+			this.parentSettings.showPasswordReset = false;
 		},
 		async clearandResetButton() {
 			await this.clearUserFormData();
@@ -1148,9 +992,10 @@ export default {
 			this.fileURL = "";
 		},
 		async createCustomerandNew() {
+			this.$store.commit("RESET_ERRORS");
 			console.log("createCustomerandNew");
 			//invoke the create user and create customer function
-			let createUserRes = await this.createCustomer();
+			let createUserRes = await this.POSTCustomer();
 			console.log("createUserRes", createUserRes);
 			//Populate Fields with Created Instance
 			this.resetViewtoHome();
@@ -1158,9 +1003,10 @@ export default {
 			console.log("createCustomerandNew All Done");
 		},
 		async createCustomerandEdit() {
+			this.$store.commit("RESET_ERRORS");
 			console.log("createCustomerandEdit");
 			//invoke the create user and create customer function
-			let createCustomerRes = await this.createCustomer();
+			let createCustomerRes = await this.POSTCustomer();
 			console.log("createCustomerRes", createCustomerRes);
 			await this.clearUserFormData();
 			//Populate Fields with Created Instance
@@ -1169,17 +1015,23 @@ export default {
 			console.log("createCustomerandEdit All Done createUserRes");
 		},
 		async createCustomerandClose() {
+			this.$store.commit("RESET_ERRORS");
 			console.log("createCustomerandClose");
 			//invoke the create user and create customer function
-			let response = await this.createCustomer();
+			let response = await this.POSTCustomer();
 			console.log("createCustomerandClose response", response);
 			//Populate Fields with Created Instance
-			this.resetViewtoHome();
+			if(response != undefined) {
+				await this.clearFormData();
+				this.resetViewtoHome();
+			} else {
+				this.$f7.dialog.alert("You had some errors on your submission").open();
+			}
 			//Load current users data next
 			console.log("createCustomerandClose All Done");
 		},
 
-		createCustomer() {
+		POSTCustomer() {
 			return new Promise(async (resolve, reject) => {
 				var newUserForm = {};
 				this.$f7.preloader.show();
@@ -1191,8 +1043,8 @@ export default {
 				var customerFormCopy = JSON.parse(JSON.stringify(this.customerForm));
 
 				console.log("customerFormCopy", customerFormCopy);
-				let response = await this.$store.dispatch("createUser", customerFormCopy.user);
-				console.log("createCustomer createUser response: ", response);
+				let response = await this.$store.dispatch("POSTUser", customerFormCopy.user);
+				console.log("POSTCustomer POSTUser response: ", response);
 
 				if (response.status === 200 || response.status === 201) {
 					console.log("Response 201");
@@ -1238,7 +1090,7 @@ export default {
 				}
 
 				console.log("this.customerForm", this.customerForm);
-				let custResponse = await this.$store.dispatch("createCustomer", this.customerForm);
+				let custResponse = await this.$store.dispatch("POSTCustomer", this.customerForm);
 				console.log("Create Customer Promise custResponse", custResponse);
 				if (custResponse.status === 200 || custResponse.status === 201) {
 					this.$f7.preloader.hide();
@@ -1261,7 +1113,7 @@ export default {
 		// Populate Fields for editing in browser
 		async showUserData(customerID) {
 			console.log("showUserData customerID", customerID);
-			this.showPasswordRest = true;
+			this.parentSettings.showPasswordReset = true;
 			this.parentSettings.activeTab = 0;
 			//Get User ID and object and map to fields
 			var customerListID = null;
@@ -1369,11 +1221,11 @@ export default {
 			this.customerForm.dob = new Date(this.customerForm.user.dob);
 
 			try {
-				await this.$store.dispatch("PATCHUser", this.customerForm.user).then((response) => {
+				await this.$store.dispatch("PATCHEmployeeProfile", this.customerForm.user).then((response) => {
 					console.log("PATCH User Repsonse Update User", response);
 				});
 				delete this.customerForm.user;
-				await this.$store.dispatch("PATCHCustomer", this.customerForm).then((response) => {
+				await this.$store.dispatch("PATCHCustomerProfile", this.customerForm).then((response) => {
 					console.log("PATCH User Repsonse Update Customer", response);
 				});
 			} catch (error) {
@@ -1381,35 +1233,35 @@ export default {
 			}
 		},
 		//Set User item to inactive instead of deleting instance
-		async deleteCustomer() {
+		async PATCHDeleteProfile() {
 			// Is item Selected in table?
 			if (this.checkedRows[0].id) {
 				var rowID = this.checkedRows[0].id;
 				var findIndexID = this.Users.userList.findIndex((elem) => {
 					return elem.id == rowID;
 				});
-				console.log("deleteCustomer findIndexID", findIndexID);
+				console.log("PATCHDeleteProfile findIndexID", findIndexID);
 				if (this.Users.userList.length === 0) {
 					this.$store.commit("updateNotification", "There are no items available");
 				}
 				if (this.Users.userList.length === 1) {
 					let UserItem = this.Users.userList[0];
-					console.log("deleteCustomer len===1 UserItem", UserItem);
+					console.log("PATCHDeleteProfile len===1 UserItem", UserItem);
 					for (let key in this.customerForm) {
 						this.customerForm[key] = UserItem[key];
 					}
 					this.customerForm.is_active = false;
-					await this.$store.dispatch("deleteCustomer", this.customerForm);
+					await this.$store.dispatch("PATCHDeleteProfile", this.customerForm);
 				}
 				if (this.Users.userList.length >= 2) {
 					// Map function to assign the varibles to the form variables
 					let UserItem = this.Users.userList[findIndexID];
-					console.log("deleteCustomer len>=2 UserItem", UserItem);
+					console.log("PATCHDeleteProfile len>=2 UserItem", UserItem);
 					for (let key in this.customerForm) {
 						this.customerForm[key] = UserItem[key];
 					}
 					this.customerForm.is_active = false;
-					await this.$store.dispatch("deleteCustomer", this.customerForm);
+					await this.$store.dispatch("PATCHDeleteProfile", this.customerForm);
 				}
 			} else {
 				this.$store.commit("updateNotification", "You must select an item first");
@@ -1432,19 +1284,12 @@ export default {
 		...mapState(["Auth", "Locale", "Static", "Errors", "Common", "VTHPP"]),
 		...mapState(["Users", "Companies", "Datacom", "Partners", "Customers"]),
 		...mapGetters(["GET_USER_LIST", "GET_STATE_LIST", "getcustomerCreditCardsList"]),
-		computedPasswords: {
-			get() {
-				console.log("this.passwordMessage", this.passwordMessage);
-				if (this.customerForm.user.password != this.customerForm.user.verify_pw) {
-					return "The passwords do not match";
-				} else {
-					return;
-				}
-			},
-			set() {
-				//I cant seem to figure out how to set vartiables with the computed
-				this.passwordMessage = "New Message";
-			},
+		...mapGetters(["GET_CUSTOMER_ERRORS_LIST", "GET_CUSTOMER_ERROR_HANDLE"]),
+		errorData() {
+			return this.GET_CUSTOMER_ERRORS_LIST
+		},
+		errorHandle() {
+			return this.GET_CUSTOMER_ERROR_HANDLE
 		},
 		canSubmitUserForm() {
 			if (this.Auth.isAuthenticated) {

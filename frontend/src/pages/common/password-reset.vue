@@ -120,7 +120,7 @@ export default {
 				else {
 					console.log('Password Reset Submitted');
 					this.loginData.email = this.$f7route.params.email;
-					let employeeResponse = await this.$store.dispatch('getEmployeeList');
+					let employeeResponse = await this.$store.dispatch('GETEmployeeList');
 					console.log("employeeResponse", employeeResponse);
 					//Query Emplpoyee List for specific User
 					var userObj = employeeResponse.find(item => item.user.email == this.loginData.email);

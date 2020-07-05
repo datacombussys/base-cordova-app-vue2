@@ -73,6 +73,34 @@ export const UniversalMixins = {
         }
       });
     },
+    getObjectQueryFilter(form) {
+      console.log('getObjectQueryFilter form', form);
+      return new Promise(async (resolve, reject) => {
+        let obj = {
+          filterURL: "",
+          id: 0
+        };
+        if (form.is_datacom) {
+          console.log("getObjectQueryFilter datacom");
+          obj.filterURL = "?datacom__id=";
+          obj.id = form.id
+          return resolve(obj);
+        } else if (form.is_partner) {
+          console.log("getObjectQueryFilter partner");
+          obj.filterURL = "?partner__id=";
+          obj.id = form.id
+          return resolve(obj);
+        } else if (form.is_merchant) {
+          console.log("getObjectQueryFilter company");
+          obj.filterURL = "?company__id=";
+          obj.id = form.id
+          return resolve(obj);
+        } else {
+          return reject({error: "No Matching companies"})
+        }
+      });
+
+    }
     // setUserPlatformPUT(form) {
     //   console.log('setUserPlatformGET form', form);
     //   var newForm = {};

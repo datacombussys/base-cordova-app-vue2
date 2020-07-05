@@ -9,41 +9,33 @@ import axios from "axios";
 export const Errors = {
 	namespace: true,
 	state: {
-		//Main Notificaiton
-		updateNotification: null,
-		//Login Errors
+
+		updateNotification: new Array(),
+		loginErrorData: new Array(),
+		invErrorData: new Array(),
+		datacomErrorData: new Array(),
+		newPartnerData: new Array(),
+		companyErrorData: new Array(),
+		userErrorData: new Array(),
+		employeeErrorData: new Array(),
+		customerErrorData: new Array(),
+		warehouseErrorData: new Array(),
+		salesOfficeErrorData: new Array(),
+		vendorErrorData: new Array(),
+		leadsErrorData: new Array(),
 		loginErrorHandle: false,
-		loginErrorData: [],
-		//Inventory Errors
 		invErrorHandle: false,
-		invErrorData: [],
-		//Datacom Errors
 		datacomErrorHandle: false,
-		datacomErrorData: [],
-		//Partner Errors
 		partnerErrorHandle: false,
-		partnerErrorData: [],
-		//Company Errors
 		companyErrorHandle: false,
-		companyErrorData: [],
-		//Users Errors
 		userErrorHandle: false,
-		userErrorData: [],
-		//Employee Errors
 		employeeErrorHandle: false,
-		employeeErrorData: [],
-		//Customer Errors
 		customerErrorHandle: false,
-		customerErrorData: [],
-		//Warehouse Errors
 		warehouseErrorHandle: false,
-		warehouseErrorData: [],
-		//SalesOffice Errors
 		salesOfficeErrorHandle: false,
-		salesOfficeErrorData: [],
-		//Vendor Errors
 		vendorErrorHandle: false,
-		vendorErrorData: []
+		leadsErrorHandle: false,
+		
 	},
 	mutations: {
 		//Main Subscriber for Toast's and Notifications
@@ -69,21 +61,66 @@ export const Errors = {
 			state.invErrorHandle = true;
 			state.invErrorData = Object.entries(payload);
 		},
+		//Error Handing for Datacom
+		SET_DATACOM_ERRORS(state, payload) {
+			state.datacomErrorHandle = true;
+			state.datacomErrorData = Object.entries(payload);
+		},
+		//Error Handing for Partners
+		// SET_PARTNER_ERRORS(state, payload) {
+		// 	// Vue.set
+			
+		// 	console.log('SET_PARTNER_ERRORS', payload);
+		// 	// state.partnerErrorHandle = true;
+		// 	console.log('state.partnerErrorHandle', state.partnerErrorHandle);
+		// 	// state.partnerErrorData = Object.entries(payload);
+		// 	// let entries = Object.entries(payload);
+		// 	let entry = [1,2,3,4,5];
+		// 	console.log('entry', entry);
+		// 	// Vue.set(state.partnerErrorData, 0, entry);
+		// 	// state.partnerErrorData.splice(0,1,entries)
+		// 	console.log('state.partnerErrorData', state.partnerErrorData);
+		// },
+		set_partner_Error(state, payload) {
+			state.partnerErrorHandle = true;
+			let entries = Object.entries(payload);
+			state.newPartnerData = entries ;
+		},
 		//Error Handing for Companies
 		SET_COMPANY_ERRORS(state, payload) {
 			state.companyErrorHandle = true;
 			state.companyErrorData = Object.entries(payload);
+		},
+		//Error Handing for Vendors
+		SET_VENDOR_ERRORS(state, payload) {
+			state.vendorErrorHandle = true;
+			state.vendorErrorData = Object.entries(payload);
+		},
+		//Error Handing for Leads
+		SET_LEAD_ERRORS(state, payload) {
+			state.leadErrorHandle = true;
+			state.leadErrorData = Object.entries(payload);
+		},
+		//Error Handing for SalesOffice
+		SET_SALESOFFICE_ERRORS(state, payload) {
+			state.salesOfficeErrorHandle = true;
+			state.salesOfficeErrorData = Object.entries(payload);
+		},
+		//Error Handing for Warehouse
+		SET_WAREHOUSE_ERRORS(state, payload) {
+			state.warehouseErrorHandle = true;
+			state.warehouseErrorData = Object.entries(payload);
 		},
 		//Error Handing for User and Employees
 		SET_USER_ERRORS(state, payload) {
 			state.userErrorHandle = true;
 			state.userErrorData = Object.entries(payload);
 		},
-		SET_CUSTOMER_USER_ERRORS(state, payload) {
+		SET_CUSTOMER_ERRORS(state, payload) {
 			state.customerErrorHandle = true;
 			state.customerErrorData = Object.entries(payload);
 		},
-		SET_EE_ERRORS(state, payload) {
+		SET_EMPLOYEE_ERRORS(state, payload) {
 			state.userErrorHandle = true;
 			state.employeeErrorData = Object.entries(payload);
 		},
@@ -91,24 +128,31 @@ export const Errors = {
 		//Reset All Errors
 		RESET_ERRORS(state, payload) {
 			state.updateNotification = null;
+			state.loginErrorData = new Array();
+			state.invErrorData = new Array();
+			state.datacomErrorData = new Array();
+			state.partnerErrorData = new Array();
+			state.companyErrorData = new Array();
+			state.salesOfficeErrorData = new Array();
+			state.warehouseErrorData = new Array();
+			state.leadErrorData = new Array();
+			state.userErrorData = new Array();
+			state.employeeErrorData = new Array();
+			state.customerErrorData = new Array();
+			state.vendorErrorData = new Array();
 			state.loginErrorHandle = false;
-			state.loginErrorData = [];
 			state.invErrorHandle = false;
-			state.invErrorData = [];
 			state.datacomErrorHandle = false;
-			state.datacomErrorData = [];
 			state.partnerErrorHandle = false;
-			state.partnerErrorData = [];
 			state.companyErrorHandle = false;
-			state.companyErrorData = [];
+			state.salesOfficeErrorHandle = false;
+			state.warehouseErrorHandle = false;
+			state.leadErrorHandle = false;
 			state.userErrorHandle = false;
-			state.userErrorData = [];
 			state.employeeErrorHandle = false;
-			state.employeeErrorData = [];
 			state.customerErrorHandle = false;
-			state.customerErrorData = [];
 			state.vendorErrorHandle = false;
-			state.vendorErrorData = [];
+			
 		}
 	},
 	actions: {
@@ -131,31 +175,56 @@ export const Errors = {
 					"UPDATE_NOTIFICATIONS",
 					`The submission to ${payload.type} did not meet the server requirements. ${payload.data.non_field_errors}`
 				);
+				//Datacom Errors
+				if (payload.type === "Create New Datacom") {
+					commit("SET_DATACOM_ERRORS", payload.data);
+				}
+				//Partner Errors
+				if (payload.type === "Create New Partner") {
+					commit("set_partner_Error", payload.data);
+				}
+				//Company Errors
+				if (payload.type === "Create New Company") {
+					commit("SET_COMPANY_ERRORS", payload.data);
+				}
+				//Vendor Errors
+				if (payload.type === "Create New Vendor") {
+					commit("SET_VENDOR_ERRORS", payload.data);
+				}
+				//Lead Errors
+				if (payload.type === "Create New Lead") {
+					commit("SET_LEAD_ERRORS", payload.data);
+				}
+				//SalesOffice Errors
+				if (payload.type === "Create New Sales Office") {
+					commit("SET_SALESOFFICE_ERRORS", payload.data);
+				}
+				//Warehouse Errors
+				if (payload.type === "Create New Warehouse") {
+					commit("SET_WAREHOUSE_ERRORS", payload.data);
+				}
+				
+				//User Errors
+				if (payload.type === "Create New User") {
+					commit("SET_USER_ERRORS", payload.data);
+				}
+				//Employee Errors
+				if (payload.type === "Create New Employee") {
+					commit("SET_EMPLOYEE_ERRORS", payload.data);
+				}
+
+				//Customer Errors - Need to finish
+				if (payload.type === "Create New ustomer") {
+					commit("SET_CUSTOMER_ERRORS", payload.data);
+				}
+
 				//Login Errors
 				if (payload.type === "Login Unsuccessful") {
 					commit("SET_LOGIN_ERRORS", payload.data);
 				}
-				//Inventory Errors
+				//Inventory Errors - Need to finish
 				if (payload.type === "Create Inventory") {
 					commit("SET_INV_ERRORS", payload.data);
-				}
-				//Company Errors
-				if (payload.type === "Create Company") {
-					commit("SET_COMPANY_ERRORS", payload.data);
-				}
-				//User Errors
-				if (payload.type === "Create User") {
-					commit("SET_USER_ERRORS", payload.data);
-				}
-				if (payload.type === "Create Customer") {
-					commit("SET_CUSTOMER_USER_ERRORS", payload.data);
-				}
-				//Employee Errors
-				if (payload.type === "Create Employee") {
-					commit("SET_EE_ERRORS", payload.data);
-				}
-				if (payload.type === "Retrieve Employee Profile") {
-					commit("SET_EE_ERRORS", payload.data);
 				}
 			}
 			if (payload.status === 401) {
@@ -230,5 +299,100 @@ export const Errors = {
 			}
 		}
 	},
-	getters: {}
+	getters: {
+		GET_DATACOM_ERRORS_LIST(state) {
+			return state.datacomErrorData;
+		},
+		GET_DATACOM_ERRORS_LIST_LENGTH(state) {
+			return state.datacomErrorData.length;
+		},
+		GET_DATACOM_ERROR_HANDLE(state) {
+			return state.datacomErrorHandle;
+		},
+		// GET_PARTNER_ERRORS_LIST(state) {
+		// 	return state.partnerErrorData;
+		// },
+		partnerData(state) {
+			return state.newPartnerData;
+		},
+		GET_PARTNER_ERRORS_LIST_LENGTH(state) {
+			return state.partnerErrorData.length;
+		},
+		GET_PARTNER_ERROR(state) {
+			return state.partnerErrorHandle;
+		},
+		GET_COMPANY_ERRORS_LIST(state) {
+			return state.companyErrorData;
+		},
+		GET_COMPANY_ERROR_HANDLE(state) {
+			return state.companyErrorHandle;
+		},
+		GET_COMPANY_ERRORS_LIST_LENGTH(state) {
+			return state.companyErrorData.length;
+		},
+		GET_VENDOR_ERRORS_LIST(state) {
+			return state.vendorErrorData;
+		},
+		GET_VENDOR_ERRORS_LIST_LENGTH(state) {
+			return state.vendorErrorData.length;
+		},
+		GET_VENDOR_ERROR_HANDLE(state) {
+			return state.vendorErrorHandle;
+		},
+		GET_LEAD_ERRORS_LIST(state) {
+			return state.leadErrorData;
+		},
+		GET_LEAD_ERRORS_LIST_LENGTH(state) {
+			return state.leadErrorData.length;
+		},
+		GET_LEAD_ERROR_HANDLE(state) {
+			return state.leadErrorHandle;
+		},
+		GET_SALESOFFICE_ERRORS_LIST(state) {
+			return state.salesOfficeErrorData;
+		},
+		GET_SALESOFFICE_ERRORS_LIST_LENGTH(state) {
+			return state.salesOfficeErrorData.length;
+		},
+		GET_SALESOFFICE_ERROR_HANDLE(state) {
+			return state.salesOfficeErrorHandle;
+		},
+		GET_WAREHOUSE_ERRORS_LIST(state) {
+			return state.warehouseErrorData;
+		},
+		GET_WAREHOUSE_ERRORS_LIST_LENGTH(state) {
+			return state.warehouseErrorData.length;
+		},
+		GET_WAREHOUSE_ERROR_HANDLE(state) {
+			return state.warehouseErrorHandle;
+		},
+		GET_CUSTOMER_ERRORS_LIST(state) {
+			return state.customerErrorData;
+		},
+		GET_CUSTOMER_ERRORS_LIST_LENGTH(state) {
+			return state.customerErrorData.length;
+		},
+		GET_CUSTOMER_ERROR_HANDLE(state) {
+			return state.customerErrorHandle;
+		},
+		GET_USER_ERRORS_LIST(state) {
+			return state.userErrorData;
+		},
+		GET_USER_ERRORS_LIST_LENGTH(state) {
+			return state.userErrorData.length;
+		},
+		GET_USER_ERROR_HANDLE(state) {
+			return state.userErrorHandle;
+		},
+		GET_EMPLOYEE_ERRORS_LIST(state) {
+			return state.employeeErrorData;
+		},
+		GET_EMPLOYEE_ERRORS_LIST_LENGTH(state) {
+			return state.employeeErrorData.length;
+		},
+		GET_EMPLOYEE_ERROR_HANDLE(state) {
+			return state.employeeErrorHandle;
+		},
+		
+	}
 };

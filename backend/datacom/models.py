@@ -61,10 +61,9 @@ class DatacomManager(models.Manager):
     if shipping_contacts_var:
       datacom.shipping_contacts.set(shipping_contacts_var)
       
-
     barcode = CommonBarcode.objects.create_barcode(datacom.id, **kwargs)
-    print('daatcom barcode', barcode)
-    datacom['barcode'] = barcode
+    print('Datacom barcode', barcode)
+    datacom.barcode = barcode
 
     datacom.save(using=self._db)
 

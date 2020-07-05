@@ -55,12 +55,20 @@ class CompanyManager(models.Manager):
 
     company.save(using=self._db)
 
-    company.primary_contacts.set(primary_contacts_var)
-    company.billing_contacts.set(billing_contacts_var)
-    company.technical_contacts.set(technical_contacts_var)
-    company.shipping_contacts.set(shipping_contacts_var)
+    if primary_contacts_var:
+      company.primary_contacts.set(primary_contacts_var)
+    if billing_contacts_var:
+      company.billing_contacts.set(billing_contacts_var)
+    if technical_contacts_var:
+      company.technical_contacts.set(technical_contacts_var)
+    if shipping_contacts_var:
+      company.shipping_contacts.set(shipping_contacts_var)
 
-    company.save()
+    barcode = CommonBarcode.objects.create_barcode(company.id, **kwargs)
+    print('Company barcode', barcode)
+    company.barcode = barcode
+
+    company.save(using=self._db)
 
     return company
 

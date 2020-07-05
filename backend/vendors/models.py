@@ -30,7 +30,7 @@ class VendorManager(models.Manager):
       kwargs['account_number'] = 0
 
     kwargs['is_vendor'] = True
-    print('Modified creat_datacom kwargs', kwargs)
+    print('Modified create vendor kwargs', kwargs)
 
     newVendorID = CompanyIDs.newCompanyID(self, **kwargs)
     print('Modified newVendorID', newVendorID)
@@ -51,12 +51,20 @@ class VendorManager(models.Manager):
 
     vendor.save(using=self._db)
 
-    vendor.primary_contacts.set(primary_contacts_var)
-    vendor.billing_contacts.set(billing_contacts_var)
-    vendor.technical_contacts.set(technical_contacts_var)
-    vendor.shipping_contacts.set(shipping_contacts_var)
+    if primary_contacts_var:
+      vendor.primary_contacts.set(primary_contacts_var)
+    if billing_contacts_var:
+      vendor.billing_contacts.set(billing_contacts_var)
+    if technical_contacts_var:
+      vendor.technical_contacts.set(technical_contacts_var)
+    if shipping_contacts_var:
+      vendor.shipping_contacts.set(shipping_contacts_var)
 
-    vendor.save()
+    barcode = CommonBarcode.objects.create_barcode(vendor.id, **kwargs)
+    print('Vendor barcode', barcode)
+    vendor.barcode = barcode
+
+    vendor.save(using=self._db)
 
     return vendor
 
@@ -72,7 +80,6 @@ class Vendor(CommonCompanyBase):
   shipping_contacts   = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="vendor_shipping_contacts", blank=True)
   dba_name 			      = models.CharField(max_length=200)
   legal_name 		      = models.CharField(max_length=200)
-  domain              = models.CharField(max_length=100)
   account_number      = models.CharField(max_length=16, null=True, blank=True)
   notes 	            = models.TextField(blank=True, null=True)
   purchasing_terms    = models.CharField(max_length=250, blank=True, null=True)

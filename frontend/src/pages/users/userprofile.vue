@@ -161,12 +161,12 @@
 						<!-- el2 -->
 						<f7-block class="no-margin">
 							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.userErrorHandle" class="left message is-danger">
+								<articlev-if="Errors.userErrorHandle" class="left message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
+								</articlev-if=>
 								<div v-if="Errors.userErrorData.length != 0">
 									<div class="full-width" v-for="errorArray in Errors.userErrorData" :key="errorArray.id">
 										<div
@@ -234,9 +234,11 @@
 								<!-- Begin Parent Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 									<parent-component
+										ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
 										:parentSettings="parentSettings"
-										:moduleInfo="moduleInfo">
+										:moduleInfo="moduleInfo"
+										:formData="employeeForm">
 									</parent-component>
 								</b-tab-item>
 								<!-- END Parent Company Tab -->
@@ -2249,7 +2251,7 @@ export default {
 		async createUserandNew() {
 			console.log("createUserandNew");
 			//invoke the create user and create employee function
-			let createUserRes = await this.createEmployee();
+			let createUserRes = await this.POSTEmployee();
 			console.log("createUserRes", createUserRes);
 			//Populate Fields with Created Instance
 			this.resetViewtoHome();
@@ -2259,7 +2261,7 @@ export default {
 		async createUserandEdit() {
 			console.log("createUserandEdit");
 			//invoke the create user and create employee function
-			let createEmployeeRes = await this.createEmployee();
+			let createEmployeeRes = await this.POSTEmployee();
 			console.log("createEmployeeRes", createEmployeeRes);
 			await this.clearUserFormData();
 			//Populate Fields with Created Instance
@@ -2270,14 +2272,14 @@ export default {
 		async createUserandClose() {
 			console.log("createUserandClose");
 			//invoke the create user and create employee function
-			let response = await this.createEmployee();
+			let response = await this.POSTEmployee();
 			console.log("createUserandClose response", response);
 			this.resetViewtoHome();
 			//Load current users data next
 			console.log("createUserandClose All Done");
 		},
 
-		createEmployee() {
+		POSTEmployee() {
 			return new Promise(async (resolve, reject) => {
 				var newUserForm = {};
 				this.$f7.preloader.show();
@@ -2286,7 +2288,7 @@ export default {
 				delete this.employeeForm.user.groups;
 
 				console.log("Create User this.employeeForm.user", this.employeeForm.user);
-				let response = await this.$store.dispatch("createUser", this.employeeForm.user);
+				let response = await this.$store.dispatch("POSTUser", this.employeeForm.user);
 				console.log("response: ", response);
 				this.employeeForm.user.barcode = {};
 
@@ -2338,11 +2340,11 @@ export default {
 				}
 
 				console.log("this.employeeForm", this.employeeForm);
-				let eeResponse = await this.$store.dispatch("createEmployee", this.employeeForm);
+				let eeResponse = await this.$store.dispatch("POSTEmployee", this.employeeForm);
 				console.log("Create Employee Promise eeResponse", eeResponse);
 
 				if (response.status === 200 || response.status === 201) {
-					this.$store.dispatch("getEmployeeList");
+					this.$store.dispatch("GETEmployeeList");
 					this.$f7.preloader.hide();
 					return resolve(eeResponse);
 				} else {
@@ -2359,7 +2361,7 @@ export default {
 			});
 		},
 		refreshEmployees() {
-			this.$store.dispatch("getEmployeeList");
+			this.$store.dispatch("GETEmployeeList");
 		},
 		// Populate Fields for editing in browser
 		async showUserData(employeeID) {
@@ -2426,11 +2428,11 @@ export default {
 			this.employeeForm.user.bio = this.$refs.userBio.f7TextEditor.contentEl.innerHTML;
 
 			try {
-				await this.$store.dispatch("PATCHUser", this.employeeForm.user).then((response) => {
+				await this.$store.dispatch("PATCHEmployeeProfile", this.employeeForm.user).then((response) => {
 					console.log("PATCH User Repsonse Update User", response);
 				});
 				delete this.employeeForm.user;
-				await this.$store.dispatch("PATCHEmployee", this.employeeForm).then((response) => {
+				await this.$store.dispatch("PATCHEmployeeProfile", this.employeeForm).then((response) => {
 					console.log("PATCH User Repsonse Update Employee", response);
 				});
 			} catch (error) {
@@ -2551,7 +2553,7 @@ export default {
 					setTimeout(() => {
 						let chunk = djangoInvObj.splice(0, 1);
 						console.log("chunk", chunk);
-						this.$store.dispatch("createUser", chunk);
+						this.$store.dispatch("POSTUser", chunk);
 					}, 2000 * i);
 				})(i++);
 			}
@@ -2588,12 +2590,12 @@ export default {
 			console.log("this.employeeForm.user", this.employeeForm.user);
 
 			try {
-				this.$store.dispatch("PATCHUser", formdata);
+				this.$store.dispatch("PATCHEmployeeProfile", formdata);
 				// await axios.patch('/django/users/'+ formdata.id + '/', formdata).then(response => {
 				//   console.log("Django Image PATCH response", response);
 				//   response.type = "Update User Profile Image";
 				//   this.$store.dispatch("updateNotification", response);
-				//   this.$store.dispatch('getEmployeeList');
+				//   this.$store.dispatch('GETEmployeeList');
 				// });
 				this.uploadMessage = "File has been uploaded";
 				this.file = "";

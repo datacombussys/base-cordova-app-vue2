@@ -19,12 +19,6 @@ from partners.serializers import PartnerSerializer, PartnerListSerializer
 from datacom.serializers import DatacomSerializer, DatacomListSerializer
 
 
-class SimpleCompanySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Company
-        fields = ['id', 'dba_name', 'legal_name', 'datacom__id', 'partner__id']
-
 class CompanySerializer(serializers.ModelSerializer):
     datacom_obj = DatacomListSerializer(read_only=True, source='datacom')
     datacom = serializers.PrimaryKeyRelatedField(queryset=Datacom.objects.all(), required=False, allow_null=True)
@@ -38,6 +32,15 @@ class CompanySerializer(serializers.ModelSerializer):
     company_docs = serializers.PrimaryKeyRelatedField(queryset=CompanyDocuments.objects.all(), required=False, allow_null=True)
     industry_obj = IndustrySerializer(read_only=True, source='industry')
     industry = serializers.PrimaryKeyRelatedField(queryset=Industry.objects.all(), required=False, allow_null=True)
+
+    primary_contacts_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')
+    primary_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    shipping_contacts_list = UserListSerializer(many=True, read_only=True, source='shipping_contacts')
+    shipping_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    billing_contact_list = UserListSerializer(many=True, read_only=True, source='billing_contacts')
+    billing_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+    technical_contacts_list = UserListSerializer(many=True, read_only=True, source='technical_contacts')
+    technical_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
 
     profile_img = Base64ImageField(max_length=None,
                                     use_url=True,
@@ -64,6 +67,16 @@ class CompanySerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
+    def validate(self, data):
+        print('data', data)
+        print('self', self)
+        datacom = data.get('datacom', "")
+        partner = data.get('partner', "")
+        if datacom and partner:
+            msg = "You cannot assign datacom and a partner to the same merchant"
+            raise serializers.ValidationError(msg)
+        return data
 
 class CompanyListSerializer(serializers.ModelSerializer):
     class Meta:

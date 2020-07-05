@@ -643,7 +643,7 @@
 											<f7-block class="full-width" v-if="hideUpdateItemButtons">
 												<f7-row class="margin-top">
 													<f7-col width="25">
-														<f7-button fill class="bg-color-red" @click="deleteCompany">Delete</f7-button>
+														<f7-button fill class="bg-color-red" @click="PATCHDeleteProfile">Delete</f7-button>
 													</f7-col>
 													<f7-col width="25">
 														<f7-button fill class="bg-color-blue" @click="updateCompanyPATCH">Update</f7-button>
@@ -728,13 +728,17 @@
 										<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 										<business-contact-form-component 
 											:contactForm="leadForm"
-											:formSettings="billingContactSettings">
+											:formSettings="billingContactSettings"
+											:errorData="errorData"
+											:errorHandle="errorHandle">
 										</business-contact-form-component>
 
 										<f7-block-title class="full-width" medium>Primary Shipping Information</f7-block-title>
 										<business-contact-form-component 
 											:contactForm="leadForm"
-											:formSettings="shippingContactSettings">
+											:formSettings="shippingContactSettings"
+											:errorData="errorData"
+											:errorHandle="errorHandle">
 										</business-contact-form-component>
 						
 										<f7-row class="margin-top">
@@ -880,7 +884,7 @@
 											<f7-list>
 												<f7-list-item link="#" popover-close title="Clear Checkbox"></f7-list-item>
 												<f7-list-item link="#" @click="editCompanyData" popover-close title="Edit Item"></f7-list-item>
-												<f7-list-item link="#" @click="deleteCompany" popover-close title="Delete Item"></f7-list-item>
+												<f7-list-item link="#" @click="PATCHDeleteProfile" popover-close title="Delete Item"></f7-list-item>
 											</f7-list>
 										</f7-popover>
 									</f7-row>
@@ -1013,279 +1017,6 @@
 		</f7-row>
 		<!-- END Main Container -->
 
-		<!-- Product Bulk Upload Sheet -->
-		<f7-sheet
-			class="uploadInventory image-sheet"
-			:opened="companyBulkUploadSheet"
-			@sheet:closed="companyBulkUploadSheet = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content>
-				<!-- Store to Django Database -->
-				<f7-block-title medium>Store History</f7-block-title>
-				<f7-card>
-					<f7-card-content class="no-margin-top">
-						<f7-block-title class="margin-top-half" medium>Use the following format</f7-block-title>
-						<f7-row>
-							<f7-col>
-								<a href="/static/InventoryCSVFormat.csv" class="external" download="sample">Download Sample</a>
-							</f7-col>
-						</f7-row>
-						<f7-block-title medium>Please select a file to upload</f7-block-title>
-						<!--UPLOAD-->
-						<csv-import
-							v-model="csv"
-							:map-fields="[
-								'Name',
-								'Category',
-								'Manufacturer',
-								'Model',
-								'Model Number',
-								'Service?',
-								'Variation?',
-								'Tracked?',
-								'Downloadable?',
-								'On Website?',
-								'On Sale?',
-								'Taxable?',
-								'Parent Item',
-								'Product ID',
-								'SKU',
-								'Product Type',
-								'ISBN',
-								'Tags',
-								'Sales Notes',
-								'Vendor Notes',
-								'Product Description',
-								'List Price',
-								'Purchase Price',
-								'Sale Price',
-								'Wholesale Price',
-								'Discount %',
-								'Sale Expiration',
-								'Income Account',
-								'Expense Account',
-								'Reorder Level',
-								'Weight',
-								'Weight UOM',
-								'Width',
-								'Height',
-								'Length',
-								'Dimensions UOM'
-							]"
-						>
-							<template slot="hasHeaders" slot-scope="{ headers, toggle }">
-								<label hidden>
-									<f7-checkbox id="hasHeaders" :value="headers" checked @change="toggle"></f7-checkbox>
-									Headers?
-								</label>
-							</template>
-
-							<template slot="error">
-								File type is invalid
-							</template>
-
-							<template slot="thead">
-								<tr>
-									<th>Database Fields</th>
-									<th>CSV Column</th>
-								</tr>
-							</template>
-							<!-- Large preloaders -->
-							<template slot="next" slot-scope="{ load }">
-								<f7-row class="display-flex justify-content-left">
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="load">Map Data Fields</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="parseDataHistory">Execute</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="testingMethod">Test</f7-button>
-									</f7-col>
-								</f7-row>
-							</template>
-						</csv-import>
-					</f7-card-content>
-				</f7-card>
-				<!-- END Store to Django Database -->
-				<f7-row class="margin">
-					<f7-col>
-						<f7-block>
-							{{ csv }}
-						</f7-block>
-					</f7-col>
-				</f7-row>
-			</f7-page-content>
-			<!-- END Bulk Upload Sheet Content -->
-		</f7-sheet>
-		<!-- END Bulk Upload Sheet -->
-
-		<!-- Company Image Upload Sheet -->
-		<f7-sheet class="company-image image-sheet" :opened="companyImageSheet" @sheet:closed="companyImageSheet = false">
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content class="padding-bottom">
-				<section>
-					<f7-block v-show="!leadForm.id">
-						<f7-block-header>
-							You must first select a company to add a profile image
-						</f7-block-header>
-					</f7-block>
-				</section>
-
-				<section>
-					<f7-block v-show="leadForm.id">
-						<div class="block">
-							<button class="button" fill @click="activeStep = 0">Start Over</button>
-						</div>
-						<div>
-							<b-steps
-								v-model="activeStep"
-								:animated="isAnimated"
-								:has-navigation="hasNavigation"
-								:icon-prev="prevIcon"
-								:icon-next="nextIcon"
-							>
-								<b-step-item label="Choose Image" :clickable="isStepsClickable">
-									<div class="left" v-if="uploadMessage" :class="`message ${error ? 'is-danger' : 'is-success'}`">
-										<div class="message-body">{{ uploadMessage }}</div>
-									</div>
-									<f7-block>
-										<form enctype="multipart/form-data">
-											<f7-row class="justify-content-center">
-												<div class="dropzone">
-													<input type="file" name="invArray" @change="selectFile" ref="invFile" class="input-field" />
-
-													<p v-if="!uploading" class="call-to-action">
-														Drop file here
-													</p>
-													<p v-if="uploading" class="progress-bar is-primary" :value="progress" max="100">
-														<progress class="progress"> </progress>
-														{{ progress }} %
-													</p>
-												</div>
-												<f7-row>
-													<f7-col width="100">
-														<div v-if="file" class="file-name" style="font-size:3rem;">{{ file.name }}</div>
-													</f7-col>
-												</f7-row>
-											</f7-row>
-										</form>
-									</f7-block>
-								</b-step-item>
-
-								<b-step-item
-									label="Resize Image"
-									:clickable="isStepsClickable"
-									:type="{ 'is-success': isProfileSuccess }"
-								>
-									<template>
-										<f7-row>
-											<f7-col width="50">
-												<!-- Note that 'ref' is important here (value can be anything). read the description about `ref` below. -->
-												<vue-croppie
-													ref="croppieRefCompany"
-													:enableOrientation="true"
-													:boundary="{ width: 500, height: 500 }"
-													:viewport="{ width: 300, height: 300, type: 'circle' }"
-													@result="result"
-													@update="update"
-												>
-												</vue-croppie>
-												<f7-button fill @click="crop()">Crop</f7-button>
-											</f7-col>
-											<f7-col width="50">
-												<!-- the result -->
-												<f7-row v-if="cropped">
-													<f7-col class="display-flex justify-content-center">
-														<img v-bind:src="cropped" />
-													</f7-col>
-												</f7-row>
-											</f7-col>
-										</f7-row>
-									</template>
-								</b-step-item>
-
-								<b-step-item label="Upload Image" :clickable="isStepsClickable" disabled>
-									<!-- the result -->
-									<f7-row v-if="cropped">
-										<f7-col class="display-flex justify-content-center">
-											<img v-bind:src="cropped" />
-										</f7-col>
-									</f7-row>
-									<f7-row v-if="!cropped">
-										<f7-col class="display-flex justify-content-center">
-											<p style="font-size: 30px;">You have not cropped an image. Please go back and click "Cropped".</p>
-										</f7-col>
-									</f7-row>
-								</b-step-item>
-
-								<!-- navigation Links -->
-								<template v-if="customNavigation" slot="navigation" slot-scope="{ previous, next }">
-									<f7-row class="display-flex justify-content-space-around">
-										<f7-col width="25" class="imageNavButtons">
-											<b-button
-												v-if="!previous.disabled"
-												class="display-flex justify-content-center"
-												outlined
-												type="is-danger"
-												icon-pack="mdi"
-												icon-left="arrow-left-box"
-												size="is-large"
-												:disabled="previous.disabled"
-												@click.prevent="previous.action"
-											>
-												<span>Previous</span>
-											</b-button>
-										</f7-col>
-										<f7-col width="25" class="imageNavButtons">
-											<b-button
-												v-if="!next.disabled"
-												class="display-flex justify-content-center"
-												outlined
-												type="is-success"
-												icon-pack="mdi"
-												size="is-large"
-												icon-left="arrow-right-box"
-												:disabled="next.disabled"
-												@click.prevent="next.action"
-											>
-												<span>Next</span>
-											</b-button>
-											<f7-button
-												class="display-flex justify-content-center"
-												v-if="next.disabled"
-												large
-												fill
-												sheet-close
-												@click.prevent="sendFile"
-												>Submit</f7-button
-											>
-										</f7-col>
-									</f7-row>
-								</template>
-								<!-- END navigation Links -->
-							</b-steps>
-						</div>
-					</f7-block>
-				</section>
-				<f7-block class="margin-bottom"></f7-block>
-			</f7-page-content>
-			<!-- END Company Sheet Content -->
-		</f7-sheet>
-		<!-- END Company Image Upload Sheet -->
 	</f7-page>
 </template>
 
@@ -1528,7 +1259,7 @@ export default {
 			//Dispatch creation method and update Fields with latest Object
 			console.log("createCompanyandEdit", this.leadForm);
 			this.leadForm.description = this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML;
-			await this.$store.dispatch("createCompany", this.leadForm).then((response) => {
+			await this.$store.dispatch(POSTCompany, this.leadForm).then((response) => {
 				console.log("Promise Response from Create Company", response);
 				//Populate Fields with Created Instance
 				this.editCompanyData(response.id);
@@ -1540,7 +1271,7 @@ export default {
 			//Dispatch creation method and update Fields with latest Object
 			console.log("createCompanyandNew, this.leadForm", this.leadForm);
 			this.leadForm.description = this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML;
-			await this.$store.dispatch("createCompany", this.leadForm).then((response) => {
+			await this.$store.dispatch(POSTCompany, this.leadForm).then((response) => {
 				console.log("Promise Response from CreateCompanyandNew", response);
 				//Populate Fields with Created Instance
 				this.newItemButton();
@@ -1552,7 +1283,7 @@ export default {
 			//Dispatch creation method and update Fields with latest Object
 			console.log("createCompanyandNew, this.leadForm", this.leadForm);
 			this.leadForm.description = this.$refs.companyDescription.f7TextEditor.contentEl.innerHTML;
-			await this.$store.dispatch("createCompany", this.leadForm).then((response) => {
+			await this.$store.dispatch(POSTCompany, this.leadForm).then((response) => {
 				console.log("Promise Response from CreateCompanyandNew", response);
 				//Populate Fields with Created Instance
 				this.clearFormData();
@@ -1560,7 +1291,7 @@ export default {
 		},
 		async refreshCompany() {
 			console.log("this.getCompanyLit", this.getCompanies);
-			await this.$store.dispatch("getCompanyList");
+			await this.$store.dispatch("GETCompanyList");
 		},
 		// Populate Fields for editing in browser
 		editCompanyData(companyID) {
@@ -1610,20 +1341,20 @@ export default {
 			this.$store.dispatch("updateCompanyItem", this.leadForm);
 		},
 		//Set inventory item to inactive instead of deleting instance
-		async deleteCompany() {
+		async PATCHDeleteProfile() {
 			// Is item Selected in table?
 			if (this.checkedRows[0].id) {
 				var rowID = this.checkedRows.slice(-1)[0].id;
 				var findIndexID = this.Companies.companyList.findIndex((elem) => {
 					return elem.id == rowID;
 				});
-				console.log("deleteCompany findIndexID", findIndexID);
+				console.log("PATCHDeleteProfile findIndexID", findIndexID);
 				if (this.Companies.companyList.length === 0) {
 					this.$store.commit("updateNotification", "There are no items available");
 				}
 				if (this.Companies.companyList.length != 0) {
 					let companyItem = this.Companies.companyList[findIndexID];
-					console.log("deleteCompany != 0 companyItem", companyItem);
+					console.log("PATCHDeleteProfile != 0 companyItem", companyItem);
 					for (let key in this.leadForm) {
 						this.leadForm[key] = companyItem[key];
 					}
@@ -1634,8 +1365,8 @@ export default {
 					const newDate = new Date(date);
 					console.log("newDate", newDate.toISOString());
 					this.leadForm.acct_closure_date = newDate;
-					await this.$store.dispatch("deleteCompany", this.leadForm).then((response) => {
-						console.log("response from deleteCompany method", response);
+					await this.$store.dispatch("PATCHDeleteProfile", this.leadForm).then((response) => {
+						console.log("response from PATCHDeleteProfile method", response);
 						this.clearFormData();
 					});
 				}
@@ -1665,125 +1396,9 @@ export default {
 			this.hideUpdateItemButtons = true;
 		},
 
-		// Parsing CSV for Django storage
-		parseDataHistory() {
-			// this.$store.dispatch('firePreloader');
-			console.log("csv", this.csv);
-			var djangoInvObj = [];
-			let mappedData = this.csv.map((data) => {
-				"Name", "Model", "Manufacturer", "Category", "Category Class", "List Price", "Purchase Price";
-				var objOfData = {
-					name: data["Name"],
-					model: data["Model"],
-					category: data["Category"],
-					category_class: data["Category Class"],
-					purchase_price: data["Purchase Price"]
-				};
-				djangoInvObj.push(objOfData);
-			});
-			console.log("csv data from mapping function", djangoInvObj);
+	
 
-			//Place code here to split the array and dispatch each separately in chunks
-			let count = djangoInvObj.length / 1;
-			let i = 0;
-			while (i < count + 1) {
-				((i) => {
-					setTimeout(() => {
-						let chunk = djangoInvObj.splice(0, 1);
-						console.log("chunk", chunk);
-						this.$store.dispatch("createInventory", chunk);
-					}, 2000 * i);
-				})(i++);
-			}
-			// this.$store.dispatch('closePreloader');
-		},
-		selectFile(e) {
-			//Get image URL and send to bind method
-			console.log("Event", e);
-			let newImageFile = e.target.files[0];
-			var reader = new FileReader();
-			reader.readAsDataURL(newImageFile);
-			reader.onload = (e) => {
-				this.fileURL = e.target.result;
-				this.bind();
-			};
-			//Get Image object and validate then send
-			this.file = this.$refs.invFile.files[0];
-			const allowedFileTypes = ["image/jpeg", "image/png", "image/gif"];
-			const MAX_SIZE = 2000000;
-			const tooLarge = this.file.size > MAX_SIZE;
 
-			if (allowedFileTypes.includes(this.file.type) && !tooLarge) {
-				this.error = false;
-				this.uploadMessage = "";
-			} else {
-				this.error = true;
-				this.uploadMessage = toolarge ? `Too large, Max size is ${MAX_SIZE / 1000}kb` : "Only Images are allowed";
-			}
-		},
-
-		async sendFile() {
-			this.leadForm.profile_img = this.cropped;
-			var formdata = this.leadForm;
-			console.log("this.leadForm", this.leadForm);
-
-			try {
-				await axios.put("/django/companies/" + formdata.id + "/", formdata).then((response) => {
-					console.log("Commpany Image PUT response", response);
-					this.$store.dispatch("getCompanyList");
-				});
-				this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-			} catch (err) {
-				this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
-				console.log("Error Uploading", err);
-				this.error = true;
-			}
-		},
-
-		//Image Cropper
-		bind() {
-			var $$ = this.Dom7;
-			// Bind image to Cropper
-			console.log("this.fileURL from bind()", this.fileURL);
-			this.$refs.croppieRefCompany
-				.bind({
-					url: this.fileURL
-				})
-				.then(() => {
-					$$(".cr-slider").attr({ min: 0.15, max: 3 });
-				});
-		},
-
-		// CALLBACK USAGE
-		crop() {
-			// Here we are getting the result via callback function
-			// and set the result to this.cropped which is being
-			// used to display the result above.
-			let options = {
-				format: "png",
-				circle: true
-			};
-			this.$refs.croppieRefCompany.result(options, (output) => {
-				this.cropped = output;
-			});
-		},
-		// EVENT USAGE
-		cropViaEvent() {
-			this.$refs.croppieRefCompany.result(options);
-		},
-		result(output) {
-			this.cropped = output;
-		},
-		update(val) {
-			console.log(val);
-		},
-		rotate(rotationAngle) {
-			// Rotates the image
-			this.$refs.croppieRefCompany.rotate(rotationAngle);
-		},
 		getPrimaryCities(e) {
 			this.leadForm.primary_states = e.target.value;
 			this.$store.dispatch("getCities", this.leadForm.primary_states);
@@ -1802,13 +1417,10 @@ export default {
 		...mapGetters(["getCompanies"])
 	},
 	mounted() {
-		this.$store.dispatch("getCompanyList");
+		this.$store.dispatch("GETCompanyList");
 		this.$store.dispatch("getStates");
 
-		// function to put an initial image on the canvas for Croppie.js.
-		this.$refs.croppieRefCompany.bind({
-			url: ""
-		});
+
 	},
 	on: {}
 };

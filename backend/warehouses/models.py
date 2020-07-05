@@ -32,15 +32,15 @@ class WarehouseManager(models.Manager):
     print('warehouse kwargs', kwargs)
     newWarehouseID = CompanyIDs.newCompanyID(self, **kwargs)
 
-    primary_contacts_var = kwargs['primary_contacts']
-    billing_contacts_var = kwargs['billing_contacts']
-    technical_contacts_var = kwargs['technical_contacts']
-    shipping_contacts_var = kwargs['shipping_contacts']
+    # primary_contacts_var = kwargs['primary_contacts']
+    # billing_contacts_var = kwargs['billing_contacts']
+    # technical_contacts_var = kwargs['technical_contacts']
+    # shipping_contacts_var = kwargs['shipping_contacts']
 
-    del kwargs['primary_contacts']
-    del kwargs['billing_contacts']
-    del kwargs['technical_contacts']
-    del kwargs['shipping_contacts']
+    # del kwargs['primary_contacts']
+    # del kwargs['billing_contacts']
+    # del kwargs['technical_contacts']
+    # del kwargs['shipping_contacts']
     
     warehouse = self.model(**kwargs)
     warehouse.is_active = True
@@ -48,12 +48,20 @@ class WarehouseManager(models.Manager):
 
     warehouse.save(using=self._db)
 
-    warehouse.primary_contacts.set(primary_contacts_var)
-    warehouse.billing_contacts.set(billing_contacts_var)
-    warehouse.technical_contacts.set(technical_contacts_var)
-    warehouse.shipping_contacts.set(shipping_contacts_var)
+    # if primary_contacts_var:
+    #   warehouse.primary_contacts.set(primary_contacts_var)
+    # if billing_contacts_var:
+    #   warehouse.billing_contacts.set(billing_contacts_var)
+    # if technical_contacts_var:
+    #   warehouse.technical_contacts.set(technical_contacts_var)
+    # if shipping_contacts_var:
+    #   warehouse.shipping_contacts.set(shipping_contacts_var)
 
-    warehouse.save()
+    barcode = CommonBarcode.objects.create_barcode(warehouse.id, **kwargs)
+    print('Warehouse barcode', barcode)
+    warehouse.barcode = barcode
+
+    warehouse.save(using=self._db)
 
     return warehouse
 

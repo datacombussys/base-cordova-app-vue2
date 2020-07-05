@@ -126,7 +126,7 @@ export default {
     let response = await this.setUserPlatformGET();
     console.log('Mounted Warehouse database response', response);
     if(this.Warehouses.warehouseList.length === 0) {
-      this.$store.dispatch('getWarehouseList', response);
+      this.$store.dispatch('GETWarehouseList', response);
     }
     
   },

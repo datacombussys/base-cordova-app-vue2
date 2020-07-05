@@ -98,7 +98,7 @@
 									<f7-row class="padding-bottom display-flex justify-content-center">
 										<f7-col>
 											<f7-segmented raised round>
-												<f7-button round active>{{ Auth.userLoginProfile.full_name || 'Clerk' }}</f7-button>
+												<f7-button round active>{{ Auth.userProfile.full_name || 'Clerk' }}</f7-button>
 												<f7-button @click="testButton" popup-open=".manager-login-popup"round>Manager</f7-button>
 												<manager-login-popup-component></manager-login-popup-component>
 											</f7-segmented>
@@ -684,7 +684,7 @@ export default {
 	methods: {
 		testButton() {
 			// console.log("this.Auth.user", this.Auth.user);
-			// console.log("this.Auth.userLoginProfile", this.Auth.userLoginProfile);
+			// console.log("this.Auth.userProfile", this.Auth.userProfile);
 			this.startTimer();
 
 			

@@ -69,7 +69,7 @@
 						</f7-col>
 					</f7-row>
 					<!--Vendor is for Users and customers-->
-					<f7-row v-if="moduleInfo.level >= 4 && Auth.authLevel < 4" class="margin-top">
+					<!-- <f7-row v-if="moduleInfo.level >= 4 && Auth.authLevel < 4" class="margin-top">
 						<f7-col width="50">
 							<p>Vendor:</p>
 							<f7-list-item>
@@ -85,10 +85,10 @@
 								<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
 							</f7-list-item>
 						</f7-col>
-					</f7-row>
-					<f7-row>
+					</f7-row> -->
+					<!-- <f7-row>
 						<f7-button @click="testingMethod">Test</f7-button>
-					</f7-row>
+					</f7-row> -->
 				</f7-list>
 				<!-- END Company Display -->
 				<!-- Begin Company Edit View List -->
@@ -100,7 +100,7 @@
 							<f7-list-item>
 								<f7-toggle
 									name="datacom"
-									:disabled="Datacom.datacomList.length === 0"
+									:disabled="GET_DATACOM_LIST.length === 0"
 									:checked="parentSettings.accountParent.is_datacom"
 									@change="companyTypeToggle"
 								></f7-toggle>
@@ -116,7 +116,7 @@
 								type="select"
 								class="datacom-input"
 							>
-								<option v-for="dataco in Datacom.datacomList" :key="dataco.id" :value="dataco.dba_name">
+								<option v-for="dataco in GET_DATACOM_LIST" :key="dataco.id" :value="dataco.dba_name">
 									{{
 									dataco.dba_name
 									}}
@@ -130,7 +130,7 @@
 							<f7-list-item>
 								<f7-toggle
 									name="partner"
-									:disabled="Partners.partnerList.length === 0"
+									:disabled="GET_PARTNER_LIST.length === 0"
 									:checked="parentSettings.accountParent.is_partner"
 									@change="companyTypeToggle"
 								></f7-toggle>
@@ -145,7 +145,7 @@
 								type="select"
 								class="datacom-input"
 							>
-								<option v-for="partner in Partners.partnerList" :key="partner.id">{{ partner.dba_name }}</option>
+								<option v-for="partner in GET_PARTNER_LIST" :key="partner.id">{{ partner.dba_name }}</option>
 							</f7-list-input>
 						</f7-col>
 					</f7-row>
@@ -155,7 +155,7 @@
 							<f7-list-item>
 								<f7-toggle
 									name="merchant"
-									:disabled="Companies.companyList.length === 0"
+									:disabled="GET_COMPANY_LIST.length === 0"
 									:checked="parentSettings.accountParent.is_merchant"
 									@change="companyTypeToggle"
 								></f7-toggle>
@@ -165,24 +165,22 @@
 							<p>Merchant Name:</p>
 							<f7-list-input
 								:disabled="parentSettings.accountParent.is_merchant === false"
-								:value="
-									Auth.platformInfo.platform === 'company' && Auth.isAuthenticated ? parentSettings.accountParent.company_name : ''
-								"
+								:value="parentSettings.accountParent.company_name"
 								@input="parentSettings.accountParent.company_name = $event.target.value"
 								type="select"
 								class="datacom-input"
 							>
-								<option v-for="co in Companies.companyList" :key="co.id">{{ co.dba_name }}</option>
+								<option v-for="co in GET_COMPANY_LIST" :key="co.id">{{ co.dba_name }}</option>
 							</f7-list-input>
 						</f7-col>
 					</f7-row>
-					<f7-row class="margin-top" v-if="moduleInfo.level >= 4 && Auth.authLevel < 4">
+					<!-- <f7-row class="margin-top" v-if="moduleInfo.level >= 4 && Auth.authLevel < 4">
 						<f7-col width="50">
 							<p>Vendor:</p>
 							<f7-list-item>
 								<f7-toggle
 									name="vendor"
-									:disabled="Vendors.vendorList.length === 0"
+									:disabled="GET_VENDOR_LIST.length === 0"
 									:checked="parentSettings.accountParent.is_vendor"
 									@change="companyTypeToggle"
 								></f7-toggle>
@@ -199,14 +197,14 @@
 								type="select"
 								class="datacom-input"
 							>
-								<option v-for="vend in Vendors.vendorList" :key="vend.id">{{ vend.dba_name }}</option>
+								<option v-for="vend in GET_VENDOR_LIST" :key="vend.id">{{ vend.dba_name }}</option>
 							</f7-list-input>
 						</f7-col>
-					</f7-row>
+					</f7-row> -->
 					<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
 						<f7-row class="margin-top level-right">
 							<f7-col width="25">
-								<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
+								<f7-button fill @click="parentSettings.activeTab = 1" class="bg-color-deeporange">Next -></f7-button>
 							</f7-col>
 						</f7-row>
 					</f7-block>
@@ -242,6 +240,10 @@ export default {
 		toggleEditProfile: {
 			type: Function
 		},
+		formData: {
+			type: Object,
+			required: true
+		}
 	
 	},
 	data() {
@@ -256,7 +258,6 @@ export default {
 			this.parentSettings.accountParent.is_datacom = name === "datacom";
 			this.parentSettings.accountParent.is_partner = name === "partner";
 			this.parentSettings.accountParent.is_merchant = name === "merchant";
-			this.parentSettings.accountParent.is_vendor = name === "vendor";
 		},
 		companyTypeToggle(e) {
 			console.log("Toggle e", e);
@@ -264,6 +265,7 @@ export default {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
+					this.parentSettings.accountParent.company_name = null;
 					this.parentSettings.accountParent.is_datacom = false;
 				}
 			}
@@ -271,6 +273,7 @@ export default {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
+					this.parentSettings.accountParent.company_name = null;
 					this.parentSettings.accountParent.is_partner = false;
 				}
 			}
@@ -278,22 +281,41 @@ export default {
 				if (e.target.checked) {
 					this.resetCompanyToggles(e.target.name);
 				} else {
+					this.parentSettings.accountParent.company_name = null;
 					this.parentSettings.accountParent.is_merchant = false;
 				}
 			}
-			if (e.target.name === "vendor") {
-				if (e.target.checked) {
-					this.resetCompanyToggles(e.target.name);
-				} else {
-					this.parentSettings.accountParent.is_vendor = false;
+		},
+		determineAccountOwner() {
+			return new Promise( async (resolve, reject) => {
+				var companyOBJ = {};
+				if (this.parentSettings.accountParent.is_datacom) {
+					companyOBJ = this.GET_DATACOM_LIST.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+					console.log("is_datacom companyOBJ", companyOBJ);
+					this.formData["datacom"] = companyOBJ.id;
+					return resolve({success: "You must select a Company"});
+				} else if (this.parentSettings.accountParent.is_partner) {
+					companyOBJ = this.GET_PARTNER_LIST.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+					console.log("is_partner companyOBJ", companyOBJ);
+					this.formData["partner"] = companyOBJ.id;
+					return resolve();
+				} else if (this.parentSettings.accountParent.is_merchant) {
+					companyOBJ = this.GET_COMPANY_LIST.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+					console.log("is_merchant companyOBJ", companyOBJ);
+					this.formData["company"] = companyOBJ.id;
+					return resolve();
+				}else {
+					this.$f7.dialog.alert("You must select a Company").open();
+					return resolve({error: "You must select a Company"});
 				}
-			}
+			});
+			
 		}
 	},
 	computed: {
 		...mapState(["Auth"]),
-		...mapState(["Users", "Companies", "Datacom", "Partners", "Vendors"])
-		// ...mapGetters([]),
+		...mapState(["Users", "Companies", "Datacom", "Partners", "Vendors"]),
+		...mapGetters(["GET_DATACOM_LIST", "GET_PARTNER_LIST", "GET_COMPANY_LIST", "GET_VENDOR_LIST"]),
 	},
 	created() {},
 	mounted() {}

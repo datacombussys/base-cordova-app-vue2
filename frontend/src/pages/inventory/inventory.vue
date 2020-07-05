@@ -29,9 +29,9 @@
 											<f7-link sheet-open=".inventory-image">
 												<b-icon class="edit-icon" icon="pencil"></b-icon>
 											</f7-link>
-											<profile-image-popup-component 
-												:profileData="invForm"
-												ref="profileComponent">
+											<profile-image-popup-component
+												:profileImageSettings="profileImageSettings"
+												:profileData="invForm">
 											</profile-image-popup-component>
 										</f7-col>
 									</f7-row>
@@ -111,7 +111,7 @@
 										</f7-col>
 									</f7-row>
 									<f7-row class="full-width display-flex justify-content-center" v-if="hideCreateItem">
-										<f7-col width="90" class="no-paddign">
+										<f7-col width="100" class="no-padding">
 											<f7-button @click="clearandResetButton" fill class="bg-color-red">Clear Data</f7-button>
 										</f7-col>
 									</f7-row>
@@ -146,12 +146,12 @@
 						<!-- el2 -->
 						<f7-block>
 							<f7-row class="full-width display-flex justify-content-center">
-								<div v-if="Errors.invErrorHandle" class="left message is-danger">
+								<article v-if="Errors.invErrorHandle" class="left message is-danger">
 									<div class="message-body">
 										There were one or more errors when processing this request. Please review all the fields and make
 										the necessary changes.
 									</div>
-								</div>
+								</article>
 							</f7-row>
 							<f7-card>
 								<f7-card-content>
@@ -1429,12 +1429,12 @@
 													<p class="text-align-center">Please select an inventory item to see sales history.</p>
 												</f7-col>
 											</f7-row>
-											<f7-row class="text-align-center" v-if="Orders.transactions.length === 0 && invForm.id != null">
+											<f7-row class="text-align-center" v-if="Orders.transactionList.length === 0 && invForm.id != null">
 												<f7-col>
 													<p class="text-align-center">There are no order for this product at this time.</p>
 												</f7-col>
 											</f7-row>
-											<f7-row v-if="Orders.transactions.length >= 1">
+											<f7-row v-if="Orders.transactionList.length >= 1">
 												<table class="full-width">
 													<thead>
 														<tr>
@@ -1524,7 +1524,7 @@
 													</f7-row>
 												</f7-col>
 											</f7-row>
-											<f7-row v-if="Inventory.inventoryList.length != 0">
+											<f7-row>
 												<b-table
 													:data="Inventory.inventoryList"
 													:paginated="isPaginated"
@@ -1659,122 +1659,6 @@
 		</f7-row>
 		<!-- END Main Container -->
 
-		<!-- Product Bulk Upload Sheet -->
-		<f7-sheet
-			class="uploadInventory image-sheet"
-			:opened="invBulkSheetOpened"
-			@sheet:closed="invBulkSheetOpened = false"
-		>
-			<f7-toolbar>
-				<div class="left"></div>
-				<div class="right">
-					<f7-link sheet-close>Close</f7-link>
-				</div>
-			</f7-toolbar>
-			<!-- Scrollable sheet content -->
-			<f7-page-content>
-				<!-- Store to Django Database -->
-				<f7-block-title medium>Store History</f7-block-title>
-				<f7-card>
-					<f7-card-content class="no-margin-top">
-						<f7-block-title class="margin-top-half" medium>Use the following format</f7-block-title>
-						<f7-row>
-							<f7-col>
-								<a href="/static/InventoryCSVFormat.csv" class="external" download="sample">Download Sample</a>
-							</f7-col>
-						</f7-row>
-						<f7-block-title medium>Please select a file to upload</f7-block-title>
-						<!--UPLOAD-->
-						<csv-import
-							v-model="csv"
-							:map-fields="[
-								'Name',
-								'Category',
-								'Manufacturer',
-								'Model',
-								'Model Number',
-								'Service?',
-								'Variation?',
-								'Tracked?',
-								'Downloadable?',
-								'On Website?',
-								'On Sale?',
-								'Taxable?',
-								'Parent Item',
-								'Product ID',
-								'SKU',
-								'Product Type',
-								'ISBN',
-								'Tags',
-								'Sales Notes',
-								'Vendor Notes',
-								'Product Description',
-								'List Price',
-								'Purchase Price',
-								'Sale Price',
-								'Wholesale Price',
-								'Discount %',
-								'Sale Expiration',
-								'Income Account',
-								'Expense Account',
-								'Reorder Level',
-								'Weight',
-								'Weight UOM',
-								'Width',
-								'Height',
-								'Length',
-								'Dimensions UOM'
-							]"
-						>
-							<template slot="hasHeaders" slot-scope="{ headers, toggle }">
-								<label hidden>
-									<f7-checkbox id="hasHeaders" :value="headers" checked @change="toggle"></f7-checkbox>
-									Headers?
-								</label>
-							</template>
-
-							<template slot="error">
-								File type is invalid
-							</template>
-
-							<template slot="thead">
-								<tr>
-									<th>Database Fields</th>
-									<th>CSV Column</th>
-								</tr>
-							</template>
-							<!-- Large preloaders -->
-							<template slot="next" slot-scope="{ load }">
-								<f7-row class="display-flex justify-content-left">
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="load">Map Data Fields</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="parseDataHistory">Execute</f7-button>
-									</f7-col>
-									<f7-col width="25" class="margin">
-										<f7-button fill @click.prevent="testingMethod">Test</f7-button>
-									</f7-col>
-								</f7-row>
-							</template>
-						</csv-import>
-					</f7-card-content>
-				</f7-card>
-				<!-- END Store to Django Database -->
-				<f7-row class="margin">
-					<f7-col>
-						<f7-block>
-							{{ csv }}
-						</f7-block>
-					</f7-col>
-				</f7-row>
-			</f7-page-content>
-			<!-- END Bulk Upload Sheet Content -->
-		</f7-sheet>
-		<!-- END Bulk Upload Sheet -->
-
-
-
 	</f7-page>
 </template>
 
@@ -1838,11 +1722,16 @@ export default {
 			categorySettings: {
 				catPopupOpened: false,
 			},
-			//IMage Gallery Popup
+			//Image Gallery Popup
 			galleryUploadSettings: {
 				gallerySheetOpened: false,
 			},
-
+			//Edit Profile IMage
+			profileImageSettings: {
+				url: 'inventory/',
+				module: 'Inventory',
+				mutation: 'UPDATE_PROFILE_IMAGE'
+			},
 			//Scrollbar Settings
 			settings: {
 				maxScrollbarLength: 120
@@ -1994,6 +1883,7 @@ export default {
 
 		},
 		async createItemandNew() {
+			this.$store.commit("RESET_ERRORS");
 			console.log("createInventoryandNew Start");
 			let reponse = await this.createInventory();
 			console.log("reponse", reponse);
@@ -2003,6 +1893,7 @@ export default {
 			this.newItemButton();
 		},
 		async createItemandEdit() {
+			this.$store.commit("RESET_ERRORS");
 			console.log("createInventoryandEdit Start");
 			let reponse = await this.createInventory();
 			console.log("reponse", reponse);
@@ -2012,39 +1903,49 @@ export default {
 			console.log("createInventoryandEdit All Done", reponse);
 		},
 		async createItemandClose() {
+			this.$store.commit("RESET_ERRORS");
 			console.log("createInventoryandClose Start");
 			let newitem = await this.createInventory();
 			console.log("newitem", newitem);
 			//Clear Form and Reset to Starting Viewing Position
 			console.log("createInventoryandClose All Done");
-			// await this.clearFormData();
-			// this.resetViewtoHome();
+			if(newitem != undefined) {
+				await this.clearFormData();
+				this.resetViewtoHome();
+			} else {
+				this.$f7.dialog.alert("You had some errors on your submission").open();
+			}
 		},
 		async createInventory() {
-			this.$store.commit("RESET_ERRORS");
-			try {
-				this.$f7.preloader.show();
-				this.invForm.sales_notes = this.$refs.salesNotes.f7TextEditor.contentEl.innerHTML;
-				this.invForm.vendor_notes = this.$refs.vendorNotes.f7TextEditor.contentEl.innerHTML;
-				this.invForm.product_desc = this.$refs.productDesc.f7TextEditor.contentEl.innerHTML;
-				this.invForm.sale_expires = this.saleExpireCalendar[0];
-				// Handle the Category
-				if (this.invCategory.id) {
-					var catID = this.invCategory.id;
+			return new Promise( async (resolve, reject) => {
+				try {
+					this.$f7.preloader.show();
+					var invFormCopy = JSON.parse(JSON.stringify(this.companyForm));
+
+					invFormCopy.sales_notes = this.$refs.salesNotes.f7TextEditor.contentEl.innerHTML;
+					invFormCopy.vendor_notes = this.$refs.vendorNotes.f7TextEditor.contentEl.innerHTML;
+					invFormCopy.product_desc = this.$refs.productDesc.f7TextEditor.contentEl.innerHTML;
+					invFormCopy.sale_expires = this.saleExpireCalendar[0];
+					// Handle the Category
+					if (this.invCategory.id) {
+						var catID = this.invCategory.id;
+					}
+					invFormCopy.category_id = this.invCategory.id;
+
+					//Dispatch creation method and update Fields with latest Object
+					console.log("invFormCopy pre-Action", invFormCopy);
+
+					let newInvForm = await this.setUserPlatformPOST(invFormCopy);
+					let response = await this.$store.dispatch("POSTInventory", newInvForm);
+					this.$f7.preloader.hide();
+
+					return resolve(response);
+				} catch (error) {
+					console.log("Promise Response Container Error Create Inventory Item", error);
+					return reject(error);
 				}
-				this.invForm.category_id = this.invCategory.id;
-
-				//Dispatch creation method and update Fields with latest Object
-				console.log("this.invForm pre-Action", this.invForm);
-
-				let newInvForm = await this.setUserPlatformPOST(this.invForm);
-				let response = await this.$store.dispatch("POSTInventory", newInvForm);
-				this.$f7.preloader.hide();
-
-				return response;
-			} catch (error) {
-				console.log("Promise Response Container Error Create Inventory Item", error);
-			}
+			});
+			
 		},
 		async refreshInventory() {
 			await this.$store.dispatch("GETInventoryList");
@@ -2230,7 +2131,14 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Inventory", "Orders", "Companies", "Errors", "Static", "Users"]),
-		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST"])
+		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST"]),
+		...mapGetters(["GET_DATACOM_ERRORS_LIST", "GET_DATACOM_ERROR_HANDLE"]),
+		errorData() {
+			return this.GET_DATACOM_ERRORS_LIST
+		},
+		errorHandle() {
+			return this.GET_DATACOM_ERROR_HANDLE
+		}
 	},
 	async mounted() {
 

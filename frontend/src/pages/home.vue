@@ -204,9 +204,11 @@ export default {
 	},
 	methods: {
 		testMethods() {
-			// console.log("this.Auth.userLoginProfile", this.Auth.userLoginProfile);
+			// console.log("this.Auth.userProfile", this.Auth.userProfile);
 			// console.log("this.Users.employeeProfile", this.Users.employeeProfile);
-			this.$store.dispatch('GETCustomerList');
+			// console.log("this.Auth.platformInfo", this.Auth.platformInfo);
+			// console.log("this.GET_OWN_DATACOM_PROFILE", this.GET_OWN_DATACOM_PROFILE);
+			console.log("this.Vendors.vendorList", this.Vendors.vendorList);
 			
 		},
 
@@ -257,7 +259,8 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(["Users", "Inventory", "Auth", "Errors", "Attendance", "Datacom", "Common"]),
+		...mapState(["Users", "Inventory", "Auth", "Errors", "Attendance", "Datacom", "Common", "Vendors"]),
+		...mapGetters(['GET_OWN_DATACOM_PROFILE']),
 		pieStyle() {
 			return {
 				width: "175px"

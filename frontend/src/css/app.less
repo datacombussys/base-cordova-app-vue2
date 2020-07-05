@@ -1207,6 +1207,10 @@ div.list {
 .item-input&.item-content {
 	width: 100%;
 }
+//f7-input fields
+.item-input.item-input-with-error-message.item-input-invalid {
+	padding-bottom: 0px;
+}
 
 //Checkbox
 .b-checkbox.checkbox input[type="checkbox"]:checked + .check {
@@ -1297,29 +1301,7 @@ div.list {
 	font-family: OpenSans-Regular;
 	margin-right: 10px;
 }
-.password-requirements-table {
-	width: 100%;
-	p {
-		font-family: OpenSans-Bold;
-		font-size: @standard-font*1.2;
-	}
-	tbody {
-		tr {
-			td {
-				ul {
-					li {
-						font-size: @standard-font*0.8;
-						list-style: disc inside;
-					}
-				}
-				
 
-			}
-		}
-	}
-	
-
-}
 .card-header {
 	.block-title {
 		border: none;
@@ -1343,6 +1325,9 @@ div.list {
 	min-height: 100px;
 	border: 1px solid rgb(82, 82, 82);
 	background: rgba(209, 240, 245, 0.5);
+}
+.article-error-container {
+	background: green;
 }
 
 //Buefy Table Search Field
@@ -1414,7 +1399,6 @@ h2 {
 	width: 75%;
 }
 // Card Shadows
-
 .card-content {
 	background: rgb(255, 255, 255);
 	border-radius: var(--f7-button-border-radius);
@@ -1454,7 +1438,6 @@ i.icon {
 }
 
 //Searchbar
-
 .searchbar input[type="search"] {
 	padding-right: 0px;
 	padding-left: 50px;
@@ -1586,14 +1569,20 @@ i.icon {
 
 //Error Message Body Formatting
 .message {
-	width: 100%;
+	max-width: 100%;
+	
 	.message-body {
-		padding: 0.75em;
+		text-align: center;
+		padding: 0.5em;
 		background: rgb(236, 236, 236);
-		align-self: center;
 		font-weight: 600;
 	}
 }
+ //Error Meaasge Body
+// .message .message-body {
+// 	text-align: center;
+// 	border-width: 0 4px 0 4px;
+// }
 
 //f7-Menu Format
 //f7 Menu VARS
@@ -1822,11 +1811,7 @@ i.icon {
 		transform: translateX(-50%);
 	}
 }
-//Error Meaasge Body
-.message .message-body {
-	text-align: center;
-	border-width: 0 4px 0 4px;
-}
+
 
 //Double Button
 .trans-btn-left {

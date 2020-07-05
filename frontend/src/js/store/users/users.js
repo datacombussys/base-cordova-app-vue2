@@ -6,231 +6,140 @@ Vue.use(Vuex);
 //Import and Use Axios
 import axios from "axios";
 
+import apiRoutes from '@/js/api-routes';
+
 export const Users = {
 	namespace: true,
 	state: {
 		//User and Employee Personal Data
 		employeeProfile: {},
 		//All Users based on Logged in User
+
+		//Own Business Employees
 		employeeList: [],
-		// employeeBarcodeList: [],
 		companyFilteredEmployeeList: [],
-		//Company Specific Employees based on Selected Business
-		companySpecificEmployeeList: [],
+
+		//Selected Business Employees
+		selectedEmployeeList: [],
 	},
 	mutations: {
 		SET_EMPLOYEE_PROFILE(state, payload) {
 			state.employeeProfile = {};
-			if(payload.length === 0 || payload == null) {
-				return
-			} else {
-				state.employeeProfile = payload[0];
-				console.log("state.employeeProfile", state.employeeProfile);
-			}
+			state.employeeProfile = payload;
+			console.log("state.employeeProfile", state.employeeProfile);
 		},
-		async SET_EMPLOYEE_LIST(state, payload) {
+		SET_EMPLOYEE_LIST(state, payload) {
 			console.log("SET_EMPLOYEE_LIST payload", payload);
 			state.employeeList = payload;
 		},
-		PUSH_NEW_EE_LIST(state, payload) {
+		PUSH_NEW_EMPLOYEE(state, payload) {
 			state.employeeList.push(payload);
 		},
-		SET_FILTERED_EMPLOYEES_COMPANY(state, payload) {
-			state.companyFilteredEmployeeList = payload;
+		SET_SELECTED_EMPLOYEE_LIST(state, payload) {
+			state.selectedEmployeeList = payload;
 		},	
 		CLEAR_USER_DATA(state, payload) {
 			state.employeeProfile = {};
 		},
-		COMMIT_TEST(state, payload) {
-			console.log('employeeProfile', state.employeeProfile);
-			// console.log('COMMIT_TEST Payload', payload);
-		}
+		SET_SELECTED_EMPLOYEE_PROFILE(state, payload) {
+      state.selectedPartnerProfile = payload;
+    },
+    UPDATE_EMPLOYEE_PROFILE() {
+      console.log('payload', payload);
+      let listIndex = state.employeeList.findIndex(elem => elem.id === payload.id);
+      state.employeeList.slice(listIndex, 1);
+      state.employeeList.splice(listIndex, 1, payload);
+      console.log('state.employeeList', state.employeeList);
+    },
+    PATCH_DELETE_EMPLOYEE_PROFILE(state, payload) {
+      console.log('payload', payload);
+      let listIndex = state.employeeList.findIndex(elem => elem.id === payload.id);
+      state.employeeList.slice(listIndex, 1);
+      console.log('state.employeeList', state.employeeList);
+    }
+
 		
 	},
 	actions: {
-		//Return a Promise
-		createUser({ dispatch, commit, rootState }, form) {
-			return new Promise((resolve, reject) => {
-				// if(!rootState.Auth.isAuthenticated) {
-				// 	let error = {};
-				// 	error.type = "Login Required";
-				// 	error.status = 2000;
-				// 	dispatch('updateNotification', error);
-				// 	return reject(error);
-				// }
-				delete form.barcode;
-				console.log("Users Store Action Add user", form);
-				axios.post("/django/users/", form).then((response) => {
-					console.log("response data", response);
-					if (response.status === 200 || response.status === 201) {
-						response.type = "Create User";
-						dispatch('updateNotification', response);
-						return resolve(response);
-					}
-				}).catch(error => {
-					error.type = "Create User";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-
-				return error;
-			});
-							
+		//Create Methods
+    async POSTUser({commit, dispatch, rootState}, payload) {
+			let endpoint = 'users/';
+      let type = 'Create New User';
+			let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+			console.log('POSTUser response', response);
 		},
-		createEmployee({ dispatch, commit, rootState }, form) {
-			return new Promise((resolve, reject) => {
-				console.log("createEmployee form", form);
-				console.log('rootState.Auth.isAuthenticated', rootState.Auth.isAuthenticated);
-				// if(!rootState.Auth.isAuthenticated) {
-				// 	let error = {};
-				// 	error.type = "Login Required";
-				// 	error.status = 2000;
-				// 	dispatch('updateNotification', error);
-				// 	return reject(error);
-				// }
-				axios.post("/django/employee/", form).then(response => {
-					console.log("response data", response);
-					if (response.status === 200 ||response.status === 201) {
-						response.type = "Create Employee";
-						commit('PUSH_NEW_EE_LIST', response.data);
-						dispatch('updateNotification', response);
-
-						return resolve(response);
-					}
-				}).catch(error => {
-
-						error.type = "Create Employee";
-						dispatch('updateNotification', error);
-						//Employee was not created, so we need to delete the User instance that was created.
-						dispatch("deleteUser", form.user);
-
-						return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		async POSTEmployee({commit, dispatch, rootState}, payload) {
+			let endpoint = 'employee/';
+      let type = 'Create New Employee';
+			let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+			console.log('POSTEmployee response', response);
+			commit('PUSH_NEW_EMPLOYEE', response.data);
+			//Handle response error to dfelete user that was created
+			//dispatch("DELETEUserProfile", form.user);
+    },
+    //GET Partner LIST
+    async GETEmployeeList({commit, dispatch, rootState}, payload) {
+			let endpoint = 'employee-list/';
+      let type = 'Get Employee List';
+			let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+			console.log('GETEmployeeList response', response);
+			commit('SET_EMPLOYEE_LIST', response.data);
 		},
-		//Current as of 4-23-20 Update all others accordingly
-		async getEmployeeList({commit, dispatch, rootState}, payload) {
-			return new Promise(async (resolve, reject) => {
-				console.log('getEmployeeList payload', payload);
-				console.log('rootState.Auth.isAuthenticated', rootState.Auth.isAuthenticated);
-				if(!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				} 
-				var url = "";
-				if(payload != undefined) {
-					url = payload.url;
-				}
-				axios.get('/django/employee-list/' + url).then(response => {
-					if (response.status === 200) {
-						console.log("getEmployeeList", response);
-						commit('SET_EMPLOYEE_LIST', response.data);
-						response.type = "Retrieve Employee List";
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					console.log('getEmployeeList error', error);
-					error.type = "Retrieve Employee List";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
+		async GETSelectedEmployeeList({commit, dispatch, rootState}, payload) {
+			//filterURL is passed from the original call
+			let endpoint = 'employee-list/';
+      let type = 'Get Employee List';
+			let response = await apiRoutes.GETSelectedList(dispatch, rootState, endpoint, payload, type);
+			console.log('GETEmployeeList response', response);
+			commit('SET_SELECTED_EMPLOYEE_LIST', response.data);
+    },
+    //GET Own Employee Profile
+    GETEmployeeOwnProfile({commit, dispatch, rootState}, payload) {
+			return new Promise( async (resolve, reject) => {
+				console.log('GETEmployeeOwnProfile payload', payload);
+				let endpoint = 'employee/?user__id=';
+				let type = 'Get Employee Profile';
+				let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+				console.log('GETEmployeeOwnProfile response', response);
+				commit('SET_EMPLOYEE_PROFILE', response.data[0]);
+				commit('SET_PLATFORM_INFO', response.data[0]);
+				return resolve(response.data[0]);
 			});
+    },
+    //GET Selected Profile
+    async GETEmployeeSelectedProfile({commit, dispatch, rootState}, payload) {
+			return new Promise( async (resolve, reject) => {
+				let endpoint = 'employee/';
+				let type = 'Get Employee Profile';
+				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+				console.log('GETEmployeeSelectedProfile response', response);
+				commit('SET_SELECTED_EMPLOYEE_PROFILE', response.data);
+				return resolve(response.data)
+			});
+    },
+    //PATCH Profile
+    async PATCHEmployeeProfile({commit, dispatch, rootState}, payload) {
+			let endpoint = 'employee/';
+      let type = 'Update Employee Profile';
+			let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+			console.log('PATCHEmployeeProfile response', response);
+			commit('UPDATE_EMPLOYEE_PROFILE', response.data);
+    },
+    //PATCHDelete PROFILE
+    async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+			let endpoint = 'employee/';
+      let type = 'Delete Employee Profile';
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+			console.log('PATCHDeleteProfile response', response);
+			commit('PATCH_DELETE_EMPLOYEE_PROFILE', payload);
 		},
-	
-		//Filter Employee Profile based on User ID
-		getEmployeeProfileByUserID({ dispatch, commit }, userID) {
-			return new Promise(async (resolve, reject) => {
-				const url = '/django/employee/?user__id=' + userID;
-				axios.get(url).then(response => {
-					console.log("getEmployeeProfileByUserID response", response);
-					if (response.status === 200) {
-						commit('SET_EMPLOYEE_PROFILE', response.data);
-						commit('SET_PLATFORM_INFO', response.data[0]);
-						response.type = "Retrieve Employee Profile by UserID";
-						// dispatch('updateNotification', response);
-						return resolve(response.data)
-					}
-				}).catch(error => {
-					error.type = "Retrieve Employee Profile";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-			});
-		}).catch(error => {
-			return error;
-		});
-			
+		//DELETE Item
+		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
+			let endpoint = 'users/';
+      let type = 'Delete Employee Profile';
+			let response = await apiRoutes.DELETEItem(dispatch, rootState, endpoint, payload, type);
+			console.log('DELETEProfile response', response);
 		},
-		//Update Users
-		PATCHUser({ dispatch, commit }, form) {
-			return new Promise((resolve, reject) => {
-				console.log("PATCH User in Store", form);
-				axios.patch("/django/employee/" + form.id + "/", form).then(response => {
-					console.log("Patch User Response Data", response);
-					if (response.status === 200) {
-						response.type = "Update User Profile";
-						dispatch('updateNotification', response);
-						this.$store.dispatch('getEmployeeList');
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Update User Profile";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
-		},
-		PATCHEmployee({ dispatch, commit }, form) {
-			return new Promise((resolve, reject) => {
-				console.log("PATCH Employee Info", form);
-				axios.patch("/django/employee/" + form.id + "/", form).then(response => {
-					console.log("PUT Employee Response Data", response);
-					if (response.status === 200) {
-						dispatch('getEmployeeList');
-						response.type = "Update Employee Profile";
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Update Employee Profile";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			
-			}).catch(error => {
-				return error;
-			});
-		},
-		//Delete Users
-		deleteUser({ dispatch, commit }, userID) {
-			console.log("Employee Creation Failed, deleting UserID:", userID);
-			axios.delete("/django/users/"+ userID + "/").then(response => {
-				response.type = "Delete User Profile";
-				dispatch("updateNotification", response);
-				dispatch('getEmployeeList');
-			}).catch(error => {
-				error.type = "Delete User Profile";
-				dispatch('updateNotification', error);
-			});
-			},
 
 
 	},
@@ -239,14 +148,20 @@ export const Users = {
 			return state.userList;
 		},
 		GET_EMPLOYEE_LIST(state) {
-			return [];
+			return state.employeeList;
 		},
 		GET_EMPLOYEE_LIST_LENGTH(state) {
-			return 0;
+			return state.employeeList.length;
 		},
-		getEmployeeProfile(state) {
+		GET_EMPLOYEE_PROFILE(state) {
 			return state.employeeProfile;
 		},
+		GET_SELECTED_EMPLOYEE_LIST(state) {
+			return state.selectedEmployeeList;
+		},
+		GET_SELECTED_EMPLOYEE_LIST_LENGTH(state) {
+			return state.selectedEmployeeList.length;
+		}
 	}
 }
 
