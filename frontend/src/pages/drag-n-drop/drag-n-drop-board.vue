@@ -207,7 +207,7 @@ export default {
     
   }
 </script>
-<style lang="less">
+<style lang="scss">
 .board {
   display: block;
   width: 100%;

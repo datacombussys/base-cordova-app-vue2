@@ -589,7 +589,7 @@ import {mapGetters} from 'vuex';
   }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .new-contract {
   height: 100%;
   width: 100%;

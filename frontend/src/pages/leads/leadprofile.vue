@@ -1430,13 +1430,7 @@ export default {
 .sticky-top {
 	height: 95vh;
 }
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
-}
+
 .dashboard-icons {
 	text-align: center;
 	p {

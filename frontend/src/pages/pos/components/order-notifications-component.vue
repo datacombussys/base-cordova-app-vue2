@@ -67,7 +67,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .notification-header {
 	background: lightgrey;
 	.notification-text {

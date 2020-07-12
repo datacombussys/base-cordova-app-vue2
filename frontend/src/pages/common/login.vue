@@ -138,7 +138,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .login-background {
 	// background: green;
 	background-image: url('/static/LoginPage1920x1080.jpg');

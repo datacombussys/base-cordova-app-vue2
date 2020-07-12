@@ -62,7 +62,7 @@ import { mapGetters } from "vuex";
 
 //Layout Components
 import HoursOfOperationComponent from "./components/hours-of-operation-component.vue";
-import navBarComponent from "../../components/universal/navbar-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
 import attendanceSettingsComponent from "./components/attendance-settings-component.vue";
 import holidayComponent from "./components/holiday-component.vue";
 import shiftComponent from "./components/shift-component.vue";
@@ -151,4 +151,4 @@ export default {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="scss" scoped></style>

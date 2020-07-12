@@ -258,7 +258,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .pin-cell {
   height: 50px;
   width: 50%;

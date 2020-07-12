@@ -79,7 +79,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .fill {
 	background-image: url('http://source.unsplash.com/random/150x150');
 	position: relative;

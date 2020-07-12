@@ -161,30 +161,7 @@
 
           <!-- Col-2 Main Calendar-->
           <f7-col class="body-col-2 display-flex flex-direction-column padding">
-            <calendar style="height: 100%;"
-            ref="tuiCalendar"
-            @afterRenderSchedule="onAfterRenderSchedule"
-            @beforeCreateSchedule="onBeforeCreateSchedule"
-            @beforeDeleteSchedule="onBeforeDeleteSchedule"
-            @beforeUpdateSchedule="onBeforeUpdateSchedule"
-            @clickDayname="onClickDayname"
-            @clickSchedule="onClickSchedule"
-            @clickTimezonesCollapseBtn="onClickTimezonesCollapseBtn"
-            :calendars="calendarList"
-            :schedules="scheduleList"
-            :view="view"
-            :taskView="taskView"
-            :scheduleView="scheduleView"
-            :theme="theme"
-            :week="week"
-            :month="month"
-            :timezones="timezones"
-            :disableDblClick="disableDblClick"
-            :isReadOnly="isReadOnly"
-            :template="template"
-            :useCreationPopup="useCreationPopup"
-            :useDetailPopup="useDetailPopup"
-        />
+          
           </f7-col>
           <!-- END Col-2 Main Calendar -->
 
@@ -205,7 +182,6 @@
 <script>
 import {mapState} from 'vuex';
 import {mapGetters} from 'vuex';
-import Calendar from 'tui-calendar'; /* ES6 */
 
 export default {
     name: "userCalendar",
@@ -217,141 +193,14 @@ export default {
           maxScrollbarLength: 120
         },
         //Calendar Form
-        calendarForm: {
-          calendarID: null,
-          startDate: null,
-          endDate: null,
-          title: null,
-          body: null,
-          subject: null,
-          readOnly: null,
-          ispublic: null,
-          isAllDay: false,
-          dueDateClass: null,
-          location: null,
-          attendees: null,
-          recurrenceRule: null, 
-          isPrivate: true,
-          color: null,
-          bgColor: null,
-          state: 'busy',
-
-        },
-        //Calendar Settings
-        calendarList: [],
-        scheduleList: [],
-        view: 'month',
-        taskView: true,
-        scheduleView: true,
-        theme: {
-            'month.dayname.height': '30px',
-            'month.dayname.borderLeft': '1px solid #ff0000',
-            'month.dayname.textAlign': 'center',
-            'week.today.color': '#333',
-            'week.daygridLeft.width': '100px',
-            'week.timegridLeft.width': '100px'
-        },
-        week: {
-          narrowWeekend: false,
-          showTimezoneCollapseButton: true,
-          timezonesCollapsed: false
-        },
-        month: {
-          visibleWeeksCount: 6,
-          startDayOfWeek: 1,
-          workweek: false,
-          
-        },
-        timezones: [{
-          timezoneOffset: 540,
-          displayLabel: 'GMT+09:00',
-          tooltip: 'Seoul'
-        }, {
-          timezoneOffset: -420,
-          displayLabel: 'GMT-08:00',
-          tooltip: 'Los Angeles'
-        }],
-        disableDblClick: true,
-        isReadOnly: false,
-        template: {
-          milestone: function(schedule) {
-            return `<span style="color:red;">${schedule.title}</span>`;
-          },
-          milestoneTitle: function() {
-            return 'MILESTONE';
-          },
-        },
-        useCreationPopup: true,
-        useDetailPopup: false,
-        }
+      }
     
     },
     methods: {
       testButton() {
-        // console.log("this.calendarList[0]", this.calendarList[0]);
-        var calendar = new Calendar('#calendar2', {
-          defaultView: 'month',
-          taskView: true,
-          template: {
-            monthDayname: function(dayname) {
-              return '<span class="calendar-week-dayname-name">' + dayname.label + '</span>';
-            }
-          }
-        });
-        console.log("calendar", calendar);
-        this.calendarList.push(calendar);
-        console.log("this.calendarList", this.calendarList);
-
-     
-      
+    
       },
-      addSchedule() {
-        this.scheduleList.push(
-        {
-          id: '2',
-          calendarId: '0',
-          title: 'second schedule',
-          category: 'time',
-          dueDateClass: '',
-          start: '2020-03-03T17:30:00+09:00',
-          end: '2020-03-10T17:31:00+09:00',
-          isReadOnly: true    // schedule is read-only
-        });
-      },
-      onAfterRenderSchedule(e) {
-          // implement your code
-      },
-      onBeforeCreateSchedule(e) {
-          // implement your code
-      },
-      onBeforeDeleteSchedule(e) {
-          // implement your code
-      },
-      onBeforeUpdateSchedule(e) {
-          // implement your code
-      },
-      onClickDayname(e) {
-          // implement your code
-      },
-      onClickSchedule(e) {
-          // implement your code
-      },
-      onClickTimezonesCollapseBtn(e) {
-          // implement your code
-      },
-      next() {
-        var newcalendar = this.$refs.tuiCalendar.getRootElement();
-        this.$refs.tuiCalendar.invoke('next');
-
-      },
-      previous() {
-
-      },
-
-
-      onIndexSelect(itemContent) {
-        console.log(itemContent);
-      },
+ 
    
   
     },
@@ -363,16 +212,7 @@ export default {
  
     },
     mounted() {
-      var calendar = new Calendar('#calendar', {
-        defaultView: 'month',
-        taskView: true,
-        template: {
-          monthDayname: function(dayname) {
-            return '<span class="calendar-week-dayname-name">' + dayname.label + '</span>';
-          }
-        }
-      });
-      this.calendarList.push(calendar);
+      
     },
     created() {
 
@@ -386,57 +226,7 @@ export default {
   }
 </script>
 
-<style lang="less" scoped>
-
-
-.title-bar {
-  height: 75px;
-  .row-col-1 {
-    height: 100%;
-    width: 20%;
-    background:rgb(47, 58, 80);
-  }
-  .row-col-2 {
-    height: 100%;
-    width: 80%;
-    background:rgb(74, 88, 114);
-      .nav-col-1 {
-       width: 40%;
-      }
-      .nav-col-2 {
-        width: 30%;
-        .searchbar {
-          display: flex;
-          justify-content: flex-start;
-          width: 300px;
-        }
-      }
-      .nav-col-3 {
-         width:30%;
-      }
-  }
-}
-
-.body-row {
-  .body-col-1 {
-    background: rgb(217, 230, 235);
-    height: 100vh;
-    width: 20%;
-  }
-  .body-col-2 {
-    background: rgb(185, 185, 185);
-    height: 100vh;
-    width: 80%;
-  }
-  .body-col-3 {
-    background: rgb(207, 207, 207);
-    height: 100vh;
-    width: 60%;
-  }
-}
-
-
-
+<style lang="scss" scoped>
 
 </style>
 

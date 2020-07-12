@@ -158,7 +158,8 @@ import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 var moment = require("moment");
 // import axios from "axios";
-import VueAxios from "vue-axios";
+// import VueAxios from "vue-axios";
+import axios from "axios";
 
 //Mixins
 import { UniversalMixins } from "@/mixins/universal-mixins";
@@ -260,8 +261,8 @@ export default {
 			
 
 			try {
-				VueAxios.put("/django/" + endpoint + formdata.id + "/", this.profileData).then((response) => {
-					console.log(`${this.profileImageSettings.module} Image PUT response`, response);
+				axios.patch("/django/" + endpoint + formdata.id + "/", this.profileData).then((response) => {
+					console.log(`${this.profileImageSettings.module} Image PATCH response`, response);
 					// this.$store.dispatch("GETPartnerList");
 					response.type = this.profileImageSettings.module + "Profile Image";
 					this.$store.dispatch("updateNotification", response);

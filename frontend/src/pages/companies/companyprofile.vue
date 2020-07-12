@@ -22,11 +22,18 @@
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
 									<f7-row class="full-width display-flex align-items-center">
-										<f7-col width="50" class="align-self-flex-end">
+										<f7-col width="50">
 											<f7-block-title class="full-width no-margin-bottom">Company</f7-block-title>
 										</f7-col>
 										<f7-col width="50" class="text-align-right">
-											<f7-link sheet-open=".company-image"> <b-icon class="edit-icon" icon="pencil"></b-icon> </f7-link>
+											<f7-link sheet-open=".edit-profile-image"> 
+												<b-icon class="edit-icon" icon="pencil"></b-icon> 
+											</f7-link>
+											<profile-image-popup-component
+												ref="profileImageComponent"
+												:profileImageSettings="profileImageSettings"
+												:profileData="companyForm">
+											</profile-image-popup-component>
 										</f7-col>
 									</f7-row>
 								</f7-card-header>
@@ -1343,10 +1350,10 @@ var moment = require("moment");
 
 //Mixins
 import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
-import { UniversalMixins } from "../../mixins/universal-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 
 //Components
-import navBarComponent from "../../components/universal/navbar-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
 import creditCardComponent from "../../components/business/creditcard-ach-component.vue";
 import shippingComponent from "../../components/business/shipping-component.vue";
 import setupSheetComponent from "../../components/business/setup-sheet-component.vue";
@@ -1413,6 +1420,12 @@ export default {
 					is_partner: false,
 					is_merchant: false,
 				}
+			},
+				//Edit Profile Image
+			profileImageSettings: {
+				url: 'company/',
+				module: 'Company',
+				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
 
 			//Popups and Modals
@@ -1825,13 +1838,7 @@ export default {
 .sticky-top {
 	height: 95vh;
 }
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
-}
+
 .dashboard-icons {
 	text-align: center;
 	p {

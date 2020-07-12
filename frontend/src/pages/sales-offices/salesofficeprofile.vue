@@ -22,13 +22,18 @@
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
 									<f7-row class="full-width display-flex align-items-center">
-										<f7-col width="50" class="align-self-flex-end">
+										<f7-col width="80" class="align-self-flex-end">
 											<f7-block-title class="full-width no-margin-bottom">Sales Office</f7-block-title>
 										</f7-col>
-										<f7-col width="50" class="text-align-right">
+										<f7-col width="20" class="text-align-right">
 											<f7-link sheet-open=".salesOffice-image">
 												<b-icon class="edit-icon" icon="pencil"></b-icon>
 											</f7-link>
+											<profile-image-popup-component
+												ref="profileImageComponent"
+												:profileImageSettings="profileImageSettings"
+												:profileData="salesOfficeForm">
+											</profile-image-popup-component>
 										</f7-col>
 									</f7-row>
 								</f7-card-header>
@@ -912,11 +917,11 @@ import Croppie from "croppie";
 var moment = require("moment");
 
 //Mixins
-import { UniversalMixins } from "../../mixins/universal-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
 
 //LayoutComponents
-import navBarComponent from "../../components/universal/navbar-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
 import profileCardComponent from "../../components/layout-elements/profile-card-component.vue";
 import reportingChartsComponent from "../../components/business/reporting-component.vue";
 import parentComponent from "../../components/business/parent-company-component.vue";
@@ -974,6 +979,12 @@ export default {
 					is_merchant: false,
 					is_vendor: false
 				}
+			},
+				//Edit Profile Image
+			profileImageSettings: {
+				url: 'sales-office/',
+				module: 'Sales Office',
+				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
 
 			//Popups and Modals
@@ -1361,14 +1372,6 @@ export default {
 .sticky-top {
 	height: 95vh;
 }
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
-}
-
 .about-me-box {
 	width: 100%;
 	border: 1px solid rgb(182, 181, 181);

@@ -421,7 +421,7 @@ export default {
   }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .clock-in-button {
   display: flex;
   justify-content: center;

@@ -813,7 +813,7 @@ export default {
   }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .edit-timesheet {
   height: 100%;
 }

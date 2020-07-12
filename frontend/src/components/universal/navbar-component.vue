@@ -47,7 +47,7 @@
 					:panel-open="pageSettings.leftNavDrawer"
 				></f7-link>
 			</f7-nav-left>
-			<f7-nav-title class="display-flex justify-content-center align-items-center">
+			<f7-nav-title>
 				{{ pageSettings.pageTitle }}
 			</f7-nav-title>
 			<f7-nav-right>

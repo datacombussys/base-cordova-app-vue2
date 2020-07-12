@@ -1097,7 +1097,7 @@ export default {
   }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 /* Limit resizable panel width */
 .panel {
   min-width: 400px;

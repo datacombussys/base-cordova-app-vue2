@@ -22,11 +22,18 @@
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
 									<f7-row class="full-width display-flex align-items-center">
-										<f7-col width="50" class="align-self-flex-end">
+										<f7-col width="50">
 											<f7-block-title class="full-width no-margin-bottom">Partner</f7-block-title>
 										</f7-col>
 										<f7-col width="50" class="text-align-right">
-											<f7-link sheet-open=".partner-image"> <b-icon class="edit-icon" icon="pencil"></b-icon> </f7-link>
+											<f7-link sheet-open=".edit-profile-image"> 
+												<b-icon class="edit-icon" icon="pencil"></b-icon>
+											</f7-link>
+											<profile-image-popup-component
+												ref="profileImageComponent"
+												:profileImageSettings="profileImageSettings"
+												:profileData="partnerForm">
+											</profile-image-popup-component>
 										</f7-col>
 									</f7-row>
 								</f7-card-header>
@@ -1539,6 +1546,13 @@ export default {
 					is_merchant: false
 				}
 			},
+				//Edit Profile Image
+			profileImageSettings: {
+				url: 'partner/',
+				module: 'Partner',
+				mutation: 'UPDATE_PROFILE_IMAGE'
+			},
+
 			//Popups and Modals
 			deptPopupOpened: false,
 			payCyclesPopupOpened: false,
@@ -1959,13 +1973,6 @@ export default {
 <style lang="scss" scoped>
 .sticky-top {
 	height: 95vh;
-}
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
 }
 .dashboard-icons {
 	text-align: center;

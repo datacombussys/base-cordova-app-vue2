@@ -463,7 +463,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 @standard-font: 1.1em;
 .open-till-popup {
 	left: 35%;

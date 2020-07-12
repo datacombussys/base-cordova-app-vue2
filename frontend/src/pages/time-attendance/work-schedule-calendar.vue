@@ -85,7 +85,7 @@ import {mapGetters} from 'vuex';
 
 //Components
 import fullCalendar from '@fullcalendar/vue';
-import navBarComponent from "../../components/universal/navbar-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
 import createEventPopupComponent from '../../components/layout-elements/calendar/calendar-create-event-component.vue';
 import viewEventPopupComponent from '../../components/layout-elements/calendar/calendar-view-event-component.vue';
 import confirmDeleteComponent from '../../components/layout-elements/confirm-delete-popup-component.vue';

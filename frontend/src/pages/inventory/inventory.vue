@@ -17,23 +17,24 @@
 					<div>
 						<!-- el2 -->
 
-						<!-- INventory Image and Common Details -->
+						<!-- Inventory Image and Common Details -->
 						<f7-block class="display-block full-height">
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
-									<f7-row class="full-width">
-										<f7-col width="50" class="align-self-flex-end">
+									<f7-row class="full-width display-flex align-items-center">
+										<f7-col width="80">
 											<f7-block-title class="full-width no-margin-bottom">Product</f7-block-title>
 										</f7-col>
-										<f7-col width="50" class="text-align-right">
-											<f7-link sheet-open=".inventory-image">
+										<f7-col width="20">
+											<f7-link sheet-open=".edit-profile-image">
 												<b-icon class="edit-icon" icon="pencil"></b-icon>
 											</f7-link>
-											<profile-image-popup-component
-												:profileImageSettings="profileImageSettings"
-												:profileData="invForm">
-											</profile-image-popup-component>
 										</f7-col>
+										<profile-image-popup-component
+											ref="profileImageComponent"
+											:profileImageSettings="profileImageSettings"
+											:profileData="invForm">
+										</profile-image-popup-component>
 									</f7-row>
 								</f7-card-header>
 								<f7-card-content>
@@ -205,8 +206,8 @@
 								<b-tab-item label="Profile" icon="cube-scan" class="no-padding">
 									<f7-card class="mo-margin-top">
 										<f7-card-header class="no-border hovering" valign="bottom" style="background: lightgray">
-											<f7-row class="full-width">
-												<f7-col width="50" class="align-self-flex-end">
+											<f7-row class="full-width display-flex align-items-center">
+												<f7-col width="50">
 													<f7-block-title class="full-width">Profile</f7-block-title>
 												</f7-col>
 												<f7-col width="50" class="text-align-right">
@@ -555,10 +556,10 @@
 													<f7-block class="full-width" v-if="hideUpdateItemButtons">
 														<f7-row class="margin-top">
 															<f7-col width="25">
-																<f7-button fill class="bg-color-red" @click="deleteInventoryItem">Delete</f7-button>
+																<f7-button fill class="bg-color-red" @click="DELETEInventoryItem">Delete</f7-button>
 															</f7-col>
 															<f7-col width="25">
-																<f7-button fill class="bg-color-blue" @click="putInventoryItem">Update</f7-button>
+																<f7-button fill class="bg-color-blue" @click="PATCHInventoryItem">Update</f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -581,7 +582,7 @@
 								<b-tab-item label="Inventory" icon="warehouse" class="no-padding">
 									<f7-card class="mo-margin-top">
 										<f7-card-header class="no-border hovering" valign="bottom" style="background: lightgray">
-											<f7-row class="full-width">
+											<f7-row class="full-width display-flex align-items-center">
 												<f7-col width="50" class="align-self-flex-end">
 													<f7-block-title class="full-width">Inventory</f7-block-title>
 												</f7-col>
@@ -903,7 +904,7 @@
 																<f7-button fill class="bg-color-red">Delete</f7-button>
 															</f7-col>
 															<f7-col width="25">
-																<f7-button fill class="bg-color-blue" @click="putInventoryItem">Update</f7-button>
+																<f7-button fill class="bg-color-blue" @click="PATCHInventoryItem">Update</f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -926,7 +927,7 @@
 								<b-tab-item label="Sales" icon="point-of-sale" class="no-padding">
 									<f7-card class="mo-margin-top">
 										<f7-card-header class="no-border hovering" valign="bottom" style="background: lightgray">
-											<f7-row class="full-width">
+											<f7-row class="full-width display-flex align-items-center">
 												<f7-col width="50" class="align-self-flex-end">
 													<f7-block-title class="full-width">Sales</f7-block-title>
 												</f7-col>
@@ -1030,7 +1031,7 @@
 																<f7-button fill class="bg-color-red">Delete</f7-button>
 															</f7-col>
 															<f7-col width="25">
-																<f7-button fill class="bg-color-blue" @click="putInventoryItem">Update</f7-button>
+																<f7-button fill class="bg-color-blue" @click="PATCHInventoryItem">Update</f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -1055,7 +1056,7 @@
 								<b-tab-item label="Finance" icon="cash-usd-outline" class="no-padding">
 									<f7-card class="mo-margin-top">
 										<f7-card-header class="no-border hovering" valign="bottom" style="background: lightgray">
-											<f7-row class="full-width">
+											<f7-row class="full-width display-flex align-items-center">
 												<f7-col width="50" class="align-self-flex-end">
 													<f7-block-title class="full-width">Finance</f7-block-title>
 												</f7-col>
@@ -1315,7 +1316,7 @@
 																<f7-button fill class="bg-color-red">Delete</f7-button>
 															</f7-col>
 															<f7-col width="25">
-																<f7-button fill class="bg-color-blue" @click="putInventoryItem">Update</f7-button>
+																<f7-button fill class="bg-color-blue" @click="PATCHInventoryItem">Update</f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -1503,7 +1504,7 @@
 														></f7-list-item>
 														<f7-list-item
 															link="#"
-															@click="deleteInventoryItem"
+															@click="DELETEInventoryItem"
 															popover-close
 															title="Delete Item"
 														></f7-list-item>
@@ -1879,7 +1880,7 @@ export default {
 			this.hideSaveItem = true;
 			this.activeTab = 0;
 			this.$store.commit("RESET_ERRORS");
-			this.$refs.profileComponent.resetFields;
+			this.$refs.profileImageComponent.resetFields();
 
 		},
 		async createItemandNew() {
@@ -1945,7 +1946,34 @@ export default {
 					return reject(error);
 				}
 			});
-			
+		},
+		clearFormData() {
+			return new Promise((resolve, reject) => {
+				try {
+					this.$store.commit("RESET_ERRORS");
+					console.log("clearFormData this.invForm", this.invForm);
+					for (let key in this.invForm) {
+						console.log("key", this.invForm[key]);
+						if (this.invForm[key] === true || this.invForm[key] === false) {
+							// console.log('TF key', key);
+							this.invForm[key] = false;
+						} else {
+							this.invForm[key] = null;
+						}
+					}
+					for (let key in this.invImgGallery) {
+						console.log("key", this.invImgGallery[key]);
+						this.invImgGallery[key] = null;
+					}
+	
+					//Reset Variables
+					this.invForm.is_active = true;
+
+					return resolve("clearForm Completed");
+				} catch (error) {
+					return reject("clearForm Failed");
+				}
+			});
 		},
 		async refreshInventory() {
 			await this.$store.dispatch("GETInventoryList");
@@ -2011,9 +2039,9 @@ export default {
 			}
 		},
 		//Make the PUT request to update datebase instance from updated form Data
-		putInventoryItem() {
+		PATCHInventoryItem() {
 			//House Cleaning
-			console.log("putInventoryItem this.invForm", this.invForm);
+			console.log("PATCHInventoryItem this.invForm", this.invForm);
 			this.$store.commit("RESET_ERRORS");
 			this.$f7.preloader.show();
 
@@ -2041,10 +2069,11 @@ export default {
 			console.log("this.invForm", this.invForm);
 			this.$store.dispatch("PATCHInventoryItem", this.invForm);
 			//I may have to refresh the database Inventory items
+			this.$f7.preloader.hide();
 		},
 		//Set inventory item to inactive instead of deleting instance
-		async deleteInventoryItem() {
-			console.log("deleteInventoryItem Start");
+		async DELETEInventoryItem() {
+			console.log("DELETEInventoryItem Start");
 			this.$store.commit("RESET_ERRORS");
 			// Item MUST be selected from table - No other way to delete
 			if (this.checkedRows.length >= 2) {
@@ -2060,7 +2089,7 @@ export default {
 				var findIndexID = this.Inventory.inventoryList.findIndex((elem) => {
 					return elem.id == rowID;
 				});
-				console.log("deleteInventoryItem findIndexID", findIndexID);
+				console.log("DELETEInventoryItem findIndexID", findIndexID);
 				inventoryListID = findIndexID;
 
 				if (this.Inventory.inventoryList.length === 0) {
@@ -2069,7 +2098,7 @@ export default {
 				//Populate current fields with the one in the Store
 				if (this.Inventory.inventoryList.length != 0) {
 					let InventoryItem = this.Inventory.inventoryList[inventoryListID];
-					console.log("deleteInventoryitem len===1 InventoryItem", InventoryItem);
+					console.log("DELETEInventoryitem len===1 InventoryItem", InventoryItem);
 					for (let key in this.invForm) {
 						this.invForm[key] = InventoryItem[key];
 					}
@@ -2083,36 +2112,7 @@ export default {
 		},
 		deleteChip() {
 			console.log("deleting Chip");
-		},
-		clearFormData() {
-			return new Promise((resolve, reject) => {
-				try {
-					this.$store.commit("RESET_ERRORS");
-					console.log("clearFormData this.invForm", this.invForm);
-					for (let key in this.invForm) {
-						console.log("key", this.invForm[key]);
-						if (this.invForm[key] === true || this.invForm[key] === false) {
-							// console.log('TF key', key);
-							this.invForm[key] = false;
-						} else {
-							this.invForm[key] = null;
-						}
-					}
-					for (let key in this.invImgGallery) {
-						console.log("key", this.invImgGallery[key]);
-						this.invImgGallery[key] = null;
-					}
-	
-					//Reset Variables
-					this.invForm.is_active = true;
-
-					return resolve("clearForm Completed");
-				} catch (error) {
-					return reject("clearForm Failed");
-				}
-			});
-		},
-	
+		},	
 		calcWholesaleMargin(e) {
 			console.log("calcWholesaleMargin");
 			this.invForm.wholesale_price = e.target.value;
@@ -2154,13 +2154,7 @@ export default {
 	position: sticky;
 	top: 0;
 }
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
-}
+
 .dashboard-icons {
 	text-align: center;
 	p {

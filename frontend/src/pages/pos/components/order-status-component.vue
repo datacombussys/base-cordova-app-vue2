@@ -129,7 +129,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .badge {
 	min-height: 30px;
 	min-width: 90px;

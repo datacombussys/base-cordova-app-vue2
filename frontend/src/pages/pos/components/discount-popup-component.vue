@@ -799,7 +799,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .discount-popup {
 	height: 750px;
 }

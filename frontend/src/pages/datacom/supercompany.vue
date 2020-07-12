@@ -26,7 +26,7 @@
 									style="background-color: lightgrey;"
 								>
 									<f7-row class="full-width display-flex align-items-center">
-										<f7-col width="50" class="align-self-flex-end">
+										<f7-col width="50">
 											<f7-block-title class="full-width no-margin-bottom">Company</f7-block-title>
 										</f7-col>
 										<f7-col width="50" class="text-align-right">
@@ -34,6 +34,7 @@
 												<b-icon class="edit-icon" icon="pencil"></b-icon>
 											</f7-link>
 											<profile-image-popup-component
+												ref="profileImageComponent"
 												:profileImageSettings="profileImageSettings"
 												:profileData="datacomForm">
 											</profile-image-popup-component>
@@ -1068,10 +1069,10 @@ var moment = require("moment");
 
 //Mixins
 import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
-import { UniversalMixins } from "../../mixins/universal-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 
 //LayoutComponents
-import navBarComponent from "../../components/universal/navbar-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
 import creditCardComponent from "../../components/business/creditcard-ach-component.vue";
 import shippingComponent from "../../components/business/shipping-component.vue";
 import setupSheetComponent from "../../components/business/setup-sheet-component.vue";
@@ -1556,13 +1557,7 @@ export default {
 .sticky-top {
 	height: 95vh;
 }
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
-}
+
 .dashboard-icons {
 	text-align: center;
 	p {

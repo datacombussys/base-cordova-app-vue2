@@ -74,7 +74,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="scss">
 .empty-col {
 	display: inline-block;
 	flex-direction: row;

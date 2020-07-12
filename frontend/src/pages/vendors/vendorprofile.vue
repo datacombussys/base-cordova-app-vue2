@@ -22,12 +22,13 @@
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
 									<f7-row class="full-width display-flex align-items-center">
-										<f7-col width="50" class="align-self-flex-end">
+										<f7-col width="50">
 											<f7-block-title class="full-width no-margin-bottom">Vendor</f7-block-title>
 										</f7-col>
 										<f7-col width="50" class="text-align-right">
-											<f7-link sheet-open=".vendor-image"> <b-icon class="edit-icon" icon="pencil"></b-icon> </f7-link>
+											<f7-link sheet-open=".edit-profile-image"> <b-icon class="edit-icon" icon="pencil"></b-icon> </f7-link>
 											<profile-image-popup-component
+												ref="profileImageComponent"
 												:profileImageSettings="profileImageSettings"
 												:profileData="vendorForm">
 											</profile-image-popup-component>
@@ -894,11 +895,11 @@ import Croppie from "croppie";
 var moment = require("moment");
 
 //Mixins
-import { UniversalMixins } from "../../mixins/universal-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
 
 //LayoutComponents
-import navBarComponent from "../../components/universal/navbar-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
 import profileCardComponent from "../../components/layout-elements/profile-card-component.vue";
 import employeeDatabaseComponent from "../../components/business/employees-database-component.vue";
 import reportingChartsComponent from "../../components/business/reporting-component.vue";
@@ -1369,13 +1370,7 @@ export default {
 .sticky-top {
 	height: 95vh;
 }
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
-}
+
 .dashboard-icons {
 	text-align: center;
 	p {

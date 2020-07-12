@@ -1,28 +1,10 @@
-<f7-link icon-ios="f7:lock_open" icon-aurora="f7:lock_open" icon-md="material:lock_open"></f7-link>
-<f7-icon material="menu"></f7-icon> Material Design
-<f7-icon f7="menu">airplane</f7-icon> F7
-<f7-icon icon="icon-back" color="white"></f7-icon> Custom
-<f7-icon fa-icon="fa-cc-visa" color="white"></f7-icon> Custom
-<f7-icon size="40" icon="mdi mdi-calendar" slot="media"></f7-icon>
-<b-icon icon="home" size="is-large"></b-icon> Buefy Icons Material Design
-<b-button
-  outlined
-  type="is-danger"
-  icon-pack="mdi" // "fas" also works
-  icon-left="arrow-right-circle"
-  :disabled="previous.disabled"
-  @click.prevent="previous.action">
-Previous
-</b-button>
+<span class="mdi mdi-cart-minus mdi-48px" ></span>
+<md-icon class="md-size-5x">menu</md-icon>
 
-  <f7-button fill class="trans-btn-left" icon="mdi mdi-menu"><span>New Transaction</span></f7-button>
-*************<f7-link icon-size="10" icon="mdi mdi-currency-usd"></f7-link> ***************
-Link with Badge
-<f7-link icon-only>
-  <f7-icon size="50" icon="mdi mdi-account-lock">
-    <f7-badge color="red">5</f7-badge>
-  </f7-icon>
-</f7-link>
+<fa-icon :icon="['far', 'address-book']" size="6x"></fa-icon>
+
+<i class="material-icons" style="font-size:45px;">check_circle</i>
+<span class="material-icons md-48 orange600"> check_circle </span>
 
 _______________Options for this ------------------
     console.log('this', this);

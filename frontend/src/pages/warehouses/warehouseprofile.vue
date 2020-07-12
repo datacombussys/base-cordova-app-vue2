@@ -17,18 +17,23 @@
 					<div>
 						<!-- el2 -->
 						<!-- User Image and Common Details -->
-						<f7-block class="display-block margin-top-half full-height">
+						<f7-block class="margin-top-half full-height">
 							<f7-card>
 								<f7-card-header class="no-border hovering" valign="bottom" style="background-color: lightgrey;">
 									<f7-row class="full-width display-flex align-items-center">
-										<f7-col width="50" class="align-self-flex-end">
+										<f7-col width="80">
 											<f7-block-title class="full-width no-margin-bottom">Warehouse</f7-block-title>
 										</f7-col>
-										<f7-col width="50" class="text-align-right">
-											<f7-link sheet-open=".warehouse-image">
+										<f7-col width="20">
+											<f7-link sheet-open=".edit-profile-image">
 												<b-icon class="edit-icon" icon="pencil"></b-icon>
 											</f7-link>
 										</f7-col>
+										<profile-image-popup-component
+											ref="profileImageComponent"
+											:profileImageSettings="profileImageSettings"
+											:profileData="warehouseForm">
+										</profile-image-popup-component>
 									</f7-row>
 								</f7-card-header>
 								<f7-card-content>
@@ -878,11 +883,11 @@ import Croppie from "croppie";
 var moment = require("moment");
 
 //Mixins
-import { UniversalMixins } from "../../mixins/universal-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
 
 //LayoutComponents
-import navBarComponent from "../../components/universal/navbar-component.vue";
+import navBarComponent from "@/components/universal/navbar-component.vue";
 import parentComponent from "../../components/business/parent-company-component.vue";
 import profileCardComponent from "../../components/layout-elements/profile-card-component.vue";
 import businessContactFormComponent from "@/components/business/contact-form-component.vue";
@@ -935,6 +940,12 @@ export default {
 					is_merchant: false,
 					is_vendor: false
 				},
+			},
+				//Edit Profile Image
+			profileImageSettings: {
+				url: 'warehouse/',
+				module: 'Warehouse',
+				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
 
 			//Popups and Modals
@@ -1318,13 +1329,6 @@ export default {
 <style lang="scss" scoped>
 .sticky-top {
 	height: 95vh;
-}
-span.icon {
-	color: grey;
-}
-.material-icons {
-	font-size: 48px;
-	color: grey;
 }
 .active-arrow {
 	text-align: center;

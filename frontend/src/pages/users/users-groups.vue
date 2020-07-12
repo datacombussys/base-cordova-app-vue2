@@ -294,7 +294,7 @@ import { mapState } from "vuex";
 	};
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .footer-pagination {
 	display: flex;
 	justify-content: space-around;

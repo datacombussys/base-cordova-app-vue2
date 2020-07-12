@@ -279,7 +279,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .gallery-images {
 	height: 100vh;
 }

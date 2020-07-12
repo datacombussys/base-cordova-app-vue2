@@ -499,7 +499,7 @@ import { mapGetters } from "vuex";
 
 //Mixins
 import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
-import { UniversalMixins } from "../../mixins/universal-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 
 export default {
 	name: "creditCardComponent",

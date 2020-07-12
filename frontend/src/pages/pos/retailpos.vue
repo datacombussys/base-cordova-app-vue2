@@ -106,7 +106,7 @@
 									</f7-row>
 									<f7-row class="full-width">
 										<f7-col width="75" class="display-flex justify-content-space-between">
-											<f7-button class="bottom-button padding-half" style="width:35%;" fill>Dashboard</f7-button>
+											<f7-button class="bottom-button padding-half" href="/" style="width:35%;" fill>Dashboard</f7-button>
 											<f7-button
 												class="bottom-button padding-half bg-color-gray"
 												style="width:28%;"

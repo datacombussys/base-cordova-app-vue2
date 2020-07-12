@@ -68,7 +68,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .row-container {
 	padding-bottom: 100px;
 	border: 3px grey solid;

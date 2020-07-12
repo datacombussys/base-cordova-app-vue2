@@ -158,7 +158,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 //  CALCULATOR  \\
 @darker: #1c1c1d;
 @dark: #474849;

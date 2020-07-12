@@ -207,7 +207,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .checkout-text-bold-paid {
 	font-size: 1.5em;
 	font-family: OpenSans-SemiBold;

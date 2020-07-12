@@ -257,7 +257,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .retail-POS-Settings {
 	height: 100%;
 }

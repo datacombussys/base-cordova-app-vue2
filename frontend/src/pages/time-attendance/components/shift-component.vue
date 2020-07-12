@@ -630,7 +630,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .shift-popup-component {
 	width: 750px;
 	left: 45%;

@@ -181,7 +181,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .credit-card-popup {
 	height: 650px;
 }

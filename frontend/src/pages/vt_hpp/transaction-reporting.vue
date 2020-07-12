@@ -231,7 +231,7 @@ import {mapGetters} from 'vuex';
   }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .scroll-area {
   position: relative;
   margin: auto;

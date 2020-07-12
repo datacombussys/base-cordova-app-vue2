@@ -743,7 +743,7 @@ import { UniversalMixins } from "@/mixins/universal-mixins";
   }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .card-container {
   width: 75%;
 }

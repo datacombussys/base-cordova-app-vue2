@@ -51,7 +51,7 @@ import { mapGetters } from "vuex";
 var moment = require("moment");
 
 //Mixins
-import { UniversalMixins } from "../../mixins/universal-mixins";
+import { UniversalMixins } from "@/mixins/universal-mixins";
 import { DataTableMixins } from "../../mixins/components/table-mixins";
 
 //Components
