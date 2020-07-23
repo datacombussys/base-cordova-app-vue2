@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles', 
-    'django.contrib.gis',
 
     #3rd Party Modules
     'rest_framework',
@@ -46,8 +45,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'storages',
     'django_filters',
-    'cities_light',
-    'cities',
 
     #My Modules
     'attendance',
@@ -207,7 +204,7 @@ AWS_DEFAULT_ACL = None
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-CITIES_LIGHT_INCLUDE_COUNTRIES = ['US']
+# CITIES_LIGHT_INCLUDE_COUNTRIES = ['US']
 
 EVENTTOOLS_REPEAT_CHOICES = (
     ("RRULE:FREQ=DAILY", 'Daily'),
@@ -217,10 +214,10 @@ EVENTTOOLS_REPEAT_CHOICES = (
 )
 
 #GeoSpatial Database Settings
-GEOS_LIBRARY_PATH = '/usr/local/lib/libgeos_c.so'
-GDAL_LIBRARY_PATH = '/usr/local/lib/libgdal.so'
-CITIES_CONTINENT_DATA = {
-    'NA': ('North America', 6255149),
-}
-CITIES_LOCALES = ['en']
-CITIES_POSTAL_CODES = ['US']
+# GEOS_LIBRARY_PATH = '/usr/local/lib/libgeos_c.so'
+# GDAL_LIBRARY_PATH = '/usr/local/lib/libgdal.so'
+# CITIES_CONTINENT_DATA = {
+#     'NA': ('North America', 6255149),
+# }
+# CITIES_LOCALES = ['en']
+# CITIES_POSTAL_CODES = ['US']

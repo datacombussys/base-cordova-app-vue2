@@ -109,7 +109,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["Common", "Locale", "Companies", "Auth"]),
+    ...mapState(["Common", "Locale", "Merchants", "Auth"]),
     ...mapGetters(["GET_POSITIONS_LIST"]),
   },
   created() {

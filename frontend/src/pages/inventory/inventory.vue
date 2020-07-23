@@ -1666,7 +1666,6 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import axios from "axios";
 import _ from "lodash";
 import Croppie from "croppie";
 
@@ -1675,7 +1674,7 @@ var momenttz = require("moment-timezone");
 
 //Mixins
 import { UniversalMixins } from "@/mixins/universal-mixins";
-import { LocaleMixin } from "@/mixins/businesses/locale-mixins";
+import { LocaleMixins } from "@/mixins/businesses/locale-mixins";
 
 //Components
 import navBarComponent from "@/components/universal/navbar-component.vue";
@@ -1689,7 +1688,7 @@ export default {
 	name: "inventoryItem",
 	mixins: [
 		UniversalMixins, 
-		LocaleMixin
+		LocaleMixins
 		],
 	components: {
 		"nav-bar-component": navBarComponent,
@@ -2130,7 +2129,7 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(["Auth", "Inventory", "Orders", "Companies", "Errors", "Static", "Users"]),
+		...mapState(["Auth", "Inventory", "Orders", "Merchants", "Errors", "Static", "Users"]),
 		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST"]),
 		...mapGetters(["GET_DATACOM_ERRORS_LIST", "GET_DATACOM_ERROR_HANDLE"]),
 		errorData() {

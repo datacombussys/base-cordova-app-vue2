@@ -29,7 +29,7 @@ class UserBarcodeManager(models.Manager):
 
 		print("last_barcode", last_barcode)
 		if not last_barcode:
-			return "000003100000"
+			return "1000000"
 		else:
 			last_barcode_no = last_barcode.barcode_number
 			if type(last_barcode_no) is int:
@@ -67,13 +67,13 @@ class UserBarcodeManager(models.Manager):
 	def create_barcode(self, **kwargs):
 		print('create_barcode kwargs', kwargs)
 		current_barcode_number = self.create_barcode_number(kwargs)
-		barcode_image = self.create_barcode_image(current_barcode_number)
+		# barcode_image = self.create_barcode_image(current_barcode_number)
   
 		uuid_id = uuid4()
 
 		item = self.model(title=kwargs['first_name'] + "_" + kwargs['last_name']+ "_" + str(uuid_id)[:10])
 		print('1 user barcode item has id?', item)
-		item.image = barcode_image
+		# item.image = barcode_image
 		item.barcode_type = "qrcode"
 		item.barcode_number = int(current_barcode_number)
 		item.save(using=self._db)

@@ -331,10 +331,6 @@
 
 <script>
 import { mapState } from "vuex";
-import Framework7Vue, { f7 } from 'framework7-vue';
-import Dom7 from 'dom7';
-
-const $ = Dom7;
 
 export default {
 	name: "userGroups",

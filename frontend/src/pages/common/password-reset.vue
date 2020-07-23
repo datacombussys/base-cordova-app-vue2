@@ -78,8 +78,6 @@
 </template>
 
 <script>
-//Import and Use Axios
-import axios from "axios";
 
 import { mapActions } from "vuex";
 import {mapState} from 'vuex';

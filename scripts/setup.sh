@@ -26,7 +26,7 @@ printf "Activating virtual environment...\n"
 source "./env/bin/activate"
 
 printf "\nInstalling python packages..\n"
-pip install -r "./backend/requirements.txt"
+pip3 install -r "./backend/requirements.txt"
 
 if [ -d ./frontend ]; then
 	printf "\nInstalling frontend's node packages...\n"
@@ -39,10 +39,10 @@ fi
 
 if [ -d ./node ]; then
 	printf "\nInstalling Node's node packages...\n"
-	npm --prefix ./frontend/ install ./frontend/
+	npm --prefix ./node/ install ./node/
 	
 	printf "Adding nodeJS modules bin to your path\n"
-	export PATH="`pwd`/frontend/node_modules/.bin/:$PATH"
+	export PATH="`pwd`/node/node_modules/.bin/:$PATH"
 	export NODE_ENV="development"
 fi
 

@@ -1023,7 +1023,6 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import axios from "axios";
 import _ from "lodash";
 import Croppie from "croppie";
 
@@ -1413,7 +1412,7 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(["Users", "Companies", "Static", "Locale"]),
+		...mapState(["Users", "Merchants", "Static", "Locale"]),
 		...mapGetters(["getCompanies"])
 	},
 	mounted() {

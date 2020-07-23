@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from cities.models import Country, Region, City, PostalCode
+
+#Deactivated Citites package
+# from cities.models import Country, Region, City, PostalCode
 
 from .models import TimeZones, Holiday, Shipping, Department, GeneralSettings
 
@@ -15,25 +17,25 @@ from datacom.serializers import DatacomSerializer, DatacomListSerializer
 from companies.serializers import CompanySerializer, CompanyListSerializer
 from users.serializers import UserSerializer, UserListSerializer
 
-class CountrySerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Country
-    fields = ('__all__')
+# class CountrySerializer(serializers.ModelSerializer):
+#   class Meta:
+#     model = Country
+#     fields = ('__all__')
 
-class RegionSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Region
-    fields = ('__all__')
+# class RegionSerializer(serializers.ModelSerializer):
+#   class Meta:
+#     model = Region
+#     fields = ('__all__')
 
-class CitySerializer(serializers.ModelSerializer):
-  class Meta:
-    model = City
-    fields = ('__all__')
+# class CitySerializer(serializers.ModelSerializer):
+#   class Meta:
+#     model = City
+#     fields = ('__all__')
 
-class PostalCodeSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = PostalCode
-    fields = ('__all__')
+# class PostalCodeSerializer(serializers.ModelSerializer):
+#   class Meta:
+#     model = PostalCode
+#     fields = ('__all__')
 
 
 class TimezoneSerializer(serializers.ModelSerializer):

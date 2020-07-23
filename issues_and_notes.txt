@@ -41,6 +41,8 @@ Help me get it setup
 
 Ingenico terminals require Windows and .NET
 
+Show me how to programatically add components form Devexpress to a .js page
+
 I need to change to uplaod path to Amazon AWS for employees to /employee/name.
 I need to figure out how to delete the files from Amazon AWS using a CRON job. What script do I need to write
 When I delete an model instance with an image, I need to do a pre delete signal to capture the necessary informaiton of the file to be deleted.

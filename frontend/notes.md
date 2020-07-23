@@ -1,21 +1,28 @@
-<span class="mdi mdi-cart-minus mdi-48px" ></span>
+https://cdn.materialdesignicons.com/
+<span class="mdi mdi-cart-minus mdi-48" ></span>
 <md-icon class="md-size-5x">menu</md-icon>
 
-<fa-icon :icon="['far', 'address-book']" size="6x"></fa-icon>
+<fa-icon :icon="['far', 'address-book']" class="mdi-35"></fa-icon>
+<fa-icon :icon="['fa', 'ambulance']" class="mdi-35"></fa-icon>
 
+https://material.io/resources/icons
 <i class="material-icons" style="font-size:45px;">check_circle</i>
 <span class="material-icons md-48 orange600"> check_circle </span>
+<span class="material-icons md-48 text-orange">check-bold</span>
 
-_______________Options for this ------------------
-    console.log('this', this);
-		console.log('this.Dom7', this.Dom7);
-		console.log('this.$$', this.$$);
-		console.log('this.$f7', this.$f7);
+https://ej2.syncfusion.com/vue/documentation/appearance/icons/
+also Devexpress ICons See Icon Page.vue
+<span class="e-icons e-upload"></span>
+.e-upload:before{
+	content: '\e714';
+	font-size: 60px;
+}
+https://js.devexpress.com/Documentation/Guide/Themes_and_Styles/Icons/#Built-In_Icon_Library
+<DxItem title="Profile" icon="dx-icon dx-icon-card">
+text: "Login",
+icon: "mdi mdi-login",
 
-Perfect Table with Sort and Filter
-see shift-component.vue
-
-Add a "showInactive" button to show / hide inactive items in database table. The user can then reactivate if they desire.
+DxtextBox Modes: 'email' | 'password' | 'search' | 'tel' | 'text' | 'url'
 
 **********************************Successful Computed Setter ********************************
 totalThings: {
@@ -72,8 +79,7 @@ this.$refs.barcodeInput.$el.querySelector('input').focus();
 Usage of BASE_URL
 url("#{\$baseURL}assets/images/backgrounds/bg-1.png")
 
-<f7-block v-show="companyForm.id">
-</f7-block>
+
 
 <div for person in people>
 <h1> {{ people.firstmname | capitalize }} <h2>
@@ -111,97 +117,16 @@ v-for="item in items"
   }
 </script>
 
-//SmartSelect in Popup
 
-<div class="view view-init">
-  <f7-list-item title="Attendees" smart-select :smart-select-params="{openIn: 'popover'}">
-    <select name="attendees" multiple>
-      <option value="Ian" selected>Ian</option>
-      <option value="Joe">Joe</option>
-      <option value="Mike">Mike</option>
-    </select>
-    <b-icon slot="media" icon="account" size="is-medium"></b-icon>
-  </f7-list-item>
-</div>
 
-//Rendering a list in a select and using V-Model
-<f7-input label="Choose Pair:" type="select"
-:value="names"
-@input="names = $event.target.value">
-
-  <option v-for="pair in getMyList" :key="pair.id" 
-    :value="pair">{{pair}}</option>
-</f7-input>
-
-//V-Model
-<f7-input
-type="text"
-:value="classdata.title"
-@input="classdata.title = $event.target.value"
-placeholder=" ">
-</f7-input>
-
-//Dropdown bindings
-<f7-input type="select"
-:value="symbolDropdown"
-@input="symbolDropdown = $event.target.value">
-<option 
-      v-for="pair in getMyList" 
-      :key="pair.id" 
-      :value="pair.name"
-      >{{ pair }}</option>
-</f7-input>
-
-input PATTERNS
-pattern="[0-9]+(\.\d{1,2})" - 2 decimal for text field
-pattern="[a-zA-Z]*" - Letters only
-
-//Calendar Values. values are an array
-<f7-list-input
-id="expires"
-type="datepicker"
-placeholder="Select date"
-closeOnSelect="true"
-@calendar:change="(values) => invForm.sale_expires.push(...values)"
-:calendar-params="{dateFormat: 'DD, MM dd, yyyy'}"
-style="background: rgb(216,252,253)">
-</f7-list-input>
-response: sale_expires: 0: Date Wed Feb 26 2020 00:00:00 GMT-0700 (Mountain Standard Time)
-
-//Toggle Checked pass true false for checked
-<f7-toggle @change="userForm.is_something = $event.target.checked"></f7-toggle>
-
-//Show hide element
-v-if="!DataFeed.showCharts ? 'hidden' : ''"
-//Show hide parameters
-:fill="DataFeed.feedType == 'live'"
-
-//Upating variables on click and passing info
-<f7-button name="live" :fill="DataFeed.feedType == 'live'" @click="DataFeed.feedType= \$event.target.name">Live</f7-button>
-
-//Class Binding
 
 <div class="left" v-if="uploadMessage" :class="`message ${error ? 'is-danger': 'is-success'}`">
 
-Default Values for Input Fields
-**\* Required. Set value (merchantParent.company_name) in the Mounted() method ** DO NOT use defaultValue
-<f7-list-input
-v-if="Auth.authLevel === 1"
-:disabled="merchantParent.is_datacom === false"
-@input="merchantParent.company_name = $event.target.value"
-type="select"
-class="datacom-input"
-:value="Auth.domain === 'datacom' ? merchantParent.company_name : ''">
-<option v-for="dataco in Datacom.datacomList" 
-    :key="dataco.id">{{ dataco.dba_name }}</option>
-</f7-list-input>
-<f7-list-item v-if="Auth.authLevel === 2" :title="Auth.userCompanyParent">
-<f7-icon slot="media" size="40" icon="mdi mdi-office-building"></f7-icon>
-</f7-list-item>
+
 
 ****** Slots ******
 --Parent--
-<template v-slot:button>
+<template #:button>
   <f7-row class="display-flex justify-content-center">
     <f7-col width="50">
       Start Below
@@ -228,19 +153,18 @@ methods() {
 }
 
 ***********************Animation Transition Between two Elements ********************************
-<f7-row class="full-width">
+<div class="full-width">
   <transition name="calc-transition" class="flip-card" mode="out-in">
     <div v-if="showCalc" key="firstText" class="cardFront"><p>This is the first text</p></div>
     <div v-else key="secondText" class="cardBack"><p>Sorry, no items found.</p></div>
   </transition>
-</f7-row>
+</div>
 
-<f7-row class="full-width">
-  <f7-button @click="showCalc = !showCalc">Click</f7-button>
-</f7-row>
+<div class="full-width">
+  <button @click="showCalc = !showCalc">Click</button>
+</div>
 
-***** Get Dates from f7 Datefiled *****
-this.holidayForm.date = this.$refs.holidayDatePicker.$refs.inputEl.value;
+***** Get Dates from JavaScript Convert to Python *****
 console.log('this.holidayForm', this.holidayForm);
 var year = new Date().getFullYear();
 console.log('year', year);
@@ -250,36 +174,24 @@ console.log('newDate', newDate.toISOString());
 
 <F7 PRELOADERS And DIALOG BOXES>
 
-this.$f7.dialog.progress("Notice: You must enter a valid date");
-  setTimeout(() => {
-    this.$f7.dialog.close();
-  }, 3000);
-
-  this.$f7.dialog.create({
-    title: "The title",
-    text: "You must enter a valid date",
-    buttons: [
-      {
-        text: "OK",
-        bold: true,
-        close: true,
-        color: "red"
-      },
-    ],
-    closeByBackdropClick: true,
-  }).open();
-
-  this.$f7.dialog.alert("Notice: You must enter a valid date");
-  this.$f7.dialog.confirm("Notice: You must enter a valid date");
-  this.$f7.dialog.prompt("Notice: You must enter a valid date");
-  this.$f7.dialog.password("Notice: You must enter a valid date");
-  this.$f7.dialog.login("Notice: You must enter a valid date");
-  this.$f7.dialog.preloader("Notice: You must enter a valid date");
-  this.$f7.dialog.progress("Notice: You must enter a valid date");
+Devexpress Custom Button
+this.$nextTick(function() {
+  let myDialog = custom({
+    title: "Custom dialog",
+    messageHtml: "<b>Dialog with custom buttons</b>",
+    buttons: [{
+      text: "button 1",
+      onClick: (e) => {
+        return { buttonText: e.component.option("text") }
+      }
+    }]
+  });
+  myDialog.show().then((dialogResult) => {
+      console.log(dialogResult.buttonText);
+  });
+})
 
 
-
-selectedPermissions.indexOf(item.id) >= 0
 
 Javascript TEMPLATES with Null Undefined, etc... REMOVE NULL AND UNDEFINED FIRST BY filter(),THEN PERFORM FUNCTION ON RESULT
 Empty Object with nested entries --> e.g. --> category.name
@@ -484,6 +396,8 @@ I cannot return a promise from an Action.
 merging Objects in Javascript
 Use spread operator
 let merged = {...obj1, ...obj2};
+
+	return reject(response.message);
 
 ****************************Django-Rest To Representaiton() ********************************
 

@@ -21,7 +21,8 @@ class CommonUserBase(AbstractBaseUser):
 	last_name 		= models.CharField(max_length=100)
 	mobile_phone 	= models.CharField(max_length=10, null=True, 
 									blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
-	street_address= models.CharField(max_length=200, blank=True, null=True)
+	address 			= models.CharField(max_length=200, blank=True, null=True)
+	address2 			= models.CharField(max_length=200, blank=True, null=True)
 	city 					= models.CharField(max_length=200, blank=True, null=True)
 	state 				= models.CharField(max_length=50, blank=True, null=True)
 	zip 					= models.CharField(max_length=5, null=True, 

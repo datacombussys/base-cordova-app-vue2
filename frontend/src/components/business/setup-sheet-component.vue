@@ -331,7 +331,7 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(["Companies", "Users", "Attendance", "GroupsPermissions", "Inventory"]),
+		...mapState(["Merchants", "Users", "Attendance", "GroupsPermissions", "Inventory"]),
 		...mapGetters(["GET_DEPARTMENTS_LIST", "GET_POSITIONS_LIST"]),
 	},
 	created() {},

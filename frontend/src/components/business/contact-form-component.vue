@@ -956,13 +956,13 @@ import { mapState } from "vuex";
 import {mapGetters} from 'vuex';
 
 // Mixins
-import { LocaleMixin } from '@/mixins/businesses/locale-mixins';
+import { LocaleMixins } from '@/mixins/businesses/locale-mixins';
 
 
 export default {
 	name: "businessContactFormComponent",
 	components: {},
-	mixins: [LocaleMixin],
+	mixins: [LocaleMixins],
 	props: {
 		formSettings: {
 			type: Object,

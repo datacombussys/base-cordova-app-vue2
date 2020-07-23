@@ -75,10 +75,11 @@ from inventory.views import (InventoryViewset,
                             InvCategoryClassViewset, 
                             InvCategoryViewset,
                             InvLabelViewSet, )
-from commons2.views import (CountryViewset, 
-                            RegionViewset, 
-                            CityViewset, 
-                            PostalCodeViewset, 
+from commons2.views import (
+                            # CountryViewset, 
+                            # RegionViewset, 
+                            # CityViewset, 
+                            # PostalCodeViewset, 
                             TimezonesViewset, 
                             HolidayViewset, 
                             ShippingViewSet, 
@@ -114,18 +115,18 @@ router.register(r'django/benefits', BenefitsSerializerViewset)
 router.register(r'django/blogs', BlogViewset)
 router.register(r'django/cardprocessingacct', CardProcessingAccountViewset)
 router.register(r'django/calendars', CalendarViewset)
-router.register(r'django/city', CityViewset)
+# router.register(r'django/city', CityViewset)
 router.register(r'django/contenttype', ContentTypeViewSet)
 
-router.register(r'django/company', CompanyViewset, basename="companies")
-router.register(r'django/company-list', CompanyListViewset, basename="company-list")
-router.register(r'django/company-primary-contacts', CompanyPrimaryContactViewset, basename="company-primary-contacts")
-router.register(r'django/company-shipping-contacts', CompanyShippingContactViewset, basename="company-shipping-contacts")
-router.register(r'django/company-billing-contacts', CompanyBillingContactViewset, basename="company-billing-contacts")
-router.register(r'django/company-technical-contacts', CompanyTechnicalContactViewset, basename="company-technical-contacts")
+router.register(r'django/merchant', CompanyViewset, basename="companies")
+router.register(r'django/merchant-list', CompanyListViewset, basename="merchant-list")
+router.register(r'django/merchant-primary-contacts', CompanyPrimaryContactViewset, basename="merchant-primary-contacts")
+router.register(r'django/merchant-shipping-contacts', CompanyShippingContactViewset, basename="merchant-shipping-contacts")
+router.register(r'django/merchant-billing-contacts', CompanyBillingContactViewset, basename="merchant-billing-contacts")
+router.register(r'django/merchant-technical-contacts', CompanyTechnicalContactViewset, basename="merchant-technical-contacts")
 
-router.register(r'django/company-docs', CompanyDocumentsViewset)
-router.register(r'django/countries', CountryViewset)
+router.register(r'django/merchant-docs', CompanyDocumentsViewset)
+# router.register(r'django/countries', CountryViewset)
 router.register(r'django/creditcard', CreditCardViewset)
 router.register(r'django/customer', CustomerViewset, basename="customer")
 router.register(r'django/customer-list', CustomerListViewset, basename="customers-list")
@@ -177,9 +178,9 @@ router.register(r'django/permission', BasePermissionsViewSet)
 router.register(r'django/permissions', ExtendedPermissionsViewSet)
 
 router.register(r'django/positions', PositionsViewset)
-router.register(r'django/postal-code', PostalCodeViewset)
+# router.register(r'django/postal-code', PostalCodeViewset)
 router.register(r'django/receipts', ReceiptViewset)
-router.register(r'django/region', RegionViewset)
+# router.register(r'django/region', RegionViewset)
 router.register(r'django/shipping', ShippingViewSet)
 
 router.register(r'django/sales-office', SalesOfficeViewset, basename="salesoffice")

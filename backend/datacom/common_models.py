@@ -9,15 +9,8 @@ class CommonCompanyBase(models.Model):
   description 	      = models.TextField(blank=True, null=True)
   date_added 		      = models.DateTimeField(verbose_name="date added", auto_now_add=True)
   global_id 		      = models.UUIDField(primary_key=False, default=uuid4, editable=False)
-  corp_address 	      = models.CharField(max_length=200, blank=True, null=True)
-  corp_city 	  	    = models.CharField(max_length=60, blank=True, null=True)
-  corp_state 		      = models.CharField(max_length=20, blank=True, null=True)
-  corp_zip 			      = models.CharField(max_length=5, null=True, 
-                        blank=True, validators=[RegexValidator(r'^\d{1,5}$')])
-  main_phone 		      = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
-  main_fax 		        = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
-  main_email          = models.CharField(max_length=255, blank=True, null=True)
   primary_mailing_address = models.CharField(max_length=200)
+  primary_mailing_address_2 = models.CharField(max_length=200, blank=True, null=True)
   primary_mailing_city    = models.CharField(max_length=60)
   primary_mailing_state   = models.CharField(max_length=20)
   primary_mailing_zip     = models.CharField(max_length=5, validators=[RegexValidator(r'^\d{1,5}$')])
@@ -28,6 +21,7 @@ class CommonCompanyBase(models.Model):
   primary_fax 		        = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
   primary_email       = models.CharField(max_length=200)
   shipping_address 	  = models.CharField(max_length=200, blank=True, null=True)
+  shipping_address_2  = models.CharField(max_length=200, blank=True, null=True)
   shipping_city 	  	= models.CharField(max_length=60, blank=True, null=True)
   shipping_state 		  = models.CharField(max_length=20, blank=True, null=True)
   shipping_zip 			  = models.CharField(max_length=5, null=True, 
@@ -40,6 +34,7 @@ class CommonCompanyBase(models.Model):
   shipping_fax 		    = models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
   shipping_email      = models.CharField(max_length=200, blank=True, null=True)
   billing_address 	  = models.CharField(max_length=200, blank=True, null=True)
+  billing_address_2 	  = models.CharField(max_length=200, blank=True, null=True)
   billing_city 	  	  = models.CharField(max_length=60, blank=True, null=True)
   billing_state 		  = models.CharField(max_length=20, blank=True, null=True)
   billing_zip 			  = models.CharField(max_length=5, null=True, 
@@ -55,7 +50,6 @@ class CommonCompanyBase(models.Model):
 									      blank=True, validators=[RegexValidator(r'^\d{1,9}$')])
   resale_id           = models.CharField(max_length=20, null=True, 
 									      blank=True, validators=[RegexValidator(r'^\d{1,20}$')])
-  status              = models.CharField(max_length=200, blank=True, null=True)
   is_active           = models.BooleanField(default=True)
   is_datacom          = models.BooleanField(default=False, blank=True, null=True)
   is_partner          = models.BooleanField(default=False, blank=True, null=True)
@@ -64,7 +58,7 @@ class CommonCompanyBase(models.Model):
   is_warehouse        = models.BooleanField(default=False, blank=True, null=True)
   is_salesoffice      = models.BooleanField(default=False, blank=True, null=True)
   board_date          = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
-  acct_closure_date   = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
+  closure_date   = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
   closure_reason      = models.CharField(max_length=250, blank=True, null=True)
   
   class Meta:

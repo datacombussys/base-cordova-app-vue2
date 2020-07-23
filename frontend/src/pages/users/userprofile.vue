@@ -80,7 +80,7 @@
 											<f7-button @click="newUserButton" fill class="bg-color-red">Add New User</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
+									<f7-row class="full-width" v-show="!accountSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button
 												fill
@@ -230,13 +230,13 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="accountSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Parent Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 									<parent-component
 										ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
-										:parentSettings="parentSettings"
+										:accountSettings="accountSettings"
 										:moduleInfo="moduleInfo"
 										:formData="employeeForm">
 									</parent-component>
@@ -260,7 +260,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width margin-top-half" medium>Employee Information</f7-block-title>
 													<f7-col width="50">
@@ -331,7 +331,7 @@
 											</f7-list>
 											<!-- END Profile Display List -->
 											<!-- Begin Profile Edit List -->
-											<f7-list simple-list v-show="parentSettings.editProfile">
+											<f7-list simple-list v-show="accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width margin-top-half" medium>Employee Information</f7-block-title>
 													<f7-col width="50">
@@ -726,10 +726,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="accountSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -758,7 +758,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Human Resources Display List -->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Employment Details</f7-block-title>
 													<f7-col width="50">
@@ -856,7 +856,7 @@
 											</f7-list>
 											<!-- END Human Resources Display List -->
 											<!-- Begin Human Resources Edit List -->
-											<f7-list v-show="parentSettings.editProfile">
+											<f7-list v-show="accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Employment Details</f7-block-title>
 													<f7-col width="30">
@@ -1067,10 +1067,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="parentSettings.activeTab = 3" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="accountSettings.activeTab = 3" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -1099,7 +1099,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Benefits List-->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Benefits</f7-block-title>
 													<f7-col width="20">
@@ -1150,7 +1150,7 @@
 											</f7-list>
 											<!-- END Benefits Display List -->
 											<!-- Begin Benefits Edit List -->
-											<f7-list v-show="parentSettings.editProfile">
+											<f7-list v-show="accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Benefits</f7-block-title>
 													<f7-col width="20">
@@ -1240,7 +1240,7 @@
 														</f7-col>
 													</f7-row>
 												</f7-block>
-												<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+												<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 													<f7-row class="margin-top level-right">
 														<f7-col width="25" class="display-flex justify-content-end margin">
 															<f7-button
@@ -1310,7 +1310,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Document List-->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row class="display-flex justify-content-space-evenly">
 													<f7-block-title class="full-width" medium>Company Policies</f7-block-title>
 													<f7-col width="25">
@@ -1384,7 +1384,7 @@
 											</f7-list>
 											<!-- END Document Display List -->
 											<!-- Begin Document Edit List -->
-											<f7-list v-show="parentSettings.editProfile">
+											<f7-list v-show="accountSettings.editProfile">
 												<f7-row class="display-flex justify-content-space-evenly">
 													<f7-block-title class="full-width" medium>Company Policies</f7-block-title>
 													<f7-col width="25">
@@ -1480,7 +1480,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Attendance Display List -->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row class="margin-top display-flex justify-content-center">
 													<f7-block-title class="full-width" medium>Attendance History</f7-block-title>
 													<f7-row class="full-width display-flex justify-content-end">
@@ -1518,7 +1518,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Compensation History List-->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row class="margin-top">
 													<f7-block-title class="full-width" medium>Paychecks</f7-block-title>
 										
@@ -1982,7 +1982,6 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import axios from "axios";
 import _ from "lodash";
 import Croppie from "croppie";
 
@@ -2000,13 +1999,13 @@ import positionsComponent from "@/components/business/positions-component.vue";
 
 //Mixins
 import { UniversalMixins } from '@/mixins/universal-mixins';
-import { LocaleMixin } from '@/mixins/businesses/locale-mixins';
+import { LocaleMixins } from '@/mixins/businesses/locale-mixins';
 
 export default {
 	name: "userProfile",
 	mixins: [
 		UniversalMixins,
-		LocaleMixin
+		LocaleMixins
 	],
 	components: {
 		"nav-bar-component": navBarComponent,
@@ -2037,11 +2036,11 @@ export default {
 			hireDateSettings: {
 				ref: "hireCalendarDate"
 			},
-			parentSettings: {
+			accountSettings: {
 				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
-				accountParent: {
+				accountPlatform: {
 					company_name: null,
 					is_datacom: false,
 					is_partner: false,
@@ -2206,16 +2205,16 @@ export default {
 		},
 
 		showEditProfile() {
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideUpdateUserButtons = true;
 			this.hideCreateUser = true;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 		},
 		toggleEditProfile() {
-			this.parentSettings.editProfile = !this.parentSettings.editProfile;
+			this.accountSettings.editProfile = !this.accountSettings.editProfile;
 			this.hideUpdateUserButtons = !this.hideUpdateUserButtons;
 			this.hideCreateUser = !this.hideCreateUser;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 		},
 		async newUserButton() {
 			//Show/Hide Edit Fields and buttons
@@ -2224,11 +2223,11 @@ export default {
 			if (this.Users.employeeProfile.company) {
 				this.employeeForm.company_id = this.Users.employeeProfile.company.id;
 			}
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = true;
-			this.parentSettings.hideSaveItem = false;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = false;
+			this.accountSettings.activeTab = 0;
 			this.showPasswordRest = false;
 		},
 		async clearandResetButton() {
@@ -2236,11 +2235,11 @@ export default {
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.parentSettings.editProfile = false;
+			this.accountSettings.editProfile = false;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = false;
-			this.parentSettings.hideSaveItem = true;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = true;
+			this.accountSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -2314,20 +2313,20 @@ export default {
 				//Get Company ID (from each company type) and UserID add to Employee Form
 				console.log("this.employeeForm", this.employeeForm);
 				var companyOBJ = {};
-				if (this.parentSettings.accountParent.is_datacom) {
-					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+				if (this.accountSettings.accountPlatform.is_datacom) {
+					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.accountSettings.accountPlatform.company_name);
 					console.log("is_datacom companyOBJ", companyOBJ);
 					this.employeeForm["datacom"] = companyOBJ.id;
-				} else if (this.parentSettings.accountParent.is_partner) {
-					companyOBJ = this.Partners.partnerList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+				} else if (this.accountSettings.accountPlatform.is_partner) {
+					companyOBJ = this.Partners.partnerList.find((elem) => elem.dba_name == this.accountSettings.accountPlatform.company_name);
 					console.log("is_partner companyOBJ", companyOBJ);
 					this.employeeForm["partner"] = companyOBJ.id;
-				} else if (this.parentSettings.accountParent.is_merchant) {
-					companyOBJ = this.Companies.companyList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+				} else if (this.accountSettings.accountPlatform.is_merchant) {
+					companyOBJ = this.Companies.companyList.find((elem) => elem.dba_name == this.accountSettings.accountPlatform.company_name);
 					console.log("is_merchant companyOBJ", companyOBJ);
 					this.employeeForm["company"] = companyOBJ.id;
-				} else if (this.parentSettings.accountParent.is_vendor) {
-					companyOBJ = this.Vendors.vendorList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+				} else if (this.accountSettings.accountPlatform.is_vendor) {
+					companyOBJ = this.Vendors.vendorList.find((elem) => elem.dba_name == this.accountSettings.accountPlatform.company_name);
 					console.log("is_vendor companyOBJ", companyOBJ);
 					this.employeeForm["vendor"] = companyOBJ.id;
 				} else {
@@ -2367,7 +2366,7 @@ export default {
 		async showUserData(employeeID) {
 			console.log("showUserData employeeID", employeeID);
 			this.showPasswordRest = true;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.activeTab = 0;
 			//Get User ID and object and map to fields
 			var emloyeeListID = null;
 			if (this.checkedRows.length != 0) {
@@ -2678,7 +2677,7 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Orders", "Inventory", "Locale", "Static", "Errors"]),
-		...mapState(["Users", "Companies", "Datacom", "Partners", "Vendors"]),
+		...mapState(["Users", "Merchants", "Datacom", "Partners", "Vendors"]),
 		...mapGetters(["GET_USER_LIST", "GET_COUNTRY_LIST", "GET_STATE_LIST", "GET_CITY_LIST"]),
 		computedPasswords: {
 			get() {
@@ -2708,22 +2707,22 @@ export default {
 		},
 		canSubmitUserForm() {
 			if (this.Auth.isAuthenticated) {
-				if (this.parentSettings.accountParent.is_datacom) {
+				if (this.accountSettings.accountPlatform.is_datacom) {
 					if ((this.requiredFieldsDone = 6)) {
 						return false;
 					}
 				}
-				if (this.parentSettings.accountParent.is_partner) {
+				if (this.accountSettings.accountPlatform.is_partner) {
 					if ((this.requiredFieldsDone = 6)) {
 						return false;
 					}
 				}
-				if (this.parentSettings.accountParent.is_merchant) {
+				if (this.accountSettings.accountPlatform.is_merchant) {
 					if ((this.requiredFieldsDone = 6)) {
 						return false;
 					}
 				}
-				if (this.parentSettings.accountParent.is_vendor) {
+				if (this.accountSettings.accountPlatform.is_vendor) {
 					if ((this.requiredFieldsDone = 6)) {
 						return false;
 					}

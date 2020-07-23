@@ -1,28 +1,24 @@
-//GET request Template
-import store from 'vuex';
 import axios from 'axios';
-console.log('store', store);
-
 
 export default {
 	//CREATE Item
 	POSTItem(dispatch, rootState, endpoint, payload, type) {
 		return new Promise((resolve, reject) => {
 			console.log('POSTItem payload', payload);
-			if (!rootState.Auth.isAuthenticated) {
-				let error = {};
-				error.type = "Login Required";
-				error.status = 2000;
-				dispatch('updateNotification', error);
-				return reject(error);
-			}
+			// if (!rootState.Auth.isAuthenticated) {
+			// 	let error = {};
+			// 	error.type = "Login Required";
+			// 	error.status = 2000;
+			// 	dispatch('updateNotification', error);
+			// 	return reject(error);
+			// }
 			axios.post("/django/" + endpoint, payload).then(response => {
 				if (response.status === 201) {
 					console.log("API Call from POSTItem");
 					response.type = type;
 					dispatch('updateNotification', response);
 
-					return resolve(response.data);
+					return resolve(response);
 				}
 			}).catch(error => {
 				
@@ -30,13 +26,14 @@ export default {
 					error.response.type = type;
 					console.error("error.response", error.response);
 					dispatch('updateNotification', error.response);
-					return reject(error);
+					return reject(error.response);
 				}
 				return reject({error: "There was an error"});
 
 				
 			});
 		}).catch(error => {
+			error.promise = "promise error"
 			console.error(error);
 			return error;
 		});
@@ -46,13 +43,13 @@ export default {
 		return new Promise((resolve, reject) => {
 			console.log('GETList payload', payload);
 			var platform = rootState.Auth.platformInfo;
-			if(!rootState.Auth.isAuthenticated) {
-				let error = {};
-				error.type = "Login Required";
-				error.status = 2000;
-				dispatch('updateNotification', error);
-				return reject(error);
-			} 
+			// if(!rootState.Auth.isAuthenticated) {
+			// 	let error = {};
+			// 	error.type = "Login Required";
+			// 	error.status = 2000;
+			// 	dispatch('updateNotification', error);
+			// 	return reject(error);
+			// } 
 			var url = platform.url;
 			if(payload != undefined) {
 				url = payload.url;

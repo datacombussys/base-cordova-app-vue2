@@ -30,6 +30,6 @@ export const vueKeyboardMixin = {
 
   },
   created() {
-    console.log("The created Mixin for the LocaleMixin worked!");
+    console.log("The created Mixin for the LocaleMixins worked!");
   }
 }

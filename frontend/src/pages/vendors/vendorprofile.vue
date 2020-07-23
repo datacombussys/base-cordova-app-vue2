@@ -77,7 +77,7 @@
 											<f7-button @click="newItemButton" fill class="bg-color-red">Add New Vendor</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
+									<f7-row class="full-width" v-show="!accountSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button fill @click="createVendorandClose" class="bg-color-green trans-btn-left"
 												><span>Save Vendor</span></f7-button
@@ -224,13 +224,13 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="accountSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" v-if="Auth.authLevel <= 3" icon="office-building" class="no-padding">
 										<parent-component
 										ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
-										:parentSettings="parentSettings"
+										:accountSettings="accountSettings"
 										:moduleInfo="moduleInfo"
 										:formData="vendorForm">
 									</parent-component>
@@ -254,7 +254,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width no-margin-top" medium>Account Information</f7-block-title>
 													<f7-col width="50">
@@ -339,7 +339,7 @@
 											<!-- END Profile Display List -->
 
 											<!-- Begin Profile Edit List -->
-											<f7-list v-show="parentSettings.editProfile">
+											<f7-list v-show="accountSettings.editProfile">
 												<f7-block-title class="full-width" medium>Account Information</f7-block-title>
 												<f7-row>
 													<f7-col width="50">
@@ -448,10 +448,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="accountSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -480,7 +480,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<f7-col width="50">
@@ -588,7 +588,7 @@
 											</f7-list>
 											<!-- END Contacts Display List -->
 											<!-- Begin Contacts Edit List -->
-											<f7-list simple-list v-show="parentSettings.editProfile">
+											<f7-list simple-list v-show="accountSettings.editProfile">
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="vendorForm"
@@ -616,8 +616,8 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
-														<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
+														<f7-row class="full-width" v-show="!accountSettings.hideSaveItem">
 															<f7-col width="25" class="display-flex margin">
 																<f7-button fill @click="createVendorandClose" class="bg-color-green trans-btn-left"
 																	><span>Save Vendor</span></f7-button
@@ -888,7 +888,6 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import axios from "axios";
 import _ from "lodash";
 import Croppie from "croppie";
 
@@ -896,7 +895,7 @@ var moment = require("moment");
 
 //Mixins
 import { UniversalMixins } from "@/mixins/universal-mixins";
-import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
+import { LocaleMixins } from "../../mixins/businesses/locale-mixins";
 
 //LayoutComponents
 import navBarComponent from "@/components/universal/navbar-component.vue";
@@ -909,7 +908,7 @@ import profileImagePopupComponent from "@/components/universal/profile-image/pro
 
 export default {
 	name: "vendorProfile",
-	mixins: [UniversalMixins, LocaleMixin],
+	mixins: [UniversalMixins, LocaleMixins],
 	components: {
 		"nav-bar-component": navBarComponent,
 		"profile-card-component": profileCardComponent,
@@ -946,11 +945,11 @@ export default {
 			billingContactSettings: {
 				type: "billing"
 			},
-			parentSettings: {
+			accountSettings: {
 				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
-				accountParent: {
+				accountPlatform: {
 					company_name: null,
 					is_datacom: false,
 					is_partner: false,
@@ -1102,7 +1101,7 @@ export default {
 	methods: {
 		testingMethod(e) {
 			console.log("this.vendorForm ", this.vendorForm);
-			console.log("this.parentSettings", this.parentSettings);
+			console.log("this.accountSettings", this.accountSettings);
 			console.log("this.Vendors.vendorList", this.Vendors.vendorList);
 
 		},
@@ -1111,36 +1110,36 @@ export default {
 			// Add User to list
 		},
 		showEditProfile() {
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideUpdateItemButtons = true;
 			this.hideCreateItem = true;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 		},
 		toggleEditProfile() {
-			this.parentSettings.editProfile = !this.parentSettings.editProfile;
+			this.accountSettings.editProfile = !this.accountSettings.editProfile;
 			this.hideUpdateItemButtons = !this.hideUpdateItemButtons;
 			this.hideCreateItem = !this.hideCreateItem;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 		},
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearFormData();
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideCreateItem = !this.hideCreateItem;
 			this.hideUpdateItemButtons = false;
-			this.parentSettings.hideSaveItem = false;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = false;
+			this.accountSettings.activeTab = 0;
 		},
 		clearandResetButton() {
 			this.clearFormData();
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.parentSettings.editProfile = false;
+			this.accountSettings.editProfile = false;
 			this.hideUpdateItemButtons = false;
 			this.hideCreateItem = false;
-			this.parentSettings.hideSaveItem = true;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = true;
+			this.accountSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -1184,9 +1183,9 @@ export default {
 					console.log("POSTVendor, this.vendorForm", this.vendorForm);
 					this.vendorForm.description = this.$refs.vendorDescription.f7TextEditor.contentEl.innerHTML;
 
-					//If parentSettings then use that, if Not then use setUserPlatform
-					console.group('this.parentSettings.accountParent.company_name', this.parentSettings.accountParent.company_name);
-					if(this.parentSettings.accountParent.company_name) {
+					//If accountSettings then use that, if Not then use setUserPlatform
+					console.group('this.accountSettings.accountPlatform.company_name', this.accountSettings.accountPlatform.company_name);
+					if(this.accountSettings.accountPlatform.company_name) {
 						let response = await this.$refs.parentComponentRef.determineAccountOwner();
 						console.log("response", response);
 						var vendorResponse = await this.$store.dispatch("POSTVendor", this.vendorForm);
@@ -1215,7 +1214,7 @@ export default {
 		async editVendorForm() {
 			//I still need to handle the Parent Company Field. I ti snot updating properly
 			this.clearFormData();
-			this.parentSettings.activeTab = 1;
+			this.accountSettings.activeTab = 1;
 			if (this.checkedRows.length != 0) {
 				console.log("this.checkedRows != 0", this.checkedRows);
 				var rowID = this.checkedRows.slice(-1)[0].id;
@@ -1233,7 +1232,7 @@ export default {
 		async editVendorFormById(companyID) {
 			console.log("editVendor");
 			this.clearFormData();
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.activeTab = 0;
 			//2) Get User ID and object and map to fields from database table
 			var getSelectedVendorObj = await this.$store.dispatch("GETVendorSelectedProfile", {id: companyID});
 			console.group('getSelectedVendorObj', getSelectedVendorObj);

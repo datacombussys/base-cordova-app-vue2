@@ -83,6 +83,6 @@ export const managerLoginMixin = {
 
   },
   created() {
-    console.log("The created Mixin for the LocaleMixin worked!");
+    console.log("The created Mixin for the LocaleMixins worked!");
   }
 }

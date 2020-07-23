@@ -77,7 +77,7 @@
 											<f7-button @click="newItemButton" fill class="bg-color-red">Add New Warehouse</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
+									<f7-row class="full-width" v-show="!accountSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button
 												fill
@@ -233,13 +233,13 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="accountSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Parent Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 									<parent-component
 										ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
-										:parentSettings="parentSettings"
+										:accountSettings="accountSettings"
 										:moduleInfo="moduleInfo"
 										:formData="warehouseForm">
 									</parent-component>
@@ -263,7 +263,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width no-margin-top" medium>Account Information</f7-block-title>
 													<f7-col width="50">
@@ -346,7 +346,7 @@
 											</f7-list>
 											<!-- END Profile Display List -->
 											<!-- Begin Profile Edit List -->
-											<f7-list v-show="parentSettings.editProfile">
+											<f7-list v-show="accountSettings.editProfile">
 												<f7-block-title class="full-width" medium>Account Information</f7-block-title>
 												<f7-row>
 													<f7-col width="50">
@@ -454,10 +454,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="accountSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -486,7 +486,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width" medium>Primary Shipping Information</f7-block-title>
 													<f7-col width="50">
@@ -531,7 +531,7 @@
 											</f7-list>
 											<!-- END Contacts Display List -->
 											<!-- Begin Contacts Edit List -->
-											<f7-list simple-list v-show="parentSettings.editProfile">
+											<f7-list simple-list v-show="accountSettings.editProfile">
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="warehouseForm"
@@ -556,7 +556,7 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 														<f7-row class="margin-top">
 															<f7-col width="50" class="display-flex margin justify-content-end">
 																<f7-button
@@ -876,7 +876,6 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import axios from "axios";
 import _ from "lodash";
 import Croppie from "croppie";
 
@@ -884,7 +883,7 @@ var moment = require("moment");
 
 //Mixins
 import { UniversalMixins } from "@/mixins/universal-mixins";
-import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
+import { LocaleMixins } from "../../mixins/businesses/locale-mixins";
 
 //LayoutComponents
 import navBarComponent from "@/components/universal/navbar-component.vue";
@@ -896,7 +895,7 @@ export default {
 	name: "warehouses",
 	mixins: [
 		UniversalMixins, 
-		LocaleMixin
+		LocaleMixins
 		],
 	components: {
 		"nav-bar-component": navBarComponent,
@@ -929,11 +928,11 @@ export default {
 			billingContactSettings: {
 				type: "billing"
 			},
-			parentSettings: {
+			accountSettings: {
 				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
-				accountParent: {
+				accountPlatform: {
 					company_name: null,
 					is_datacom: false,
 					is_partner: false,
@@ -1059,7 +1058,7 @@ export default {
 			console.log("this.warehouseForm", this.warehouseForm);
 			console.log("this.GET_WAREHOUSE_LIST", this.GET_WAREHOUSE_LIST);
 			console.log("this.Warehouses.warehouseProfile", this.Warehouses.warehouseProfile);
-			console.log("this.parentSettings.accountParent", this.parentSettings.accountParent);
+			console.log("this.accountSettings.accountPlatform", this.accountSettings.accountPlatform);
 			console.log("this.Auth.userCompanyParent", this.Auth.userCompanyParent);
 		},
 		menudropdown(UserID) {
@@ -1067,36 +1066,36 @@ export default {
 			// Add User to list
 		},
 		showEditProfile() {
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideUpdateItemButtons = true;
 			this.hideCreateItem = true;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 		},
 		toggleEditProfile() {
-			this.parentSettings.editProfile = !this.parentSettings.editProfile;
+			this.accountSettings.editProfile = !this.accountSettings.editProfile;
 			this.hideUpdateItemButtons = !this.hideUpdateItemButtons;
 			this.hideCreateItem = !this.hideCreateItem;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 		},
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearFormData();
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideCreateItem = !this.hideCreateItem;
 			this.hideUpdateItemButtons = false;
-			this.parentSettings.hideSaveItem = false;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = false;
+			this.accountSettings.activeTab = 0;
 		},
 		clearandResetButton() {
 			this.clearFormData();
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.parentSettings.editProfile = false;
+			this.accountSettings.editProfile = false;
 			this.hideUpdateItemButtons = false;
 			this.hideCreateItem = false;
-			this.parentSettings.hideSaveItem = true;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = true;
+			this.accountSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -1170,7 +1169,7 @@ export default {
 		async editWarehouse() {
 			//I still need to handle the Parent Company Field. I ti snot updating properly
 			this.clearFormData();
-			this.parentSettings.activeTab = 1;
+			this.accountSettings.activeTab = 1;
 			if (this.checkedRows.length != 0) {
 				console.log("this.checkedRows != 0", this.checkedRows);
 				var rowID = this.checkedRows.slice(-1)[0].id;
@@ -1191,7 +1190,7 @@ export default {
 		async editWarehouseById(companyID) {
 			console.log("editWarehouse");
 			this.clearFormData();
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.activeTab = 0;
 			//2) Get User ID and object and map to fields from database table
 			var getSelectedWarehouseObj = await this.$store.dispatch("GETWarehouseSelectedProfile", {id: companyID});
 			console.group('getSelectedWarehouseObj', getSelectedWarehouseObj);

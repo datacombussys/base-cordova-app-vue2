@@ -48,6 +48,7 @@ class Shipping(models.Model):
   state 		      = models.CharField(max_length=50, blank=True, null=True)
   zip 		  	    = models.CharField(max_length=5, null=True, 
                     blank=True, validators=[RegexValidator(r'^\d{1,5}$')])
+  country         = models.CharField(max_length=200, blank=True, null=True)
   phone 	        = models.CharField(max_length=10, null=True, 
                   blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
   instructions    = models.CharField(max_length=250, blank=True, null=True)

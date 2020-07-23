@@ -60,7 +60,7 @@ import {mapGetters} from 'vuex';
 import _ from 'lodash';
 
 //Mixins
-// import { LocaleMixin } from '../mixins/businesses/locale-mixins';
+// import { LocaleMixins } from '../mixins/businesses/locale-mixins';
 import { UniversalMixins } from "../../../mixins/universal-mixins";
 
 //Components

@@ -157,8 +157,7 @@
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 var moment = require("moment");
-// import axios from "axios";
-// import VueAxios from "vue-axios";
+
 import axios from "axios";
 
 //Mixins

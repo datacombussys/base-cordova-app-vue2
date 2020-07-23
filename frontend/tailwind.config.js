@@ -135,6 +135,10 @@ let colors = {
   'pink-light': '#AA0461',
   'pink-lighter': '#D50479',
   'pink-lightest': '#FD038F',
+
+  'success': '#038146',
+  'warning': '#f3cf01',
+  'danger': '#fb2600',
 }
 
 module.exports = {
@@ -202,6 +206,11 @@ module.exports = {
 
   fonts: {
     'sans': [
+      'Open Sans',
+      'Montserrat',
+      'Abel',
+      'Julius Sans One',
+      'Raleway',
       'system-ui',
       'BlinkMacSystemFont',
       '-apple-system',
@@ -234,6 +243,9 @@ module.exports = {
       'Liberation Mono',
       'Courier New',
       'monospace',
+    ],
+    'cursive': [
+      'Big Shoulders Display'
     ]
   },
 

@@ -72,7 +72,7 @@
 											<f7-button @click="newUserButton" fill class="bg-color-red">Add New User</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
+									<f7-row class="full-width" v-show="!accountSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button fill @click.prevent="createCustomerandClose" class="bg-color-green trans-btn-left"
 												><span>Save Customer</span></f7-button
@@ -222,13 +222,13 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="accountSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" icon="office-building" class="no-padding">
 								<parent-component
 									ref="parentComponentRef"
 									:toggleEditProfile="toggleEditProfile"
-									:parentSettings="parentSettings"
+									:accountSettings="accountSettings"
 									:moduleInfo="moduleInfo"
 									:formData="customerForm">
 								</parent-component>
@@ -252,7 +252,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width margin-top-half" medium>Your Information</f7-block-title>
 													<f7-col width="50">
@@ -291,7 +291,7 @@
 											</f7-list>
 											<!-- END Profile Display List -->
 											<!-- Begin Profile Edit List -->
-											<f7-list simple-list v-show="parentSettings.editProfile">
+											<f7-list simple-list v-show="accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width margin-top-half" medium>Your Information</f7-block-title>
 													<f7-col width="50">
@@ -495,7 +495,7 @@
 											</f7-list>
 
 											<set-password-component 
-												:parentSettings="parentSettings"
+												:accountSettings="accountSettings"
 												:loginForm="customerForm"
 												:errorData="errorData"
 												:errorHandle="errorHandle">
@@ -510,7 +510,7 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="50" class="display-flex justify-content-end margin">
 																<f7-button
@@ -783,14 +783,13 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import axios from "axios";
 import _ from "lodash";
 import Croppie from "croppie";
 
 var moment = require("moment");
 
 //Mixins
-import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
+import { LocaleMixins } from "../../mixins/businesses/locale-mixins";
 import { UniversalMixins } from "@/mixins/universal-mixins";
 
 //Components
@@ -808,7 +807,7 @@ import setPasswordComponent from "../../components/universal/logging-in/set-pass
 export default {
 	name: "customerProfile",
 	mixins: [
-		LocaleMixin,
+		LocaleMixins,
 		UniversalMixins
 		],
 	components: {
@@ -834,12 +833,12 @@ export default {
 				type: "profile",
 				level: 5
 			},
-			parentSettings: {
+			accountSettings: {
 				showPasswordReset: false,
 				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
-				accountParent: {
+				accountPlatform: {
 					company_name: null,
 					is_datacom: false,
 					is_partner: false,
@@ -961,40 +960,40 @@ export default {
 			console.log("this.customerForm", this.customerForm);
 		},
 		showEditProfile() {
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideUpdateUserButtons = true;
 			this.hideCreateUser = true;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 			
 		},
 		toggleEditProfile() {
-			this.parentSettings.editProfile = !this.parentSettings.editProfile;
+			this.accountSettings.editProfile = !this.accountSettings.editProfile;
 			this.hideUpdateUserButtons = !this.hideUpdateUserButtons;
 			this.hideCreateUser = !this.hideCreateUser;
-			this.parentSettings.hideSaveItem = true;
-			this.parentSettings.showPasswordReset = !this.parentSettings.showPasswordReset;
+			this.accountSettings.hideSaveItem = true;
+			this.accountSettings.showPasswordReset = !this.accountSettings.showPasswordReset;
 		},
 		async newUserButton() {
 			//Show/Hide Edit Fields and buttons
 			let response = await this.clearUserFormData();
 			console.log("addNewuserButton response", response);
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = true;
-			this.parentSettings.hideSaveItem = false;
-			this.parentSettings.activeTab = 0;
-			this.parentSettings.showPasswordReset = false;
+			this.accountSettings.hideSaveItem = false;
+			this.accountSettings.activeTab = 0;
+			this.accountSettings.showPasswordReset = false;
 		},
 		async clearandResetButton() {
 			await this.clearUserFormData();
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.parentSettings.editProfile = false;
+			this.accountSettings.editProfile = false;
 			this.hideUpdateUserButtons = false;
 			this.hideCreateUser = false;
-			this.parentSettings.hideSaveItem = true;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = true;
+			this.accountSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -1078,16 +1077,16 @@ export default {
 				//Get Company ID (from each company type) and UserID add to Customer Form
 				console.log("this.customerForm", this.customerForm);
 				var companyOBJ = {};
-				if (this.parentSettings.accountParent.is_datacom) {
-					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+				if (this.accountSettings.accountPlatform.is_datacom) {
+					companyOBJ = this.Datacom.datacomList.find((elem) => elem.dba_name == this.accountSettings.accountPlatform.company_name);
 					console.log("is_datacom companyOBJ", companyOBJ);
 					this.customerForm["datacom"] = companyOBJ.id;
-				} else if (this.parentSettings.accountParent.is_partner) {
-					companyOBJ = this.Partners.partnerList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+				} else if (this.accountSettings.accountPlatform.is_partner) {
+					companyOBJ = this.Partners.partnerList.find((elem) => elem.dba_name == this.accountSettings.accountPlatform.company_name);
 					console.log("is_partner companyOBJ", companyOBJ);
 					this.customerForm["partner"] = companyOBJ.id;
-				} else if (this.parentSettings.accountParent.is_merchant) {
-					companyOBJ = this.Companies.companyList.find((elem) => elem.dba_name == this.parentSettings.accountParent.company_name);
+				} else if (this.accountSettings.accountPlatform.is_merchant) {
+					companyOBJ = this.Companies.companyList.find((elem) => elem.dba_name == this.accountSettings.accountPlatform.company_name);
 					console.log("is_merchant companyOBJ", companyOBJ);
 					this.customerForm["company"] = companyOBJ.id;
 				} else {
@@ -1124,8 +1123,8 @@ export default {
 		// Populate Fields for editing in browser
 		async showUserData(customerID) {
 			console.log("showUserData customerID", customerID);
-			this.parentSettings.showPasswordReset = true;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.showPasswordReset = true;
+			this.accountSettings.activeTab = 0;
 			//Get User ID and object and map to fields
 			var customerListID = null;
 			if (this.checkedRows.length != 0) {
@@ -1293,7 +1292,7 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Locale", "Static", "Errors", "Common", "VTHPP"]),
-		...mapState(["Users", "Companies", "Datacom", "Partners", "Customers"]),
+		...mapState(["Users", "Merchants", "Datacom", "Partners", "Customers"]),
 		...mapGetters(["GET_USER_LIST", "GET_STATE_LIST", "getcustomerCreditCardsList"]),
 		...mapGetters(["GET_CUSTOMER_ERRORS_LIST", "GET_CUSTOMER_ERROR_HANDLE"]),
 		errorData() {
@@ -1304,22 +1303,22 @@ export default {
 		},
 		canSubmitUserForm() {
 			if (this.Auth.isAuthenticated) {
-				if (this.parentSettings.accountParent.is_datacom) {
+				if (this.accountSettings.accountPlatform.is_datacom) {
 					if ((this.requiredFieldsDone = 6)) {
 						return false;
 					}
 				}
-				if (this.parentSettings.accountParent.is_partner) {
+				if (this.accountSettings.accountPlatform.is_partner) {
 					if ((this.requiredFieldsDone = 6)) {
 						return false;
 					}
 				}
-				if (this.parentSettings.accountParent.is_merchant) {
+				if (this.accountSettings.accountPlatform.is_merchant) {
 					if ((this.requiredFieldsDone = 6)) {
 						return false;
 					}
 				}
-				if (this.parentSettings.accountParent.is_vendor) {
+				if (this.accountSettings.accountPlatform.is_vendor) {
 					if ((this.requiredFieldsDone = 6)) {
 						return false;
 					}

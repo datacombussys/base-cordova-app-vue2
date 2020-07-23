@@ -19,6 +19,6 @@ module.exports = {
         "vue"
     ],
     "rules": {
-        "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": true }]
+        "no-unused-vars": "off"
     }
 };

@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<f7-row v-show="parentSettings.editProfile">
+		<f7-row v-show="accountSettings.editProfile">
 			<f7-block-title class="full-width" medium>Login Information</f7-block-title>
-			<f7-row class="full-width" v-if="!parentSettings.showPasswordReset">
+			<f7-row class="full-width" v-if="!accountSettings.showPasswordReset">
 				<f7-col>
 					<table class="password-requirements-table">
 						<p>	Password requirements:</p>
@@ -67,12 +67,12 @@
 			</f7-row>
 			<f7-row class="full-width">
 				<f7-list simple-list class="full-width">
-					<f7-row v-if="parentSettings.showPasswordReset" class="full-width margin-top">
+					<f7-row v-if="accountSettings.showPasswordReset" class="full-width margin-top">
 						<f7-col width="100">
 							<f7-button fill>Password Reset</f7-button>
 						</f7-col>
 					</f7-row>
-					<f7-row v-if="!parentSettings.showPasswordReset" class="margin-top">
+					<f7-row v-if="!accountSettings.showPasswordReset" class="margin-top">
 						<f7-col width="50">
 							<p class="field-title">Email:<span style="color: red;"> *</span></p>
 							<f7-list-input
@@ -224,7 +224,7 @@ export default {
 	mixins: [],
 	components: {},
 	props: {
-		parentSettings: {
+		accountSettings: {
 			type: Object,
 			required: true
 		},

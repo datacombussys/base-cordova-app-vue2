@@ -98,8 +98,8 @@ class Employee(models.Model):
   is_exempt 	      = models.BooleanField(default=False, blank=True, null=True)
   is_manager 	      = models.BooleanField(default=False, blank=True, null=True)
   reporting_manager = models.CharField(max_length=250, blank=True, null=True)
-  hire_date         = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
-  termination_date  = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
+  hire_date         = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
+  termination_date  = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
   termination_reason= models.TextField(blank=True, null=True)
   ssn               = models.CharField(max_length=9, null=True, 
 									    blank=True, validators=[RegexValidator(r'^\d{1,9}$')])

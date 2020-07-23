@@ -84,9 +84,9 @@ class Company(CommonCompanyBase):
   billing_contacts    = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_billing_contacts", blank=True)
   technical_contacts  = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_technical_contacts", blank=True)
   shipping_contacts   = models.ManyToManyField(base.AUTH_USER_MODEL, related_name="company_shipping_contacts", blank=True)
-  domain              = models.CharField(max_length=100)
-  dba_name 			      = models.CharField(max_length=200)
-  legal_name 		      = models.CharField(max_length=200)
+  domain              = models.CharField(max_length=100, unique=True)
+  dba_name 			      = models.CharField(max_length=200, unique=True)
+  legal_name 		      = models.CharField(max_length=200, unique=True)
   account_number      = models.CharField(max_length=16, null=True, blank=True)
   merchant_id         = models.CharField(max_length=16, null=True, 
 									      blank=True, validators=[RegexValidator(r'^\d{1,16}$')])

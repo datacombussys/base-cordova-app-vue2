@@ -498,12 +498,12 @@ import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 //Mixins
-import { LocaleMixin } from "../../mixins/businesses/locale-mixins";
+import { LocaleMixins } from "../../mixins/businesses/locale-mixins";
 import { UniversalMixins } from "@/mixins/universal-mixins";
 
 export default {
 	name: "creditCardComponent",
-	mixins: [LocaleMixin, UniversalMixins],
+	mixins: [LocaleMixins, UniversalMixins],
 	components: {},
 	props: {
 		moduleInfo: {
@@ -527,6 +527,7 @@ export default {
 				is_active: true,
 				is_debit: false,
 				name_on_card: null,
+				card_number: null,
 				card_number_token: null,
 				card_cvv: null,
 				billing_address: null,

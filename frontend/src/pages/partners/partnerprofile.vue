@@ -78,7 +78,7 @@
 											<f7-button @click="newItemButton" fill class="bg-color-red">Add New Partner</f7-button>
 										</f7-col>
 									</f7-row>
-									<f7-row class="full-width" v-show="!parentSettings.hideSaveItem">
+									<f7-row class="full-width" v-show="!accountSettings.hideSaveItem">
 										<f7-col width="100" class="display-flex margin">
 											<f7-button fill @click="createPartnerandClose" class="bg-color-green trans-btn-left"
 												><span>Save Partner</span></f7-button
@@ -226,13 +226,13 @@
 							</f7-card>
 						</f7-block>
 						<f7-block>
-							<b-tabs type="is-boxed" v-model="parentSettings.activeTab" class="no-padding-top bg-color-white">
+							<b-tabs type="is-boxed" v-model="accountSettings.activeTab" class="no-padding-top bg-color-white">
 								<!-- Begin Company Tab -->
 								<b-tab-item label="Company" v-if="Auth.authLevel === 1" icon="office-building" class="no-padding">
 									<parent-component
 										ref="parentComponentRef"
 										:toggleEditProfile="toggleEditProfile"
-										:parentSettings="parentSettings"
+										:accountSettings="accountSettings"
 										:moduleInfo="moduleInfo"
 										:formData="partnerForm">
 									</parent-component>
@@ -256,7 +256,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin profile Display List-->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 												<f7-row>
 													<f7-block-title class="full-width no-margin-top" medium>Account Information</f7-block-title>
 													<f7-col width="50">
@@ -434,7 +434,7 @@
 											<!-- END Profile Display List -->
 
 											<!-- Begin Profile Edit List -->
-											<f7-list v-show="parentSettings.editProfile">
+											<f7-list v-show="accountSettings.editProfile">
 												<f7-block-title class="full-width" medium>Account Information</f7-block-title>
 												<f7-row>
 													<f7-col width="50">
@@ -712,10 +712,10 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 														<f7-row class="margin-top level-right">
 															<f7-col width="25">
-																<f7-button fill @click="parentSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
+																<f7-button fill @click="accountSettings.activeTab = 2" class="bg-color-deeporange">Next -></f7-button>
 															</f7-col>
 														</f7-row>
 													</f7-block>
@@ -744,7 +744,7 @@
 										</f7-card-header>
 										<f7-card-content>
 											<!-- Begin Contacts Display List -->
-											<f7-list v-show="!parentSettings.editProfile">
+											<f7-list v-show="!accountSettings.editProfile">
 											<f7-row>
 													<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 													<f7-col width="50">
@@ -851,7 +851,7 @@
 											</f7-list>
 											<!-- END Contacts Display List -->
 											<!-- Begin Contacts Edit List -->
-											<f7-list simple-list v-show="parentSettings.editProfile">
+											<f7-list simple-list v-show="accountSettings.editProfile">
 												<f7-block-title class="full-width" medium>Primary Billing Information</f7-block-title>
 												<business-contact-form-component 
 													:contactForm="partnerForm"
@@ -879,7 +879,7 @@
 															</f7-col>
 														</f7-row>
 													</f7-block>
-													<f7-block class="full-width" v-if="!parentSettings.hideSaveItem">
+													<f7-block class="full-width" v-if="!accountSettings.hideSaveItem">
 														<f7-row class="full-width">
 															<f7-col width="50" class="display-flex margin">
 																<f7-button fill @click="createPartnerandClose" class="bg-color-green trans-btn-left"
@@ -1467,14 +1467,13 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import axios from "axios";
 import _ from "lodash";
 import Croppie from "croppie";
 
 var moment = require("moment");
 
 //Mixins
-import { LocaleMixin } from "@/mixins/businesses/locale-mixins";
+import { LocaleMixins } from "@/mixins/businesses/locale-mixins";
 import { UniversalMixins } from "@/mixins/universal-mixins";
 
 //Components
@@ -1493,7 +1492,7 @@ import businessContactFormComponent from "@/components/business/contact-form-com
 
 export default {
 	name: "partnerProfile",
-	mixins: [LocaleMixin, UniversalMixins],
+	mixins: [LocaleMixins, UniversalMixins],
 	components: {
 		"nav-bar-component": navBarComponent,
 		"shipping-component": shippingComponent,
@@ -1535,11 +1534,11 @@ export default {
 			billingContactSettings: {
 				type: "billing"
 			},
-			parentSettings: {
+			accountSettings: {
 				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
-				accountParent: {
+				accountPlatform: {
 					company_name: null,
 					is_datacom: false,
 					is_partner: false,
@@ -1693,7 +1692,7 @@ export default {
 			// console.log("this.partnerForm ", this.partnerForm);
 			// console.log("this.Companaies.partnerList", this.GET_PARTNER_LIST);
 			// console.log("this.partnerForm.entity_type ", this.partnerForm.entity_type);
-			// console.log("this.parentSettings.accountParent ", this.parentSettings.accountParent);
+			// console.log("this.accountSettings.accountPlatform ", this.accountSettings.accountPlatform);
 			// console.log("this.Auth.platformInfo", this.Auth.platformInfo);
 			console.log("this.partnerData", this.partnerData);
 			console.log("this.GET_PARTNER_ERROR", this.GET_PARTNER_ERROR);
@@ -1705,36 +1704,36 @@ export default {
 			// Add User to list
 		},
 		showEditProfile() {
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideUpdateItemButtons = true;
 			this.hideCreateItem = true;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 		},
 		toggleEditProfile() {
-			this.parentSettings.editProfile = !this.parentSettings.editProfile;
+			this.accountSettings.editProfile = !this.accountSettings.editProfile;
 			this.hideUpdateItemButtons = !this.hideUpdateItemButtons;
 			this.hideCreateItem = !this.hideCreateItem;
-			this.parentSettings.hideSaveItem = true;
+			this.accountSettings.hideSaveItem = true;
 		},
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearFormData();
-			this.parentSettings.editProfile = true;
+			this.accountSettings.editProfile = true;
 			this.hideCreateItem = !this.hideCreateItem;
 			this.hideUpdateItemButtons = false;
-			this.parentSettings.hideSaveItem = false;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = false;
+			this.accountSettings.activeTab = 0;
 		},
 		clearandResetButton() {
 			this.clearFormData();
 			this.resetViewtoHome();
 		},
 		resetViewtoHome() {
-			this.parentSettings.editProfile = false;
+			this.accountSettings.editProfile = false;
 			this.hideUpdateItemButtons = false;
 			this.hideCreateItem = false;
-			this.parentSettings.hideSaveItem = true;
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.hideSaveItem = true;
+			this.accountSettings.activeTab = 0;
 			this.activeStep = 0;
 			this.$store.commit("RESET_ERRORS");
 			this.uploadMessage = "";
@@ -1810,7 +1809,7 @@ export default {
 		async editPartnerForm() {
 			//I still need to handle the Parent Company Field. I ti snot updating properly
 			this.clearFormData();
-			this.parentSettings.activeTab = 1;
+			this.accountSettings.activeTab = 1;
 			if (this.checkedRows.length != 0) {
 				console.log("this.checkedRows != 0", this.checkedRows);
 				var rowID = this.checkedRows.slice(-1)[0].id;
@@ -1828,7 +1827,7 @@ export default {
 		async editPartnerFormById(companyID) {
 			console.log("editPartner");
 			this.clearFormData();
-			this.parentSettings.activeTab = 0;
+			this.accountSettings.activeTab = 0;
 			//2) Get User ID and object and map to fields from database table
 			var getSelectedPartnerObj = await this.$store.dispatch("GETPartnerSelectedProfile", {id: companyID});
 			console.group('getSelectedPartnerObj', getSelectedPartnerObj);
@@ -1953,7 +1952,7 @@ export default {
 	},
 	computed: {
 		...mapState(["Auth", "Static"]),
-		...mapState(["Users", "Companies", "Datacom", "Partners"]),
+		...mapState(["Users", "Merchants", "Datacom", "Partners"]),
 		...mapGetters(["GET_PARTNER_LIST", "GET_OWN_PARTNER_PROFILE", "GET_SELECTED_PARTNER_PROFILE"]),
 		...mapGetters(["partnerData", "GET_PARTNER_ERROR"]),
 		errorData() {
