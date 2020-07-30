@@ -1,5 +1,5 @@
 
-;
+
 
 import apiRoutes from '@/js/api-routes';
 
@@ -45,7 +45,7 @@ export const Vendors = {
     async POSTVendor({commit, dispatch, rootState}, payload) {
       let endpoint = 'vendor/';
       let type = 'Create New Vendor';
-      let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+      let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
       console.log('POSTVendor response', response);
       commit('PUSH_NEW_VENDOR', response);
     },
@@ -53,7 +53,7 @@ export const Vendors = {
     async GETVendorList({commit, dispatch, rootState}, payload) {
       let endpoint = 'vendor-list/';
       let type = 'Get Vendor List';
-      let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+      let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
       console.log('GETVendorList response', response);
       commit('SET_VENDOR_LIST', response.data);
     },
@@ -61,7 +61,7 @@ export const Vendors = {
     async GETVendorOwnProfile({commit, dispatch, rootState}, payload) {
       let endpoint = 'vendor/';
       let type = 'Get Vendor Profile';
-      let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+      let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
       console.log('GETVendorOwnProfile response', response);
       commit('SET_OWN_VENDOR_PROFILE', response.data);
     },
@@ -70,7 +70,7 @@ export const Vendors = {
       return new Promise( async (resolve, reject) => {
         let endpoint = 'vendor/';
         let type = 'Get Vendor Profile';
-        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
         console.log('GETVendorSelectedProfile response', response);
         commit('SET_SELECTED_VENDOR_PROFILE', response.data);
         return resolve(response.data);
@@ -80,7 +80,7 @@ export const Vendors = {
     async PATCHVendorProfile({commit, dispatch, rootState}, payload) {
       let endpoint = 'vendor/';
       let type = 'Update Vendor Profile';
-      let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+      let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
       console.log('PATCHVendorProfile response', response);
       commit('UPDATE_VENDOR_PROFILE', response.data);
     },
@@ -88,7 +88,7 @@ export const Vendors = {
     async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
       let endpoint = 'vendor/';
       let type = 'Delete Vendor Profile';
-      let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+      let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
       console.log('PATCHVendorProfile response', response);
       commit('PATCH_DELETE_VENDOR_PROFILE', payload);
     },

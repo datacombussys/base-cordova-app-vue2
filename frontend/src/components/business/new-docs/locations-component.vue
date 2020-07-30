@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="md-headline">Locations Datagrid</div>
+		<div class="headline">Locations Datagrid</div>
 		<template>
 			<DxDataGrid
 				:data-source="dataSource"

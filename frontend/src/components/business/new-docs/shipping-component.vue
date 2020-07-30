@@ -1,10 +1,7 @@
 <template>
 	<div>
-		<template>	
-
-		</template>
 		<div class="flex justify-between mt-2">
-			<div class="md-headline">Shipping Locations</div>
+			<div class="headline">Shipping Locations</div>
 			<div>
 				<DxButton
 					width="100%"
@@ -13,52 +10,65 @@
 					@click="popupVisible = true" />
 			</div>
 		</div>
-		<md-card>
-      <md-ripple>
-        <md-card-header class="flex">
-					<span class="mdi mdi-star-outline mdi-30px"></span>
+		<template>
+			<v-card
+				max-width="100%"
+				class="mx-auto custom-card"
+			>
+				<v-list-item>
+					<v-list-item-avatar color="grey"></v-list-item-avatar>
+					<v-list-item-content>
+						<span class="mdi mdi-star-outline mdi-30px"></span>
 					<span class="text-datacom-darker ml-4 flex items-center" style="font-size: 20px;">Primary</span>
-        </md-card-header>
-        <md-card-content>
-					<div class="row">
-					 <div class="col-25">
-						 <p class="label">Name:</p>
-					 </div>
-					 <div class="col-75">
-						<p class="field">Joe Smith</p>
-					 </div>
-					 <div class="col-25">
-						 <p class="label">Address:</p>
-					 </div>
-					 <div class="col-75">
-						<p class="field">1234 N. Main St</p>
-					 </div>
-					 <div class="col-25">
-						 <p class="label">City:</p>
-					 </div>
-					 <div class="col-75">
-						<p class="field">Phoenix</p>
-					 </div>
-					 <div class="col-25">
-						 <p class="label">State:</p>
-					 </div>
-					 <div class="col-75">
-						<p class="field">Arizona</p>
-					 </div>
-					 <div class="col-25">
-						 <p class="label">Phone:</p>
-					 </div>
-					 <div class="col-75">
-						<p class="field">(602-451-8710)</p>
-					 </div>
+					</v-list-item-content>
+				</v-list-item>
+
+				<v-card-text>
+					<div class="container">
+						<div class="row">
+							<div class="col-25p">
+								<p class="label">Name:</p>
+							</div>
+							<div class="col-75p">
+								<p class="field">Joe Smith</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-25p">
+								<p class="label">Address:</p>
+							</div>
+							<div class="col-75p">
+								<p class="field">1234 N. Main St</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-25p">
+								<p class="label">City:</p>
+							</div>
+							<div class="col-75p">
+								<p class="field">Phoenix</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-25p">
+								<p class="label">State:</p>
+							</div>
+							<div class="col-75p">
+								<p class="field">Arizona</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-25p">
+								<p class="label">Phone:</p>
+							</div>
+							<div class="col-75p">
+								<p class="field">(602-451-8710)</p>
+							</div>
+						</div>
 				 </div>
-         
-        </md-card-content>
-        <md-card-actions>
-          <md-button>Edit</md-button>
-        </md-card-actions>
-      </md-ripple>
-    </md-card>
+				</v-card-text>
+			</v-card>
+		</template>
 
 		<template>
 			<DxPopup
@@ -71,11 +81,11 @@
 				title="New Shipping Address"
 			>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Name of Person Receiving Shipment</p>
 						<DxTextBox :value.sync="shippingForm.name"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Phone of Person Receiving Shipment</p>
 					<DxTextBox 
 						:mask-rules="phoneRules"
@@ -84,31 +94,31 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Address</p>
 						<DxTextBox :value.sync="shippingForm.address"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Address 2</p>
 						<DxTextBox :value.sync="shippingForm.address2"/>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">City</p>
 						<DxTextBox :value.sync="shippingForm.city"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">State</p>
 						<DxTextBox :value.sync="shippingForm.state"/>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Zip Code</p>
 						<DxTextBox :value.sync="shippingForm.zip"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Country</p>
 						<DxDropDownBox
 							:data-source="countries"
@@ -123,11 +133,11 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-75">
+					<div class="col-75p">
 						<p class="label">Instructions</p>
 						<DxTextArea :value.sync="shippingForm.instructions" placeholder="Type here..."/>
 					</div>
-					<div class="col-25">
+					<div class="col-25p">
 						<p class="label">Make as Primary</p>
 						<DxSwitch 
 							@changed="shippingForm.is_primary = !shippingForm.is_primary"
@@ -136,11 +146,11 @@
 					
 				</div>
 				<div class="row justify-between mt4">
-					<div class="col-25 text-center">
-						<md-button class="md-raised text-white bg-danger">Delete</md-button>
+					<div class="col-25p text-center">
+						<v-btn class=" text-white bg-danger">Delete</v-btn>
 					</div>
-					<div class="col-25 text-center">
-						<md-button @click="testingMethod" class="md-raised text-white bg-success">Save</md-button>
+					<div class="col-25p text-center">
+						<v-btn @click="testingMethod" class=" text-white bg-success">Save</v-btn>
 					</div>
 				</div>
 			</DxPopup>
@@ -236,10 +246,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
- .md-card {
-    width: 320px;
-    margin: 4px;
-    display: inline-block;
-    vertical-align: top;
-  }
+
 </style>

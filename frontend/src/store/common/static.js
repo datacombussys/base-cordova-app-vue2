@@ -1,4 +1,4 @@
-;
+
 import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
@@ -62,6 +62,35 @@ export const Static = {
       {id: 6, name: 'Friday', abrev: 'Fri', code: 'FR'},
       {id: 7, name: 'Saturday', abrev: 'Sat', code: 'SA'},
       
+    ],
+    Units: [
+      "Each",
+      "Box",
+      "Unit",
+      "Bag",
+      "Pallet",
+      "Carton"
+    ],
+    UOMWeight: [
+      "Grams",
+      "Kilograms",
+      "Ounces",
+      "Pounds"
+    ],
+    UOMDimension: [
+      "Centimeters",
+      "Milimeters",
+      "Inches",
+      "Feet",
+      "Kilometers"
+    ],
+    barcodeType: [
+      "SKU",
+      "UPC",
+    ],
+    UOMBilling: [
+      "Hour",
+      "Job",
     ]
 
 	},

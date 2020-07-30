@@ -1,4 +1,4 @@
-;
+
 import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
@@ -67,7 +67,7 @@ export const Datacom = {
         try {
           let endpoint = 'datacom/';
           let type = 'Create New Datacom';
-          let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type)
+          let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type)
           console.log('POSTDatacom response', response);
           if(response.status === 201) {
             console.log("Successful");
@@ -87,7 +87,7 @@ export const Datacom = {
     async GETDatacomList({commit, dispatch, rootState}, payload) {
 			let endpoint = 'datacom-list/';
       let type = 'Get Datacom List';
-			let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
 			console.log('GETDatacomList response', response);
 			commit('SET_DATACOM_LIST', response.data);
     },
@@ -95,7 +95,7 @@ export const Datacom = {
     async GETDatacomOwnProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'datacom/';
       let type = 'Get Datacom Profile';
-      let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+      let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
       console.log('GETDatacomOwnProfile response', response);
       commit('SET_OWN_DATACOM_PROFILE', response.data);
     },
@@ -104,7 +104,7 @@ export const Datacom = {
       return new Promise( async (resolve, reject) => {
         let endpoint = 'datacom/';
         let type = 'Get Datacom Profile';
-        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
         if(response.data) {
           console.log('GETDatacomSelectedProfile response', response);
           commit('SET_SELECTED_DATACOM_PROFILE', response.data);
@@ -119,7 +119,7 @@ export const Datacom = {
     async PATCHDatacomProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'datacom/';
       let type = 'Update Datacom Profile';
-			let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHDatacomProfile response', response);
 			commit('UPDATE_DATACOM_PROFILE', response.data);
     },
@@ -127,7 +127,7 @@ export const Datacom = {
     async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'datacom/';
       let type = 'Delete Datacom Profile';
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHDatacomProfile response', response);
 			commit('PATCH_DELETE_DATACOM_PROFILE', payload);
     },

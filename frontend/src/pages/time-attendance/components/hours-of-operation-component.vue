@@ -305,7 +305,7 @@ export default {
 					}
 					
 				}
-			};
+			}
 		},
 		async saveHolidayHours() {
 			//1) Process Days 

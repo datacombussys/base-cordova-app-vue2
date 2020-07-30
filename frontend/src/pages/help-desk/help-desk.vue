@@ -1,13 +1,13 @@
 <template>
   <div>
 		<div class="row">
-			<div class="col-25">
+			<div class="col-25p">
 
 			</div>
-			<div class="col-25">
+			<div class="col-25p">
 
 			</div>
-			<div class="col-25">
+			<div class="col-25p">
 				<DxButton
 					:width="120"
 					text="New Ticket"
@@ -37,7 +37,7 @@
 					>
 						<div class="dx-fieldset mt-0">
 							<div class="row">
-								<div class="col-50">
+								<div class="col-50p">
 									<div class="dx-field">
 										<div class="dx-field-label">User Name</div>
 										<div class="dx-field-value">
@@ -53,7 +53,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-50">
+								<div class="col-50p">
 									<div class="dx-field">
 										<div class="dx-field-label">Category</div>
 										<div id="category-drop-down-menu" class="dx-field-value">
@@ -69,7 +69,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-50">
+								<div class="col-50p">
 									<div class="dx-field">
 										<div class="dx-field-label">Subject</div>
 										<div class="dx-field-value">
@@ -97,7 +97,7 @@
 									</div>
 								</div>
 
-								<div class="col-50">
+								<div class="col-50p">
 									<div class="dx-field">
 										<div class="dx-field-label">File</div>
 										<div class="dx-field-value">
@@ -112,7 +112,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-50">
+								<div class="col-50p">
 									<div class="dx-field">
 										<div class="dx-field-label">Priority</div>
 										<div id="priority-drop-down-menu" class="dx-field-value">
@@ -128,7 +128,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-50">
+								<div class="col-50p">
 									<div class="dx-field">
 										<div class="dx-field-label">Expedite</div>
 										<div class="dx-field-value flex justify-start">
@@ -142,11 +142,11 @@
 								<!-- Buttons -->
 								<template>	
 									<div class="row justify-between mt4">
-										<div class="col-25 text-center">
-											<md-button class="md-raised text-white bg-danger">Delete</md-button>
+										<div class="col-25p text-center">
+											<v-btn class=" text-white bg-danger">Delete</v-btn>
 										</div>
-										<div class="col-25 text-center">
-											<md-button @click="testingMethod" class="md-raised text-white bg-success">Save</md-button>
+										<div class="col-25p text-center">
+											<v-btn @click="testingMethod" class=" text-white bg-success">Save</v-btn>
 										</div>
 									</div>
 								</template>

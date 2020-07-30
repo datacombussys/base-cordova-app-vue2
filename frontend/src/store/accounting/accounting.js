@@ -5,7 +5,13 @@ Vue.use(Vuex);
 
 export const Accounting = {
 	namespace: true,
-	state: {},
+	state: {
+		incomeAccountsList: [],
+		expenseAccountsList: [],
+		liabilityAccountList: [],
+		assetsAccountList: [],
+		ownerEquityAccountList: []
+	},
 	mutations: {},
 	actions: {},
 	getters: {}

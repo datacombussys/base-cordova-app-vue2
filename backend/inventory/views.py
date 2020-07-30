@@ -16,6 +16,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from storages.backends.s3boto3 import S3Boto3Storage
 
 from .serializers import (InventorySerializer, 
+                        InventoryListSerializer, 
                         InventoryBarcodeSerializer, 
                         InventoryGallerySerializer, 
                         InvCategoryClassSerializer, 
@@ -25,12 +26,20 @@ from .models import Inventory, InventoryBarcode, InventoryImage, InvCategoryClas
 from .mixins import CreateListMixin
 from .permissions import CanViewInventory
 
-class InventoryViewset(CreateListMixin, viewsets.ModelViewSet):
+class InventoryViewset(viewsets.ModelViewSet):
     serializer_class = InventorySerializer
-    # queryset = Inventory.objects.all().filter(is_active=True)
     queryset = Inventory.objects.all()
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    # authentication_classes = (TokenAuthentication, )
+    # permission_classes = (IsAuthenticated, )
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['name', 'category__id', 'datacom__id', 'partner__id', 'company__id', 'vendor__id', 'warehouse_loc__id']
+    search_fields = ['name', 'category__id', 'datacom__id', 'partner__id', 'company__id', 'vendor__id', 'warehouse_loc__id']
+
+class InventoryListViewset(viewsets.ModelViewSet):
+    serializer_class = InventoryListSerializer
+    queryset = Inventory.objects.all()
+    # authentication_classes = (TokenAuthentication, )
+    # permission_classes = (IsAuthenticated, )
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['name', 'category__id', 'datacom__id', 'partner__id', 'company__id', 'vendor__id', 'warehouse_loc__id']
     search_fields = ['name', 'category__id', 'datacom__id', 'partner__id', 'company__id', 'vendor__id', 'warehouse_loc__id']

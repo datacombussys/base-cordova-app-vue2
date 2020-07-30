@@ -1,4 +1,4 @@
-;
+
 import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
@@ -63,7 +63,7 @@ export const Merchants = {
 		async POSTCompany({commit, dispatch, rootState}, payload) {
 			let endpoint = 'merchant/';
 			let type = 'Create New Company';
-			let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
 			console.log('POSTCompany response', response);
 			commit('PUSH_NEW_MERCHANT', response);
 		},
@@ -71,7 +71,7 @@ export const Merchants = {
 		async GETCompanyList({commit, dispatch, rootState}, payload) {
 			let endpoint = 'merchant-list/';
 			let type = 'Get Company List';
-			let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
 			console.log('GETCompanyList response', response);
 			commit('SET_MERCHANT_LIST', response.data);
 		},
@@ -79,7 +79,7 @@ export const Merchants = {
 		async GETCompanyOwnProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'merchant/';
 			let type = 'Get Company Profile';
-			let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
 			console.log('GETCompanyOwnProfile response', response);
 			commit('SET_OWN_MERCHANT_PROFILE', response.data);
 		},
@@ -88,7 +88,7 @@ export const Merchants = {
 			return new Promise( async (resolve, reject) => {
 				let endpoint = 'merchant/';
 				let type = 'Get Company Profile';
-				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
 				console.log('GETCompanySelectedProfile response', response);
 				commit('SET_SELECTED_MERCHANT_PROFILE', response.data);
 
@@ -101,7 +101,7 @@ export const Merchants = {
 		async PATCHCompanyProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'merchant/';
 			let type = 'Update Company Profile';
-			let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHCompanyProfile response', response);
 			commit('UPDATE_MERCHANT_PROFILE', response.data);
 		},
@@ -109,7 +109,7 @@ export const Merchants = {
 		async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'merchant/';
 			let type = 'Delete Company Profile';
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHCompanyProfile response', response);
 			commit('PATCH_DELETE_MERCHANT_PROFILE', payload);
 		},

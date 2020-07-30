@@ -1,31 +1,44 @@
 <template>
-  <div id="root">
-    <div class="cssClasses">
-      <router-view
-        name="layout"
-        :title="title"
-        :isXSmall="screen.isXSmall"
-        :isLarge="screen.isLarge"
-      >
-        <div class="content">
-          <router-view name="content" class="page-container"/>
-        </div>
-        <template #footer>
-          <the-footer />
-          <div class="loader">
-          <DxLoadPanel
-            :close-on-outside-click="false"
-            :visible.sync="Notifications.isLoadPanelVisible"
-            :show-indicator="true"
-            :show-pane="true"
-            :shading="true"
-            shading-color="rgba(0,0,0,0.4)"
-          />
+  <div id="root" data-app>
+
+      <div class="cssClasses">
+        <router-view
+          name="layout"
+          :title="title"
+          :isXSmall="screen.isXSmall"
+          :isLarge="screen.isLarge"
+        >
+          <div class="content">
+            <router-view name="content" class="page-container"/>
           </div>
-        </template>
-      </router-view>
-      
-    </div>
+          <template #footer>
+            <the-footer />
+            <div class="loader">
+            <DxLoadPanel
+              :close-on-outside-click="false"
+              :visible.sync="Notifications.isLoadPanelVisible"
+              :show-indicator="true"
+              :show-pane="true"
+              :shading="true"
+              shading-color="rgba(0,0,0,0.4)"
+            />
+            </div>
+          </template>
+        </router-view>
+        <router-view
+          name="categories"
+          :title="title"
+          :isXSmall="screen.isXSmall"
+          :isLarge="screen.isLarge"
+        >
+          <div class="content">
+            <router-view name="pos" class="page-container"/>
+          </div>
+    
+        </router-view>
+        
+      </div>
+
   </div>
 </template>
 

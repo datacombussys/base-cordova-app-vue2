@@ -1,5 +1,5 @@
 
-;
+
 
 import apiRoutes from '@/js/api-routes';
 
@@ -44,7 +44,7 @@ export const Customers = {
 		async POSTCustomer({commit, dispatch, rootState}, payload) {
 			let endpoint = 'customer/';
 			let type = 'Create New Customer';
-			let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
 			console.log('POSTCustomer response', response);
 			commit('PUSH_NEW_CUSTOMER', response.data);
 		},
@@ -52,7 +52,7 @@ export const Customers = {
 		async GETCustomerList({commit, dispatch, rootState}, payload) {
 			let endpoint = 'customer-list/';
 			let type = 'Get Customer List';
-			let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
 			console.log('GETCustomerList response', response);
 			commit('SET_CUSTOMER_LIST', response.data);
 		},
@@ -60,7 +60,7 @@ export const Customers = {
 			//filterURL is passed from the original call
 			let endpoint = 'customer-list/';
 			let type = 'Get Customer List';
-			let response = await apiRoutes.GETSelectedList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETSelectedList(dispatch, rootState,payload, endpoint, type);
 			console.log('GETCustomerList response', response);
 			commit('SET_SELECTED_CUSTOMER_LIST', response.data);
 		},
@@ -70,7 +70,7 @@ export const Customers = {
 				console.log('GETCustomerOwnProfile payload', payload);
 				let endpoint = 'customer/?user__id=';
 				let type = 'Get Customer Profile';
-				let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+				let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
 				console.log('GETCustomerOwnProfile response', response);
 				commit('SET_CUSTOMER_PROFILE', response.data[0]);
 				commit('SET_PLATFORM_INFO', response.data[0]);
@@ -82,7 +82,7 @@ export const Customers = {
 			return new Promise( async (resolve, reject) => {
 				let endpoint = 'customer/';
 				let type = 'Get Customer Profile';
-				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
 				console.log('GETCustomerSelectedProfile response', response);
 				commit('SET_SELECTED_CUSTOMER_PROFILE', response.data);
 				return resolve(response.data)
@@ -92,7 +92,7 @@ export const Customers = {
 		async PATCHCustomerProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'customer/';
 			let type = 'Update Customer Profile';
-			let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHCustomerProfile response', response);
 			commit('UPDATE_CUSTOMER_PROFILE', response.data);
 		},
@@ -100,7 +100,7 @@ export const Customers = {
 		async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'customer/';
 			let type = 'Delete Customer Profile';
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHDeleteProfile response', response);
 			commit('PATCH_DELETE_CUSTOMER_PROFILE', payload);
 		},
@@ -108,7 +108,7 @@ export const Customers = {
 		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'customer/';
 			let type = 'Delete Customer Profile';
-			let response = await apiRoutes.DELETEItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.DELETEItem(dispatch, rootState,payload, endpoint, type);
 			console.log('DELETEProfile response', response);
 		},
 

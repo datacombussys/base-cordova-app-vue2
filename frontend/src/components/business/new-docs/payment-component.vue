@@ -3,7 +3,7 @@
 
 		<!--redit Cards -->
 		<div class="flex justify-between m-2">
-			<div class="md-headline">Credit Cards</div>
+			<div class="headline">Credit Cards</div>
 			<div>
 				<DxButton
 					width="100%"
@@ -18,38 +18,41 @@
         item-template="item">
         <template #item="{ data }">
 					<div>
-						<div class="row">
-							<div class="col-25">
-								<p class="label">Cardholder:</p>
+						<div class="container">
+							<div class="row">
+								<div class="col-25p">
+									<p class="label">Cardholder:</p>
+								</div>
+								<div class="col-75p">
+									<p class="field">{{ data.name_on_card }}</p>
+								</div>
 							</div>
-							<div class="col-75">
-								<p class="field">{{ data.name_on_card }}</p>
+							<div class="row">
+								<div class="col-25p">
+									<p class="label">Address:</p>
+								</div>
+								<div class="col-75p">
+									<p class="field">{{ data.billing_address }} {{ data.billing_address2 }}</p>
+									<p class="field">{{ data.billing_city }} {{ data.billing_state }}, {{ data.billing_zip }}</p>
+									<p class="field">Phone: {{ data.phone }}</p>
+								</div>
+							</div>
+							<div class="row pt-4 justify-end">
+								<div class="col-25p justify-center">
+									<DxButton
+										type="warning raised"
+										text="Edit"
+										@click="testingMethod" />
+								</div>
+								<div class="col-25p justify-center">
+									<DxButton
+										type="success"
+										text="Make Primary"
+										@click="testingMethod" />
+								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-25">
-								<p class="label">Address:</p>
-							</div>
-							<div class="col-75">
-								<p class="field">{{ data.billing_address }} {{ data.billing_address2 }}</p>
-								<p class="field">{{ data.billing_city }} {{ data.billing_state }}, {{ data.billing_zip }}</p>
-								<p class="field">Phone: {{ data.phone }}</p>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-50">
-								<DxButton
-									type="warning raised"
-									text="Edit"
-									@click="testingMethod" />
-							</div>
-							<div class="col-50">
-								<DxButton
-									type="success"
-									text="Make Primary"
-									@click="testingMethod" />
-							</div>
-						</div>
+						
 					</div>
         </template>
     	</DxAccordion>
@@ -60,7 +63,7 @@
 		<div class="divider"></div>
 
 		<div class="flex justify-between m-2">
-			<div class="md-headline">Bank Accounts</div>
+			<div class="headline">Bank Accounts</div>
 			<div>
 				<DxButton
 					width="100%"
@@ -76,31 +79,31 @@
         <template #item="{ data }">
 					<div>
 						<div class="row">
-							<div class="col-25">
+							<div class="col-25p">
 								<p class="label">Cardholder:</p>
 							</div>
-							<div class="col-75">
+							<div class="col-75p">
 								<p class="field">{{ data.name_on_card }}</p>
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-25">
+							<div class="col-25p">
 								<p class="label">Address:</p>
 							</div>
-							<div class="col-75">
+							<div class="col-75p">
 								<p class="field">{{ data.billing_address }} {{ data.billing_address2 }}</p>
 								<p class="field">{{ data.billing_city }} {{ data.billing_state }}, {{ data.billing_zip }}</p>
 								<p class="field">Phone: {{ data.phone }}</p>
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-50">
+							<div class="col-50p">
 								<DxButton
 									type="warning raised"
 									text="Edit"
 									@click="testingMethod" />
 							</div>
-							<div class="col-50">
+							<div class="col-50p">
 								<DxButton
 									type="success"
 									text="Make Primary"
@@ -125,14 +128,14 @@
 				title="New Credit Card"
 			>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Credit Card Number</p>
 						<DxTextBox 
 							:mask-rules="expirationRules"
 							mask="X0/00"
 							:value.sync="creditCardForm.card_number"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Name of Cardholder</p>
 					<DxTextBox 
 						:mask-rules="phoneRules"
@@ -141,31 +144,31 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Address</p>
 						<DxTextBox :value.sync="creditCardForm.address"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Address 2</p>
 						<DxTextBox :value.sync="creditCardForm.address2"/>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">City</p>
 						<DxTextBox :value.sync="creditCardForm.city"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">State</p>
 						<DxTextBox :value.sync="creditCardForm.state"/>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Zip Code</p>
 						<DxTextBox :value.sync="creditCardForm.zip"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Country</p>
 						<DxDropDownBox
 							:data-source="countries"
@@ -180,11 +183,11 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-75">
+					<div class="col-75p">
 						<p class="label">Instructions</p>
 						<DxTextArea :value.sync="creditCardForm.instructions" placeholder="Type here..."/>
 					</div>
-					<div class="col-25">
+					<div class="col-25p">
 						<p class="label">Make as Primary</p>
 						<DxSwitch 
 							@changed="creditCardForm.is_primary = !creditCardForm.is_primary"
@@ -193,11 +196,11 @@
 					
 				</div>
 				<div class="row justify-between mt4">
-					<div class="col-25 text-center">
-						<md-button class="md-raised text-white bg-danger">Delete</md-button>
+					<div class="col-25p text-center">
+						<v-btn class="text-white bg-danger">Delete</v-btn>
 					</div>
-					<div class="col-25 text-center">
-						<md-button @click="testingMethod" class="md-raised text-white bg-success">Save</md-button>
+					<div class="col-25p text-center">
+						<v-btn @click="testingMethod" class="text-white bg-success">Save</v-btn>
 					</div>
 				</div>
 			</DxPopup>
@@ -216,14 +219,14 @@
 				title="New Credit Card"
 			>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Credit Card Number</p>
 						<DxTextBox 
 							:mask-rules="expirationRules"
 							mask="X0/00"
 							:value.sync="creditCardForm.card_number"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Name of Cardholder</p>
 					<DxTextBox 
 						:mask-rules="phoneRules"
@@ -232,31 +235,31 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Address</p>
 						<DxTextBox :value.sync="creditCardForm.address"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Address 2</p>
 						<DxTextBox :value.sync="creditCardForm.address2"/>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">City</p>
 						<DxTextBox :value.sync="creditCardForm.city"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">State</p>
 						<DxTextBox :value.sync="creditCardForm.state"/>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Zip Code</p>
 						<DxTextBox :value.sync="creditCardForm.zip"/>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<p class="label">Country</p>
 						<DxDropDownBox
 							:data-source="countries"
@@ -271,11 +274,11 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-75">
+					<div class="col-75p">
 						<p class="label">Instructions</p>
 						<DxTextArea :value.sync="creditCardForm.instructions" placeholder="Type here..."/>
 					</div>
-					<div class="col-25">
+					<div class="col-25p">
 						<p class="label">Make as Primary</p>
 						<DxSwitch 
 							@changed="creditCardForm.is_primary = !creditCardForm.is_primary"
@@ -284,11 +287,11 @@
 					
 				</div>
 				<div class="row justify-between mt4">
-					<div class="col-25 text-center">
-						<md-button class="md-raised text-white bg-danger">Delete</md-button>
+					<div class="col-25p text-center">
+						<v-btn class="text-white bg-danger">Delete</v-btn>
 					</div>
-					<div class="col-25 text-center">
-						<md-button @click="testingMethod" class="md-raised text-white bg-success">Save</md-button>
+					<div class="col-25p text-center">
+						<v-btn @click="testingMethod" class="text-white bg-success">Save</v-btn>
 					</div>
 				</div>
 			</DxPopup>

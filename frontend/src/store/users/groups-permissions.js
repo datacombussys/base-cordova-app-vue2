@@ -22,10 +22,10 @@ export const GroupsPermissions = {
 				// console.log('newGroupObj[item]', newGroupObj[item]);
 					for(let index in newGroupObj[item].permissions) {
 						newGroupObj[item][newGroupObj[item].permissions[index].codename] = true;
-					};
+					}
 				console.log('Main newGroupObj', newGroupObj);
 
-			};
+			}
 			state.groupsList = newGroupObj;
 			console.log("Mutated Group List", state.groupsList);
 		},
@@ -119,7 +119,7 @@ export const GroupsPermissions = {
 				var permObj = PermissionList.find(elem => elem.codename === grpPermissions[permission]);
 				console.log('matched permObj.id', permObj);
 				groupObj.permissions_id.push(permObj.id);
-			};
+			}
 			delete groupObj.permissionsnew;
 			console.log('groupObj final', groupObj);
 			axios.put("/django/groups/"+ groupObj.id + "/", groupObj).then(response => {

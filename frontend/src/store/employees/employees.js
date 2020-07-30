@@ -1,4 +1,4 @@
-;
+
 import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
@@ -15,34 +15,22 @@ export const Employees = {
     //Selected Details
     selectedEmployeeProfile: {},
 
-    //Specific Employee Company Data
-    employeeEmployeesList: [],
-
   },
   mutations: {
     SET_EMPLOYEE_LIST(state, payload) {
       state.employeeList = payload;
     },
-    PUSH_NEW_DATACOM(state, payload) {
+    SET_EMPLOYEE_PROFILE(state, payload) {
+      state.employeeProfile = payload;
+    },
+    PUSH_NEW_EMPLOYEE(state, payload) {
       state.employeeList.push(payload);
     },
-    SET_OWN_EMPLOYEE_PROFILE(state, payload) {
-      console.log('SET_OWN_EMPLOYEE_PROFILE, payload', payload);
-      state.employeeProfile = payload;
-      console.log('state.employeeProfile', state.employeeProfile);
-    },
+    SET_SELECTED_EMPLOYEE_LIST(state, payload) {
+			state.selectedEmployeeList = payload;
+		},
     SET_SELECTED_EMPLOYEE_PROFILE(state, payload) {
       state.selectedEmployeeProfile = payload;
-    },
-    SET_EMPLOYEE_EMPLOYEES(state, payload) {
-      state.employeeEmployeesList = payload;
-    },
-    UPDATE_PROFILE_IMAGE(state, payload) {
-      console.log('payload', payload);
-      let listIndex = state.employeeList.findIndex(elem => elem.id === payload.id);
-      state.employeeList.slice(listIndex, 1);
-      state.employeeList.splice(listIndex, 1, payload);
-      console.log('state.employeeList', state.employeeList);
     },
     UPDATE_EMPLOYEE_PROFILE() {
       console.log('payload', payload);
@@ -66,7 +54,7 @@ export const Employees = {
         try {
           let endpoint = 'employee/';
           let type = 'Create New Employee';
-          let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+          let response = await apiRoutes.POSTItem(dispatch, rootState, payload, endpoint, type);
           console.log('POSTEmployee response', response);
           commit('PUSH_NEW_EMPLOYEE', response.data);
           return resolve(response)
@@ -87,7 +75,7 @@ export const Employees = {
     async GETEmployeeList({commit, dispatch, rootState}, payload) {
 			let endpoint = 'employee-list/';
       let type = 'Get Employee List';
-			let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETList(dispatch, rootState, payload, endpoint, type);
 			console.log('GETEmployeeList response', response);
 			commit('SET_EMPLOYEE_LIST', response.data);
 		},
@@ -96,7 +84,7 @@ export const Employees = {
 			//filterURL is passed from the original call
 			let endpoint = 'employee-list/';
       let type = 'Get Employee List';
-			let response = await apiRoutes.GETSelectedList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETSelectedList(dispatch, rootState, payload, endpoint, type);
 			console.log('GETEmployeeList response', response);
 			commit('SET_SELECTED_EMPLOYEE_LIST', response.data);
     },
@@ -106,7 +94,7 @@ export const Employees = {
 				console.log('GETEmployeeOwnProfile payload', payload);
 				let endpoint = 'employee/?user__id=';
 				let type = 'Get Employee Profile';
-				let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+				let response = await apiRoutes.GETOwnProfile(dispatch, rootState, payload, endpoint, type);
 				console.log('GETEmployeeOwnProfile response', response);
 				commit('SET_EMPLOYEE_PROFILE', response.data[0]);
 				commit('SET_PLATFORM_INFO', response.data[0]);
@@ -118,7 +106,7 @@ export const Employees = {
       return new Promise( async (resolve, reject) => {
         let endpoint = 'employee/';
         let type = 'Get Employee Profile';
-        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, payload, endpoint, type);
         console.log('GETEmployeeSelectedProfile response', response);
         commit('SET_SELECTED_EMPLOYEE_PROFILE', response.data);
         return resolve(response.data);
@@ -128,7 +116,7 @@ export const Employees = {
     async PATCHEmployeeProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'employee/';
       let type = 'Update Employee Profile';
-			let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHItem(dispatch, rootState, payload, endpoint, type);
 			console.log('PATCHEmployeeProfile response', response);
 			commit('UPDATE_EMPLOYEE_PROFILE', response.data);
     },
@@ -136,7 +124,7 @@ export const Employees = {
     async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'employee/';
       let type = 'Delete Employee Profile';
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, payload, endpoint, type);
 			console.log('PATCHEmployeeProfile response', response);
 			commit('PATCH_DELETE_EMPLOYEE_PROFILE', payload);
     },

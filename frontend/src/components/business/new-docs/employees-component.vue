@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="md-headline">Employees</div>
+		<div class="headline">Employees</div>
 		<template>
 			<DxDataGrid
 				:data-source="GET_EMPLOYEE_LIST"

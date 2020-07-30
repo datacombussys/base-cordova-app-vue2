@@ -1,4 +1,4 @@
-;
+
 import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
@@ -12,34 +12,35 @@ export const Users = {
 	namespace: true,
 	state: {
 		//User and Employee Personal Data
-		employeeProfile: {},
+		userProfile: {},
 		//All Users based on Logged in User
 
 		//Own Business Employees
-		employeeList: [],
+		userList: [],
 		companyFilteredEmployeeList: [],
 
 		//Selected Business Employees
-		selectedEmployeeList: [],
+		selectedUserList: [],
 	},
 	mutations: {
-		SET_EMPLOYEE_PROFILE(state, payload) {
-			state.employeeProfile = {};
-			state.employeeProfile = payload;
-			console.log("state.employeeProfile", state.employeeProfile);
+		SET_USER_PROFILE(state, payload) {
+			state.userProfile = payload;
 		},
-		SET_EMPLOYEE_LIST(state, payload) {
+		PUSH_NEW_USER(state, payload) {
+      state.userList.push(payload);
+		},
+		
+
+		SET_USER_LIST(state, payload) {
 			console.log("SET_EMPLOYEE_LIST payload", payload);
 			state.employeeList = payload;
 		},
 		PUSH_NEW_EMPLOYEE(state, payload) {
 			state.employeeList.push(payload);
 		},
-		SET_SELECTED_EMPLOYEE_LIST(state, payload) {
-			state.selectedEmployeeList = payload;
-		},	
+			
 		CLEAR_USER_DATA(state, payload) {
-			state.employeeProfile = {};
+			state.userProfile = {};
 		},
 		SET_SELECTED_EMPLOYEE_PROFILE(state, payload) {
       state.selectedPartnerProfile = payload;
@@ -65,11 +66,13 @@ export const Users = {
 			return new Promise( async (resolve, reject) => {
 				try {
 					let endpoint = 'users-profile/';
+			
+			
 					let type = 'Create New User';
-					let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+					let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
 					console.log('POSTUser response', response);
 
-					commit('PUSH_NEW_DATACOM', response);
+					commit('PUSH_NEW_USER', response);
 					return resolve(response)
 					
 				} catch (error) {
@@ -87,7 +90,7 @@ export const Users = {
 		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'users/';
       let type = 'Delete Employee Profile';
-			let response = await apiRoutes.DELETEItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.DELETEItem(dispatch, rootState,payload, endpoint, type);
 			console.log('DELETEProfile response', response);
 		},
 

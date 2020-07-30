@@ -28,6 +28,10 @@ import Merchant from "@/pages/merchants/merchant"
 import Employee from "@/pages/employees/employee"
 import HelpDesk from "@/pages/help-desk/help-desk"
 
+import RetailPOS from "@/pages/pos/new-pos/new-pos"
+import Categories from "@/pages/pos/new-pos/categories-drawer"
+import Inventory from "@/pages/inventory/new/inventory"
+
 import Colors from '@/pages/colors'
 import Icons from '@/pages/icons'
 // import Fonts from '@/pages/fonts'
@@ -178,6 +182,23 @@ export default new Router({
       components: {
         layout: defaultLayout,
         content: Icons
+      }
+    },
+    {
+      path: "/retail-pos",
+      name: "retail-pos",
+      components: {
+        categories: Categories,
+        pos: RetailPOS,
+      }
+    },
+    {
+      path: "/inventory",
+      name: "inventory",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: Inventory
       }
     },
     {

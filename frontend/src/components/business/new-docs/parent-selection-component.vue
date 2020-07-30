@@ -1,120 +1,122 @@
 <template>
 	<div>
-		<template>	
+		<template>
+			<v-card
+				max-width="100%"
+				class="mx-auto custom-card"
+			>
+				<v-list-item>
+					<v-list-item-avatar color="grey"></v-list-item-avatar>
+					<v-list-item-content>
+						<span class="headline">Select Parent Organization</span>
+					</v-list-item-content>
+				</v-list-item>
 
-		</template>
-
-		<md-card class="w-full">
-			<md-card-header class="flex">
-				<span class="headline">Select Parent Organization</span>
-			</md-card-header>
-			<md-card-content>
-				<div class="container">
-					<div class="title">Affiliated Company</div>
-					<div class="row" v-if="moduleInfo.level >= 1 && Auth.authLevel === 1">
-						<div class="col-50">
-							<p class="subtitle">Datacom</p>
-							<DxSwitch 
-								id="datacom" 
-								:disabled="GET_DATACOM_LIST.length === 0"
-								:value="accountSettings.accountPlatform.is_datacom" 
-								@value-changed="companyTypeToggle"/>
-						</div>
-						<div class="col-50">
-							<p class="subtitle text-center">Name</p>
-							<div class="flex">
-								<span class="mdi mdi-domain mdi-35 mr-4"></span>
-								<DxDropDownBox
-									v-if="Auth.authLevel === 1"
-									:disabled="accountSettings.accountPlatform.is_datacom === false"
-									:data-source="GET_DATACOM_LIST"
-									:value.sync="selectedDatacom"
-									placeholder="Select a value..."
-									display-expr="dba_name"
-									@value-changed="datacomDropdownSelection($event)"
-								>
-									<DxList
+				<v-card-text>
+					<div class="container">
+						<div class="title">Affiliated Company</div>
+						<div class="row" v-if="moduleInfo.level >= 1 && Auth.authLevel === 1">
+							<div class="col-50p">
+								<p class="subtitle">Datacom</p>
+								<DxSwitch 
+									id="datacom" 
+									:disabled="GET_DATACOM_LIST.length === 0 || !accountSettings.editProfile"
+									:value="accountSettings.accountPlatform.is_datacom" 
+									@value-changed="companyTypeToggle"/>
+							</div>
+							<div class="col-50p">
+								<p class="subtitle text-center">Name</p>
+								<div class="flex">
+									<span class="mdi mdi-domain mdi-35 mr-4"></span>
+									<DxDropDownBox
+										v-if="Auth.authLevel === 1"
+										:disabled="accountSettings.accountPlatform.is_datacom === false"
 										:data-source="GET_DATACOM_LIST"
-										:height="400"
-										:selected-items.sync="selectedDatacom"
-										selection-mode="single"
-										display-expr="dba_name"> 
-									</DxList>
-								</DxDropDownBox>
+										:value.sync="selectedDatacom"
+										placeholder="Select a value..."
+										display-expr="dba_name"
+										@value-changed="datacomDropdownSelection($event)"
+									>
+										<DxList
+											:data-source="GET_DATACOM_LIST"
+											:height="400"
+											:selected-items.sync="selectedDatacom"
+											selection-mode="single"
+											display-expr="dba_name"> 
+										</DxList>
+									</DxDropDownBox>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row" v-if="moduleInfo.level >= 2 && Auth.authLevel === 1">
-						<div class="col-50">
-							<p class="subtitle">Partner</p>
-							<DxSwitch 
-							id="partner" 
-							:disabled="GET_PARTNER_LIST.length === 0"
-							:value="accountSettings.accountPlatform.is_partner" 
-							@value-changed="companyTypeToggle" />
-							
-						</div>
-						<div class="col-50">
-							<div class="flex">
-								<fa-icon :icon="['fa', 'handshake']" class="mdi-30 mr-4"></fa-icon>
-								<DxDropDownBox
-									:disabled="accountSettings.accountPlatform.is_partner === false"
-									:data-source="GET_PARTNER_LIST"
-									:value.sync="selectedPartner"
-									placeholder="Select a value..."
-									@value-changed="partnerDropdownSelection($event)"
-									display-expr="dba_name">
-									<DxList
+						<div class="row" v-if="moduleInfo.level >= 2 && Auth.authLevel === 1">
+							<div class="col-50p">
+								<p class="subtitle">Partner</p>
+								<DxSwitch 
+								id="partner" 
+								:disabled="GET_PARTNER_LIST.length === 0"
+								:value="accountSettings.accountPlatform.is_partner" 
+								@value-changed="companyTypeToggle" />
+								
+							</div>
+							<div class="col-50p">
+								<div class="flex">
+									<fa-icon :icon="['fa', 'handshake']" class="mdi-30 mr-4"></fa-icon>
+									<DxDropDownBox
+										:disabled="accountSettings.accountPlatform.is_partner === false"
 										:data-source="GET_PARTNER_LIST"
-										:height="400"
-										:selected-items-keys.sync="selectedPartner"
-										selection-mode="single"
-										display-expr="dba_name" />
-								</DxDropDownBox>
+										:value.sync="selectedPartner"
+										placeholder="Select a value..."
+										@value-changed="partnerDropdownSelection($event)"
+										display-expr="dba_name">
+										<DxList
+											:data-source="GET_PARTNER_LIST"
+											:height="400"
+											:selected-items-keys.sync="selectedPartner"
+											selection-mode="single"
+											display-expr="dba_name" />
+									</DxDropDownBox>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-50">
-							<p class="subtitle">Merchant</p>
-							<DxSwitch 
-							id="merchant" 
-							:disabled="GET_MERCHANT_LIST.length === 0"
-							:value="accountSettings.accountPlatform.is_merchant" 
-							@value-changed="companyTypeToggle" />
-						</div>
-						<div class="col-50">
-							<div class="flex">
-								<span class="mdi mdi-storefront-outline mdi-35 mr-4"></span>
-								<DxDropDownBox
-									:disabled="accountSettings.accountPlatform.is_merchant === false"
-									:data-source="datacomList"
-									:value.sync="selectedMerchant"
-									placeholder="Select a value..."
-									@value-changed="merchantDropdownSelection($event)"
-									display-expr="dba_name">
-									<DxList
-										:data-source="datacomList"
-										:height="400"
-										:selected-items.sync="selectedMerchant"
-										selection-mode="single"
-										display-expr="dba_name" />
-								</DxDropDownBox>
-							</div>
-						</div>
-					</div>
-
 						<div class="row">
-							<DxButton text="Click me" @click="testingMethod"/>
+							<div class="col-50p">
+								<p class="subtitle">Merchant</p>
+								<DxSwitch 
+								id="merchant" 
+								:disabled="GET_MERCHANT_LIST.length === 0"
+								:value="accountSettings.accountPlatform.is_merchant" 
+								@value-changed="companyTypeToggle" />
+							</div>
+							<div class="col-50p">
+								<div class="flex">
+									<span class="mdi mdi-storefront-outline mdi-35 mr-4"></span>
+									<DxDropDownBox
+										:disabled="accountSettings.accountPlatform.is_merchant === false"
+										:data-source="datacomList"
+										:value.sync="selectedMerchant"
+										placeholder="Select a value..."
+										@value-changed="merchantDropdownSelection($event)"
+										display-expr="dba_name">
+										<DxList
+											:data-source="datacomList"
+											:height="400"
+											:selected-items.sync="selectedMerchant"
+											selection-mode="single"
+											display-expr="dba_name" />
+									</DxDropDownBox>
+								</div>
+							</div>
 						</div>
 
-					
-				</div>
-			</md-card-content>
-    </md-card>
+							<div class="row">
+								<DxButton text="Click me" @click="testingMethod"/>
+							</div>
 
-	
-
+						
+					</div>
+				</v-card-text>
+			</v-card>
+		</template>
 
 	</div>
 </template>
@@ -279,7 +281,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.md-card {
+.custom-card{
 	width: 100%;
 	margin: 4px;
 	display: inline-block;

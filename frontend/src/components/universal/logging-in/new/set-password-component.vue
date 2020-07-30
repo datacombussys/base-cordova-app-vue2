@@ -6,59 +6,59 @@
 		</template>
 		<template>	
 			<div class="row">
-				<div class="col-100">
+				<div class="col-100p">
 					<table class="password-requirements-table">
 						<p>	Password requirements:</p>
 						<tbody>
 							<tr>
 								<td>
 									<div class="row">
-										<div class="col-10 p-4">
+										<div class="col-10p p-4">
 											<div class="mdi mdi-check-bold mdi-24px" :class="minOneLetter ? 'text-green': 'text-red'"></div>
 										</div>	
-										<div class="col-90">
+										<div class="col-90p">
 											Minimum of One Letter: a, b c, d, e
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-10">
+										<div class="col-10p">
 											<div class="mdi mdi-check-bold mdi-24px" :class="minOneNumber ? 'text-green': 'text-red'"></div>
 										</div>	
-										<div class="col-90">
+										<div class="col-90p">
 											Minimum of One Number: 1234567890
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-10">
+										<div class="col-10p">
 											<div class="mdi mdi-check-bold mdi-24px" :class="minOneCharacter ? 'text-green': 'text-red'"></div>
 										</div>	
-										<div class="col-90">
+										<div class="col-90p">
 											Minimum of One Special Character: #@*^&!
 										</div>
 									</div>
 								</td>
 								<td>
 									<div class="row">
-										<div class="col-10">
+										<div class="col-10p">
 											<div class="mdi mdi-check-bold mdi-24px" :class="minSixChars ? 'text-green': 'text-red'"></div>
 										</div>	
-										<div class="col-90">
+										<div class="col-90p">
 											Minimum 6 characters
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-10">
+										<div class="col-10p">
 											<div class="mdi mdi-check-bold mdi-24px" :class="cantUseName ? 'text-green': 'text-red'"></div>
 										</div>	
-										<div class="col-90">
+										<div class="col-90p">
 											Cannot use your name in password
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-10">
+										<div class="col-10p">
 											<div class="mdi mdi-check-bold mdi-24px" :class="cantUseCommon ? 'text-green': 'text-red'"></div>
 										</div>	
-										<div class="col-90">
+										<div class="col-90p">
 											No common words such as 'password'
 										</div>
 									</div>
@@ -72,7 +72,7 @@
 
 		<template>	
 			<div class="row" v-if="accountSettings.showPasswordReset" >
-				<div class="col-50">
+				<div class="col-50p">
 					<DxButton
 					class="w-full"
 					text="Reset password"
@@ -86,7 +86,7 @@
 				<div class="dx-fieldset-header">Set Password</div>
 				<div class="row">
 
-					<div class="col-50">
+					<div class="col-50p">
 						<div class="dx-field">
 							<div class="dx-field-label">Email Address</div>
 							<div class="dx-field-value">
@@ -105,7 +105,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-50">
+					<div class="col-50p">
 						<div class="dx-field">
 						<div class="dx-field-label">PIN</div>
 							<div class="dx-field-value">
@@ -124,13 +124,14 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-50">
+						<div class="col-50p">
 							<div class="dx-field">
 								<div class="dx-field-label">Password</div>
 								<div class="dx-field-value">
 									<DxTextBox
 										:disabled="!accountSettings.editProfile"
 										:value.sync="loginForm.user.password"
+										@key-up="calcValidPassword($event)"
 										mode="password"
 									>
 										<DxValidator>
@@ -140,7 +141,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-50">
+						<div class="col-50p">
 							<div class="dx-field">
 								<div class="dx-field-label">Confirm Password</div>
 								<div class="dx-field-value">
@@ -232,6 +233,12 @@ export default {
 		return {
 			//Form Settings
 			confirmPassword: null,
+			minOneLetter: false,
+			minOneNumber: false,
+			minOneCharacter: false,
+			minSixChars: false,
+			cantUseName: false,
+			cantUseCommon: false,
 
 		};
 	},
@@ -243,89 +250,124 @@ export default {
 		passwordComparison() {
       return this.loginForm.user.password;
 		},
-		minOneLetter() {
-			console.log('minOneLetter');
-			var re = /[a-zA-Z]/;
-			if(this.loginForm.user.password) {
-				if(this.loginForm.user.password.match(re)) {
-					return true;
-				}
-			}
-			return false;
-		},
-		minOneNumber() {
-			console.log('minOneNumber');
-			var re = /[0-9]/;
-			if(this.loginForm.user.password) {
-				if(this.loginForm.user.password.match(re)) {
-					return true;
-				}
-			}
-			return false;
-		},
-		minOneCharacter() {
-			console.log('minOneCharacter');
-			var re = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-			if(this.loginForm.user.password) {
-				if(this.loginForm.user.password.match(re)) {
-					return true;
-				}
-			}
-			return false;
-		},
-		minSixChars() {
-			console.log('minSixChars');
-			var re = /.{6,}$/;
-			if(this.loginForm.user.password) {
-				if(this.loginForm.user.password.match(re)) {
-					return true;
-				}
-			}
-			return false;
-		},
-		cantUseName() {
-			console.log('cantUseName');
-			if(this.loginForm.user.first_name) {
-				var firstname = this.loginForm.user.first_name.toLowerCase();
-			}
-			if(this.loginForm.user.last_name) {
-				var lastname = this.loginForm.user.last_name.toLowerCase();
-			}
-			if(this.loginForm.user.email) {
-				var email = this.loginForm.user.email.toLowerCase();
-			}
-			var words = [firstname, lastname, email];
-			if(this.loginForm.user.password) {
-				var password = this.loginForm.user.password.toLowerCase();
-				for(let key in words) {
-					if(password.includes(words[key])) {
-						return false
-					} 
-				}
-			}
-			return true;
-		},
-		cantUseCommon() {
-			console.log('cantUseCommon');
-			var words = ['password', '12345'];
-
-			if(this.loginForm.user.password) {
-				var password = this.loginForm.user.password.toLowerCase();
-				for(let key in words) {
-					if(password.includes(words[key])) {
-						return false
-					} 
-				}
-			}
-			return true;
-		},
+		
 		asyncValidation() {
 			console.log("AsyncValidation")
+		},
+		calcValidPassword(e) {
+			console.log('e', e)
+			var oneLetter = /[a-zA-Z]+/
+			var minOneNum = /[0-9]+/
+			var minOneChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
+			var minSixChar = /^.{6,}$/
+			
+			let foundoneLetter = oneLetter.test(e.event.target.value)
+			console.log('foundoneLetter', foundoneLetter);
+			let foundminOneNum = minOneNum.test(e.event.target.value)
+			console.log('foundminOneNum', foundminOneNum);
+			let foundminOneChar = minOneChar.test(e.event.target.value)
+			console.log('foundminOneChar', foundminOneChar);
+			let foundminSixChar = minSixChar.test(e.event.target.value)
+			console.log('foundminSixChar', foundminSixChar);
+
+
+			if(oneLetter.test(e.event.target.value)) {
+				this.minOneLetter = true
+				console.log('minOneLetter', this.minOneLetter);
+			} else if(minOneNum.test(e.event.target.value)) {
+				this.minOneNumber = true
+				console.log('minOneNumber', this.minOneNumber);
+			} else if(minOneChar.test(e.event.target.value)) {
+				this.minOneCharacter = true
+				console.log('minOneCharacter', this.minOneCharacter);
+			} else if(minSixChar.test(e.event.target.value)) {
+				this.minSixChars = true
+				console.log('minSixChars', this.minSixChars);
+			} else {
+				this.minOneLetter = false
+				this.minOneNumber = false
+				this.minOneCharacter = false
+				this.minSixChars = false
+			}
+
 		}
 	
 	},
 	computed: {
 		...mapState([]),
+		// minOneLetter() {
+			
+		// 	return false;
+		// },
+		// minOneNumber() {
+		// 	
+		// 	return false;
+		// },
+		// minOneCharacter() {
+		// 	console.log('minOneCharacter');
+		// 	var minOneChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+		// 	if(this.loginForm.user.password) {
+		// 		if(this.loginForm.user.password.match(minOneChar)) {
+		// 			return true;
+		// 		}
+		// 	}
+		// 	return false;
+		// },
+		// minSixChars() {
+		// 	console.log('minSixChars');
+		// 	var minSixChar = /.{6,}$/;
+		// 	if(this.loginForm.user.password) {
+		// 		if(this.loginForm.user.password.match(minSixChar)) {
+		// 			return true;
+		// 		}
+		// 	}
+		// 	return false;
+		// },
+		// cantUseName() {
+		// 	console.log('cantUseName');
+		// 	if(this.loginForm.user.first_name) {
+		// 		var firstname = this.loginForm.user.first_name.toLowerCase();
+		// 	}
+		// 	if(this.loginForm.user.last_name) {
+		// 		var lastname = this.loginForm.user.last_name.toLowerCase();
+		// 	}
+		// 	if(this.loginForm.user.email) {
+		// 		var email = this.loginForm.user.email.toLowerCase();
+		// 	}
+		// 	var words = [firstname, lastname, email];
+		// 	if(this.loginForm.user.password) {
+		// 		var password = this.loginForm.user.password.toLowerCase();
+		// 		for(let key in words) {
+		// 			if(password.includes(words[key])) {
+		// 				return false
+		// 			} 
+		// 		}
+		// 	}
+		// 	return true;
+		// },
+		// cantUseCommon() {
+		// 	console.log('cantUseCommon');
+		// 	var words = ['password', '12345'];
+
+		// 	if(this.loginForm.user.password) {
+		// 		var password = this.loginForm.user.password.toLowerCase();
+		// 		for(let key in words) {
+		// 			if(password.includes(words[key])) {
+		// 				return false
+		// 			} 
+		// 		}
+		// 	}
+		// 	return true;
+		// },
+		
+	},
+	watch: {
+		// 'loginForm.user.password': {
+		// 	handler: function (after, before) {
+				 
+		// 	},
+		// 	deep: true
+		// }
 	},
 	created() {},
 	mounted() {

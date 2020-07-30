@@ -5,7 +5,7 @@
 		<f7-login-screen-title>Password Reset</f7-login-screen-title>
 		<!-- Error Mapping -->
 		<f7-row class="full-width display-flex justify-content-center">
-			<div v-if="Errors.loginErrorHandle" class="left message is-danger display-flex align-items-center col-20">
+			<div v-if="Errors.loginErrorHandle" class="left message is-danger display-flex align-items-center col-20p">
 				<div class="message-body">Logging in was unsuccessful.</div>
 			</div>
 		</f7-row>

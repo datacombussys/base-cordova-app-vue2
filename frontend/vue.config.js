@@ -1,43 +1,40 @@
 module.exports = {
-  lintOnSave: false,
-  runtimeCompiler: true,
-  publicPath: '',
-  pluginOptions: {
-    cordovaPath: 'src-cordova',
-    moment: {
-      locales: [
-        ''
+  "lintOnSave": false,
+  "runtimeCompiler": true,
+  "publicPath": "",
+  "pluginOptions": {
+    "cordovaPath": "src-cordova",
+    "moment": {
+      "locales": [
+        ""
       ]
     }
   },
-  devServer: {
-    port: 9000,
-    open: true,
-    overlay: {
-      warnings: false,
-      errors: true
+  "devServer": {
+    "port": 9000,
+    "open": true,
+    "overlay": {
+      "warnings": false,
+      "errors": true
     },
-    proxy: {
-      '/django': {
-        target: 'http://localhost:9010',
-        secure: false
+    "proxy": {
+      "/django": {
+        "target": "http://localhost:9010",
+        "secure": false
       },
-      '/node': {
-        target: 'http://localhost:9020',
-        secure: false
-      },
-      // '/cms': {
-      //   target: 'http://localhost:9030',
-      //   secure: false
-      // }
-    },
+      "/node": {
+        "target": "http://localhost:9020",
+        "secure": false
+      }
+    }
   },
-  configureWebpack: {
-    module: {
-      rules: [
-      ]
+  "configureWebpack": {
+    "module": {
+      "rules": []
     },
-    plugins: [
-    ],
-  }
+    "plugins": []
+  },
+  "transpileDependencies": [
+    "vuetify"
+  ]
 }

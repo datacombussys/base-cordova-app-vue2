@@ -29,6 +29,10 @@ const isLargeScreen = sizes()['screen-large'];
 const items = navigation.map((item) => ({ ...item, expanded: isLargeScreen }));
 
 export default {
+  name: "sideNavMenuComponent",
+  components: {
+    DxTreeView
+  },
   props: {
     compactMode: Boolean
   },
@@ -82,9 +86,7 @@ export default {
       }
     }
   },
-  components: {
-    DxTreeView
-  }
+  
 };
 </script>
 

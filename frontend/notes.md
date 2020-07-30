@@ -1,5 +1,5 @@
 https://cdn.materialdesignicons.com/
-<span class="mdi mdi-cart-minus mdi-48" ></span>
+<span class="mdi mdi-cart-minus mdi-48"></span>
 <md-icon class="md-size-5x">menu</md-icon>
 
 <fa-icon :icon="['far', 'address-book']" class="mdi-35"></fa-icon>
@@ -9,6 +9,7 @@ https://material.io/resources/icons
 <i class="material-icons" style="font-size:45px;">check_circle</i>
 <span class="material-icons md-48 orange600"> check_circle </span>
 <span class="material-icons md-48 text-orange">check-bold</span>
+<div class="material-icons mdi-60 text-datacom mb-3">notifications</div>
 
 https://ej2.syncfusion.com/vue/documentation/appearance/icons/
 also Devexpress ICons See Icon Page.vue
@@ -21,6 +22,12 @@ https://js.devexpress.com/Documentation/Guide/Themes_and_Styles/Icons/#Built-In_
 <DxItem title="Profile" icon="dx-icon dx-icon-card">
 text: "Login",
 icon: "mdi mdi-login",
+
+https://fontawesome.com/icons?d=gallery
+.delete::after {
+	font-family: "FontAwesome";
+	content: '\f057';
+}
 
 DxtextBox Modes: 'email' | 'password' | 'search' | 'tel' | 'text' | 'url'
 

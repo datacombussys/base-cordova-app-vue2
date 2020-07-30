@@ -1,5 +1,5 @@
 
-;
+
 
 import apiRoutes from '@/js/api-routes';
 
@@ -46,7 +46,7 @@ export const SalesOffices = {
 		async POSTSalesOffice({commit, dispatch, rootState}, payload) {
 			let endpoint = 'sales-office/';
 			let type = 'Create New Sales Office';
-			let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
 			console.log('POSTSalesOffice response', response);
 			commit('PUSH_NEW_SALESOFFICE', response.data);
 		},
@@ -54,7 +54,7 @@ export const SalesOffices = {
 		async GETSalesOfficeList({commit, dispatch, rootState}, payload) {
 			let endpoint = 'salesoffice-list/';
 			let type = 'Get Sales Office List';
-			let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
 			console.log('GETSalesOfficeList response', response);
 			commit('SET_SALESOFFICE_LIST', response.data);
 		},
@@ -62,7 +62,7 @@ export const SalesOffices = {
 			//filterURL is passed from the original call
 			let endpoint = 'salesoffice-list/';
 			let type = 'Get Sales Office List';
-			let response = await apiRoutes.GETSelectedList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETSelectedList(dispatch, rootState,payload, endpoint, type);
 			console.log('GETSalesOfficeList response', response);
 			commit('SET_SELECTED_SALESOFFICE_LIST', response.data);
 		},
@@ -72,7 +72,7 @@ export const SalesOffices = {
 				console.log('GETSalesOfficeOwnProfile payload', payload);
 				let endpoint = 'sales-office/?user__id=';
 				let type = 'Get Sales Office Profile';
-				let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+				let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
 				console.log('GETSalesOfficeOwnProfile response', response);
 				commit('SET_SALESOFFICE_PROFILE', response.data[0]);
 				commit('SET_PLATFORM_INFO', response.data[0]);
@@ -84,7 +84,7 @@ export const SalesOffices = {
 			return new Promise( async (resolve, reject) => {
 				let endpoint = 'sales-office/';
 				let type = 'Get Sales Office Profile';
-				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
 				console.log('GETSalesOfficeSelectedProfile response', response);
 				commit('SET_SELECTED_SALESOFFICE_PROFILE', response.data);
 				return resolve(response.data)
@@ -94,7 +94,7 @@ export const SalesOffices = {
 		async PATCHSalesOfficeProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'sales-office/';
 			let type = 'Update Sales Office Profile';
-			let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHSalesOfficeProfile response', response);
 			commit('UPDATE_SALESOFFICE_PROFILE', response.data);
 		},
@@ -102,7 +102,7 @@ export const SalesOffices = {
 		async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'sales-office/';
 			let type = 'Delete Sales Office Profile';
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHDeleteProfile response', response);
 			commit('PATCH_DELETE_SALESOFFICE_PROFILE', payload);
 		},
@@ -110,7 +110,7 @@ export const SalesOffices = {
 		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'sales-office/';
 			let type = 'Delete Sales Office Profile';
-			let response = await apiRoutes.DELETEItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.DELETEItem(dispatch, rootState,payload, endpoint, type);
 			console.log('DELETEProfile response', response);
 		},
 	},

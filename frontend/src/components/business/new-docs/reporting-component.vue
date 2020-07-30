@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<div class="md-headline">Reporting</div>
-	
+		<div class="headline">Reporting</div>
+
 	</div>
 </template>
 

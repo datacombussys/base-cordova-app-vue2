@@ -70,6 +70,7 @@ from users.views import (UserProfileViewset,
 from blog.views import BlogViewset
 from financial.views import SalesTaxViewset
 from inventory.views import (InventoryViewset, 
+                            InventoryListViewset, 
                             InvBarcodesViewset, 
                             InvGalleryViewset, 
                             InvCategoryClassViewset, 
@@ -153,11 +154,14 @@ router.register(r'django/groups-users', UserGroupsViewSet, basename="groups-user
 
 router.register(r'django/holidays', HolidayViewset)
 router.register(r'django/industries', IndustryViewset)
+
 router.register(r'django/invbarcodes', InvBarcodesViewset)
-router.register(r'django/inventory', InventoryViewset)
+router.register(r'django/inventory', InventoryViewset, basename="inventory")
+router.register(r'django/inventory-list', InventoryListViewset, basename="inventory-list")
 router.register(r'django/inventorygallery', InvGalleryViewset)
 router.register(r'django/invcategoryclass', InvCategoryClassViewset)
 router.register(r'django/invcategory', InvCategoryViewset)
+
 router.register(r'django/invoices', InvoiceViewset)
 router.register(r'django/inventory-labels', InvLabelViewSet)
 router.register(r'django/leave-request', LeaveRequestViewset)

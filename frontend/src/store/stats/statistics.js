@@ -16,7 +16,7 @@ export const Statistics = {
 		async POSTStatistic({commit, dispatch, rootState}, payload) {
 			let endpoint = 'sales-office/';
 			let type = 'Report Stat';
-			let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
 			console.log('POSTSalesOffice response', response);
 			commit('PUSH_NEW_SALESOFFICE', response.data);
 		},

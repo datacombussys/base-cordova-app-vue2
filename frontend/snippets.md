@@ -162,16 +162,16 @@ Accepted Values: 'billions' | 'currency' | 'day' | 'decimal' | 'exponential' | '
 <div class="container">
 	<div class="row">
 		<div class="title">Title Here</div>
-		<div class="col-50">			
+		<div class="col-50p">			
 		</div>
-		<div class="col-50">
+		<div class="col-50p">
 		</div>
 	</div>
 	<div class="row">
 		<div class="title">Title Here</div>
-		<div class="col-50">			
+		<div class="col-50p">			
 		</div>
-		<div class="col-50">
+		<div class="col-50p">
 		</div>
 	</div>
 </div>

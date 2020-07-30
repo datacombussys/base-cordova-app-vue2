@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="md-display-1">DevExpress Icons</div>
+		<div class="display-1">DevExpress Icons</div>
 		<div class="flex flex-wrap">
 			
 			<span class="dx-icons dx-icon-add" style="font-size:50px;"></span>
@@ -753,13 +753,13 @@
 			<p>dx-icon-syle="fon</p>
 		</div>
 		<div class="mt-6">
-			<p class="md-display-1">I can also use the icons from Material Design</p>
-			<p class="md-headline">https://cdn.materialdesignicons.com/5.3.45/</p>
+			<p class="display-1">I can also use the icons from Material Design</p>
+			<p class="headline">https://cdn.materialdesignicons.com/5.3.45/</p>
 		</div>
 		<div class="mt-6">
-			<p class="md-headline">Acceptable Usage</p>
-			<p class="md-title">headerText1: { text: 'Contacts', 'iconCss': 'dx-icon-email' },</p>
-			<p class="md-title">headerText2: { text: 'Locations', 'iconCss': 'mdi mdi-account-box-multiple-outline'},</p>
+			<p class="headline">Acceptable Usage</p>
+			<p class="title">headerText1: { text: 'Contacts', 'iconCss': 'dx-icon-email' },</p>
+			<p class="title">headerText2: { text: 'Locations', 'iconCss': 'mdi mdi-account-box-multiple-outline'},</p>
 		</div>
 	</div>
 </template>

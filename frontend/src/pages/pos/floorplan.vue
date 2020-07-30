@@ -522,7 +522,7 @@ export default {
         tr.attachTo(simpleLabel);
         this.layer.draw();
 
-        this.layer.add(simpleLabel);;
+        this.layer.add(simpleLabel);
 
         this.stage.add(this.layer);
       },

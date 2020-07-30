@@ -9,8 +9,6 @@ from django.shortcuts import get_object_or_404
 from django.core.files.images import ImageFile
 from django.apps import apps
 
-import treepoem
-
 from employees.models import Employee
 from companies.models import Company
 from datacom.models import Datacom
@@ -25,7 +23,7 @@ class InvBarcodeManager(models.Manager):
     # last_barcode = UserBarcode.objects.filter(user__employee__datacom__id__gte=1).order_by().last()
     print("last_barcode", last_barcode)
     if not last_barcode:
-      return "100000000000"
+      return "00000000"
     else:
       last_barcode_no = last_barcode.barcode_number
       if type(last_barcode_no) is int:
@@ -38,40 +36,14 @@ class InvBarcodeManager(models.Manager):
         str_last_barcode = str(last_barcode_no)
         return str_last_barcode
 
-  def create_barcode_image(self, barcode):
-    '''Grab barcode number and create barcode instance and save'''
-    barcodeImage = treepoem.generate_barcode(
-      barcode_type="ean13",
-      data=barcode,
-      options={'height': 2,
-      'width': 4}
-    )
-    barcodeImage.convert('1').save(barcode + ".png")
-    print(barcodeImage)
-
-    #Grab file from Filesystem
-    myfile = open(barcode + ".png", "rb")
-    # print("myfile", myfile)
-    finalImage = ImageFile(myfile)
-    # print("finalImage", finalImage)
-    #Delete file from hard drive
-    if os.path.exists(barcode + ".png"):
-      os.remove(barcode + ".png")
-    
-    return finalImage
-
   def create_barcode(self, item, **kwargs):
     print('create_barcode kwargs', kwargs)
     print('create_barcode item', item)
-    current_barcode_number = self.create_barcode_number()
-    barcode_image = self.create_barcode_image(current_barcode_number)
-    
-    uuid_id = uuid4()
+    current_barcode_number = self.create_barcode_number()    
 
-    barcode = self.model(title=item.name + "_" + str(uuid_id)[:10])
-    barcode.image = barcode_image
-    barcode.barcode_type = "ean-13"
-    barcode.barcode_number = int(current_barcode_number)
+    barcode = self.model(barcode_number=int(current_barcode_number), barcode_type = "ean-13")
+
+  
     barcode.save(using=self._db)
     
     return barcode
@@ -79,12 +51,10 @@ class InvBarcodeManager(models.Manager):
 class InventoryBarcode(models.Model):
   date_added 		  = models.DateTimeField(verbose_name="date added", 														
                     auto_now_add=True)
-  title 			    = models.CharField(max_length=50, null=True, blank=True)
-  barcode_number  = models.BigIntegerField(null=True, blank=True)
+  barcode_number  = models.CharField(max_length=8)
   barcode_type 		= models.CharField(max_length=10, null=True, blank=True)
-  subtitle 			  = models.CharField(max_length=50, null=True, blank=True)
-  metadata 		    = models.CharField(max_length=250, blank=True, null=True)
-  image 	        = models.FileField(max_length=100, upload_to='inventory/barcodes', blank=True, null=True)
+  is_sku          = models.BooleanField(default=False)
+  is_upc          = models.BooleanField(default=False)
 
   objects	= InvBarcodeManager()
 
@@ -128,29 +98,25 @@ class Inventory(models.Model):
   uom_dimensions 	= models.ForeignKey(UOMDimensions, on_delete=models.DO_NOTHING, blank=True, null=True)
   barcode 			  = models.ForeignKey(InventoryBarcode, on_delete=models.CASCADE, null=True, blank=True)
   global_id 		  = models.UUIDField(primary_key=False, default=uuid4, editable=False)
+  date_added 		  = models.DateTimeField(verbose_name="date added", 														
+                    auto_now_add=True)
   name 			      = models.CharField(max_length=50)
   manufacturer 		= models.CharField(max_length=50, blank=True, null=True)
   model 		      = models.CharField(max_length=50, blank=True, null=True)
   model_number 		= models.CharField(max_length=50, blank=True, null=True)
-  date_added 		  = models.DateTimeField(verbose_name="date added", 														
-                    auto_now_add=True)
   profile_img 	  = models.ImageField(max_length=100, upload_to='inventory/profile', null=True, blank=True)
   gallery_imgs 	  = models.TextField(null=True, blank=True)
   is_service			= models.BooleanField(default=False)
   is_active       = models.BooleanField(default=True)
-  is_variation		= models.BooleanField(default=False)
   is_tracked			= models.BooleanField(default=False)
   is_downloadable	= models.BooleanField(default=False)
   is_on_website		= models.BooleanField(default=False)
   is_on_sale			= models.BooleanField(default=False)
   is_taxable			= models.BooleanField(default=False)
-  parent_item 		= models.CharField(max_length=50, blank=True, null=True)
   product_id 			= models.CharField(max_length=20, blank=True, null=True)
-  sku 	          = models.CharField(max_length=20, null=True, blank=True)
+  sku 	          = models.CharField(max_length=8, null=True, blank=True)
   product_type 	  = models.CharField(max_length=100, blank=True, null=True)
-  isbn 		        = models.CharField(max_length=25, null=True, 
-                    blank=True, validators=[RegexValidator(r'^\d{1,25}$')])
-  tags 		        = models.CharField(max_length=255, blank=True, null=True)
+  initial_qty     = models.IntegerField(blank=True, null=True)
   sales_notes 		= models.TextField(blank=True, null=True)
   vendor_notes 		= models.TextField(blank=True, null=True)
   product_desc 		= models.TextField(blank=True, null=True)

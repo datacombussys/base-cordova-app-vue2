@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="md-headline">{{ databaseSettings.title }}</div>
+		<div class="headline">{{ databaseSettings.title }}</div>
 		<template>
 			<DxDataGrid
 				:data-source="databaseData.list"

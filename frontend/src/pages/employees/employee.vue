@@ -5,30 +5,39 @@
 			<!-- Left Column -->
 			<div class="left-col">
 				<div class="small-block">
-					<md-card class="rounded-md">
-						<md-card-header>
-							<md-card-header-text>
-								<div class="md-title">Joey Cipoletti</div>
-								<div class="md-subhead">Employee</div>
-							</md-card-header-text>
+					<v-card class="rounded-md">
+						<v-card-title>
+								<div class="title">Joey Cipoletti</div>
+								<div class="subtitle">Employee</div>
 
-							<md-menu md-size="big" md-direction="bottom-end">
-								<md-button class="md-icon-button" md-menu-trigger>
-									<md-icon>more_vert</md-icon>
-								</md-button>
+							<v-spacer></v-spacer>
 
-								<md-menu-content>
-									<md-menu-item @click="editImage">
-										<div class="rounded-full border border-gray-400 p-1 mr-6">
-											<md-icon>create</md-icon>
-										</div>
-										<div>Edit Image</div>
-									</md-menu-item>
-								</md-menu-content>
-							</md-menu>
-						</md-card-header>
+								<v-menu bottom left>
+									<template v-slot:activator="{ on, attrs }">
+										<v-btn
+											dark
+											icon
+											v-bind="attrs"
+											v-on="on"
+										>
+										<p>Icon here</p>
+											<v-icon>mdi-dots-vertical</v-icon>
+										</v-btn>
+									</template>
 
-						<md-card-content class="flex flex-col w-full">
+									<v-list>
+										<v-list-item
+											v-for="(item, i) in profileMenu"
+											:key="i"
+											@click=""
+										>
+											<v-list-item-title>{{ item.title }}</v-list-item-title>
+										</v-list-item>
+									</v-list>
+								</v-menu>
+						</v-card-title>
+
+						<v-card-text class="flex flex-col w-full">
 							<div>
 								<img src="@/static/BusinessLogo170x170.png"
 									style="width:170px;height:170px;"
@@ -40,13 +49,13 @@
 								</div>
 								<p class="text-center">D-13343645</p>
 							</div>									
-						</md-card-content>
-					</md-card>
+						</v-card-text>
+					</v-card>
 				</div>
 
 				<div class="small-block">
-					<md-card>
-						<md-card-content>
+					<v-card>
+						<v-card-text>
 							<div class="flex flex-wrap w-full">
 								<div v-show="!hideCreateItem" class="mt-4 w-full">
 									<DxButton
@@ -84,8 +93,8 @@
 							
 
 
-						</md-card-content>
-					</md-card>
+						</v-card-text>
+					</v-card>
 					
 				</div>
 		
@@ -96,14 +105,12 @@
 
 						<!-- Header Card -->
 						<div class="small-block">
-							<md-card class="rounded-md">
-								<md-card-header>
-									<md-card-header-text>
-										<div class="md-title">Quicklinks</div>
-									</md-card-header-text>
-								</md-card-header>
+							<v-card class="rounded-md">
+								<v-card-title>
+										<div class="title">Quicklinks</div>
+								</v-card-title>
 
-								<md-card-content class="flex w-full spacing">
+								<v-card-text class="flex w-full spacing">
 									<div class="m-4">
 										<div class="mdi mdi-account-lock mdi-60 text-datacom mb-3"></div>
 										<div class="mt-4 text-center">Permissions</div>
@@ -123,16 +130,16 @@
 										</router-link>
 									</div>
 										
-								</md-card-content>
-							</md-card>
+								</v-card-text>
+							</v-card>
 						</div>
 						
 						<!-- Devextreme Tabs -->
 						<template>
 							<div class="small-block">
-								<md-card class="rounded-md">
+								<v-card class="rounded-md">
 									
-									<md-card-content class="flex w-full spacing">
+									<v-card-text class="flex w-full spacing">
 										<div id="tabContainer">
 											<DxTabPanel :show-nav-buttons="true">
 												<DxItem title="Parent" icon="mdi mdi-domain">
@@ -181,14 +188,9 @@
 												</DxItem>
 											</DxTabPanel>
 										</div>
-										
-							
 
-											
-	
-											
-									</md-card-content>
-								</md-card>
+									</v-card-text>
+								</v-card>
 							</div>
 						</template>
 
@@ -297,6 +299,9 @@ export default {
 				module: 'Employee',
 				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
+			profileMenu: [
+        { title: 'Profile Image' },
+      ],
 			accountSettings: {
 				showPasswordReset: false,
 				activeTab: 0,
@@ -412,10 +417,7 @@ export default {
 	//******************************************** Methods ***********************************************//
   methods: {
     testMethod(e) {
-			console.log('this.employeeForm', this.employeeForm)
-			console.log('this.accountSettings', this.accountSettings)
-			console.log('this.Auth', this.Auth)
-			console.log('this.Datacom.datacomList', this.Datacom.datacomList)
+			console.log('this.employeeForm.user.password', this.employeeForm.user.password)
 
 
 		},
@@ -498,7 +500,7 @@ export default {
 					this.isLoadPanelVisible = false;
 					await this.clearUserFormData();
 					this.resetViewtoHome()
-				};
+				}
 			} catch(error) {
 				this.isLoadPanelVisible = false;
 				throw error
@@ -533,7 +535,7 @@ export default {
 					console.log('error.response', error.response)
 					//Return an undefined becasue was error
 					return reject(error.response);
-				};
+				}
 				
 				}).catch((error) => {
 					this.isLoadPanelVisible = false;

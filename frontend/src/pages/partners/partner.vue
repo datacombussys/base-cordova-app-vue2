@@ -5,31 +5,39 @@
 			<!-- Left Column -->
 			<div class="left-col">
 				<div class="small-block">
-					<md-card class="rounded-md">
-						<md-card-header>
-							<md-card-header-text>
-								<div class="md-title">Partner Sales, Inc.</div>
-								<div class="md-subhead">Partner</div>
-							</md-card-header-text>
+					<v-card class="rounded-md">
+						<v-card-title>
+								<div class="title">Partner Sales, Inc.</div>
+								<div class="subtitle">Partner</div>
 
-							<md-menu md-size="big" md-direction="bottom-end">
-								<md-button class="md-icon-button" md-menu-trigger>
-									<md-icon>more_vert</md-icon>
-									
-								</md-button>
+							<v-spacer></v-spacer>
 
-								<md-menu-content>
-									<md-menu-item @click="editImage">
-										<div class="rounded-full border border-gray-400 p-1 mr-6">
-											<md-icon>create</md-icon>
-										</div>
-										<div>Edit Image</div>
-									</md-menu-item>
-								</md-menu-content>
-							</md-menu>
-						</md-card-header>
+								<v-menu bottom left>
+									<template v-slot:activator="{ on, attrs }">
+										<v-btn
+											dark
+											icon
+											v-bind="attrs"
+											v-on="on"
+										>
+										<p>Icon here</p>
+											<v-icon>mdi-dots-vertical</v-icon>
+										</v-btn>
+									</template>
 
-						<md-card-content class="flex flex-col w-full">
+									<v-list>
+										<v-list-item
+											v-for="(item, i) in profileMenu"
+											:key="i"
+											@click=""
+										>
+											<v-list-item-title>{{ item.title }}</v-list-item-title>
+										</v-list-item>
+									</v-list>
+								</v-menu>
+						</v-card-title>
+
+						<v-card-text class="flex flex-col w-full">
 							<div>
 								<img src="@/static/BusinessLogo170x170.png"
 									style="width:170px;height:170px;"
@@ -41,13 +49,13 @@
 								</div>
 								<p class="text-center">P-13343645</p>
 							</div>									
-						</md-card-content>
-					</md-card>
+						</v-card-text>
+					</v-card>
 				</div>
 
 				<div class="small-block">
-					<md-card>
-						<md-card-content>
+					<v-card>
+						<v-card-text>
 							<div class="flex flex-wrap w-full">
 								<div v-show="!hideCreateItem" class="mt-4 w-full">
 									<DxButton
@@ -85,8 +93,8 @@
 							
 
 
-						</md-card-content>
-					</md-card>
+						</v-card-text>
+					</v-card>
 					
 				</div>
 		
@@ -97,14 +105,12 @@
 
 						<!-- Header Card -->
 						<div class="small-block">
-							<md-card class="rounded-md">
-								<md-card-header>
-									<md-card-header-text>
-										<div class="md-title">Quicklinks</div>
-									</md-card-header-text>
-								</md-card-header>
+							<v-card class="rounded-md">
+								<v-card-title>
+										<div class="title">Quicklinks</div>
+								</v-card-title>
 
-								<md-card-content class="flex w-full spacing">
+								<v-card-text class="flex w-full spacing">
 									<div class="m-4">
 										<div class="mdi mdi-account-lock mdi-60px mb-3">
 										</div>
@@ -126,16 +132,16 @@
 										<div class="mt-4 text-center">Support</div>
 									</div>
 										
-								</md-card-content>
-							</md-card>
+								</v-card-text>
+							</v-card>
 						</div>
 						
 						<!-- Devextreme Tabs -->
 						<template>
 							<div class="small-block">
-								<md-card class="rounded-md">
+								<v-card class="rounded-md">
 									
-									<md-card-content class="flex w-full spacing">
+									<v-card-text class="flex w-full spacing">
 										<div id="tabContainer">
 											<DxTabPanel :show-nav-buttons="true">
 												<DxItem title="Profile" icon="mdi mdi-account-box">
@@ -178,7 +184,10 @@
 												</DxItem>
 												<DxItem title="Database" icon="mdi mdi-database">
 													<template #default>
-														<databaseComponent :formData="partnerForm"></databaseComponent>
+														<databaseComponent 
+															:databaseSettings="databaseSettings"
+															:databaseData="databaseData">
+														</databaseComponent>
 													</template>
 												</DxItem>
 											</DxTabPanel>
@@ -189,8 +198,8 @@
 											
 	
 											
-									</md-card-content>
-								</md-card>
+									</v-card-text>
+								</v-card>
 							</div>
 						</template>
 
@@ -297,6 +306,9 @@ export default {
 				module: 'Datacom',
 				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
+			profileMenu: [
+        { title: 'Profile Image' },
+      ],
 			accountSettings: {
 				showPasswordReset: false,
 				activeTab: 0,
@@ -310,69 +322,31 @@ export default {
 					is_vendor: false
 				},
 			},
+			//Database Compoennt Data
+			databaseSettings: {
+				title: "Employee Database",
+				header1: "Id",
+				header2: "Name",
+				header3: "Number",
+				header4: "Position",
+				header5: "Mobile",
+				header6: "Status",
+				col1: "id",
+				col2: "user_obj.full_name",
+				col3: "employee_number",
+				col4: "position",
+				col5: "user_obj.mobile_phone",
+				col6: "user_obj.is_active"
+			},
+			databaseData: {
+				tableId: "employeeDbTable",
+				list: new Array()
+			},
 
 			//Page Setting for CRUD Display
 			hideUpdateItemButtons: false,
 			hideCreateItem: false,
 			selectedTabIndex: 0,
-
-			//Tabs
-			colCount: {
-				xs: 1,
-				sm: 1,
-				md: 2,
-				lg: 3
-			},
-			tabList: [
-				{
-					id: 0,
-					text: 'Profile',
-					icon: 'home',
-					content: "Content"
-				},
-				{
-					id:1,
-					text: 'Contacts',
-					icon: 'home',
-					content: "Content"
-				},
-				{
-					id: 2,
-					text: 'Locations',
-					icon: 'home',
-					content: "Content"
-				},
-				{
-					id:3,
-					text: 'Payment',
-					icon: 'home',
-					content: "Content"
-				},
-				{
-					id: 4,
-					text: 'Shipping',
-					icon: 'home',
-					content: "Content"
-				},
-				{
-					id: 5,
-					text: 'Employees',
-					icon: 'home',
-					content: "Content"
-				},
-				{
-					id: 6,
-					text: 'Reports',
-					icon: 'home',
-					content: "Content"
-				},
-				{
-					id: 7,
-					text: 'Database',
-					icon: 'home',
-					content: "Content"
-				},
-			],
 
 			//Form Data
 			partnerForm: {

@@ -83,34 +83,13 @@ class InventorySerializer(serializers.ModelSerializer):
             #If it is not provided, PATCH wont change anything
             pass
         return data
-
-    # def to_representation(self, value):
-    #     data = super().to_representation(value)  
-    #     if data['datacom']:
-    #         datacom_data_serializer = DatacomSerializer(value.datacom)
-    #         data['datacom'] = datacom_data_serializer.data
-    #     if data['company']:
-    #         company_data_serializer = CompanySerializer(value.company)
-    #         data['company'] = company_data_serializer.data
-    #     if data['partner']:
-    #         partner_data_serializer = PartnerSerializer(value.partner)
-    #         data['partner'] = partner_data_serializer.data
-    #     if data['warehouse']:
-    #         warehouse_data_serializer = WarehouseSerializer(value.warehouse)
-    #         data['warehouse'] = warehouse_data_serializer.data
-    #     if data['vendor']:
-    #         vendor_data_serializer = VendorSerializer(value.vendor)
-    #         data['vendor'] = vendor_data_serializer.data
-    #     if data['category']:
-    #         category_data_serializer = InvCategorySerializer(value.category)
-    #         data['category'] = category_data_serializer.data
-
-    #     return data
     
-class SimpleInventorySerializer(serializers.ModelSerializer):
+class InventoryListSerializer(serializers.ModelSerializer):
+    barcode_obj = InventoryBarcodeSerializer(read_only=True, source='barcode')
+    barcode = serializers.PrimaryKeyRelatedField(queryset=InventoryBarcode.objects.all(), required=False, allow_null=True)
     class Meta:
         model = Inventory
-        fields = ['id', 'date_added', 'name', 'list_price', 'profile_img', 'category', 'is_active']
+        fields = ['id', 'date_added', 'name', 'list_price', 'profile_img', 'category', 'barcode', 'is_active']
 
 class InvCategoryClassSerializer(serializers.ModelSerializer):
     class Meta:
@@ -120,7 +99,7 @@ class InvCategoryClassSerializer(serializers.ModelSerializer):
 # IMAGE GALLERY
 class InventoryGallerySerializer(serializers.ModelSerializer):
     #Only make GET request on id when inv item is being loaded in datatable
-    product_obj = SimpleInventorySerializer(read_only=True, source='product')
+    product_obj = InventoryListSerializer(read_only=True, source='product')
     product = serializers.PrimaryKeyRelatedField(queryset=Inventory.objects.all(), required=False, allow_null=True)
     
     class Meta:

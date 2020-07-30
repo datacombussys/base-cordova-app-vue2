@@ -2,15 +2,22 @@ import Vue from 'vue'
 import App from './App.vue'
 import store from './store'
 
+// Import App Custom Styles
+import vuetify from './plugins/vuetify';
+
 //DevExorcess Themes and CSS
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.material.orange.light.css';
 import './assets/themes/devexpress/generated/theme.base.css';
 
-//Vue Material Framework
-import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.min.css'
-Vue.use(VueMaterial)
+
+//Vue Material Framework - Use as component basis
+// import { MdButton, MdContent, MdTabs } from 'vue-material/dist/components'
+// import 'vue-material/dist/vue-material.min.css'
+// import 'vue-material/dist/theme/default.css'
+// Vue.use(MdButton)
+// Vue.use(MdContent)
+// Vue.use(MdTabs)
 
 //Datacom App Info Init
 import appInfo from "./app-info";
@@ -19,11 +26,6 @@ import appInfo from "./app-info";
 import VueAxios from 'vue-axios'
 import axios from 'axios'
 Vue.use(VueAxios, axios)
-
-//FormWizard
-import VueFormWizard from 'vue-form-wizard'
-import 'vue-form-wizard/dist/vue-form-wizard.min.css'
-Vue.use(VueFormWizard)
 
 //Import Vue-router
 import router from './routes'
@@ -44,7 +46,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome';
- 
+
 library.add(fas);
 library.add(fab);
 library.add(far);
@@ -68,20 +70,21 @@ Vue.config.productionTip = false;
 //Custom
 {/* <i class="dx-icon-email dx-icon-custom-style"></i> */}
 
+//Vue-toggle https://www.npmjs.com/package/vue-js-toggle-button
+import ToggleButton from 'vue-js-toggle-button'
+Vue.use(ToggleButton)
+
+
 import "@/assets/icons/icons.css"
 
 //Import Google Fonts to Use in project
 import "./assets/fonts/fonts.css"
-
-
 
 //Import Tailwind CSS
 import '../public/styles.css'
 
 //My Custom CSS
 import "@/assets/css/main.css";
-
-// Import App Custom Styles
 import './assets/sass/main.scss'
 import './assets/sass/dx-styles.scss'
 
@@ -91,5 +94,6 @@ Vue.prototype.$appInfo = appInfo;
 new Vue({
   store,
   router,
+  vuetify,
   render: h => h(App)
 }).$mount('#app')

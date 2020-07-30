@@ -11,7 +11,7 @@
 		<template>
 			<div class="dx-fieldset">
 				<div class="dx-fieldset-header">Profile Details</div>
-				<div class="row">
+				<div class="field-row">
 					<div class="cols">
 						<div class="dx-field">
 							<div class="dx-field-label">Dba Name</div>
@@ -176,7 +176,7 @@
 		<template>
 			<div class="dx-fieldset">
 				<div class="dx-fieldset-header">Primary Contact</div>
-				<div class="row">
+				<div class="field-row">
 					<div class="cols">
 						<div class="dx-field">
 							<div class="dx-field-label">First Name</div>
@@ -369,7 +369,6 @@
 						</div>
 					</div>
 					
-
 				</div>
 			</div>
 		</template>

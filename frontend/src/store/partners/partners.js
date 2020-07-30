@@ -1,4 +1,4 @@
-;
+
 
 import apiRoutes from '@/js/api-routes';
 
@@ -43,7 +43,7 @@ export const Partners = {
     async POSTPartner({commit, dispatch, rootState}, payload) {
 			let endpoint = 'partner/';
       let type = 'Create New Partner';
-			let response = await apiRoutes.POSTItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
 			console.log('POSTPartner response', response);
 			commit('PUSH_NEW_PARTNER', response);
     },
@@ -51,7 +51,7 @@ export const Partners = {
     async GETPartnerList({commit, dispatch, rootState}, payload) {
 			let endpoint = 'partner-list/';
       let type = 'Get Partner List';
-			let response = await apiRoutes.GETList(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
 			console.log('GETPartnerList response', response);
 			commit('SET_PARTNER_LIST', response.data);
     },
@@ -59,7 +59,7 @@ export const Partners = {
     async GETPartnerOwnProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'partner/';
       let type = 'Get Partner Profile';
-      let response = await apiRoutes.GETOwnProfile(dispatch, rootState, endpoint, payload, type);
+      let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
       console.log('GETPartnerOwnProfile response', response);
       commit('SET_OWN_PARTNER_PROFILE', response.data);
     },
@@ -68,7 +68,7 @@ export const Partners = {
       return new Promise( async (resolve, reject) => {
         let endpoint = 'partner/';
         let type = 'Get Partner Profile';
-        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, endpoint, payload, type);
+        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
         console.log('GETPartnerSelectedProfile response', response);
         commit('SET_SELECTED_PARTNER_PROFILE', response.data);
         
@@ -80,7 +80,7 @@ export const Partners = {
     async PATCHPartnerProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'partner/';
       let type = 'Update Partner Profile';
-			let response = await apiRoutes.PATCHItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHPartnerProfile response', response);
 			commit('UPDATE_PARTNER_PROFILE', response.data);
     },
@@ -88,7 +88,7 @@ export const Partners = {
     async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'partner/';
       let type = 'Delete Partner Profile';
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, endpoint, payload, type);
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
 			console.log('PATCHPartnerProfile response', response);
 			commit('PATCH_DELETE_PARTNER_PROFILE', payload);
     },

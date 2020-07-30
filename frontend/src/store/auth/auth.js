@@ -121,8 +121,8 @@ export const Auth = {
 				console.log("EEUSerID", EEUSerID);
 				commit("SET_LOGIN_PROFILE", EEUSerID.user_obj);
 				await dispatch('loadAllData');
-				// await dispatch('loadCompanySpecificData');
-				// await dispatch('loadUserSpecificData');
+				await dispatch('loadCompanySpecificData');
+				await dispatch('loadUserSpecificData');
 				rootState.Notifications.isLoadPanelVisible = false
 			} else {
 				await dispatch('loadAllData');

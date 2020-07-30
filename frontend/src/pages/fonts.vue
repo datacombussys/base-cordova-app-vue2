@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<span class="md-headline">Fonts</span>
+		<span class="headline">Fonts</span>
     <div class="flex flex-col bg-gray-200">
 			<div class="px-4 py-2 m-2">Open Sans</div>
 			<div style="font-size: 2em; font-family: 'Open Sans', sans-serif; font-weight: 300;">The Big Brown Fox Jumped Over the Ugly Red barn - 300</div>

@@ -803,7 +803,7 @@ export default {
           tr.show();
           tr.forceUpdate();
           editTextlayer.draw();
-        };
+        }
 
         function setTextareaWidth(newWidth) {
           if (!newWidth) {

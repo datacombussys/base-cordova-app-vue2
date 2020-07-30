@@ -5,8 +5,8 @@
 			<div class="errorField">
 				<p>Create or select a company</p>
 			</div>
-			
 		</template>
+		
 		<template v-else>
 			<div class="form">
 				<div class="dx-fieldset">
@@ -31,6 +31,14 @@
 						<div class="dx-field vertical">
 							<div class="dx-field-label">Profile Image</div>
 							<div class="dx-field-value-static">img Here</div>
+						</div>
+						<div class="dx-field vertical">
+							<div class="dx-field-label">Is Service</div>
+							<div class="dx-field-value-static">True</div>
+						</div>
+						<div class="dx-field vertical">
+							<div class="dx-field-label">Quantity on Hand</div>
+							<div class="dx-field-value-static">14</div>
 						</div>
 						
 						<div class="dx-field vertical">
