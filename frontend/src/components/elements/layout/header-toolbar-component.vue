@@ -44,11 +44,10 @@
         </div>
         <div slot-scope="_" v-else>
         <!-- eslint-enable -->
-          <a href="login-form" @click="testButton">
-            <span class="mdi mdi-login mdi-35 text-white"></span>
-          </a>
-            
-
+        <router-link to="login-form" >
+          <span class="mdi mdi-login mdi-35 text-white"></span>
+        </router-link>
+        
         </div>
       </dx-item>
 
