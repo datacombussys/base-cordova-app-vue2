@@ -188,14 +188,14 @@
 							<div id="drop-down-menu" class="dx-field-value">
 								<DxDropDownBox
 									:disabled="!inventorySettings.editProfile"
-									:data-source="categories"
+									:data-source="GET_INV_CATEGORY_LIST"
 									:value.sync="selectedCategory"
 									placeholder="Select a value..."
 									display-expr="name"
 									@value-changed="selectedCategoryDropdown($event)"
 								>
 									<DxList
-										:data-source="categories"
+										:data-source="GET_INV_CATEGORY_LIST"
 										:height="400"
 										:selected-items.sync="selectedCategory"
 										selection-mode="single"
@@ -265,28 +265,33 @@
 			<v-form>
 				<v-container>
 					<v-row>
-						<v-col sm="6">
+						<v-col sm="6" class="h-20">
 							<v-text-field
-								:v-model="category.name"
+								v-model="category.name"
 								label="Name"
 							></v-text-field>
+							<DxButton 
+							text="Add Category"
+							@click="addCategory"
+							type="gray"/>
 						</v-col>
 						<v-col sm="6">
 							<DxScrollView
 								ref="categoryScroller"
 								show-scrollbar="onScroll"
-								:height="300"
+								:height="250"
 							>
 								<v-list>
 									<v-list-item
-										v-for="category in Inventory.categoryList"
+										class="data-list"
+										v-for="category in GET_INV_CATEGORY_LIST"
 										:key="category.id">
 										<v-list-item-content class="p-0">
 											<v-list-item-title v-text="category.name"></v-list-item-title>
 										</v-list-item-content>
 										
 										<v-list-item-action>
-											<v-btn icon @click="deleteCategory">
+											<v-btn icon @click="deleteCategory(category.id)">
 												<v-icon color="grey lighten-1">mdi-close-thick</v-icon>
 											</v-btn>
 										</v-list-item-action>
@@ -296,6 +301,8 @@
 
 						</v-col>
 					</v-row>
+
+					
 				</v-container>
 			</v-form>
 		
@@ -326,6 +333,10 @@
 									:items="barcodeTypes"
 									label="Type"
 								></v-select>
+								<DxButton 
+									text="Change Barcode"
+									@click="addBarcode"
+									type="gray"/>
 							</v-col>
 							<v-col sm="6">
 								<DxScrollView
@@ -345,7 +356,13 @@
 
 							</v-col>
 						</v-row>
+						<v-row>
+							<v-col sm="6">
+								<v-btn>Primary</v-btn>
+							</v-col>
+						</v-row>
 					</v-container>
+					
 				</v-form>
 			</DxPopup>
 		</template>
@@ -364,6 +381,7 @@
 
 <script>
 import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 import DxTextBox from 'devextreme-vue/text-box';
 import DxButton from 'devextreme-vue/button';
@@ -384,13 +402,15 @@ import DxScrollView from 'devextreme-vue/scroll-view';
 
 //Mixins
 import { FormMixins } from "@/mixins/form-mixins"
+import { UniversalMixins } from "@/mixins/universal-mixins"
 //Compoennts
 import inventoryDisaplayFieldsComponent from "./inventory-display-fields-component"
 
 export default {
 	name: "inventoryProfileComponent",
 	mixins: [
-		FormMixins
+		FormMixins,
+		UniversalMixins
 	],
 	components: {
 		inventoryDisaplayFieldsComponent,
@@ -425,13 +445,9 @@ export default {
 			selectedBarcodeType: [],
 			categoryPopupVisible: false,
 			barcodePopupVisible: false,
-			categories: [
-				{name: "Category One"},
-				{name: "Category Two"},
-				{name: "Category Three"}
-			],
 			//Form Data
 			category: {
+				id: null,
 				name: null
 			},
 			barcode: {
@@ -444,20 +460,40 @@ export default {
 	},
 	methods: {
 		testingMethod(e) {
-			console.log("Inventory.categoryList", this.Inventory.categoryList);
+			console.log("category", this.category);
 		},
 		selectedCategoryDropdown() {
 			console.log('categoryDropdownChange')
 		},
-		selectedBarcodeTyopeDropdown() {
-			console.log('selectedBarcodeTyopeDropdown')
+		selectedBarcodeTypeDropdown() {
+			console.log('selectedBarcodeTypeDropdown')
 		},
-		deleteCategory() {
-			console.log("deleteCategory")
-		}
+		async addCategory() {
+			console.log("adding new category");
+			console.log("this.category", this.category);
+
+			let reponse = await this.setUserPlatformPOST(this.category)
+			delete reponse.id;
+			this.$store.dispatch("POSTCategories", reponse);
+		},
+		deleteCategory(id) {
+			console.log("deleteCategory e", id)
+			//I need to do a search for inventory items that already have a category attached to them that are being deleted
+			//Ask the user if they want to delete the categories from the items first. Otherwise prevent deletion.
+			var categoryObj = this.GET_INV_CATEGORY_LIST.find((elem) => elem.id === id);
+			console.log("categoryObj", categoryObj);
+			this.$store.dispatch("DELETEInventoryCategory", categoryObj);
+		},
+		addBarcode() {
+			console.log('addBarcode')
+		},
+		deleteBarcode() {
+			console.log('deleteBarcode')
+		},
 	},
 	computed: {
-		...mapState(["Static", "Inventory"])
+		...mapState(["Static", "Inventory"]),
+		...mapGetters(["GET_INV_CATEGORY_LIST"])
 	},
 	created() {},
 	mounted() {}

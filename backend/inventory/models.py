@@ -26,15 +26,10 @@ class InvBarcodeManager(models.Manager):
       return "00000000"
     else:
       last_barcode_no = last_barcode.barcode_number
-      if type(last_barcode_no) is int:
-        last_barcode_no += 1
-        str_last_barcode = str(last_barcode_no)
-        return str_last_barcode
-      else:
-        int_last_barcode = int(last_barcode_no)
-        last_barcode_no += 1
-        str_last_barcode = str(last_barcode_no)
-        return str_last_barcode
+      int_last_barcode = int(last_barcode_no)
+      int_last_barcode += 1
+      str_last_barcode = str(int_last_barcode).zfill(8)
+      return str_last_barcode
 
   def create_barcode(self, item, **kwargs):
     print('create_barcode kwargs', kwargs)
@@ -82,7 +77,9 @@ class InventoryManager(models.Manager):
     item.is_active = True
     item.save(using=self._db)
 
-    InventoryBarcode.objects.create_barcode(item)
+    barcode = InventoryBarcode.objects.create_barcode(item)
+    item.barcode = barcode
+    item.save()
   
     return item
     
@@ -119,13 +116,14 @@ class Inventory(models.Model):
   initial_qty     = models.IntegerField(blank=True, null=True)
   sales_notes 		= models.TextField(blank=True, null=True)
   vendor_notes 		= models.TextField(blank=True, null=True)
-  product_desc 		= models.TextField(blank=True, null=True)
+  description 		= models.TextField(blank=True, null=True)
+  specifications	= models.TextField(blank=True, null=True)
   list_price      = models.DecimalField(decimal_places=2, max_digits=10)
   purchase_price  = models.DecimalField(decimal_places=2, default=0.00, max_digits=10, blank=True, null=True)
   sale_price      = models.DecimalField(decimal_places=2, default=0.00, max_digits=10, blank=True, null=True)
   wholesale_price = models.DecimalField(decimal_places=2, default=0.00, max_digits=10, blank=True, null=True)
   discount        = models.DecimalField(decimal_places=2, default=0.00, max_digits=10, blank=True, null=True)
-  sale_expires 		= models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
+  sale_expire_date= models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
   income_acct 		= models.CharField(max_length=50, blank=True, null=True)
   expense_acct 		= models.CharField(max_length=50, blank=True, null=True)
   retail_margin   = models.CharField(max_length=10, null=True, 
@@ -140,6 +138,8 @@ class Inventory(models.Model):
   width           = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
   length          = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
   height          = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
+  # How to upload multiple files
+  files	          = models.FileField(max_length=100, upload_to='inventory/files', null=True, blank=True)
   
 
   class Meta:

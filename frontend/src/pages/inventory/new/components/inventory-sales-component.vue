@@ -20,7 +20,7 @@
 				Files
 			</v-tab>
 			<v-tab-item>
-				<DxHtmlEditor height="550px">
+				<DxHtmlEditor height="550px" v-model="formData.product_desc">
 					<DxMediaResizing :enabled="true"/>
 					<DxToolbar :multiline="isMultiline">
 						<DxItem format-name="undo"/>
@@ -64,11 +64,11 @@
 						<DxItem format-name="blockquote"/>
 					</DxToolbar>
 
-					<div v-html="markup"/>
+					<div v-html="formData.product_desc"/>
 				</DxHtmlEditor>
 			</v-tab-item>
 			<v-tab-item>
-				<DxHtmlEditor height="550px">
+				<DxHtmlEditor height="550px" v-model="formData.specifications">
 					<DxMediaResizing :enabled="true"/>
 					<DxToolbar :multiline="isMultiline">
 						<DxItem format-name="undo"/>
@@ -112,31 +112,29 @@
 						<DxItem format-name="blockquote"/>
 					</DxToolbar>
 
-					<div v-html="markup"/>
+					<div v-html="formData.specifications"/>
 				</DxHtmlEditor>
 			</v-tab-item>
 			<v-tab-item>
 				<form
 					id="form"
-					ref="inventoryFilesRef"
+					ref="invFormFilesRef"
 					method="post"
 					action=""
 					enctype="multipart/form-data"
 				>
 					<div class="fileuploader-container">
 						<DxFileUploader
+							labelText="or Drop file here"
 							select-button-text="Select file(s)"
 							label-text=""
 							accept="image/*"
 							upload-mode="useForm"
 							:multiple="true"
+							@value-changed="changedFilesToUpload($event)"
 						/>
 					</div>
-					<DxButton
-						text="Upload"
-						type="success"
-						@click="onButtonClick"
-					/>
+					
 				</form>
 				
 			</v-tab-item>
@@ -158,7 +156,7 @@
 				Sales Notes
 			</v-tab>
 			<v-tab-item>
-				<DxHtmlEditor height="550px">
+				<DxHtmlEditor height="550px" v-model="formData.vendor_notes">
 					<DxMediaResizing :enabled="true"/>
 					<DxToolbar :multiline="isMultiline">
 						<DxItem format-name="undo"/>
@@ -202,11 +200,11 @@
 						<DxItem format-name="blockquote"/>
 					</DxToolbar>
 
-					<div v-html="markup"/>
+					<div v-html="formData.vendor_notes"/>
 				</DxHtmlEditor>
 			</v-tab-item>
 			<v-tab-item>
-				<DxHtmlEditor height="550px">
+				<DxHtmlEditor height="550px" v-model="formData.sales_notes">
 					<DxMediaResizing :enabled="true"/>
 					<DxToolbar :multiline="isMultiline">
 						<DxItem format-name="undo"/>
@@ -250,10 +248,19 @@
 						<DxItem format-name="blockquote"/>
 					</DxToolbar>
 
-					<div v-html="markup"/>
+					<div v-html="formData.sales_notes"/>
 				</DxHtmlEditor>
 			</v-tab-item>
 		</v-tabs>
+		<div class="container">
+			<div class="row">
+				<div class="col-50p">
+					<DxButton 
+					@click="testingMethod"
+					text="Test"/>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -280,11 +287,17 @@ export default {
 		DxFileUploader
 	},
 	props: {
-
+		inventorySettings: {
+			type: Object,
+			required: true
+		},
+		formData: {
+			type: Object,
+			required: true
+		},
 	},
 	data() {
 		return {
-			markup: "<div>Please enter data here</div><p>V-bind here</p>",
 			sizeValues: ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt'],
       fontValues: ['Arial', 'Courier New', 'Georgia', 'Impact', 'Lucida Console', 'Tahoma', 'Times New Roman', 'Verdana'],
       headerValues: [false, 1, 2, 3, 4, 5],
@@ -294,10 +307,17 @@ export default {
 	},
 	methods: {
 		testingMethod(e) {
-			console.log();
+			console.log(this.$refs, this.$refs);			
+			const form = this.$refs.invFormFilesRef[0].files;
+			console.log('form', form);
 		},
-		onButtonClick() {
-			console.log('onButtonClick')
+		onButtonClick(e) {
+			console.log('onButtonClick e', e)
+		},
+		changedFilesToUpload(e) {
+			console.log('changedFilesToUpload e', e)
+			var files = e.value
+			this.formData.files = files
 		}
 	},
 	computed: {

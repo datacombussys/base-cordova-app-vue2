@@ -74,6 +74,23 @@ Vue.config.productionTip = false;
 import ToggleButton from 'vue-js-toggle-button'
 Vue.use(ToggleButton)
 
+//Import Vue-Numeral for Number Formatting
+import vueNumeralFilterInstaller from 'vue-numeral-filter';
+Vue.use(vueNumeralFilterInstaller, { locale: 'en-gb' });
+
+//Custom Filters
+require("@/js/filters");
+
+//Lodash
+import VueLodash from 'vue-lodash'
+import lodash from 'lodash'
+Vue.use(VueLodash, { lodash: lodash })
+
+// Socket.io / Vue-Socket.io
+import VueSocketIOExt from 'vue-socket.io-extended';
+import io from 'socket.io-client';
+const socket = io('http://localhost:9022');
+Vue.use(VueSocketIOExt, socket, { store });
 
 import "@/assets/icons/icons.css"
 

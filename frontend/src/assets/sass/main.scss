@@ -9,10 +9,12 @@ body {
 	min-height: 100%;
 	height: 100%;
 	overflow: hidden;
+	font-family: 'Open Sans', sans-serif;
 	#app {
 		min-height: 100%;
 		height: 100%;
 		width: 100%;
+		font-family: 'Open Sans', sans-serif;
 		.page-container {
 			min-height: 100%;
 			height: 100%;
@@ -21,7 +23,8 @@ body {
 }
 #root {
   min-height: 100%;
-  height: 100%;
+	height: 100%;
+	font-family: 'Open Sans', sans-serif;
 }
 h1 {
 	font-size: $base-font-size * 3;
@@ -82,8 +85,18 @@ ul {
 	font-family: 'Open Sans', sans-serif;
 	
 }
+fieldset {
+	border: 2px solid rgb(2, 103, 143);
+	border-radius: 5px;
+
+}
+legend {
+	margin-left: 10px;
+	padding-left: 10px;
+}
 
 // *************************************** Icons *****************************************//
+
 // .md-icon {
 	
 // }
@@ -205,7 +218,7 @@ ul {
 		display: flex;
 		flex-direction: column;
 	}
-	.col-5 p{
+	.col-5p{
     width: 5%;
 		display: flex;
 		flex-direction: column;
@@ -214,12 +227,6 @@ ul {
 
 
 //****************************************** Custom Labels **************************************
-.label {
-  font-size: $base-font-size*0.9;
-  font-weight: 600;
-}
-
-
 
 .newrow {
 	background-color: lightgray;
@@ -258,3 +265,124 @@ ul {
 ::before {
 	vertical-align: initial;
 }
+.theme--light.v-btn:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+	background-color: rgb(97, 97, 97);
+	color: white;
+}
+.data-list {
+	height: 30px;
+	min-height: 30px;
+}
+.v-stepper__label {
+	margin-left: 7px;
+}
+//v-stepper Format
+.v-stepper  {
+	.v-stepper__header {
+		.v-stepper__step--active{
+			.v-stepper__step__step {
+				color: rgb(2, 2, 2);
+			}
+		}
+		.v-stepper__step--inactive{
+			.v-stepper__step__step {
+				background: rgb(18, 243, 243);
+				color: rgb(2, 2, 2);
+			}
+		}
+	}
+}
+.theme--light.v-stepper .v-stepper__step:not(.v-stepper__step--active):not(.v-stepper__step--complete):not(.v-stepper__step--error) .v-stepper__step__step {
+	background: darken($color: $datcom-button, $amount: 20);
+	color: rgb(255, 255, 255);
+}
+.v-stepper .v-stepper__header .v-stepper__step--active .v-stepper__step__step {
+	background: lighten($color: $datcom-button, $amount: 40);
+	color: #020202;
+}
+.theme--light.v-stepper .v-stepper__step__step, .theme--light.v-stepper .v-stepper__step__step .v-icon {
+	color: rgb(0, 195, 33);
+	font-weight: 600;
+}
+
+//Input Fields
+.v-input {
+	.v-input__control {
+		.v-input__slot {
+			.v-text-field__slot {
+				fieldset {
+					legend {
+						margin: 0px 20px;
+						padding: 0px 20px;
+					}
+				}
+				label {
+					padding: 0px 10px;
+				}
+			}
+		}
+	}
+}
+//Outlined Input Field
+.v-text-field--outlined .v-label--active {
+	transform: translateX(-5px) translateY(-30px) scale(.75)
+}
+.v-text-field--outlined.v-input--is-focused fieldset {
+	border: 2px solid rgb(2, 128, 200);
+}
+.v-expansion-panel-header {
+	justify-content: space-between;
+}
+
+// *************************************** Datacom List *****************************************//
+.d-list {
+	min-height: 20px;
+	background: lightsalmon;
+	padding: 4px 0px;
+	width: 100%;
+	.d-list-item {
+		font-size: $base-font-size;
+	}
+}
+.field {
+	width: 100%;
+	.label {
+		font-size: $base-font-size*0.8;
+		color: rgba(44, 44, 44, 0.8);
+		font-weight: 400;
+		width: 100%;
+		// background: lightgray;
+	}
+	.content {
+		display: flex;
+		align-items: center;
+		min-height: 45px;
+		font-family: "Open Sans", sans-serif;
+		padding: 5px 10px;
+		font-weight: 100;
+		width: 100%;
+		// background: lightcyan;
+	}
+}
+nav {
+	display: flex;
+	min-height: 75px;
+
+	.header {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		padding: 30px 20px 0px 20px;
+		// background: lightblue;
+		width: 90%;
+		flex-grow: 1;
+		font-size: $base-font-size*2;
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 200;
+		color:gray;
+	}
+	.button	{
+		text-align: right;
+	}
+}
+

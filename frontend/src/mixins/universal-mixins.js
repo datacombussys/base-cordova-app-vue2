@@ -29,7 +29,6 @@ export const UniversalMixins = {
           newForm['company'] = plat.id;
           return resolve(newForm);
         } else {
-          this.$f7.preloader.hide();
           console.log('No Logged In Company');
           var response = {};
           response.type = "Create Employee";

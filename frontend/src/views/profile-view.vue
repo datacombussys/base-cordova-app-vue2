@@ -1,11 +1,7 @@
 <template>
   <div>
-    <!-- <DxScrollView
-      :height="300"
-      width="100%"
-      direction="vertical">  -->
 
-      <h2 class="content-block">Profile</h2>
+      <!-- <h2 class="content-block">Profile</h2>
 
       <div class="content-block dx-card responsive-paddings">
         <div class="form-avatar">
@@ -21,25 +17,21 @@
           :form-data="formData"
           :colCountByScreen="colCountByScreen"
         />
-      </div>
-      <h2 class="content-block">Profile</h2>
-
-      <div class="content-block dx-card responsive-paddings">
-        <div class="form-avatar">
-          <img :src="imageSrc" />
+      </div> -->
+      <div class="row">
+        <div class="field">
+          <div class="label">
+            Label Text here
+          </div>  
+          <div class="content">
+            <p>input field here</p>
+          </div>
         </div>
-        <span>{{ formData.Notes }}</span>
       </div>
+      
 
-      <div class="content-block dx-card responsive-paddings">
-        <dx-form
-          id="form"
-          label-location="top"
-          :form-data="formData"
-          :colCountByScreen="colCountByScreen"
-        />
-      </div>
-     <!-- </DxScrollView> -->
+    
+     
   </div>
 </template>
 

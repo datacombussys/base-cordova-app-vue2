@@ -10,8 +10,9 @@ export const Financial = {
 	namespace: true,
 	state: {
 		salesTaxList: [
-			"Az Sales Tax",
-			"Texas Sales Tax"
+			{id: 1, name: "Arizona", rate: "4.5%"},
+			{id: 2, name: "California", rate: "22.3%"},
+			{id: 2, name: "Texas", rate: "8.9%"}
 		],
 		//Place the Profile in the array and parse on the table [0]
 		salesTaxProfile: {}

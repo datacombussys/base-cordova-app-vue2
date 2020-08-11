@@ -74,22 +74,13 @@ class InventorySerializer(serializers.ModelSerializer):
         
         return user 
 
-    def validate(self, data):
-        print('validate data', data)
-        try:
-            data['category'] = data.pop('category_id')
-        except KeyError:
-            #This will already have failed validation for POST and PUT
-            #If it is not provided, PATCH wont change anything
-            pass
-        return data
     
 class InventoryListSerializer(serializers.ModelSerializer):
     barcode_obj = InventoryBarcodeSerializer(read_only=True, source='barcode')
     barcode = serializers.PrimaryKeyRelatedField(queryset=InventoryBarcode.objects.all(), required=False, allow_null=True)
     class Meta:
         model = Inventory
-        fields = ['id', 'date_added', 'name', 'list_price', 'profile_img', 'category', 'barcode', 'is_active']
+        fields = ['id', 'date_added', 'name', 'list_price', 'sale_price', 'profile_img', 'category', 'barcode', 'barcode_obj', 'is_active']
 
 class InvCategoryClassSerializer(serializers.ModelSerializer):
     class Meta:
@@ -106,12 +97,6 @@ class InventoryGallerySerializer(serializers.ModelSerializer):
         model = InventoryImage
         fields = ('__all__')
 
-    def to_representation(self, value):
-        data = super().to_representation(value)  
-        inventory_data_serializer = InventorySerializer(value.user)
-        data['product'] = inventory_data_serializer.data
-        
-        return data
 
 class InventoryLabelSerializer(serializers.ModelSerializer):
     class Meta:

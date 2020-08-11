@@ -1,7 +1,15 @@
 <template>
   <div>
     <h2>The template page</h2>
-    <h3>This is supposed to appear in the drawer</h3>
+    <div>
+      <div class="row">
+        <div>
+          <div class="row">
+            
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -18,7 +26,7 @@ export default {
 
   },
   data() {
-    return {
+    return {  
       //Component Data
       pageSettings: {
       leftNavDrawer: ".accounting-panel",

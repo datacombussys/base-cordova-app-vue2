@@ -2,13 +2,18 @@ https://cdn.materialdesignicons.com/
 <span class="mdi mdi-cart-minus mdi-48"></span>
 <md-icon class="md-size-5x">menu</md-icon>
 
+//Do not use the fa-iconname only iconName
 <fa-icon :icon="['far', 'address-book']" class="mdi-35"></fa-icon>
 <fa-icon :icon="['fa', 'ambulance']" class="mdi-35"></fa-icon>
+<fa-layer class="mdi-35">
+  <fa-icon :icon="['fas', 'circle']" style="color:tomato;"></fa-icon>
+  <fa-icon :icon="['fas', 'times']" style="color:white"></fa-icon>
+</fa-layer>
 
 https://material.io/resources/icons
-<i class="material-icons" style="font-size:45px;">check_circle</i>
+<i class="material-icons" style="font-size:45px;">description</i>
 <span class="material-icons md-48 orange600"> check_circle </span>
-<span class="material-icons md-48 text-orange">check-bold</span>
+<span class="material-icons md-48 text-orange">view_headline</span>
 <div class="material-icons mdi-60 text-datacom mb-3">notifications</div>
 
 https://ej2.syncfusion.com/vue/documentation/appearance/icons/
@@ -82,10 +87,8 @@ watch: {
 this.$refs.barcodeInput.$el.querySelector('input').focus();
 
 
-
 Usage of BASE_URL
 url("#{\$baseURL}assets/images/backgrounds/bg-1.png")
-
 
 
 <div for person in people>
@@ -415,6 +418,8 @@ let merged = {...obj1, ...obj2};
 #         data['barcode'] = barcode_data_serializer.data
 
 #     return data
+
+
 
 
 

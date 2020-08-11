@@ -41,7 +41,9 @@ Help me get it setup
 
 Ingenico terminals require Windows and .NET
 
-Show me how to programatically add components form Devexpress to a .js page
+Show me how to programatically add components (dialog, alert, custom, etc) form Devexpress to a .js page
+
+Set up diffrent nav menu links depending on page route.  see app-naviagation.js for more info
 
 I need to change to uplaod path to Amazon AWS for employees to /employee/name.
 I need to figure out how to delete the files from Amazon AWS using a CRON job. What script do I need to write

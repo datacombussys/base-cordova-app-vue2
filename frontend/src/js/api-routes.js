@@ -269,7 +269,7 @@ export default {
 					console.log("DELETEItem error", error);
 					return reject(error);
 				}
-				axios.delete("/django/operating-hours/" + payload.id + "/").then(response => {
+				axios.delete("/django/" + endpoint + payload.id + "/").then(response => {
 					console.log("DELETE" + type, response);
 					if (response.status === 204) {
 						console.log("API Call from DELETEItem");

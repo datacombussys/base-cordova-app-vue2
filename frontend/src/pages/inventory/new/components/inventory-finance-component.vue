@@ -10,6 +10,8 @@
 							<div class="dx-field-label">Purchase Price</div>
 							<div class="flex dx-field-value justify-center">
 								<DxNumberBox
+									placeholder="$ 50.00"
+									format="$ #,##0.##"
 									:disabled="!inventorySettings.editProfile"
 									:value.sync="formData.purchase_price"
 									:step="0.01"
@@ -23,6 +25,8 @@
 							<div class="dx-field-label">List Price</div>
 							<div class="flex dx-field-value justify-center">
 								<DxNumberBox
+									placeholder="$ 100.00"
+									format="$ #,##0.##"
 									:disabled="!inventorySettings.editProfile"
 									:value.sync="formData.list_price"
 									:step="0.01"
@@ -37,6 +41,8 @@
 							<div class="dx-field-label">Whosesale Price</div>
 							<div class="flex dx-field-value justify-center">
 								<DxNumberBox
+									placeholder="$ 75.00"
+									format="$ #,##0.##"
 									:disabled="!inventorySettings.editProfile"
 									:value.sync="formData.wholesale_price"
 									:step="0.01"
@@ -57,7 +63,7 @@
 				<div class="row">
 					<div class="col-50p">
 						<div class="dx-field">
-							<div class="dx-field-label">Is On-Sale</div>
+							<div class="dx-field-label">Is On-Sale?</div>
 							<div class="flex dx-field-value justify-center">
 								<DxSwitch 
 								v-model="formData.is_on_sale"
@@ -70,6 +76,8 @@
 							<div class="dx-field-label">On-Sale Price</div>
 							<div class="dx-field-value">
 								<DxNumberBox
+									placeholder="$ 85.00"
+									format="$ #,##0.##"
 									:disabled="!inventorySettings.editProfile"
 									:value.sync="formData.sale_price"
 									:step="0.01"
@@ -81,7 +89,7 @@
 					</div>
 					<div class="col-50p">
 						<div class="dx-field">
-							<div class="dx-field-label">Expiration Date</div>
+							<div class="dx-field-label">Expiration Date?</div>
 							<div class="flex dx-field-value justify-center">
 								<DxSwitch 
 									v-model="set_expiration_date"
@@ -95,7 +103,6 @@
 							<div class="flex dx-field-value justify-center">
 									<DxDateBox
 										:disabled="!set_expiration_date"
-										:value.sync="now"
 										:min="min"
 										apply-value-mode="useButtons"
 										@value-changed="changedSaleDate"
@@ -241,7 +248,10 @@ export default {
 		},
 		changedSaleDate(e) {
 			console.log("handle sale date e", e)
-			this.formData.sale_date = e.value[0]
+			let newDate = e.value
+			let ISODate = newDate.toISOString()
+			let djangoTime = ISODate.split('T')[0]
+			this.formData.sale_expire_date = djangoTime
 		},
 		selectedIncomeAcct(e) {
 			console.log("selectedIncomeAcct e", e)

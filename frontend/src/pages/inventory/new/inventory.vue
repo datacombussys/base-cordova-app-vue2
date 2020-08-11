@@ -11,7 +11,7 @@
 							class="mx-auto custom-card"
 						>
 							<v-card-title>
-								<div class="title">Elise Sectional Set</div>
+								<div class="title">Sectional Set</div>
 								<div class="row justify-between">
 									<div class="col-50">
 										<div class="subtitle">Inventory</div>
@@ -175,7 +175,10 @@
 										</DxItem>
 										<DxItem title="Sales" icon="mdi mdi-point-of-sale">
 											<template #default>
-												<inventorySalesComponent :formData="inventoryForm"></inventorySalesComponent>
+												<inventorySalesComponent 
+													:formData="inventoryForm"
+													:inventorySettings="inventorySettings">
+													</inventorySalesComponent>
 											</template>
 										</DxItem>
 										<DxItem title="Gallery" icon="mdi mdi-image">
@@ -243,10 +246,13 @@ import inventoryFinanceComponent from "./components/inventory-finance-component"
 
 import databaseComponent from "@/components/business/new-docs/database-component"
 
+//Mixins
+import {UniversalMixins} from "@/mixins/universal-mixins"
+
 export default {
   name: "inventoryProfile",
 	mixins: [
-
+		UniversalMixins
   ],
   components: {
 		inventoryProfileComponent,
@@ -375,7 +381,8 @@ export default {
 				product_type: null,
 				sales_notes: null,
 				vendor_notes: null,
-				product_desc: null,
+				description: null,
+				specifications: null,
 				list_price: null,
 				purchase_price: null,
 				wholesale_price: null,
@@ -393,7 +400,8 @@ export default {
 				width: 0,
 				length: 0,
 				height: 0,
-				uom_dimensions: null
+				uom_dimensions: null,
+				files: []
 			},
 			invImgGallery: {
 				files: null,
@@ -405,6 +413,7 @@ export default {
 	//******************************************** Methods ***********************************************//
   methods: {
     testMethod(e) {
+			console.log('this.Inventory.categoryList', this.Inventory.categoryList)
 		},
 		showEditProfile() {
 			this.inventorySettings.editProfile = true;
@@ -473,38 +482,32 @@ export default {
 			console.log("createInventoryandEdit All Done", reponse);
 		},
 		async createItemandClose() {
-			this.$store.commit("RESET_ERRORS");
-			console.log("createInventoryandClose Start");
-			let newitem = await this.createInventory();
-			console.log("newitem", newitem);
-			//Clear Form and Reset to Starting Viewing Position
-			console.log("createInventoryandClose All Done");
-			if(newitem != undefined) {
+			try {
+				this.$store.commit("RESET_ERRORS");
+				console.log("createInventoryandClose Start");
+				let newitem = await this.createInventory();
+				console.log("newitem", newitem);
+				//Clear Form and Reset to Starting Viewing Position
+				console.log("createInventoryandClose All Done");
 				await this.clearFormData();
 				this.resetViewtoHome();
-			} else {
+			} catch(error) {
+				alert("<p>The submission had errors. Please try again.</p>", "Error");
+				this.isLoadPanelVisible = false;
 			}
 		},
 		async createInventory() {
 			return new Promise( async (resolve, reject) => {
 				try {
-					var inventoryFormCopy = JSON.parse(JSON.stringify(this.companyForm));
-
-					inventoryFormCopy.sales_notes = this.$refs.salesNotes.f7TextEditor.contentEl.innerHTML;
-					inventoryFormCopy.vendor_notes = this.$refs.vendorNotes.f7TextEditor.contentEl.innerHTML;
-					inventoryFormCopy.product_desc = this.$refs.productDesc.f7TextEditor.contentEl.innerHTML;
-					inventoryFormCopy.sale_expires = this.saleExpireCalendar[0];
-					// Handle the Category
-					if (this.invCategory.id) {
-						var catID = this.invCategory.id;
-					}
-					inventoryFormCopy.category_id = this.invCategory.id;
+					var inventoryFormCopy = JSON.parse(JSON.stringify(this.inventoryForm));
+					inventoryFormCopy.category = this.invCategory.id;
 
 					//Dispatch creation method and update Fields with latest Object
 					console.log("inventoryFormCopy pre-Action", inventoryFormCopy);
 
 					let newInvForm = await this.setUserPlatformPOST(inventoryFormCopy);
 					let response = await this.$store.dispatch("POSTInventory", newInvForm);
+					console.log('createInventory response', response)
 
 					return resolve(response);
 				} catch (error) {

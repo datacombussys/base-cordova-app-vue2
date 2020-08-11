@@ -16,9 +16,11 @@
       :min-size="drawerOptions.minMenuSize"
       :shading="drawerOptions.shaderEnabled"
       :close-on-outside-click="drawerOptions.closeOnOutsideClick"
+      style="z-index: 50;"
     >
     <!-- eslint-disable vue/no-unused-vars -->
       <side-nav-menu
+        
         slot="menu"
         slot-scope="_"
         :compact-mode="!menuOpened"
@@ -27,8 +29,7 @@
       <dx-scroll-view 
         :height="scrollHeight"
         width="100%"
-        ref="scrollViewRef" 
-        class="with-footer">
+        ref="scrollViewRef" >
         <slot />
         <slot name="footer" />
       </dx-scroll-view>
@@ -41,7 +42,6 @@
 import DxDrawer from "devextreme-vue/drawer";
 import DxScrollView from "devextreme-vue/scroll-view";
 
-import menuItems from "@/app-navigation";
 import HeaderToolbar from "@/components/elements/layout/header-toolbar-component";
 import SideNavMenu from "@/components/elements/layout/side-nav-menu-component";
 
@@ -64,7 +64,6 @@ export default {
       windowHeight: window.innerHeight,
       menuOpened: this.isLarge,
       menuTemporaryOpened: false,
-      menuItems
     };
   },
   methods: {
@@ -144,7 +143,7 @@ export default {
 .layout-header {
   z-index: 1501;
 }
-.content {
+.main-content {
   flex-grow: 1;
 }
 .menu-container {

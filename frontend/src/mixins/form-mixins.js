@@ -11,6 +11,12 @@ export const FormMixins = {
       taxIdRules: {
 				X: /[0-9]/
 			},
+			expRules: {
+				X: /[0-9]/
+			},
+			cardNumberRules: {
+				X: /[0-9]/
+			},
 			ssnRules: {
 				X: /[0-9]/
       },

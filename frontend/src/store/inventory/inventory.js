@@ -25,13 +25,17 @@ export const Inventory = {
 
 	},
 	mutations: {
-		SET_INVENTORY_LIST(state, payload) {
+		SET_INVENTORIES_LIST(state, payload) {
+			console.log('SET_INVENTORY_LIST', payload)
+			console.log('state.inventoryList', state.inventoryList)
       // setting price as the sale price or retail price
 			var saleItemList = payload.filter(item => item.sale_price != null)
+			console.log('saleItemList', saleItemList)
 			saleItemList.map(elem => {
 				elem['price'] = elem.sale_price;
 			});
 			var listPriceItemList = payload.filter(item => item.sale_price === null)
+			console.log('listPriceItemList', listPriceItemList)
 			listPriceItemList.map(elem => {
 				// console.log("elem", elem);
 				elem['price'] = elem.list_price;
@@ -39,6 +43,7 @@ export const Inventory = {
 			var combined = listPriceItemList.concat(saleItemList);
 
 			state.inventoryList = combined;
+			console.log('state.inventoryList', state.inventoryList)
     },
     PUSH_NEW_INVENTORY(state, payload) {
       state.inventoryList.push(payload);
@@ -77,14 +82,16 @@ export const Inventory = {
 
 		//Catgories
 		PUSH_NEW_INVENTORY_CATEGORY(state, payload) {
+			console.log('PUSH_NEW_INVENTORY_CATEGORY payload', payload);
 			state.categoryList.push(payload);
 		},
-		SET_CATEGORY_LIST(state, payload) {
+		SET_CATEGORIES_LIST(state, payload) {
+			console.log('SET_CATEGORY_LIST payload', payload);
 			state.categoryList = payload;
 		},
 		DELETE_INVENTORY_CATEGORY(state, payload) {
 			console.log('REMOVE_CATEGORY_LIST payload', payload);
-			var indexObj = state.categoryList.findIndex(elem => elem.id === payload);
+			var indexObj = state.categoryList.findIndex(elem => elem.id === payload.id);
 			console.log('REMOVE_CATEGORY_LIST indexObj', indexObj);
 			Vue.delete(state.categoryList, indexObj);
 			console.log('REMOVE_CATEGORY_LIST state.categoryList', state.categoryList);
@@ -104,16 +111,24 @@ export const Inventory = {
 	},
 	actions: {
 		POSTInventory({dispatch}, payload) {
-			payload.endpoint = 'inventory/';
-			payload.type = 'Create Inventory';
-			payload.mutation = 'PUSH_NEW_INVENTORY'
-			dispatch("POSTItem",  payload)
+			return new Promise(async(resolve, reject) => {
+				payload.endpoint = 'inventory/';
+				payload.type = 'Create Inventory';
+				payload.mutation = 'PUSH_NEW_INVENTORY'
+				await dispatch("POSTItem",  payload)
+				return resolve()
+			})
+			
 		},
 		GETInventoryList({dispatch}, payload) {
-			payload.endpoint = 'inventory-list/';
-			payload.type = 'Get Inventory List';
-			payload.mutation = 'SET_INVENTORY_LIST'
-			dispatch("GETItemList",  payload)
+			return new Promise(async (resolve, reject) => {
+				payload.endpoint = 'inventory-list/';
+				payload.type = 'Get Inventory List';
+				payload.mutation = 'SET_INVENTORIES_LIST'
+				await dispatch("GETItemList",  payload)
+				return resolve()
+			})
+			
 		},
 		GETSelectedInventoryList({dispatch}, payload) {
 			payload.endpoint = 'inventory-list/';
@@ -157,19 +172,27 @@ export const Inventory = {
 
 		//Categories Actions
 		POSTCategories({dispatch}, payload) {
-			payload.endpoint = 'invcategory/';
-			payload.type = 'Create Inventory Category';
-			payload.mutation = 'PUSH_NEW_INVENTORY_CATEGORY'
-			dispatch("POSTItem",  payload)
+			return new Promise(async(resolve, reject) => {
+				payload.endpoint = 'inventory-category/';
+				payload.type = 'Create Inventory Category';
+				payload.mutation = 'PUSH_NEW_INVENTORY_CATEGORY'
+				await dispatch("POSTItem",  payload)
+				return resolve()
+			})
+			
 		},
-		GETInventoryCategories({dispatch}, payload) {
-			payload.endpoint = 'invcategory/';
-			payload.type = 'Get Inventory Categories';
-			payload.mutation = 'SET_CATEGORY_LIST'
-			dispatch("GETItemList",  payload)
+		GETInvCategories({dispatch}, payload) {
+			return new Promise(async(resolve, reject) => {
+				payload.endpoint = 'inventory-category/';
+				payload.type = 'Get Inventory Categories';
+				payload.mutation = 'SET_CATEGORIES_LIST'
+				await dispatch("GETItemList",  payload)
+				return resolve()
+			})
+			
 		},
 		DELETEInventoryCategory({dispatch}, payload) {
-			payload.endpoint = 'invcategory/';
+			payload.endpoint = 'inventory-category/';
 			payload.type = 'Delete Inventory Category';
 			payload.mutation = 'DELETE_INVENTORY_CATEGORY'
 			dispatch("DELETEItemProfile",  payload)
@@ -208,9 +231,18 @@ export const Inventory = {
     },
     //GET Inventory list - Abbreviated List relating to logged in user
     async GETItemList({commit, dispatch, rootState},  payload) {
-			let response = await apiRoutes.GETList(dispatch, rootState, payload, payload.endpoint, payload.type);
-			console.log('GETItemList response', response);
-			commit(payload.mutation, response.data);
+			return new Promise( async (resolve, reject) => {
+				try {
+					let response = await apiRoutes.GETList(dispatch, rootState, payload, payload.endpoint, payload.type);
+					console.log('GETItemList response', response);
+					commit(payload.mutation, response.data);
+					return resolve(response)
+				} catch(error) {
+					console.error("POSTInventory Promise error.response", error);
+        	return error;
+				}
+			})
+			
 		},
 		//GET Selected Inventory LIST - Get Abbreviated inventory List of selected company by Parent Company Only
 		async GETSelectedItemList({commit, dispatch, rootState}, payload) {
@@ -261,7 +293,7 @@ export const Inventory = {
 		},
 		//DELETEProfile - Actually deleted the item from the db
 		async DELETEItemProfile({commit, dispatch, rootState}, payload) {
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, payload, payload.endpoint, payload.type);
+			let response = await apiRoutes.DELETEItem(dispatch, rootState, payload, payload.endpoint, payload.type);
 			console.log('DELETEItemProfile response', response);
 			commit(payload.mutation, payload);
 		},

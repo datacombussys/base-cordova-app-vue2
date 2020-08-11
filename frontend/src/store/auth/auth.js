@@ -141,44 +141,70 @@ export const Auth = {
 		//Employee Signin Method
 		async signIn({ dispatch, commit, state, rootState }, credentials) {
 			console.log("credentials", credentials);
-			axios.post("/django/login/", credentials)
-				.then(async response => {
-					console.log("response", response);
-					if(response.status === 200) {
-						rootState.Notifications.isLoadPanelVisible= true
-						console.log("Login response.data", response.data);
-						// commit("SET_LOGIN_DETAILS", response.data);	
-						response.data['signin'] = true;					
-						let indexedUser = await dispatch('setIndexedDb', response.data);
-						console.log("indexedUser", indexedUser);
-						let EEUSerID = await dispatch('GETEmployeeOwnProfile', {id: response.data.id});
-						console.log("EEUSerID", EEUSerID);
-						commit("SET_LOGIN_PROFILE", EEUSerID.data);
-
-						await dispatch('loadAllData');
-						await dispatch('loadCompanySpecificData');
-						await dispatch('loadUserSpecificData');
-						rootState.Notifications.isLoadPanelVisible = false
-						//Set Notification
-						response.type = "User Logged In";
-						dispatch('updateNotification', response);
-						if(state.preLoginPagePath === null) {
-							router.push("/home")
-						} else {
-							router.push("/secured", {reloadCurrent : true})
-						}
-						
-					} 
-				}).then(res => {
-					rootState.Notifications.isLoadPanelVisible = false
-					commit('SET_EMPLOYEE_LIST');
-				}).catch(error => {
-					rootState.Notifications.isLoadPanelVisible = false
-					console.log("Error Logging In", error);
-					error.type = "Login Unsuccessful";
-					dispatch("updateNotification", error);
+			const LOGINrequest = net.request(
+				{
+					method: 'POST',
+					protocol: 'http:',
+					hostname: 'localhost',
+					port: 9010,
+					path: '/django/login/',
 				});
-			},
+				LOGINrequest.on('response', (response) => {
+				console.log(`RESPONSE: ${response}`)
+				console.log(`STATUS: ${response.statusCode}`)
+				console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+				response.on('data', (chunk) => {
+					console.log(`BODY: ${chunk}`)
+				})
+				response.on('end', () => {
+					console.log('No more data in response.')
+				})
+				
+			})
+			LOGINrequest.setHeader("content-type", "Application/JSON")
+			LOGINrequest.write(credentials);
+			LOGINrequest.end();
+		},
+			
+
+// axios.post("/django/login/", credentials)).then(async response => {
+// 					console.log("response", response);
+// 					if(response.status === 200) {
+// 						rootState.Notifications.isLoadPanelVisible= true
+// 						console.log("Login response.data", response.data);
+// 						// commit("SET_LOGIN_DETAILS", response.data);	
+// 						response.data['signin'] = true;					
+// 						let indexedUser = await dispatch('setIndexedDb', response.data);
+// 						console.log("indexedUser", indexedUser);
+// 						let EEUSerID = await dispatch('GETEmployeeOwnProfile', {id: response.data.id});
+// 						console.log("EEUSerID", EEUSerID);
+// 						commit("SET_LOGIN_PROFILE", EEUSerID.data);
+
+// 						await dispatch('loadAllData');
+// 						await dispatch('loadCompanySpecificData');
+// 						await dispatch('loadUserSpecificData');
+// 						rootState.Notifications.isLoadPanelVisible = false
+// 						//Set Notification
+// 						response.type = "User Logged In";
+// 						dispatch('updateNotification', response);
+// 						if(state.preLoginPagePath === null) {
+// 							router.push("/home")
+// 						} else {
+// 							router.push("/secured", {reloadCurrent : true})
+// 						}
+						
+// 					} 
+// 				}).then(res => {
+// 					rootState.Notifications.isLoadPanelVisible = false
+// 					commit('SET_EMPLOYEE_LIST');
+// 				}).catch(error => {
+// 					rootState.Notifications.isLoadPanelVisible = false
+// 					console.log("Error Logging In", error);
+// 					error.type = "Login Unsuccessful";
+// 					dispatch("updateNotification", error);
+// 				});
+
+
 			//Alternate Method Login
 			signInAlt({ dispatch, commit, state }, credentials) {
 				console.log("signInAlt credentials", credentials);
@@ -488,13 +514,13 @@ export const Auth = {
 
 			loadCompanySpecificData({ commit, dispatch, state, rootState }) {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
-				return new Promise((resolve, reject) => {
+				return new Promise(async(resolve, reject) => {
 					console.log('loadCompanyData rootState', rootState);
+					await dispatch("GETInvCategories", state.platformInfo);
+					dispatch("GETInventoryList", state.platformInfo);
 					dispatch("GETEmployeeList", state.platformInfo);
 					dispatch("GETSalesOfficeList", state.platformInfo);
 					dispatch("GETWarehouseList", state.platformInfo);
-					dispatch("GETInventoryList", state.platformInfo);
-					dispatch("GETInventoryCategories", state.platformInfo);
 					dispatch("GETCustomerList", state.platformInfo);
 					dispatch("getEmployeePositions", state.platformInfo);
 					dispatch("getCompanyDepartments", state.platformInfo);
@@ -504,6 +530,7 @@ export const Auth = {
 					dispatch("getCompanyShifts", state.platformInfo);
 					dispatch("GETSalesTaxes", state.platformInfo);
 					dispatch("GETGeneralSettings", state.platformInfo);
+					
 
 					//Not Completed Yet
 					// dispatch("getInventoryLabels", state.platformInfo);

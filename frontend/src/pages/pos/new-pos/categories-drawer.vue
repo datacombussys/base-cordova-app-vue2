@@ -30,7 +30,7 @@ import retailPOS from "./new-pos"
 
 export default {
   name: "categoryDrawer",
-    mixins: [
+  mixins: [
   ],
   components: {
 		DxResizable,
@@ -77,7 +77,7 @@ export default {
       return {
         menuMode: this.isLarge ? "shrink" : "overlap",
         menuRevealMode: this.isXSmall ? "slide" : "expand",
-        minMenuSize: this.isXSmall ? 0 :0,
+        minMenuSize: this.isXSmall ? 200 :0,
         menuOpened: this.isLarge,
         closeOnOutsideClick: shaderEnabled,
         shaderEnabled

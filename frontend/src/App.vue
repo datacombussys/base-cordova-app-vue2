@@ -8,7 +8,7 @@
           :isXSmall="screen.isXSmall"
           :isLarge="screen.isLarge"
         >
-          <div class="content">
+          <div class="main-content">
             <router-view name="content" class="page-container"/>
           </div>
           <template #footer>
@@ -31,7 +31,7 @@
           :isXSmall="screen.isXSmall"
           :isLarge="screen.isLarge"
         >
-          <div class="content">
+          <div class="main-content">
             <router-view name="pos" class="page-container"/>
           </div>
     
@@ -121,13 +121,39 @@ export default {
     watch: {
  
     },
-    mounted() {
-      subscribe(this.screenSizeChanged);
-      console.log("App.vue mounted");
-			this.$store.dispatch("preFetchProfile");
-			this.$store.dispatch("initTimeZone");
-			this.$store.dispatch("initTime");
-			this.$store.dispatch("initDate");
+    async mounted() {
+      document.addEventListener("deviceready", onDeviceReady, false);
+      // device APIs are available
+      function onDeviceReady() {
+        document.addEventListener("pause", onPause, false);
+        document.addEventListener("resume", onResume, false);
+        document.addEventListener("menubutton", onMenuKeyDown, false);
+        // Add similar listeners for other events
+
+        subscribe(this.screenSizeChanged);
+        console.log("App.vue mounted");
+        console.log("device", device);
+        //Need to get device info
+        this.$store.dispatch("preFetchProfile");
+        this.$store.dispatch("initTimeZone");
+        this.$store.dispatch("initTime");
+        this.$store.dispatch("initDate");
+      
+      }
+
+      function onPause() {
+        // Handle the pause event
+      }
+
+      function onResume() {
+        // Handle the resume event
+      }
+
+      function onMenuKeyDown() {
+        // Handle the menubutton event
+      }
+
+      // Add similar event handlers for other events
 
      
     },

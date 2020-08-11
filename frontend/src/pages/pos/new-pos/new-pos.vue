@@ -26,14 +26,16 @@
             <DxButton
               text="Sale"
               type="pos"
+              :focusStateEnabled="false"
               styling-mode="contained"
-              @click="saleButton($event)"
+              @click="initSale($event)"
             />
           </div>
           <div class="col-25p px-1 justify-center">
             <DxButton
               text="Return"
               type="pos"
+              :focusStateEnabled="false"
               styling-mode="contained"
               @click="initReturn($event)"
             />
@@ -42,6 +44,7 @@
             <DxButton
               text="Void"
               type="pos"
+              :focusStateEnabled="false"
               styling-mode="contained"
               @click="initVoid($event)"
             />
@@ -58,32 +61,36 @@
               <DxButton
                 text="Open"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-25p px-1">
               <DxButton
                 text="Close"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-25p px-1">
               <DxButton
                 text="Report"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-25p px-1">
               <DxButton
                 text="Drawer"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
           </div>
@@ -99,25 +106,30 @@
               <DxButton
                 text="Manager"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-25p px-1">
               <DxButton
                 text="Settings"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-25p px-1">
-              <DxButton
-                text="Logout"
-                type="pos"
-                styling-mode="contained"
-                @click="saleButton($event)"
-              />
+              <a href="pos-login">
+                <DxButton
+                  text="Logout"
+                  type="pos"
+                  :focusStateEnabled="false"
+                  styling-mode="contained"
+                />
+              </a>
+              
             </div>
             <div class="col-25p px-1 justify-center items-center">
               <toggle-button 
@@ -167,27 +179,22 @@
               show-scrollbar="always"
               :bounce-enabled="true"
             >
-            <div class="row">
-              <div
-                v-for="item in Inventory.inventoryList"
-                :key="item.id"
-                :class="orderForm.isSale || orderForm.isReturn ? '' : 'disabled'"
-                class="inventory-item no-margin no-padding"
-                @click="addItemToTill(item.id)"
-              >
-                <div class="inventory-img">
-                  <img :src="item.profile_img" />
+            <div class="inventory-row">
+              <div class="inventory-div">
+                <div
+                  v-for="item in GET_INVENTORY_LIST"
+                  :key="item.id"
+                  :class="orderForm.isSale || orderForm.isReturn ? '' : 'disabled'"
+                  class="inventory-item no-margin no-padding"
+                  @click="addItemToTill(item.id)"
+                >
+                  <div class="inventory-img">
+                    <img :src="item.profile_img" />
+                  </div>
+                  <div class="inventory-title">{{ item.name }}</div>
                 </div>
-                <div class="inventory-title">Name:{{ item.name }}</div>
               </div>
-              <div>This is a test</div>
-              <div>This is a test</div>
-              <div>This is a test</div>
-              <div>This is a test</div>
-              <div>This is a test</div>
-              <div>This is a test</div>
-              <div>This is a test</div>
-              <div>This is a test</div>
+              
             </div>
             
             </DxScrollView>
@@ -217,6 +224,7 @@
               <div class="row">
                 <div class="col-33p px-2 items-center">
                   <DxButton
+                    :height="50"
                     text="Cash"
                     type="success"
                     class="w-full"
@@ -226,6 +234,7 @@
                 </div>
                 <div class="col-33p px-2 items-center">
                   <DxButton
+                    :height="50"
                     text="Credit"
                     type="success"
                     class="w-full"
@@ -235,6 +244,7 @@
                 </div>
                 <div class="col-33p px-2 items-center">
                   <DxButton
+                    :height="50"
                     text="Gift"
                     type="success"
                     class="w-full"
@@ -250,6 +260,7 @@
               <div class="row">
                 <div class="col-33p px-2 items-center">
                   <DxButton
+                    :height="50"
                     text="Discount"
                     type="warning"
                     class="w-full"
@@ -259,6 +270,7 @@
                 </div>
                 <div class="col-33p px-2 items-center">
                   <DxButton
+                    :height="50"
                     text="Split"
                     type="warning"
                     class="w-full"
@@ -268,7 +280,8 @@
                 </div>
                 <div class="col-33p px-2 items-center">
                   <DxButton
-                    text="Print"
+                    :height="50"
+                    text="Print/test"
                     type="warning"
                     class="w-full"
                     styling-mode="contained"
@@ -282,6 +295,7 @@
               <div class="row">
                 <div class="col-33p px-2 items-center">
                   <DxButton
+                    :height="50"
                     text="Edit"
                     type="danger"
                     class="w-full"
@@ -291,6 +305,7 @@
                 </div>
                 <div class="col-33p px-2 items-center">
                   <DxButton
+                    :height="50"
                     text="Delete"
                     type="danger"
                     class="w-full"
@@ -300,6 +315,7 @@
                 </div>
                 <div class="col-33p px-2 items-center">
                   <DxButton
+                    :height="50"
                     text="Save"
                     type="danger"
                     class="w-full"
@@ -315,18 +331,20 @@
         <multipane-resizer class="resixer"></multipane-resizer>
         <div class="pane p-1" :style="{ minWidth: '50px', width: '33%' }" style="flex-grow: 1;">
           <div class="container p-0">
-            <div class="row bg-gray-700 text-white py-2">
-              <div class="col-25p items-center">
-                <p>Qty</p>
+            <div class="row bg-gray-700 text-white py-2 justify-between">
+              <div class="col-10p text-center">
+                Qty
               </div>
-              <div class="col-25p items-center">
-                <p>Item</p>
+              <div class="col-40p text-center">
+                Item
               </div>
-              <div class="col-25p items-center">
-                <p>Each</p>
+              <div class="col-20p text-center">
+                Each
               </div>
-              <div class="col-25p items-center">
-                <p>Total</p>
+              <div class="col-20p text-center">
+                Total
+              </div>
+              <div class="col-5p text-center">
               </div>
             </div>
             <div class="row">
@@ -340,46 +358,46 @@
                 show-scrollbar="always"
                 :bounce-enabled="true"
               >
-              <div class="container p-0 w-full">
-                <div class="row p-2">
-                  <div
-                    v-for="item in Inventory.inventoryList"
-                    :key="item.id"
-                    :class="orderForm.isSale || orderForm.isReturn ? '' : 'disabled'"
-                    class="inventory-item no-margin no-padding"
-                    @click="addItemToTill(item.id)"
-                  >
-                    <div class="inventory-img">
-                      <img :src="item.profile_img" />
+                <div class="container p-0 pl-1 w-full">
+                  <div class="d-list">
+                    <div class="d-list-item" 
+                      v-for="(item, index) in sharedData.allItemsInTill"
+                      :key="item.id">
+                      <div class="row justify-between" 
+                        :class="selectedItem.id === item.id ? 'selected-item' : ''"
+                        @click="editSelectedItem($event)">
+                        <div class="col-10p">
+                          <div class="till-text">
+                            {{ item.qty }}
+                          </div>
+                        </div>
+                        <div class="col-40p">
+                          <div class="till-text">
+                            {{ item.name }}
+                          </div>
+                        </div>
+                        <div class="col-20p">
+                          <div class="till-text">
+                            {{ item.sale_price || item.list_price | formatDollar }}
+                          </div>
+                        </div>
+                        <div class="col-20p">
+                          <div class="till-text">
+                            {{ item.qty * item.sale_price || (item.qty * item.list_price) | formatDollar }}
+                          </div>
+                        </div>
+                        <div class="col-5p pr-2 items-center">
+                          <div class="till-text">
+                            <a href="#">
+                              <span class="material-icons md-48 pt-2">delete</span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div class="inventory-title">Name:{{ item.name }}</div>
                   </div>
-                </div>
-                <div class="row delete justify-between" @click="editSelectedItem($event)" style="cursor: pointer;">
-                  <div class="col-10p">
-                    <div class="till-text">
-                      3
-                    </div>
-                  </div>
-                  <div class="col-40p">
-                    <div class="till-text">
-                      Lucy Sofa Set
-                    </div>
-                  </div>
-                  <div class="col-20p">
-                    <div class="till-text">
-                      1350.00
-                    </div>
-                  </div>
-                  <div class="col-20p">
-                    <div class="till-text">
-                      4050.00
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              
+
+                </div> 
               </DxScrollView>
             </div>
           </div>
@@ -397,24 +415,27 @@
               <DxButton
                 text="Customer"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-33p px-1">
               <DxButton
                 text="Transactions"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-33p px-1">
               <DxButton
                 text="Inventory"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
           </div>
@@ -430,24 +451,27 @@
               <DxButton
                 text="Coupons"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-33p px-1">
               <DxButton
                 text="Gift Cards"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-33p px-1">
               <DxButton
                 text="Loyalty Cards"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
           </div>
@@ -463,32 +487,36 @@
               <DxButton
                 text="Find"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-25p px-1">
               <DxButton
                 text="Reprint"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-25p px-1">
               <DxButton
                 text="Hold"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
             <div class="col-25p px-1">
               <DxButton
                 text="Resume"
                 type="pos"
+                :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="saleButton($event)"
+                @click="testButton($event)"
               />
             </div>
           </div>
@@ -524,6 +552,15 @@ export default {
     DxButton,
     alert,
     calculatorComponent
+  },
+  props: {
+     keyboardClass: {
+      default: "simple-keyboard",
+      type: String
+    },
+    input: {
+      type: String
+    }
   },
   data() {
     return {
@@ -656,6 +693,7 @@ export default {
   methods: {
     testButton(e) {
       console.log("testButton e", e)
+      console.log("GET_INVENTORY_LIST", this.GET_INVENTORY_LIST)
       
     },
     toggleNavBar() {
@@ -798,11 +836,6 @@ export default {
 		},
 		editSelectedItem(e) {
       console.log("e", e)
-      if(e.explicitOriginalTarget.classList.add("edit-item")) {
-        e.explicitOriginalTarget.classList.remove("edit-item")
-      } else {
-        e.explicitOriginalTarget.classList.add("edit-item")
-      }
 
 			// if (this.selectedItem.id) {
 			// 	this.selectedItem.id = null;
@@ -865,12 +898,13 @@ export default {
 					this.$refs.barcodeInput.$el.querySelector('input').focus();
 					// console.log("this", this);			
 			}, 2000);
-		},
+    },
+
 
   },
   computed: {
     ...mapState(["Auth", "Users", "Inventory", "Orders", "Static", "Errors"]),
-		...mapGetters(["GET_INV_CATEGORY_LIST", "GET_INV_CATEGORY_LIST_LENGTH"]),
+		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST", "GET_INV_CATEGORY_LIST_LENGTH"]),
     
   },
   watch: {
@@ -920,7 +954,9 @@ export default {
   height: 76%;
 }
 .till-text {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: $base-font-size*.9;
 	line-height: 2.5em;
 }
@@ -971,6 +1007,52 @@ export default {
 }
 .edit-item {
   background: rgba(204, 36, 36, 0.5);
+}
+
+//Inventory List Pane
+.inventory-row {
+  height: 90%;
+  width: 100%;
+  .inventory-div {
+    display: flex;
+    justify-content: space-around;
+    flex-shrink: 2;
+    flex-wrap: wrap;
+    min-width: 20%;
+    width: 95%;
+    height: 100%;
+    .inventory-item {
+      border: 2px solid black;
+      cursor: pointer;
+      width: 150px;
+      height: 6em;
+      background: white;
+      font-weight: 300;
+      margin-bottom: 5px;
+      background: rgb(47, 47, 47);
+
+      .inventory-img {
+        display: flex;
+        background: rgb(235, 235, 235);
+        height: 75%;
+        text-align: center;
+        justify-content: center;
+        img {
+          height: 75px;
+          border-radius: 50%;
+          box-shadow: 5px 5px 10px rgb(34, 33, 33);
+        }
+      }
+      .inventory-title {
+        box-shadow: 0px 7px 10px rgb(34, 33, 33);
+        text-align: center;
+        font-weight: 600;
+        color: black;
+        height: 25%;
+        color: white;
+      }
+    }
+  }
 }
 
 </style>

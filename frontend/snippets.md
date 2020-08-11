@@ -148,6 +148,21 @@ date - the widget displays only the date;
 time - the widget displays only the time;
 datetime - the widget displays both the date and time.
 
+let newDate = e.value
+let ISODate = newDate.toISOString()
+let djangoTime = ISODate.split('T')[0]
+this.formData.sale_expires = djangoTime
+
+********************  Files  *************************
+<form
+	id="form"
+	ref="invFormFilesRef"
+	method="post"
+	action=""
+	enctype="multipart/form-data"
+> </form>
+const form = this.$refs.invFormFilesRef[0].files;
+console.log('form', form);
 
 ********************  Datagrid Options  *************************
 Column types:
@@ -222,49 +237,36 @@ Accepted Values: 'billions' | 'currency' | 'day' | 'decimal' | 'exponential' | '
 		</template> -->
 	</DxList>
 </DxDropDownBox>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-********************************************  Syncfusion ************************************************
-*********************************************************************************************************
-
-******************** Tabs *************************
-<ejs-tab id='syncTabs' :selected-index.sync='selectedTabIndex'>
-		<e-tabitems>
-			<e-tabitem :header='headerText0' :content="content0"></e-tabitem>
-			<e-tabitem :header='headerText1' :content="content1"></e-tabitem>
-			<e-tabitem :header='headerText2'></e-tabitem>
-	</e-tabitems>
-</ejs-tab>
-<script>
-data() {
-	return {
-		headerText0: { text: 'Profile',  'iconCss': 'dx-icon-exportselected'},
-		content0: () => {
-				return {
-					template: 
-					{
-						extends: profileComponent,
-						propsData: {formData: this.datacomForm}
-					}
-				}
-			},
+methods: {
+	dxDropdownSelection(e) {
+		e.component.close()
 	}
 }
-</script>
+
+******************** Field with Label  ************************* 
+<div class="field">
+	<div class="label">
+		Label Text here
+	</div>  
+	<div class="content">
+		<p>input field here</p>
+	</div>
+</div>
+
+
+******************** Event Bus  ************************* 
+import {EventBus} from '@/services/event-bus';
+EventBus.$on('EVENT_NAME', val => {
+	//execute stuff here;
+	});
+}
+
+
+
+
+
+
+
+
+
 

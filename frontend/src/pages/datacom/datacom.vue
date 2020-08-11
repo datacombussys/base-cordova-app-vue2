@@ -508,7 +508,7 @@ export default {
 			try {
 				this.isLoadPanelVisible = true;
 				console.log("createCompanyandClose")
-				// this.$store.commit("RESET_ERRORS");
+				this.$store.commit("RESET_ERRORS");
 				let createCompanyRes = await this.createCompany();
 				//Clear Form and Reset to Starting Viewing Position
 				console.log("createCompanyandClose All Done", createCompanyRes);

@@ -3,7 +3,8 @@ import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
 
-//Import and Use Axios
+//Import and Industries
+import industries from "@/js/industries"
 
 var moment = require('moment');
 var momenttz = require('moment-timezone');
@@ -35,32 +36,32 @@ export const Static = {
       "Part Time",
       "Seasonal",
     ],
-    industries: ["Accounting/CPA", "Banking / Finance", "Sales", "Marketing", "Eating and Drinking Establishment"],
+    industries: industries,
     months: [
-      {id: 1, name: 'January', abrev: 'Jan'},
-      {id: 2, name: 'February', abrev: 'Feb'},
-      {id: 3, name: 'March', abrev: 'Mar'},
-      {id: 4, name: 'April', abrev: 'Apr'},
-      {id: 5, name: 'May', abrev: 'May'},
-      {id: 6, name: 'June', abrev: 'Jun'},
-      {id: 7, name: 'July', abrev: 'Jul'},
-      {id: 8, name: 'August', abrev: 'Aug'},
-      {id: 9, name: 'September', abrev: 'Sept'},
-      {id: 10, name: 'October', abrev: 'Oct'},
-      {id: 11, name: 'November', abrev: 'Nov'},
-      {id: 12, name: 'December', abrev: 'Dec'}
+      {id: 1, name: 'January', abbr: 'Jan'},
+      {id: 2, name: 'February', abbr: 'Feb'},
+      {id: 3, name: 'March', abbr: 'Mar'},
+      {id: 4, name: 'April', abbr: 'Apr'},
+      {id: 5, name: 'May', abbr: 'May'},
+      {id: 6, name: 'June', abbr: 'Jun'},
+      {id: 7, name: 'July', abbr: 'Jul'},
+      {id: 8, name: 'August', abbr: 'Aug'},
+      {id: 9, name: 'September', abbr: 'Sept'},
+      {id: 10, name: 'October', abbr: 'Oct'},
+      {id: 11, name: 'November', abbr: 'Nov'},
+      {id: 12, name: 'December', abbr: 'Dec'}
     ],
     days: [
       1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
     ],
     dayOfWeek: [
-      {id: 1, name: 'Sunday', abrev: 'Sun', code: 'SU'},
-      {id: 2, name: 'Monday', abrev: 'Mon', code: 'MO'},
-      {id: 3, name: 'Tuesday', abrev: 'Tue', code: 'TU'},
-      {id: 4, name: 'Wednesday', abrev: 'Wed', code: 'WE'},
-      {id: 5, name: 'Thursday', abrev: 'Thu', code: 'TH'},
-      {id: 6, name: 'Friday', abrev: 'Fri', code: 'FR'},
-      {id: 7, name: 'Saturday', abrev: 'Sat', code: 'SA'},
+      {id: 1, name: 'Sunday', abbr: 'Sun', code: 'SU'},
+      {id: 2, name: 'Monday', abbr: 'Mon', code: 'MO'},
+      {id: 3, name: 'Tuesday', abbr: 'Tue', code: 'TU'},
+      {id: 4, name: 'Wednesday', abbr: 'Wed', code: 'WE'},
+      {id: 5, name: 'Thursday', abbr: 'Thu', code: 'TH'},
+      {id: 6, name: 'Friday', abbr: 'Fri', code: 'FR'},
+      {id: 7, name: 'Saturday', abbr: 'Sat', code: 'SA'},
       
     ],
     Units: [

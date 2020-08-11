@@ -1,6 +1,6 @@
 <template>
-  <div class="login-page">  
-    <dx-scroll-view height="100%" width="100%" class="single-card">
+  <div class="access-page">  
+    <dx-scroll-view height="100%" width="100%" class="wide-card">
       <div class="dx-card"><slot /></div>
     </dx-scroll-view>
   </div>
@@ -10,6 +10,7 @@
 import DxScrollView from "devextreme-vue/scroll-view";
 
 export default {
+	name: "accessCard",
   components: {
     DxScrollView
   }
@@ -18,12 +19,13 @@ export default {
 
 <style lang="scss">
 .login-page {
-  margin-top: 15%;
+  margin-top: 5%;
 }
-.single-card {
+.wide-card {
 
   .dx-card {
-    width: 330px;
+    width: 600px;
+    height: 600px;
     margin: 40px auto;
     padding: 40px;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);

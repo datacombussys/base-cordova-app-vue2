@@ -17,6 +17,7 @@ import Profile from "@/views/profile-view";
 import DisplayData from "@/views/display-data-view";
 import defaultLayout from "@/components/elements/layout/side-nav-outer-toolbar-component";
 import simpleLayout from "@/views/single-card-view";
+import accessCard from "@/views/access-card-view";
 
 //Datacom Converted Pages
 import LoginView from "@/views/login-form-view"
@@ -31,6 +32,8 @@ import HelpDesk from "@/pages/help-desk/help-desk"
 import RetailPOS from "@/pages/pos/new-pos/new-pos"
 import Categories from "@/pages/pos/new-pos/categories-drawer"
 import Inventory from "@/pages/inventory/new/inventory"
+import POSLoginView from "@/views/pos-login-view"
+import VirtualTerminal from "@/pages/vt_hpp/new/virtual-terminal"
 
 import Colors from '@/pages/colors'
 import Icons from '@/pages/icons'
@@ -39,23 +42,23 @@ import Icons from '@/pages/icons'
 Vue.use(Router)
 
 //Auth Only Routes
-function checkAuth(to, from, resolve, reject) {
-  if (store._modules.root.state.Auth.isAuthenticated) {
-    resolve(to);
-  } else {
-    reject();
-    var router = this;
-    console.log('router', router);
-    console.log('to', to);
-    console.log('from', from);
-    store._modules.root.state.Auth.preLoginPagePath = to.path;
-    router.navigate('/login/');
+// function checkAuth(to, from, resolve, reject) {
+//   if (store._modules.root.state.Auth.isAuthenticated) {
+//     resolve(to);
+//   } else {
+//     reject();
+//     var router = this;
+//     console.log('router', router);
+//     console.log('to', to);
+//     console.log('from', from);
+//     store._modules.root.state.Auth.preLoginPagePath = to.path;
+//     router.navigate('/login/');
 
-  }
-}
+//   }
+// }
 
 export default new Router({
-  mode:'history',
+  // mode:'history',
   routes: [
     {
       path: '/secured',
@@ -149,7 +152,8 @@ export default new Router({
         layout: defaultLayout,
         content: DisplayData
       }
-    },{
+    },
+    {
       path: "/login-form",
       name: "login-form",
       meta: { requiresAuth: false },
@@ -157,7 +161,17 @@ export default new Router({
         layout: simpleLayout,
         content: LoginView
       }
-    },{
+    },
+    {
+      path: "/pos-login",
+      name: "pos-login",
+      meta: { requiresAuth: false },
+      components: {
+        layout: accessCard,
+        content: POSLoginView
+      }
+    },
+    {
       path: "/password-reset",
       name: "password-reset",
       meta: { requiresAuth: false },
@@ -193,9 +207,16 @@ export default new Router({
       }
     },
     {
+      path: "/virtual-terminal",
+      name: "virtual-terminal",
+      components: {
+        categories: defaultLayout,
+        pos: VirtualTerminal,
+      }
+    },
+    {
       path: "/inventory",
       name: "inventory",
-      meta: { requiresAuth: true },
       components: {
         layout: defaultLayout,
         content: Inventory

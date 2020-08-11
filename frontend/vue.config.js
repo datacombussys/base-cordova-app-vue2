@@ -12,7 +12,7 @@ module.exports = {
   },
   "devServer": {
     "port": 9000,
-    "open": true,
+    "open": false,
     "overlay": {
       "warnings": false,
       "errors": true
