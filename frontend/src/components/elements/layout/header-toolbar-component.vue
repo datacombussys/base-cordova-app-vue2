@@ -195,4 +195,5 @@ export default {
 		color: rgb(233, 233, 233);
 	}
 }
+
 </style>

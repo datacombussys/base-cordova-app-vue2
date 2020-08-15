@@ -261,6 +261,14 @@ EventBus.$on('EVENT_NAME', val => {
 	});
 }
 
+******************** Screen Messages  ************************* 
+<div class="row">
+	<div class="message success">
+		<div class="message-text">
+			This is the test message
+		</div>
+	</div>
+</div>
 
 
 

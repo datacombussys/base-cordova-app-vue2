@@ -32,11 +32,9 @@ import router from './routes'
 
 window.$ = window.jQuery = require('jquery');
 
-//Material Icons - Working
 // MaterialDesignIcons.com
-//<span class="mdi mdi-cart-minus mdi-48px" ></span>
-//<md-icon class="md-size-5x">menu</md-icon>
-//<span class="material-icons">thumb_up</span>
+// <i class="mdi mdi-cart mdi-40"></i>
+// <span class="mdi mdi-cart-minus mdi-48px" ></span>
 import '@mdi/font/css/materialdesignicons.min.css';
 
 //FontAwesome Icons
@@ -59,10 +57,9 @@ Vue.config.productionTip = false;
 
 // Google's Material Design Icons for VueMaterial Theme 
 //http://google.github.io/material-design-icons
-//Imported on the index.html page
-// can be used as follows:
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
 // <i class="material-icons" style="font-size:45px;">check_circle</i>
-// <span class="material-icons md-48 orange600"> check_circle </span>
+// <span class="material-icons mdi-30"> check_circle </span>
 
 //Using MaterialIcons and dx-icons
 {/* <i class="dx-icon-email" style="font-size: 50px;"></i>
@@ -87,10 +84,16 @@ import lodash from 'lodash'
 Vue.use(VueLodash, { lodash: lodash })
 
 // Socket.io / Vue-Socket.io
-import VueSocketIOExt from 'vue-socket.io-extended';
-import io from 'socket.io-client';
-const socket = io('http://localhost:9022');
-Vue.use(VueSocketIOExt, socket, { store });
+// import VueSocketIOExt from 'vue-socket.io-extended';
+// import io from 'socket.io-client';
+// const socket = io('http://localhost:9022');
+// Vue.use(VueSocketIOExt, socket, { store });
+
+//Vue Cropper
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
+Vue.component("vue-cropper", VueCropper);
+
 
 import "@/assets/icons/icons.css"
 

@@ -102,16 +102,16 @@
             <div class="title text-center">System Management</div>              
           </div>
           <div class="row pt-2">
-            <div class="col-25p px-1">
+            <div class="col-20p px-1">
               <DxButton
-                text="Manager"
+                text="Mgr"
                 type="pos"
                 :focusStateEnabled="false"
                 styling-mode="contained"
                 @click="testButton($event)"
               />
             </div>
-            <div class="col-25p px-1">
+            <div class="col-20p px-1">
               <DxButton
                 text="Settings"
                 type="pos"
@@ -120,29 +120,40 @@
                 @click="testButton($event)"
               />
             </div>
-            <div class="col-25p px-1">
-              <a href="pos-login">
+            <div class="col-20p px-1">
+              <router-link to="home">
                 <DxButton
+                  width="100%"
+                  text="Dash"
+                  type="pos"
+                  :focusStateEnabled="false"
+                  styling-mode="contained"
+                />
+              </router-link>
+            </div>
+            <div class="col-20p px-1">
+              <router-link to="pos-login">
+                <DxButton
+                  width="100%"
                   text="Logout"
                   type="pos"
                   :focusStateEnabled="false"
                   styling-mode="contained"
                 />
-              </a>
-              
+              </router-link>
             </div>
-            <div class="col-25p px-1 justify-center items-center">
+            <div class="col-20p px-1 justify-center items-center">
               <toggle-button 
               disabled
-              :value="isOnLine"
+              :value="Common.isOnline"
               :color="switchColors"
               switch-color="#494949"
               :labels="true"
               :width="90"
               :height="40"
               :font-size="13"/>
-              <p v-if="isOnLine">Connected</p>
-              <p v-else="isOnLine">Disconnected</p>
+              <p v-if="Common.isOnline">Connected</p>
+              <p v-else="Common.isOnline">Disconnected</p>
             </div>
           </div>
         </div>
@@ -363,9 +374,9 @@
                     <div class="d-list-item" 
                       v-for="(item, index) in sharedData.allItemsInTill"
                       :key="item.id">
-                      <div class="row justify-between" 
-                        :class="selectedItem.id === item.id ? 'selected-item' : ''"
-                        @click="editSelectedItem($event)">
+                      <div class="row justify-evenly" 
+                        :class="selectedItem.id === item.id ? 'edit-item' : ''"
+                        @click="editSelectedItem(item.id)">
                         <div class="col-10p">
                           <div class="till-text">
                             {{ item.qty }}
@@ -386,9 +397,9 @@
                             {{ item.qty * item.sale_price || (item.qty * item.list_price) | formatDollar }}
                           </div>
                         </div>
-                        <div class="col-5p pr-2 items-center">
+                        <div class="col-5p pr-2 items-center" v-if="selectedItem.id === item.id">
                           <div class="till-text">
-                            <a href="#">
+                            <a href="#" @click="deleteItemFromTill(index)">
                               <span class="material-icons md-48 pt-2">delete</span>
                             </a>
                           </div>
@@ -396,8 +407,48 @@
                       </div>
                     </div>
                   </div>
-
                 </div> 
+                <!-- Till Summary -->
+                <div class="container till-totals">
+                  <div class="row">
+                    <div class="col-6 p-0">
+                      <div class="row">
+                        <div class="col-6 p-0">
+                          <div v-if="retailSettings.enableGratuity" style="font-size:1em;">Gratuity</div>
+                          <div>Tax</div>
+                          <div style="font-size:1em;">Discounts</div>
+                        </div>
+                        <div class="col-6 p-0 total-text">
+                          <div
+                            v-if="retailSettings.enableGratuity"
+                            class="text-align-center"
+                            style="font-size:1em;"
+                          >{{ orderForm.gratuity | formatDollar }}</div>
+                          <div
+                            class="text-align-center"
+                            style="font-size:1em;"
+                          >{{ orderForm.tax | formatDollar }}</div>
+                          <div
+                            class="text-align-center"
+                            style="font-size:1em;"
+                          >({{ orderForm.totalDiscounts | formatDollar }})</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6 p-0">
+                      <div class="row">
+                        <div class="col-4 p-0">
+                          <div>Subtotal</div>
+                          <div style="font-size:1.35em;">Total</div>
+                        </div>
+                        <div class="col-8 p-0">
+                          <div>{{ orderForm.subtotal | formatDollar }}</div>
+                          <div style="font-size:1.35em;">{{ grandTotal | formatDollar }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </DxScrollView>
             </div>
           </div>
@@ -604,7 +655,6 @@ export default {
       },
       
       //Main Settings
-			isOnLine: navigator.onLine,
       switchColors: {
         checked: ' #0BB804', unchecked: '#F03A00', disabled: '#0BB804'
       },
@@ -693,7 +743,7 @@ export default {
   methods: {
     testButton(e) {
       console.log("testButton e", e)
-      console.log("GET_INVENTORY_LIST", this.GET_INVENTORY_LIST)
+      console.log("Common.isOnline", this.Common.isOnline)
       
     },
     toggleNavBar() {
@@ -762,13 +812,13 @@ export default {
 		//Ticket
 		addItemToTill(id) {
 			console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);
-			//Find item in Ticket First to increase QTY
+			//Find item in Ticket
 			var findTillItem = this.sharedData.allItemsInTill.find((elem) => {
 				return elem.id == id;
 			});
 			console.log("findTillItem", findTillItem);
 			if (findTillItem === undefined) {
-				//Then add from Inventory if not already in list
+				//Not in List, Add to Till Here
 				var invObj = this.Inventory.inventoryList.find((elem) => {
 					return elem.id == id;
 				});
@@ -777,20 +827,13 @@ export default {
 				invObj.qty = 1;
 				invObj.is_discounted = false;
 				this.sharedData.allItemsInTill.push(invObj);
-				// this.subtotal += invObj.list_price * invObj.qty;
-				this.calculateTotals();
+        this.calculateTotals();
+        
 			} else {
 				//Item already in List, increase quantity
 				console.log("findTillItem Obj", findTillItem["qty"]);
 				findTillItem["qty"] += 1;
-				//Populate SelectedItem Object
-				this.selectedItem.id = findTillItem["id"];
-				this.selectedItem.qty = findTillItem["qty"];
-				this.selectedItem.name = findTillItem["name"];
-				var currentItemPrice = findTillItem["price"];
-				this.selectedItem.price = parseFloat(currentItemPrice);
-				console.log("this.selectedItem", this.selectedItem);
-
+				
 				this.$forceUpdate();
 				this.calculateTotals();
 			}
@@ -834,22 +877,32 @@ export default {
 			}
 			//Totals computed in watcher
 		},
-		editSelectedItem(e) {
-      console.log("e", e)
+		editSelectedItem(itemId) {
+      console.log("itemId", itemId)
+      console.log("this.selectedItem", this.selectedItem);
 
-			// if (this.selectedItem.id) {
-			// 	this.selectedItem.id = null;
-			// } else {
-			// 	this.selectedItem.id = itemId;
-			// }
-			// console.log("itemId", itemId);
-			// console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);
-			// var findOrderItem = this.sharedData.allItemsInTill.find((elem) => elem.id === itemId);
-			// console.log("findOrderItem", findOrderItem);
+			if (this.selectedItem.id == itemId) {
+				this.selectedItem.id = null;
+			} else {
+        this.selectedItem.id = itemId;
 
-			// this.calc.value = findOrderItem.qty;
-			// this.calc.id = findOrderItem.id;
-			// console.log("this.calc", this.calc);
+        console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);
+        //Find item in Ticket
+        var findOrderItem = this.sharedData.allItemsInTill.find((elem) => elem.id === itemId);
+        console.log("findOrderItem", findOrderItem);
+        
+        //Populate SelectedItem Object
+        this.selectedItem.id = findOrderItem["id"];
+        this.selectedItem.qty = findOrderItem["qty"];
+        this.selectedItem.name = findOrderItem["name"];
+        this.selectedItem.price = parseFloat(findOrderItem["price"]);
+        
+        //Update Calculator
+        this.calc.value = findOrderItem.qty;
+        this.calc.id = findOrderItem.id;
+        console.log("this.calc", this.calc);
+			}
+			
 		},
 		saveOrdersInstead() {
 			console.log("Offine - Orders are being saved for future processing");
@@ -903,9 +956,21 @@ export default {
 
   },
   computed: {
-    ...mapState(["Auth", "Users", "Inventory", "Orders", "Static", "Errors"]),
+    ...mapState(["Auth", "Users", "Inventory", "Orders", "Static", "Errors", "Common"]),
 		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST", "GET_INV_CATEGORY_LIST_LENGTH"]),
-    
+    categoryItems() {
+			var filtered = this.Inventory.inventoryList.filter((elem) => elem.category != null);
+			var answer = filtered.filter((elem) => elem.category.name === this.Inventory.selectedCategory);
+			return answer;
+		},
+		grandTotal() {
+			//Calculate Grand Total
+			var newTotal = parseFloat(this.orderForm.subtotal) + parseFloat(this.orderForm.gratuity) + 
+				parseFloat(this.orderForm.tax) - parseFloat(this.orderForm.totalDiscounts);
+			console.log("newTotal", newTotal);
+
+			return newTotal;
+		},
   },
   watch: {
 
@@ -1054,6 +1119,14 @@ export default {
     }
   }
 }
+.till-totals {
+	position: absolute;
+	bottom: 30px;
 
+}
+.total-text {
+	font-family: OpenSans-Bold;
+	font-weight: 500;
+}
 </style>
 

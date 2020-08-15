@@ -1,5 +1,6 @@
 <template>
-  <div id="root" data-app>
+  <div id="root">
+    <v-app>
 
       <div class="cssClasses">
         <router-view
@@ -38,7 +39,7 @@
         </router-view>
         
       </div>
-
+    </v-app>
   </div>
 </template>
 
@@ -122,9 +123,7 @@ export default {
  
     },
     async mounted() {
-      document.addEventListener("deviceready", onDeviceReady, false);
-      // device APIs are available
-      function onDeviceReady() {
+      let onDeviceReady = () => {
         document.addEventListener("pause", onPause, false);
         document.addEventListener("resume", onResume, false);
         document.addEventListener("menubutton", onMenuKeyDown, false);
@@ -140,18 +139,22 @@ export default {
         this.$store.dispatch("initDate");
       
       }
-
-      function onPause() {
+      let onPause = () => {
         // Handle the pause event
       }
 
-      function onResume() {
+      let onResume = () => {
         // Handle the resume event
       }
 
-      function onMenuKeyDown() {
+      let onMenuKeyDown = () => {
         // Handle the menubutton event
       }
+      document.addEventListener("deviceready", onDeviceReady, false);
+      // device APIs are available
+      
+
+      
 
       // Add similar event handlers for other events
 
@@ -170,15 +173,7 @@ export default {
 </script>
 
 <style lang="scss">
-#app {
-  font-family: 'Open Sans Regular', sans-serif;
-  font-size: 1.15em;
-  line-height: 1.75em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+
 
 
 </style>

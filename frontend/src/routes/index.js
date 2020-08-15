@@ -13,6 +13,7 @@ import Router from 'vue-router'
 
 
 import Home from "@/views/home-view";
+import TestPage from "@/views/test-page";
 import Profile from "@/views/profile-view";
 import DisplayData from "@/views/display-data-view";
 import defaultLayout from "@/components/elements/layout/side-nav-outer-toolbar-component";
@@ -86,6 +87,15 @@ export default new Router({
       components: {
         layout: defaultLayout,
         content: Home
+      }
+    },
+    {
+      path: "/test-page",
+      name: "test-page",
+      meta: { requiresAuth: false },
+      components: {
+        layout: defaultLayout,
+        content: TestPage
       }
     },
     {

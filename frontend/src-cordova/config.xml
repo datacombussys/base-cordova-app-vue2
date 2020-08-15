@@ -18,11 +18,46 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+
+    <platform name="electron">
+      <preference name="ElectronSettingsFilePath" value="electron-settings.json" />
+      <icon src="res/icon/electron/app.png" target="app" />
+      <icon src="res/icon/electron/installer.png" target="installer" />
+      <preference name="ShowSplashScreen" value="false" />
+      <preference name="AutoHideSplashScreen" value="true" />
+    </platform>
     <platform name="android">
+        <preference name="SplashScreen" value="screen" />
+        <splash src="res/screen/android/drawable-hdpi/screen.png" density="port-hdpi"/>
+        <splash src="res/screen/android/drawable-ldpi/screen.png" density="port-ldpi"/>
+        <splash src="res/screen/android/drawable-mdpi/screen.png" density="port-mdpi"/>
+        <splash src="res/screen/android/drawable-xhdpi/screen.png" density="port-xhdpi"/>
+        <splash src="res/screen/android/drawable-xxhdpi/screen.png" density="port-xxhdpi"/>
+        <splash src="res/screen/android/drawable-xxxhdpi/screen.png" density="port-xxxhdpi"/>
         <allow-intent href="market:*" />
     </platform>
     <platform name="ios">
+        <splash src="res/screen/ios/Default@2x~universal~anyany.png" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
+    <platform name="browser">
+        <splash src="img/BusinessLogo170x170.509df2e2.png"/>
+        <preference name="AutoHideSplashScreen" value="true" /> <!-- defaults to "true" -->
+        <preference name="SplashScreenDelay" value="0" /> <!-- defaults to "3000" -->
+        <preference name="SplashScreenBackgroundColor" value="green" /> <!-- defaults to "#464646" -->
+        <preference name="ShowSplashScreen" value="false" /> <!-- defaults to "true" -->
+        <preference name="SplashScreenWidth" value="600" /> <!-- defaults to "170" -->
+        <preference name="SplashScreenHeight" value="300" /> <!-- defaults to "200" -->
+    </platform>
+
+    <!-- <preference name="UIWebViewBounce" value="false" />
+    <preference name="DisallowOverscroll" value="true" />
+    <preference name="BackupWebStorage" value="local" />
+    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
+    <preference name="SplashScreenDelay" value="0" />
+    <preference name="Suppresses3DTouchGesture" value="true" />
+    <preference name="Allow3DTouchLinkPreview" value="false" />
+    <preference name="AllowInlineMediaPlayback" value="true" />  -->
 </widget>

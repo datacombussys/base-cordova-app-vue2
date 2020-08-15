@@ -7,7 +7,7 @@
     <div class="menu-container">
       <dx-tree-view
         :ref="treeViewRef"
-        :items="items"
+        :items="menuItems"
         key-expr="path"
         selection-mode="single"
         :focus-state-enabled="false"
@@ -22,11 +22,14 @@
 <script>
 import DxTreeView from "devextreme-vue/ui/tree-view";
 import { sizes } from '@/utils/media-query';
-import navigation from '@/app-navigation';
+
+//Routes
+import { Main } from '@/routes/app-navigation';
+import { Datacom } from '@/routes/app-navigation';
 
 const treeViewRef = "treeViewRef";
 const isLargeScreen = sizes()['screen-large'];
-const items = navigation.map((item) => ({ ...item, expanded: isLargeScreen }));
+
 
 export default {
   name: "sideNavMenuComponent",
@@ -39,7 +42,6 @@ export default {
   data() {
     return {
       treeViewRef,
-      items
     };
   },
   methods: {
@@ -65,6 +67,22 @@ export default {
 
       this.treeView.selectItem(this.$route.path);
       this.treeView.expandItem(this.$route.path);
+    }
+  },
+  computed: {
+    menuItems() {
+      var menu = new Array();
+      const route = this.$route.name
+      if(route == "home") {
+        menu = Main.map((item) => ({ ...item, expanded: isLargeScreen }));
+      }
+      else if(route == "test-page") {
+        menu = Datacom.map((item) => ({ ...item, expanded: isLargeScreen }));
+      } else {
+        menu = Main.map((item) => ({ ...item, expanded: isLargeScreen }));
+      }
+
+      return menu
     }
   },
   mounted() {

@@ -1,6 +1,6 @@
 https://cdn.materialdesignicons.com/
 <span class="mdi mdi-cart-minus mdi-48"></span>
-<md-icon class="md-size-5x">menu</md-icon>
+<i class="mdi mdi-cart mdi-40"></i>
 
 //Do not use the fa-iconname only iconName
 <fa-icon :icon="['far', 'address-book']" class="mdi-35"></fa-icon>
@@ -11,8 +11,7 @@ https://cdn.materialdesignicons.com/
 </fa-layer>
 
 https://material.io/resources/icons
-<i class="material-icons" style="font-size:45px;">description</i>
-<span class="material-icons md-48 orange600"> check_circle </span>
+<i class="material-icons" style="font-size:45px;">check_circle</i>
 <span class="material-icons md-48 text-orange">view_headline</span>
 <div class="material-icons mdi-60 text-datacom mb-3">notifications</div>
 

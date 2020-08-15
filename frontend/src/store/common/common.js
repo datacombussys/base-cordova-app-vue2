@@ -9,13 +9,13 @@ import axios from "axios"
 export const Common = {
 	namespace: true,
 	state: {
+		isOnline: navigator.onLine,
+		platform: null,
 		departmentList: [],
 		positionList: [],
 		shippingAddressList: [],
 		generalBusinessSettingsProfile: {},
 		
-
-
 	},
 	mutations: {
 		PUSH_NEW_SHIPPING_ADDRESS(state, payload) {

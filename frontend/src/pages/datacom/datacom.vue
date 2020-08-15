@@ -32,11 +32,18 @@
 												<v-list-item
 													v-for="(item, i) in profileMenu"
 													:key="i"
+													@click="clickProfileMenu"
 												>
 													<v-list-item-title>{{ item.title }}</v-list-item-title>
 												</v-list-item>
 											</v-list>
 										</v-menu>
+										<profileImageComponent 
+										ref="profileImageComponent"
+										:openImageSheet="openImageSheet" S
+										@closeSheet="closeSheet"
+										:profileImageSettings="profileImageSettings"
+										:profileData="datacomForm" />
 									</div>
 								</div>
 							</v-card-title>
@@ -240,6 +247,7 @@ import paymentMethodsComponent from "@/components/business/new-docs/payment-comp
 import reportingComponent from "@/components/business/new-docs/reporting-component"
 import employeesComponent from "@/components/business/new-docs/employees-component"
 import databaseComponent from "@/components/business/new-docs/database-component"
+import profileImageComponent from "@/components/universal/new/profile-image-component"
 
 export default {
   name: "datacomProfile",
@@ -252,6 +260,7 @@ export default {
 		locationsComponent,
 		shippingLocationsComponent,
 		paymentMethodsComponent,
+		profileImageComponent,
 		reportingComponent,
 		employeesComponent,
 		databaseComponent,
@@ -348,10 +357,9 @@ export default {
 			hideUpdateItemButtons: false,
 			hideCreateItem: false,
 			selectedTabIndex: 0,
+			openImageSheet: false,
 
 			
-			
-
 			//Form Data
 			datacomForm: {
 				//datacom Specific
@@ -440,10 +448,16 @@ export default {
 		captureEvent(e) {
 			console.log("captured Event e", e)
 		},
-		//Profil Image Funciton placeholder
-		editImage() {
-			// edit profile image
+		closeSheet(e) {
+			console.log("closeSheet e", e)
+			this.openImageSheet = e
 		},
+		clickProfileMenu(e) {
+			console.log("clickProfileMenu e", e)
+			if(e.target.innerText === 'Profile Image') {
+				this. openImageSheet = true
+			}
+		}	,
 		showEditProfile() {
 			this.accountSettings.editProfile = true
 			this.hideUpdateItemButtons = true

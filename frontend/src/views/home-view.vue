@@ -192,11 +192,7 @@
                     </div>
                 </div>
             </div>
-             <div><p class="text-white">more thesting stuff</p></div>
-            <p class="text-white">BASE_URL: {{ BASE_URL }}</p>
-            <div>
-                <p class="text-white">Test stuff goes here</p>
-            </div>
+
 
         </div>
     </DxScrollView>
