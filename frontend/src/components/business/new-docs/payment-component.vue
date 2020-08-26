@@ -127,82 +127,151 @@
 				height="60%"
 				title="New Credit Card"
 			>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Credit Card Number</p>
-						<DxTextBox 
-							:mask-rules="expirationRules"
-							mask="X0/00"
-							:value.sync="creditCardForm.card_number"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Name of Cardholder</p>
-					<DxTextBox 
-						:mask-rules="phoneRules"
-						mask="+1 (X00) 000-0000"
-						:value.sync="creditCardForm.name_on_card"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Address</p>
-						<DxTextBox :value.sync="creditCardForm.address"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Address 2</p>
-						<DxTextBox :value.sync="creditCardForm.address2"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">City</p>
-						<DxTextBox :value.sync="creditCardForm.city"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">State</p>
-						<DxTextBox :value.sync="creditCardForm.state"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Zip Code</p>
-						<DxTextBox :value.sync="creditCardForm.zip"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Country</p>
-						<DxDropDownBox
-							:data-source="countries"
-							:value.sync="creditCardForm.country"
-							:opened.sync="isDropDownOpened">
-							<DxList
-								:items="countries"
-								selection-mode="single"
-								@selection-changed="changeShippingCountry($event)">
-							</DxList>
-					</DxDropDownBox>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-75p">
-						<p class="label">Instructions</p>
-						<DxTextArea :value.sync="creditCardForm.instructions" placeholder="Type here..."/>
-					</div>
-					<div class="col-25p">
-						<p class="label">Make as Primary</p>
-						<DxSwitch 
-							@changed="creditCardForm.is_primary = !creditCardForm.is_primary"
-							:value="creditCardForm.is_primary" />
-					</div>
-					
-				</div>
-				<div class="row justify-between mt4">
-					<div class="col-25p text-center">
-						<v-btn class="text-white bg-danger">Delete</v-btn>
-					</div>
-					<div class="col-25p text-center">
-						<v-btn @click="testingMethod" class="text-white bg-success">Save</v-btn>
-					</div>
-				</div>
+			<div class="container">
+				<v-card 	
+					class="p-4">
+					<DxScrollView
+						id="paymentScrollview"
+						ref="paymentScrollviewWidget"
+						show-scrollbar="always"
+						:height="425"
+					>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Card Number</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="number"
+											filled
+											v-model="creditCardForm.card_number"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Cardholder Name</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.name_on_card"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Address</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_address"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Address 2</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_address2"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">City</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_city"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">State</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_state"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Zip Code</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_zip"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Country</div>
+									<div class="dx-field-value">
+										<v-select
+											filled
+											:items="countries"
+										></v-select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row justify-end mt-4">
+							<div class="col-25p">
+								<p class="label">Make as Primary</p>
+								<DxSwitch 
+									@changed="creditCardForm.is_primary = !creditCardForm.is_primary"
+									:value="creditCardForm.is_primary" />
+							</div>
+							<div class="col-25p text-center">
+								<DxButton
+									:width="150"
+									text="Delete"
+									type="danger"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="testingMethod">
+								</DxButton>
+							</div>
+							<div class="col-25p text-center">
+								<DxButton
+									:width="150"
+									text="Save"
+									type="success"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="testingMethod">
+								</DxButton>
+							</div>
+						</div>
+					</DxScrollView>
+				</v-card>
+			</div>
+
+				
 			</DxPopup>
 		</template>
 		<!--END Credit Card Popup-->
@@ -218,82 +287,177 @@
 				height="60%"
 				title="New Credit Card"
 			>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Credit Card Number</p>
-						<DxTextBox 
-							:mask-rules="expirationRules"
-							mask="X0/00"
-							:value.sync="creditCardForm.card_number"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Name of Cardholder</p>
-					<DxTextBox 
-						:mask-rules="phoneRules"
-						mask="+1 (X00) 000-0000"
-						:value.sync="creditCardForm.name_on_card"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Address</p>
-						<DxTextBox :value.sync="creditCardForm.address"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Address 2</p>
-						<DxTextBox :value.sync="creditCardForm.address2"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">City</p>
-						<DxTextBox :value.sync="creditCardForm.city"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">State</p>
-						<DxTextBox :value.sync="creditCardForm.state"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Zip Code</p>
-						<DxTextBox :value.sync="creditCardForm.zip"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Country</p>
-						<DxDropDownBox
-							:data-source="countries"
-							:value.sync="creditCardForm.country"
-							:opened.sync="isDropDownOpened">
-							<DxList
-								:items="countries"
-								selection-mode="single"
-								@selection-changed="changeShippingCountry($event)">
-							</DxList>
-					</DxDropDownBox>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-75p">
-						<p class="label">Instructions</p>
-						<DxTextArea :value.sync="creditCardForm.instructions" placeholder="Type here..."/>
-					</div>
-					<div class="col-25p">
-						<p class="label">Make as Primary</p>
-						<DxSwitch 
-							@changed="creditCardForm.is_primary = !creditCardForm.is_primary"
-							:value.sync="creditCardForm.is_primary" />
-					</div>
-					
-				</div>
-				<div class="row justify-between mt4">
-					<div class="col-25p text-center">
-						<v-btn class="text-white bg-danger">Delete</v-btn>
-					</div>
-					<div class="col-25p text-center">
-						<v-btn @click="testingMethod" class="text-white bg-success">Save</v-btn>
-					</div>
-				</div>
+			<div class="container">
+				<v-card 	
+					class="p-4">
+					<DxScrollView
+						id="shippingScrollview"
+						ref="shippingScrollviewWidget"
+						show-scrollbar="always"
+						:height="425"
+					>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Account Owner Name</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="number"
+											filled
+											v-model="creditCardForm.name"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Account Name</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.name_on_card"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Account Number</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="number"
+											filled
+											v-model="creditCardForm.account_number"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Routing Number</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.name_on_card"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Address</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_address"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Address 2</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_address2"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">City</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_city"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">State</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_state"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Zip Code</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="creditCardForm.biling_zip"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Country</div>
+									<div class="dx-field-value">
+										<v-select
+											filled
+											:items="countries"
+										></v-select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row justify-end mt-4">
+							<div class="col-25p">
+								<p class="label">Make as Primary</p>
+								<DxSwitch 
+									@changed="creditCardForm.is_primary = !creditCardForm.is_primary"
+									:value="creditCardForm.is_primary" />
+							</div>
+							<div class="col-25p text-center">
+								<DxButton
+									:width="150"
+									text="Delete"
+									type="danger"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="testingMethod">
+								</DxButton>
+							</div>
+							<div class="col-25p text-center">
+								<DxButton
+									:width="150"
+									text="Save"
+									type="success"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="testingMethod">
+								</DxButton>
+							</div>
+						</div>
+					</DxScrollView>
+				</v-card>
+			</div>
+
+				
 			</DxPopup>
 		</template>
 		<!--END ACH Popup-->
@@ -313,10 +477,12 @@ import { DxTextArea } from 'devextreme-vue/text-area';
 import DxDropDownBox from 'devextreme-vue/drop-down-box';
 import DxList from 'devextreme-vue/list';
 import DxSwitch from 'devextreme-vue/switch';
+import { DxScrollView } from 'devextreme-vue/scroll-view';
 
 //Mixins
 import { FormMixins } from "@/mixins/form-mixins.js"
 import { LocaleMixins } from "@/mixins/locale-mixins"
+
 
 export default {
 	name: "paymentMethodsComponent",
@@ -332,7 +498,8 @@ export default {
 		DxTextArea,
 		DxDropDownBox,
 		DxList,
-		DxSwitch
+		DxSwitch,
+		DxScrollView
 	},
 	props: {
 		formData: {
@@ -356,7 +523,38 @@ export default {
 				is_active: true,
 				is_debit: false,
 				name_on_card: null,
+				card_number: null,
 				card_number_token: null,
+				card_cvv: null,
+				billing_address: null,
+				billing_address2: null,
+				billing_city: null,
+				billing_state: null,
+				billing_zip: null,
+				card_exp_date: null,
+				card_exp_month: null,
+				card_exp_year: null,
+				phone: null,
+				last4: null,
+				card_type: null,
+				is_datacom: true,
+				is_partner: false,
+				is_merchant: false,
+				is_vendor: false
+			},
+			//ACH Form
+			achForm: {
+				datacom: null,
+				partner: null,
+				company: null,
+				user: null,
+				date_added: null,
+				is_primary: false,
+				is_active: true,
+				is_debit: false,
+				name_on_card: null,
+				account_number: null,
+				account_number_token: null,
 				card_cvv: null,
 				billing_address: null,
 				billing_address2: null,
@@ -423,6 +621,7 @@ export default {
 			
 		};
 	},
+
 	methods: {
 		testingMethod(e) {
 			console.log('e', e);

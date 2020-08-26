@@ -11,63 +11,84 @@
 			</div>
 		</div>
 		<template>
-			<v-card
-				max-width="100%"
-				class="mx-auto custom-card"
-			>
-				<v-list-item>
-					<v-list-item-avatar color="grey"></v-list-item-avatar>
-					<v-list-item-content>
-						<span class="mdi mdi-star-outline mdi-30px"></span>
-					<span class="text-datacom-darker ml-4 flex items-center" style="font-size: 20px;">Primary</span>
-					</v-list-item-content>
-				</v-list-item>
-
-				<v-card-text>
-					<div class="container">
-						<div class="row">
-							<div class="col-25p">
-								<p class="label">Name:</p>
+			<div class="small-block mb-6"> 
+				<v-card
+					class="mx-auto"
+					max-width="325"
+					:elevation="6">
+					<v-card-title class="p-5">
+						<div class="mdi mdi-star-outline mdi-30 text-datacom-darker"></div>
+						<div class="text-datacom-darker ml-4 flex items-center" style="font-size: 20px;">Primary</div>
+					</v-card-title>
+					
+					<v-card-text>
+						<div class="container">
+							<div class="row">
+								<div class="col-25p">
+									<p class="label">Name:</p>
+								</div>
+								<div class="col-75p">
+									<p class="field">Joe Smith</p>
+								</div>
 							</div>
-							<div class="col-75p">
-								<p class="field">Joe Smith</p>
+							<div class="row">
+								<div class="col-25p">
+									<p class="label">Address:</p>
+								</div>
+								<div class="col-75p">
+									<p class="field">1234 N. Main St</p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-25p">
+									<p class="label">City:</p>
+								</div>
+								<div class="col-75p">
+									<p class="field">Phoenix</p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-25p">
+									<p class="label">State:</p>
+								</div>
+								<div class="col-75p">
+									<p class="field">Arizona</p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-25p">
+									<p class="label">Phone:</p>
+								</div>
+								<div class="col-75p">
+									<p class="field">(602-451-8710)</p>
+								</div>
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-25p">
-								<p class="label">Address:</p>
+							<div class="col-6 flex justify-center">
+								<DxButton
+									:width="150"
+									text="Edit"
+									type="warning"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="testingMethod">
+								</DxButton>
 							</div>
-							<div class="col-75p">
-								<p class="field">1234 N. Main St</p>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-25p">
-								<p class="label">City:</p>
-							</div>
-							<div class="col-75p">
-								<p class="field">Phoenix</p>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-25p">
-								<p class="label">State:</p>
-							</div>
-							<div class="col-75p">
-								<p class="field">Arizona</p>
+							<div class="col-6 flex justify-center">
+								<DxButton
+									:width="150"
+									text="Delete"
+									type="danger"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="testingMethod">
+								</DxButton>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-25p">
-								<p class="label">Phone:</p>
-							</div>
-							<div class="col-75p">
-								<p class="field">(602-451-8710)</p>
-							</div>
-						</div>
-				 </div>
-				</v-card-text>
-			</v-card>
+					</v-card-text>
+				</v-card>
+			</div>
 		</template>
 
 		<template>
@@ -80,79 +101,175 @@
 				height="60%"
 				title="New Shipping Address"
 			>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Name of Person Receiving Shipment</p>
-						<DxTextBox :value.sync="shippingForm.name"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Phone of Person Receiving Shipment</p>
-					<DxTextBox 
-						:mask-rules="phoneRules"
-						mask="+1 (X00) 000-0000"
-						:value.sync="shippingForm.phone"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Address</p>
-						<DxTextBox :value.sync="shippingForm.address"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Address 2</p>
-						<DxTextBox :value.sync="shippingForm.address2"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">City</p>
-						<DxTextBox :value.sync="shippingForm.city"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">State</p>
-						<DxTextBox :value.sync="shippingForm.state"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-50p">
-						<p class="label">Zip Code</p>
-						<DxTextBox :value.sync="shippingForm.zip"/>
-					</div>
-					<div class="col-50p">
-						<p class="label">Country</p>
-						<DxDropDownBox
-							:data-source="countries"
-							:value.sync="shippingForm.country"
-							:opened.sync="isShippingDropDownOpened">
-							<DxList
-								:items="countries"
-								selection-mode="single"
-								@selection-changed="changeShippingCountry($event)">
-							</DxList>
-					</DxDropDownBox>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-75p">
-						<p class="label">Instructions</p>
-						<DxTextArea :value.sync="shippingForm.instructions" placeholder="Type here..."/>
-					</div>
-					<div class="col-25p">
-						<p class="label">Make as Primary</p>
-						<DxSwitch 
-							@changed="shippingForm.is_primary = !shippingForm.is_primary"
-							:value.sync="shippingForm.is_primary" />
-					</div>
+			<div class="container">
+				<v-card 	
+					class="p-4">
+					<DxScrollView
+						id="shippingScrollview"
+						ref="shippingScrollviewWidget"
+						show-scrollbar="always"
+						:height="425"
+					>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Name of Person Receiving Shipment</div>
+									<div class="dx-field-value">
+										<v-text-field
+											filled
+											v-model="shippingForm.name"
+										></v-text-field>
+									</div>
+								</div>
+								
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Phone of Person Receiving Shipment</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="tel"
+											filled
+											v-model="shippingForm.phone"
+										></v-text-field>
+									</div>
+								</div>
+							
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Address</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="shippingForm.address"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Address 2</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="shippingForm.address2"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">City</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="shippingForm.city"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">State</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="shippingForm.state"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Zip Code</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											filled
+											v-model="shippingForm.zip"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-50p">
+								<div class="dx-field">
+									<div class="dx-field-label">Country</div>
+									<div class="dx-field-value">
+										<v-select
+											filled
+											:items="countries"
+										></v-select>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-100p">
+								<div class="dx-field">
+									<div class="dx-field-label">Instructions</div>
+									<div class="dx-field-value">
+										<v-textarea
+											name="input-7-1"
+											label="Default style"
+											filled
+											v-model="shippingForm.instructions"
+											hint="Hint text"
+										></v-textarea>
+									</div>
+								</div>
+							</div>
+							
+							
+						</div>
+						<div class="row justify-end mt4">
+							<div class="col-25p">
+								<p class="label">Make as Primary</p>
+								<DxSwitch 
+									@changed="shippingForm.is_primary = !shippingForm.is_primary"
+									:value.sync="shippingForm.is_primary" />
+							</div>
+							<div class="col-25p text-center mx-4">
+								<DxButton
+									:width="150"
+									text="Delete"
+									type="danger"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="testingMethod">
+								</DxButton>
+							</div>
+							<div class="col-25p text-center mx-4 primary">
+								<DxButton
+									:width="150"
+									text="Save"
+									type="success"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="testingMethod">
+								</DxButton>
+								</v-btn>
+							</div>
+						</div>
+					</DxScrollView>
+
 					
-				</div>
-				<div class="row justify-between mt4">
-					<div class="col-25p text-center">
-						<v-btn class=" text-white bg-danger">Delete</v-btn>
-					</div>
-					<div class="col-25p text-center">
-						<v-btn @click="testingMethod" class=" text-white bg-success">Save</v-btn>
-					</div>
-				</div>
+				</v-card>
+			</div>
+			
+
+				
 			</DxPopup>
 		</template>
 
@@ -162,6 +279,7 @@
 
 <script>
 import { mapState } from "vuex";
+
 //DataExorccess
 import DxAccordion from "devextreme-vue/accordion";
 import DxButton from "devextreme-vue/button"
@@ -171,6 +289,7 @@ import { DxPopup } from 'devextreme-vue/popup';
 import { DxTextArea } from 'devextreme-vue/text-area';
 import DxDropDownBox from 'devextreme-vue/drop-down-box';
 import DxList from 'devextreme-vue/list';
+import { DxScrollView } from 'devextreme-vue/scroll-view';
 
 //Mixins
 import { FormMixins } from "@/mixins/form-mixins.js"
@@ -190,7 +309,8 @@ export default {
 		DxSwitch,
 		DxTextArea,
 		DxDropDownBox,
-		DxList
+		DxList,
+		DxScrollView
 
 	},
 	props: {
@@ -203,7 +323,6 @@ export default {
 		return {
 			//Popup
 			popupVisible: false,
-			isShippingDropDownOpened: false,
 			//Form
 			shippingForm: {
 				user: null,

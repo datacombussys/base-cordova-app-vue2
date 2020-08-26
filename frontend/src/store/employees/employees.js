@@ -19,12 +19,12 @@ export const Employees = {
   mutations: {
     SET_EMPLOYEE_LIST(state, payload) {
       state.employeeList = payload;
-    },
+		},
+		PUSH_NEW_EMPLOYEE_TO_LIST(state, payload) {
+			state.employeeList.push(payload)
+		},
     SET_EMPLOYEE_PROFILE(state, payload) {
       state.employeeProfile = payload;
-    },
-    PUSH_NEW_EMPLOYEE(state, payload) {
-      state.employeeList.push(payload);
     },
     SET_SELECTED_EMPLOYEE_LIST(state, payload) {
 			state.selectedEmployeeList = payload;
@@ -56,7 +56,7 @@ export const Employees = {
           let type = 'Create New Employee';
           let response = await apiRoutes.POSTItem(dispatch, rootState, payload, endpoint, type);
           console.log('POSTEmployee response', response);
-          commit('PUSH_NEW_EMPLOYEE', response.data);
+          commit('PUSH_NEW_EMPLOYEE_TO_LIST', response.data);
           return resolve(response)
 
         } catch (error) {
@@ -73,45 +73,50 @@ export const Employees = {
     },
     //GET Employee LIST
     async GETEmployeeList({commit, dispatch, rootState}, payload) {
-			let endpoint = 'employee-list/';
-      let type = 'Get Employee List';
-			let response = await apiRoutes.GETList(dispatch, rootState, payload, endpoint, type);
-			console.log('GETEmployeeList response', response);
-			commit('SET_EMPLOYEE_LIST', response.data);
-		},
-		//GET Selected Employee LIST
-		async GETSelectedEmployeeList({commit, dispatch, rootState}, payload) {
-			//filterURL is passed from the original call
-			let endpoint = 'employee-list/';
-      let type = 'Get Employee List';
-			let response = await apiRoutes.GETSelectedList(dispatch, rootState, payload, endpoint, type);
-			console.log('GETEmployeeList response', response);
-			commit('SET_SELECTED_EMPLOYEE_LIST', response.data);
+      return new Promise( async (resolve, reject) => {
+        let endpoint = 'employee-list/';
+        let type = 'Get Employee List';
+        let response = await apiRoutes.GETList(dispatch, rootState, payload, endpoint, type);
+        console.log('GETEmployeeList response', response);
+        commit('SET_EMPLOYEE_LIST', response.data);
+        return resolve();
+      })
+			
     },
-     //GET Own Employee Profile
-		 GETEmployeeOwnProfile({commit, dispatch, rootState}, payload) {
-			return new Promise( async (resolve, reject) => {
-				console.log('GETEmployeeOwnProfile payload', payload);
-				let endpoint = 'employee/?user__id=';
-				let type = 'Get Employee Profile';
-				let response = await apiRoutes.GETOwnProfile(dispatch, rootState, payload, endpoint, type);
-				console.log('GETEmployeeOwnProfile response', response);
-				commit('SET_EMPLOYEE_PROFILE', response.data[0]);
-				commit('SET_PLATFORM_INFO', response.data[0]);
-				return resolve(response.data[0]);
-			});
-    },
-    //GET Selected Profile
+    //GET Selected Profile By Id
     async GETEmployeeSelectedProfile({commit, dispatch, rootState}, payload) {
       return new Promise( async (resolve, reject) => {
         let endpoint = 'employee/';
         let type = 'Get Employee Profile';
-        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, payload, endpoint, type);
+        let response = await apiRoutes.GETProfileById(dispatch, rootState, payload, endpoint, type);
         console.log('GETEmployeeSelectedProfile response', response);
         commit('SET_SELECTED_EMPLOYEE_PROFILE', response.data);
         return resolve(response.data);
       });
     },
+
+    //GET Own Employee Profile by Id
+		 GETEmployeeProfileById({commit, dispatch, rootState}, payload) {
+			return new Promise( async (resolve, reject) => {
+				console.log('GETEmployeeProfileById payload', payload);
+				let endpoint = 'employee/?user__id=';
+				let type = 'Get Employee Profile';
+				let response = await apiRoutes.GETProfileById(dispatch, rootState, payload, endpoint, type);
+				console.log('GETEmployeeProfileById response', response);
+				commit('SET_EMPLOYEE_PROFILE', response.data[0]);
+				commit('SET_PLATFORM_INFO', response.data[0]);
+				return resolve(response.data[0]);
+			});
+    },
+		//GET Selected Employee List by FilterURL
+		async GETEmployeeFilterList({commit, dispatch, rootState}, payload) {
+			let endpoint = 'employee-list/';
+      let type = 'Get Employee List';
+			let response = await apiRoutes.GETFilterList(dispatch, rootState, payload, endpoint, type);
+			console.log('GETEmployeeList response', response);
+			commit('SET_SELECTED_EMPLOYEE_LIST', response.data);
+    },
+
     //PATCH Profile
     async PATCHEmployeeProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'employee/';
@@ -121,11 +126,11 @@ export const Employees = {
 			commit('UPDATE_EMPLOYEE_PROFILE', response.data);
     },
     //PATCHDelete PROFILE
-    async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+    async PATCHDeleteEmployeeProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'employee/';
       let type = 'Delete Employee Profile';
 			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, payload, endpoint, type);
-			console.log('PATCHEmployeeProfile response', response);
+			console.log('PATCHDeleteEmployeeProfile response', response);
 			commit('PATCH_DELETE_EMPLOYEE_PROFILE', payload);
     },
 

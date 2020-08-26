@@ -71,7 +71,7 @@ export const Datacom = {
           console.log('POSTDatacom response', response);
           if(response.status === 201) {
             console.log("Successful");
-            commit('PUSH_NEW_DATACOM', response);
+            commit('PUSH_NEW_DATACOM', response.data);
             return resolve(response)
           } else {
             return reject(response)
@@ -87,33 +87,41 @@ export const Datacom = {
     async GETDatacomList({commit, dispatch, rootState}, payload) {
 			let endpoint = 'datacom-list/';
       let type = 'Get Datacom List';
-			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
+			let response = await apiRoutes.GETList(dispatch, rootState, payload, endpoint, type);
 			console.log('GETDatacomList response', response);
 			commit('SET_DATACOM_LIST', response.data);
     },
     //GET Own Datacom Profile and Related Data
     async GETDatacomOwnProfile({commit, dispatch, rootState}, payload) {
-			let endpoint = 'datacom/';
-      let type = 'Get Datacom Profile';
-      let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
-      console.log('GETDatacomOwnProfile response', response);
-      commit('SET_OWN_DATACOM_PROFILE', response.data);
-    },
-    //GET Selected Profile
-    async GETDatacomSelectedProfile({commit, dispatch, rootState}, payload) {
       return new Promise( async (resolve, reject) => {
         let endpoint = 'datacom/';
         let type = 'Get Datacom Profile';
-        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
+        let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
         if(response.data) {
-          console.log('GETDatacomSelectedProfile response', response);
-          commit('SET_SELECTED_DATACOM_PROFILE', response.data);
+          console.log('GETDatacomProfileById response', response);
+          commit('SET_OWN_DATACOM_PROFILE', response.data);
+
           return resolve(response.data);
         } else {
           return reject(response)
-        }
-      });
-			
+        }        
+      })
+    },
+    //GET Selected Profile by Id
+    async GETDatacomProfileById({commit, dispatch, rootState}, payload) {
+      return new Promise( async (resolve, reject) => {
+        let endpoint = 'datacom/';
+        let type = 'Get Datacom Profile';
+        let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
+        if(response.data) {
+          console.log('GETDatacomProfileById response', response);
+          commit('SET_SELECTED_DATACOM_PROFILE', response.data);
+
+          return resolve(response.data);
+        } else {
+          return reject(response)
+        }        
+      })
     },
     //PATCH Profile
     async PATCHDatacomProfile({commit, dispatch, rootState}, payload) {
@@ -124,11 +132,11 @@ export const Datacom = {
 			commit('UPDATE_DATACOM_PROFILE', response.data);
     },
     //PATCHDelete PROFILE
-    async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+    async PATCHDeleteDatacomProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'datacom/';
       let type = 'Delete Datacom Profile';
 			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
-			console.log('PATCHDatacomProfile response', response);
+			console.log('PATCHDeleteDatacomProfile response', response);
 			commit('PATCH_DELETE_DATACOM_PROFILE', payload);
     },
 

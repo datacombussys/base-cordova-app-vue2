@@ -61,7 +61,7 @@ export const Vendors = {
     async GETVendorOwnProfile({commit, dispatch, rootState}, payload) {
       let endpoint = 'vendor/';
       let type = 'Get Vendor Profile';
-      let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
+      let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
       console.log('GETVendorOwnProfile response', response);
       commit('SET_OWN_VENDOR_PROFILE', response.data);
     },
@@ -85,11 +85,11 @@ export const Vendors = {
       commit('UPDATE_VENDOR_PROFILE', response.data);
     },
     //PATCHDelete PROFILE
-    async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+    async PATCHDeleteVendorProfile({commit, dispatch, rootState}, payload) {
       let endpoint = 'vendor/';
       let type = 'Delete Vendor Profile';
       let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
-      console.log('PATCHVendorProfile response', response);
+      console.log('PATCHDeleteVendorProfile response', response);
       commit('PATCH_DELETE_VENDOR_PROFILE', payload);
     },
 

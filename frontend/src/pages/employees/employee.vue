@@ -5,54 +5,86 @@
 			<!-- Left Column -->
 			<div class="left-col">
 				<div class="small-block">
-					<v-card class="rounded-md">
-						<v-card-title>
-								<div class="title">Joey Cipoletti</div>
-								<div class="subtitle">Employee</div>
+					<template>
+						<v-card
+							max-width="100%"
+							class="mx-auto custom-card"
+						>
+							<v-card-title>
+								<div class="title">{{ employeeForm.first_name }} {{ employeeForm.last_name }}</div>
+								<div class="row justify-between">
+									<div class="col-50">
+										<div class="subtitle">Employee</div>
+									</div>
+									<div class="col-50">
+										<v-menu>
+											<template v-slot:activator="{ on, attrs }">
+												<v-btn 
+													small 
+													icon
+													v-bind="attrs"
+													v-on="on">
+													<v-icon>mdi-dots-vertical</v-icon>
+												</v-btn>
+											</template>
 
-							<v-spacer></v-spacer>
-
-								<v-menu bottom left>
-									<template v-slot:activator="{ on, attrs }">
-										<v-btn
-											dark
-											icon
-											v-bind="attrs"
-											v-on="on"
-										>
-										<p>Icon here</p>
-											<v-icon>mdi-dots-vertical</v-icon>
-										</v-btn>
-									</template>
-
-									<v-list>
-										<v-list-item
-											v-for="(item, i) in profileMenu"
-											:key="i"
-											@click=""
-										>
-											<v-list-item-title>{{ item.title }}</v-list-item-title>
-										</v-list-item>
-									</v-list>
-								</v-menu>
-						</v-card-title>
-
-						<v-card-text class="flex flex-col w-full">
-							<div>
-								<img src="@/static/BusinessLogo170x170.png"
-									style="width:170px;height:170px;"
-									alt="Please load company profile">
-							</div>
-							<div class="mt-4">
-								<div class="mt-4 business-barcode">
-									D-13343645
+											<v-list>
+												<v-list-item
+													v-for="(item, i) in profileMenu"
+													:key="i"
+													@click="clickProfileMenu"
+												>
+													<v-list-item-title>{{ item.title }}</v-list-item-title>
+												</v-list-item>
+											</v-list>
+										</v-menu>
+										<profileImageComponent 
+										ref="profileImageComponent"
+										:openImageSheet="openImageSheet"
+										@closeSheet="closeSheet"
+										:profileImageSettings="profileImageSettings"
+										:profileData="employeeForm" />
+									</div>
 								</div>
-								<p class="text-center">D-13343645</p>
-							</div>									
-						</v-card-text>
-					</v-card>
-				</div>
+							</v-card-title>
 
+							<v-card-text>
+								<div v-if="!employeeForm.id" class="flex justify-center items-center">
+									<img
+										class="mt-3 disabled"
+										src="@/static/BusinessLogo170x170.png"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+								</div>
+								<div v-else class="flex justify-center items-center">
+									<img class="mt-3" v-if="employeeForm.profile_img" 
+										:src="employeeForm.profile_img"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+									<img class="mt-3" v-else src="@/static/BusinessLogo170x170.png"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+								</div>
+
+								<div class="mt-4" v-if="employeeForm.barcode_obj">
+									<div class="mt-4 business-barcode text-center">
+										{{ employeeForm.barcode_obj.barcode_number }}
+									</div>
+									<p class="text-center">{{ employeeForm.barcode_obj.barcode_number }}</p>
+								</div>	
+								<div class="mt-4" v-else>
+									<div class="mt-4 business-barcode text-center">
+										1234567890
+									</div>
+									<p class="text-center">1234567890</p>
+								</div>
+							</v-card-text>
+						</v-card>
+					</template>
+				</div>
+				<!-- End Profile Card -->
+
+				<!-- Button Block -->
 				<div class="small-block">
 					<v-card>
 						<v-card-text>
@@ -87,112 +119,109 @@
 										width="100%"
 										type="warning"
 										text="Test"
-										@click="testMethod" />
+										@click="testMethod"
+										:focusStateEnabled="false" />
 								</div>
 							</div>
-							
-
-
 						</v-card-text>
 					</v-card>
-					
 				</div>
-		
-				
+
 			</div>
 			<div class="right-col">
+				<!-- Header Card -->
+				<div class="small-block">
+					<v-card class="rounded-md">
+						<v-card-title>
+								<div class="title">Quicklinks</div>
+						</v-card-title>
 
-
-						<!-- Header Card -->
-						<div class="small-block">
-							<v-card class="rounded-md">
-								<v-card-title>
-										<div class="title">Quicklinks</div>
-								</v-card-title>
-
-								<v-card-text class="flex w-full spacing">
-									<div class="m-4">
-										<div class="mdi mdi-account-lock mdi-60 text-datacom mb-3"></div>
-										<div class="mt-4 text-center">Permissions</div>
-									</div>
-									<div class="m-4">
-										<div class="mdi mdi-account-cash-outline mdi-60 text-datacom mb-3"></div>
-										<div class="mt-4 text-center">Subscription</div>
-									</div>
-									<div class="m-4">
-										<div class="mdi mdi-cogs mdi-60 text-datacom mb-3"></div>
-										<div class="mt-4 text-center">Setup / Admin</div>
-									</div>
-									<div class="m-4">
-										<router-link to="/help-desk">
-											<div class="mdi mdi-lifebuoy mdi-60 text-datacom mb-3"></div>
-											<div class="mt-4 text-center">Support</div>
-										</router-link>
-									</div>
-										
-								</v-card-text>
-							</v-card>
-						</div>
-						
-						<!-- Devextreme Tabs -->
-						<template>
-							<div class="small-block">
-								<v-card class="rounded-md">
-									
-									<v-card-text class="flex w-full spacing">
-										<div id="tabContainer">
-											<DxTabPanel :show-nav-buttons="true">
-												<DxItem title="Parent" icon="mdi mdi-domain">
-													<template #default>
-														<parentSelectionComponent 
-														:formData="employeeForm" 
-														:accountSettings="accountSettings"
-														:moduleInfo="moduleInfo"></parentSelectionComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Profile" icon="mdi mdi-account-box">
-													<template #default>
-														<employeeProfileComponent 
-															:formData="employeeForm" 
-															:accountSettings="accountSettings">
-														</employeeProfileComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Human Resources" icon="mdi mdi-lan">
-													<template #default>
-														<employeeHumanResourcesComponent :formData="employeeForm" :accountSettings="accountSettings"></employeeHumanResourcesComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Benefits" icon="mdi mdi-hand-heart">
-													<template #default>
-														<employeeBenefitsComponent :formData="employeeForm" :accountSettings="accountSettings"></employeeBenefitsComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Documents" icon="mdi mdi-file-multiple-outline">
-													<template #default>
-														<employeeDocumentsComponent :formData="employeeForm" :accountSettings="accountSettings"></employeeDocumentsComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Attendance" icon="mdi mdi-account-clock">
-													<template #default>
-														<attendanceRecordComponent :formData="employeeForm"></attendanceRecordComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Database" icon="mdi mdi-database">
-													<template #default>
-														<databaseComponent 
-														:databaseSettings="databaseSettings"
-														:databaseData="databaseData"
-														></databaseComponent>
-													</template>
-												</DxItem>
-											</DxTabPanel>
-										</div>
-
-									</v-card-text>
-								</v-card>
+						<v-card-text class="flex w-full spacing mt-4">
+							<div class="m-4">
+								<div class="mdi mdi-account-lock mdi-60 text-datacom mb-3"></div>
+								<div class="mt-4 text-center">Permissions</div>
 							</div>
-						</template>
+							<div class="m-4">
+								<div class="mdi mdi-account-cash-outline mdi-60 text-datacom mb-3"></div>
+								<div class="mt-4 text-center">Subscription</div>
+							</div>
+							<div class="m-4">
+								<div class="mdi mdi-cogs mdi-60 text-datacom mb-3"></div>
+								<div class="mt-4 text-center">Setup / Admin</div>
+							</div>
+							<div class="m-4">
+								<router-link to="/help-desk">
+									<div class="mdi mdi-lifebuoy mdi-60 text-datacom mb-3"></div>
+									<div class="mt-4 text-center">Support</div>
+								</router-link>
+							</div>
+								
+						</v-card-text>
+					</v-card>
+				</div>
+				
+				<!-- Devextreme Tabs -->
+				<template>
+					<div class="small-block">
+						<v-card class="rounded-md">
+							
+							<v-card-text class="flex w-full spacing">
+								<div id="tabContainer">
+									<DxTabPanel :show-nav-buttons="true" :selected-index.sync="selectedTabIndex">
+										<DxItem title="Parent" icon="mdi mdi-domain">
+											<template #default>
+												<parentSelectionComponent 
+													:formData="employeeForm" 
+													:accountSettings="accountSettings"
+													:moduleInfo="moduleInfo">
+												</parentSelectionComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Profile" icon="mdi mdi-account-box">
+											<template #default>
+												<employeeProfileComponent 
+													:formData="employeeForm" 
+													:accountSettings="accountSettings">
+												</employeeProfileComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Human Resources" icon="mdi mdi-lan">
+											<template #default>
+												<employeeHumanResourcesComponent :formData="employeeForm" :accountSettings="accountSettings"></employeeHumanResourcesComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Benefits" icon="mdi mdi-hand-heart">
+											<template #default>
+												<employeeBenefitsComponent :formData="employeeForm" :accountSettings="accountSettings"></employeeBenefitsComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Documents" icon="mdi mdi-file-multiple-outline">
+											<template #default>
+												<employeeDocumentsComponent :formData="employeeForm" :accountSettings="accountSettings"></employeeDocumentsComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Attendance" icon="mdi mdi-account-clock">
+											<template #default>
+												<attendanceRecordComponent :formData="employeeForm"></attendanceRecordComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Database" icon="mdi mdi-database">
+											<template #default>
+												<databaseComponent 
+													:databaseSettings="databaseSettings"
+													:databaseData="databaseData"
+													@editProfile="editProfileFromChild"
+													@deleteProfile="deleteProfileFromChild"
+												></databaseComponent>
+											</template>
+										</DxItem>
+									</DxTabPanel>
+								</div>
+
+							</v-card-text>
+						</v-card>
+					</div>
+				</template>
 
 			</div>
 			<!-- Dx Scroller -->
@@ -221,7 +250,6 @@ import DxTabPanel, { DxItem } from 'devextreme-vue/tab-panel';
 
 
 //Components
-// import syncfusionTabs from "@/components/business/syncfusion-tabs/tabs-component"
 import employeeProfileComponent from "@/components/employees/profile-component"
 import shippingLocationsComponent from "@/components/business/new-docs/shipping-component"
 import paymentMethodsComponent from "@/components/business/new-docs/payment-component"
@@ -231,6 +259,7 @@ import employeeHumanResourcesComponent from "@/components/employees/human-resour
 import employeeBenefitsComponent from "@/components/employees/benefits-component"
 import employeeDocumentsComponent from "@/components/employees/documents-component"
 import attendanceRecordComponent from "@/components/employees/attendance-record-component"
+import profileImageComponent from "@/components/universal/new/profile-image-component"
 
 export default {
   name: "employeeProfile",
@@ -247,6 +276,7 @@ export default {
 		shippingLocationsComponent,
 		paymentMethodsComponent,
 		databaseComponent,
+		profileImageComponent,
 		DxScrollView,
 		DxButton,
 		DxDropDownButton,
@@ -256,7 +286,6 @@ export default {
 		alert,
 		DxItem,
 		DxTabPanel,
-
 
 	},
 
@@ -300,13 +329,14 @@ export default {
 				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
 			profileMenu: [
-        { title: 'Profile Image' },
+        { title: 'Upload Image' },
+				{ title: 'Take Photo' }
       ],
 			accountSettings: {
 				showPasswordReset: false,
-				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
+				type: "employee",
 				accountPlatform: {
 					company_name: null,
 					is_datacom: false,
@@ -319,17 +349,19 @@ export default {
 			databaseSettings: {
 				title: "Employee Database",
 				header1: "Id",
-				header2: "Name",
-				header3: "Number",
+				header2: "Image",
+				header3: "Name",
 				header4: "Position",
 				header5: "Mobile",
-				header6: "Status",
+				header6: "Number",
+				header7: "Status",
 				col1: "id",
-				col2: "user_obj.full_name",
-				col3: "employee_number",
+				col2: "profile_img",
+				col3: "user_obj.full_name",
 				col4: "position",
 				col5: "user_obj.mobile_phone",
-				col6: "user_obj.is_active"
+				col6: "employee_number",
+				col7: "user_obj.is_active"
 			},
 			databaseData: {
 				tableId: "employeeDbTable",
@@ -340,6 +372,7 @@ export default {
 			hideUpdateItemButtons: false,
 			hideCreateItem: false,
 			selectedTabIndex: 0,
+			openImageSheet: false,
 
 			//Employee / User Form
 			employeeForm: {
@@ -404,7 +437,8 @@ export default {
 					is_vendor: false,
 					is_sales_rep: false,
 					is_warehouse_ee: false,
-					barcode: {},
+					barcode: null,
+					barcode_obj: null,
 					groups: [],
 					permissions: [],
 				}
@@ -418,15 +452,26 @@ export default {
   methods: {
     testMethod(e) {
 			console.log('this.employeeForm.user.password', this.employeeForm.user.password)
-
+			console.log('JQMIGRATE: Migrate is installed, version 3.0.0')
 
 		},
-		testMethodMain(e) {
-			console.log("testMethodMain e", e);
-			console.log("Test Button Clicked");
+		closeSheet(e) {
+			console.log("closeSheet e", e)
+			this.openImageSheet = e
 		},
-		editImage() {
-
+		clickProfileMenu(e) {
+			console.log("clickProfileMenu e", e)
+			if(e.target.innerText === 'Upload Image') {
+				this.openImageSheet = true
+			}
+			if(e.target.innerText === 'Take Photo') {
+				console.log("Open Camera for photo")
+				//Open Sheet
+				this.openImageSheet = true
+				//Execute Camera
+				this.$refs.profileImageComponent.captureImage()
+				this.$refs.profileImageComponent.setMobile()
+			}
 		},
 		showEditProfile() {
 			this.accountSettings.editProfile = true
@@ -465,10 +510,20 @@ export default {
 			this.hideCreateItem = false
 			this.accountSettings.hideSaveItem = true
 			this.selectedTabIndex = 0
+			this.isLoadPanelVisible = false
 		},
 		createEmployeeChoices(e) {
 			console.log('e', e)
-			//Find out if tryin to crete nre company and edit or create nrew company and NEW
+			if(e.itemData === "Create and New") {
+				this.createEmployeeAndNew()
+			} else if(e.itemData === "Create and Edit") {
+				this.createEmployeeAndEdit()
+			} else if(e.itemData === "Create and Close") {
+				this.createEmployeeAndClose()
+			}
+		},
+		refreshEmployees() {
+			this.$store.dispatch("GETEmployeeList");
 		},
 		//Create Employee and Edit Current Employee
 		async createEmployeeAndEdit() {
@@ -502,8 +557,8 @@ export default {
 					this.resetViewtoHome()
 				}
 			} catch(error) {
-				this.isLoadPanelVisible = false;
-				throw error
+				this.submissionError()
+				this.isLoadPanelVisible = false
 			}
 		},
 		createUser() {
@@ -538,10 +593,8 @@ export default {
 				}
 				
 				}).catch((error) => {
-					this.isLoadPanelVisible = false;
-					alert("<p>The submission had errors. Please try again.</p>", "Error");
 					console.log("Caught createUser Promise error:", error);
-					return error;
+					return reject(error);
 			});
 
 		},
@@ -594,7 +647,7 @@ export default {
 					console.error('error.message', error.message)
 					console.error('error.response', error.response)
 					error.type = "Create Employee";
-					this.$store.dispatch("updateNotification", error);
+					this.$store.dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 			}).catch((error) => {
@@ -623,54 +676,26 @@ export default {
 			}
 			return
 		},
-		refreshEmployees() {
-			this.$store.dispatch("GETEmployeeList");
-		},
-		// Populate Fields for editing in browser
-		async showUserData(employeeID) {
-			console.log("showUserData employeeID", employeeID);
-			this.accountSettings.showPasswordReset = true;
-			this.accountSettings.activeTab = 0;
-			//Get User ID and object and map to fields
-			var emloyeeListID = null;
-			if (this.checkedRows.length != 0) {
-				var rowID = this.checkedRows.slice(-1)[0].id;
-				var eeIndex = this.Employees.employeeList.findIndex((elem) => elem.id === rowID);
-				console.log("editUsers eeIndex", eeIndex);
-				emloyeeListID = eeIndex;
-				console.log("IF emloyeeListID", emloyeeListID);
-			} else {
-				var findIndexPos = this.Employees.employeeList.findIndex((elem) => {
-					return elem.id === employeeID;
-				});
-				emloyeeListID = findIndexPos;
-				console.log("Else emloyeeListID", emloyeeListID);
-				console.log("Else this.Employees.employeeList", this.Employees.employeeList);
-			}
-			//Is there a list of companies to lookup?
-			if (this.Employees.employeeList.length === 0) {
-				return "There are no items available";
-			}
-			if (this.Employees.employeeList.length != 0) {
-				console.log("this.Employees.employeeList", this.Employees.employeeList);
-				console.log("Then employeeListID", emloyeeListID);
-				var employeeObj = this.Employees.employeeList[emloyeeListID];
-				console.log("showUserData employeeObj", employeeObj);
-				this.employeeForm = employeeObj;
+		async editEmployeeById(employeeID) {
+			console.log("editEmployeeById employeeID", employeeID)
+			this.accountSettings.showPasswordReset = true
+			this.selectedTabIndex = 0
+			this.clearFormData()
+
+			try {
+				// Get User ID and object and map to fields from database table
+				var getSelectedEmployeeObj = await this.$store.dispatch("GETEmployeeSelectedProfile", {id: employeeID});
+				console.group('getSelectedEmployeeObj', getSelectedEmployeeObj);
+
 				for (let key in this.employeeForm) {
-					this.employeeForm[key] = employeeObj[key];
+					this.employeeForm[key] = this.GET_SELECTED_EMPLOYEE_PROFILE[key];
 				}
-				//Parse the User SubLevel Info for User Data
-				for (let attribute in this.employeeForm.user) {
-					this.employeeForm.user[attribute] = employeeObj.user[attribute];
-				}
-				this.employeeForm.company = employeeObj.company;
 
-
-				//Populate User Bio Field
 				//Switch View to Edit Mode
 				this.resetViewtoHome();
 				this.showEditProfile();
+			} catch (error) {
+				console.error("Promise error", error)
 			}
 		},
 		//Make the PUT request to update datebase instance from updated form Data
@@ -710,8 +735,8 @@ export default {
 
 					return resolve("ClearUserForms Promise Returned");
 				} catch (error) {
-					throw error
 					console.log("Caught error", error);
+					return reject(error);
 				}
 			});
 		},
@@ -733,46 +758,43 @@ export default {
 			this.employeeForm.user = user;
 		},
 		//Set User item to inactive instead of deleting instance
-		async deleteEmployee() {
-			// Is item Selected in table?
-			if (this.checkedRows[0].id) {
-				var rowID = this.checkedRows[0].id;
-				var findIndexID = this.Users.userList.findIndex((elem) => {
-					return elem.id == rowID;
+		async deleteEmployee(id) {
+			console.log('deleteEmployee id', id);
+			try {
+				let eeObject = this.GET_EMPLOYEE_LIST.find(elem => elem.id === id)
+				console.log('deleteEmployee eeObject', eeObject);
+				eeObject.user.is_active = false;
+
+				await this.$store.dispatch("PATCHDeleteUserProfile", eeObject.user).then((response) => {
+					console.log("response from deleteEmployee method", response);
+					this.clearFormData();
 				});
-				console.log("deleteEmployee findIndexID", findIndexID);
-				if (this.Users.userList.length === 0) {
-					this.$store.commit("updateNotification", "There are no items available");
-				}
-				if (this.Users.userList.length === 1) {
-					let UserItem = this.Users.userList[0];
-					console.log("deleteEmployee len===1 UserItem", UserItem);
-					for (let key in this.employeeForm) {
-						this.employeeForm[key] = UserItem[key];
-					}
-					this.employeeForm.is_active = false;
-					await this.$store.dispatch("deleteEmployee", this.employeeForm);
-				}
-				if (this.Users.userList.length >= 2) {
-					// Map function to assign the varibles to the form variables
-					let UserItem = this.Users.userList[findIndexID];
-					console.log("deleteEmployee len>=2 UserItem", UserItem);
-					for (let key in this.employeeForm) {
-						this.employeeForm[key] = UserItem[key];
-					}
-					this.employeeForm.is_active = false;
-					await this.$store.dispatch("deleteEmployee", this.employeeForm);
-				}
-			} else {
-				this.$store.commit("updateNotification", "You must select an item first");
+
+			} catch(error) {
+				console.error("Delete error", error)
 			}
 			await this.clearUserFormData();
+			this.resetViewtoHome();
 		},
+		//Capture Edit by Child DataGrid Component
+		editProfileFromChild(e) {
+			console.log('editProfileFromChild e', e);
+			this.editEmployeeById(e)
+		},
+		deleteProfileFromChild(e) {
+			console.log('deleteProfileFromChild e', e);
+			this.deleteEmployee(e)
+		},
+		submissionError() {
+			this.$nextTick(function() {
+				alert("<p>The submission had errors. Please try again.</p>", "Error")
+			})
+		}
 
   },
   computed: {
-		...mapState(["Auth", "Users", "Merchants", "Datacom", "Partners", "Vendors"]),
-		...mapGetters(["GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST", "GET_SALES_OFFICE_EMPLOYEE_IDS", "GET_SELECTED_EMPLOYEE_LIST"]),
+		...mapState(["Auth", "Users", "Merchants", "Datacom", "Partners", "Vendors", "Employees"]),
+		...mapGetters(["GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST", "GET_SALES_OFFICE_EMPLOYEE_IDS", "GET_EMPLOYEE_LIST", "GET_SELECTED_EMPLOYEE_PROFILE"]),
 		...mapGetters(["GET_USER_ERRORS_LIST", "GET_USER_ERROR_HANDLE", "GET_EMPLOYEE_ERRORS_LIST", "GET_EMPLOYEE_ERROR_HANDLE"]),
 		canSubmitUserForm() {
 			if (this.Auth.isAuthenticated) {
@@ -805,23 +827,11 @@ export default {
 
   },
   mounted() {
-		window.addEventListener('resize', () => {
-      this.windowWidth = window.innerWidth
-      console.log("Window width is:", this.windowWidth);
-		})
-		window.addEventListener('resize', () => {
-      this.windowHeight = window.innerHeight
-      console.log("Window height is:", this.windowHeight);
-		})
-
-
-
-		
 		
     
   },
   created() {
-		this.databaseData.list = this.GET_SELECTED_EMPLOYEE_LIST;
+		this.databaseData.list = this.GET_EMPLOYEE_LIST;
   },
 
     

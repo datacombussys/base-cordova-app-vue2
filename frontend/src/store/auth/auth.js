@@ -1,6 +1,5 @@
 import router from "@/routes"
 import axios from "axios"
-import Web from "@/js/web-routes"
 
 export const Auth = {
 	namespace: true,
@@ -18,6 +17,12 @@ export const Auth = {
 		webdomain: '',
 	},
 	mutations: {
+		SET_WEBSQL_USER(state, payload) {
+			console.log("SET_WEBSQL_USER", payload);
+			state.user = payload;
+			state.isAuthenticated = true;
+			axios.defaults.headers.common['Authorization'] = "Token " + payload.token;
+		},
 		SET_INDEXEDDB_USER(state, payload) {
 			console.log("SET_INDEXEDDB_USER", payload);
 			state.user = payload;
@@ -59,7 +64,7 @@ export const Auth = {
 			return new Promise(async (resolve, reject) => {
 				console.log('SET_PLATFORM_INFO payload.employeeProfile', payload);
         if(payload.datacom != null) {
-					let platform = {id: payload.datacom, platform: "datacom", url: "?datacom__id=" + payload.datacom};
+					let platform = {id: payload.datacom, platform: "datacom", filterURL: "?datacom__id=" + payload.datacom};
 					state.platformInfo = platform;
 					state.authLevel = 1;
 					state.userCompanyName = payload.datacom.dba_name;
@@ -67,7 +72,7 @@ export const Auth = {
 					return resolve();
         }
         else if(payload.partner != null) {
-					let platform = {id: payload.partner, platform: "partner", url: "?partner__id=" + payload.partner};
+					let platform = {id: payload.partner, platform: "partner", filterURL: "?partner__id=" + payload.partner};
 					state.platformInfo = platform;
 					state.authLevel = 2;
 					state.userCompanyParent = payload.partner.datacom.dba_name;
@@ -76,7 +81,7 @@ export const Auth = {
 					return resolve();
         }
         else if(payload.company != null) {
-					let platform = {id: payload.company, platform: "company", url: "?company__id=" + payload.company};
+					let platform = {id: payload.company, platform: "company", filterURL: "?company__id=" + payload.company};
 					state.platformInfo = platform;
 					state.authLevel = 3;
 					state.userCompanyParent = payload.company.partner.dba_name || payload.company.datacom.dba_name;
@@ -85,7 +90,7 @@ export const Auth = {
 					return resolve();
         }
         else if(payload.vendor != null) {
-					let platform = {id: payload.vendor, platform: "vendor", url: "?vendor__id=" + payload.vendor};
+					let platform = {id: payload.vendor, platform: "vendor", filterURL: "?vendor__id=" + payload.vendor};
 					state.platformInfo = platform;
 					state.authLevel = 4;
 					state.userCompanyParent = payload.vendor.company.dba_name || payload.vendor.partner.dba_name || payload.vendor.datacom.dba_name;
@@ -118,9 +123,11 @@ export const Auth = {
 			const user = await dispatch('getIndexedDb');
 			console.log('preFetchProfile from IndexedDb user', user);
 			if(user) {
-				let EEUSerID = await dispatch('GETEmployeeOwnProfile', user);
+				let EEUSerID = await dispatch('GETEmployeeProfileById', user);
 				console.log("EEUSerID", EEUSerID);
 				commit("SET_LOGIN_PROFILE", EEUSerID.user_obj);
+
+				await dispatch('setDomain');
 				await dispatch('loadAllData');
 				await dispatch('loadCompanySpecificData');
 				await dispatch('loadUserSpecificData');
@@ -143,19 +150,22 @@ export const Auth = {
 		async signIn({ dispatch, commit, state, rootState }, credentials) {
 			console.log("credentials", credentials);
 	
-			axios.post(Web.server + "/django/login/", credentials).then(async response => {
+			axios.post("/django/login/", credentials).then(async response => {
 				console.log("response", response);
 				if(response.status === 200) {
-					rootState.Notifications.isLoadPanelVisible= true
+					rootState.Notifications.isLoadPanelVisible = true
 					console.log("Login response.data", response.data);
+
 					// commit("SET_LOGIN_DETAILS", response.data);	
 					response.data['signin'] = true;
+					// let webDBUser = await dispatch('setWebDb', response.data);
 					let indexedUser = await dispatch('setIndexedDb', response.data);
 					console.log("indexedUser", indexedUser);
-					let EEUSerID = await dispatch('GETEmployeeOwnProfile', {id: response.data.id});
+					let EEUSerID = await dispatch('GETEmployeeProfileById', {id: response.data.id});
 					console.log("EEUSerID", EEUSerID);
 					commit("SET_LOGIN_PROFILE", EEUSerID.data);
-
+					
+					await dispatch('setDomain');
 					await dispatch('loadAllData');
 					await dispatch('loadCompanySpecificData');
 					await dispatch('loadUserSpecificData');
@@ -176,8 +186,10 @@ export const Auth = {
 			}).catch(error => {
 				rootState.Notifications.isLoadPanelVisible = false
 				console.log("Error Logging In", error);
+				console.log("Error Logging In", error.response);
+				console.log("Error Logging In", error.message);
 				error.type = "Login Unsuccessful";
-				dispatch("updateNotification", error);
+				dispatch("updateNotification", error.response);
 			});
 		},
 
@@ -190,7 +202,7 @@ export const Auth = {
 					commit("SET_LOGIN_PROFILE", response[0].user);
 					// commit("SET_LOGIN_DETAILS", response.data);
 					console.log("Login response.data", response.data);
-					dispatch('GETEmployeeOwnProfile', response.data.user_id);
+					dispatch('GETEmployeeProfileById', response.data.user_id);
 					//Set Notification
 					response.type = "User Logged In";
 					dispatch('updateNotification', response);
@@ -205,7 +217,7 @@ export const Auth = {
 					commit('SET_EMPLOYEE_LIST');
 				}).catch(error => {
 					error.type = "Login Unsuccessful";
-					dispatch("updateNotification", error);
+					dispatch("updateNotification", error.response);
 				});
 			},
 			//Manager Barcode Auth Approval
@@ -222,7 +234,7 @@ export const Auth = {
 
 					}).catch(error => {
 						error.type = "Manager Approval";
-						dispatch("updateNotification", error);
+						dispatch("updateNotification", error.response);
 
 						return resolve(error);
 					});
@@ -249,8 +261,39 @@ export const Auth = {
 				})
 				.catch(error => {
 					error.type = "Password Reset";
-					dispatch("updateNotification", error);
+					dispatch("updateNotification", error.response);
 				});
+			},
+			//************************************************  Set WebSQL   *********************************************************/
+			setWebDb(userData) {
+				return new Promise((resolve, reject) => {
+					console.log("setWebDb userData", userData);
+					var db = openDatabase('databoxx', '1.0', 'Databoxx SQL', 2 * 1024 * 1024); 
+
+					let setUser = db.transaction((tx) => { 
+						console.log("setUser executed", userData)  
+						tx.executeSql('CREATE TABLE IF NOT EXISTS USERS (id unique, log)'); 
+						tx.executeSql('INSERT INTO USERS (id,email,employee,signin,token) VALUES (?, ?, ?, ?, ?'), [userData.id, userData.email, userData.employee, userData.signin, userData.token]; 
+					});
+
+
+					db.transaction((tx) => { 
+						console.log("findUser executed", userData)  
+            tx.executeSql('SELECT * FROM USERS', [], (tx, results) => { 
+               var len = results.rows.length, i; 
+							 console.log("There are " + len + "rows")
+							 if(len === 0) {
+								setUser()
+							 }
+      
+               for (i = 0; i < len; i++) { 
+								console.log("User Data is: " + results.rows.item(i))
+								commit("SET_WEBSQL_USER",results.rows.item(i))
+               } 
+            }, null); 
+         	});
+
+				})
 			},
 			//************************************************  Set IndexedDB Storage   *********************************************************/
 			setIndexedDb({state, commit}, payload) {
@@ -492,20 +535,20 @@ export const Auth = {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
 				return new Promise(async(resolve, reject) => {
 					console.log('loadCompanyData rootState', rootState);
-					await dispatch("GETInvCategories", state.platformInfo);
-					dispatch("GETInventoryList", state.platformInfo);
-					dispatch("GETEmployeeList", state.platformInfo);
-					dispatch("GETSalesOfficeList", state.platformInfo);
-					dispatch("GETWarehouseList", state.platformInfo);
-					dispatch("GETCustomerList", state.platformInfo);
-					dispatch("getEmployeePositions", state.platformInfo);
-					dispatch("getCompanyDepartments", state.platformInfo);
-					dispatch("getHolidays", state.platformInfo);
-					dispatch("GETBusinessHours", state.platformInfo);
-					dispatch("GETAttendanceSettings", state.platformInfo);
-					dispatch("getCompanyShifts", state.platformInfo);
-					dispatch("GETSalesTaxes", state.platformInfo);
-					dispatch("GETGeneralSettings", state.platformInfo);
+					await dispatch("GETInvCategoriesByFilter", state.platformInfo);
+					await dispatch("GETInventoryList", state.platformInfo);
+					await dispatch("GETEmployeeList", state.platformInfo);
+					await dispatch("GETSalesOfficeList", state.platformInfo);
+					await dispatch("GETWarehouseList", state.platformInfo);
+					await dispatch("GETCustomerList", state.platformInfo);
+					await dispatch("GETPositionList", state.platformInfo);
+					await dispatch("GETDepartmentList", state.platformInfo);
+					await dispatch("GETHolidays", state.platformInfo);
+					await dispatch("GETBusinessHours", state.platformInfo);
+					await dispatch("GETAttendanceSettings", state.platformInfo);
+					await dispatch("GETCompanyShifts", state.platformInfo);
+					await dispatch("GETSalesTaxList", state.platformInfo);
+					await dispatch("GETGeneralSettings", state.platformInfo);
 					
 
 					//Not Completed Yet
@@ -527,7 +570,7 @@ export const Auth = {
 					console.log('loadUserata rootState', rootState);
 					dispatch("getCreditCardList", state.platformInfo);
 					dispatch("getACHAccountList", state.platformInfo);
-					dispatch("getNewShippingList", state.platformInfo);
+					dispatch("GETShippingList", state.platformInfo);
 					dispatch("getNotifications", state.platformInfo);
 
 					return resolve();

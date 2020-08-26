@@ -20,8 +20,7 @@ from rest_framework import filters, exceptions, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import (UserSerializer, 
-                        LoginSerializer, 
-                        UserBarcodeSerializer,  
+                        LoginSerializer,   
                         AlternativeLoginSerializer,
                         ChangePasswordSerializer,
                         ManagerApprovalBarcodeSerializer, 
@@ -33,7 +32,7 @@ from .serializers import (UserSerializer,
                         UserListSerializer, 
                         UsersGroupsSerializer, )
 from .permissions import AdminSuperAdmin
-from .models import User, UserBarcode, UserPermission, UserGroup
+from .models import User, UserPermission, UserGroup
 
 
 class ContentTypeViewSet(viewsets.ModelViewSet):
@@ -155,15 +154,6 @@ class ManagerBarcodeApprovalAPIView(APIView):
             'approved': "true",
         })
 
-class UserBarcodeViewSet(viewsets.ModelViewSet):
-    """User Barcode Endpoints. All of them"""
-    serializer_class = UserBarcodeSerializer
-    queryset = UserBarcode.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['user__id', 'id', 'barcode_type', 'barcode_number', 'user__employee__datacom__id', 'user__employee__partner__id', 'user__employee__company__id', 'user__employee__vendor__id']
-    search_fields = ['user__Id', 'id', 'barcode_type', 'barcode_number', 'user__employee__datacom__id', 'user__employee__partner__id', 'user__employee__company__id', 'user__employee__vendor__id']
-    ordering_fields = '__all__'
-    ordering = ['id']
 
 class UserLogOutAPIView(APIView):
     """Handles removing user auth tokens"""

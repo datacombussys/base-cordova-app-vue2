@@ -158,18 +158,18 @@
 }
 
 //****************************************** Drawer Menu **************************************//
-
+.side-navigation-menu .menu-container .dx-treeview .dx-treeview-node[aria-level="1"] {
+  font-weight: 500;
+  border-bottom: 1px solid #e0e0e0;
+}
 .menu-container {
   .dx-widget {
     .dx-scrollable {
       .dx-scrollable-wrapper {
         .dx-scrollable-container {
           .dx-scrollable-content {
-            .dx-treeview-node-container {
-              .dx-treeview-node {
-                .dx-treeview-toggle-item-visibility {
-                  color: white;
-                }
+            ul.dx-treeview-node-container {
+              li.dx-treeview-node {
                 &.dx-state-selected {
                   .dx-item {
                     .dx-item-content {
@@ -196,11 +196,13 @@
                       }
                     }
                   }
-                }
+								}
+								
                 .dx-item {
                   &.dx-state-hover {
                     background: rgb(182, 182, 182);
                     .dx-item-content {
+											padding: 0px 2px;
                       color: rgb(49, 48, 48);
                     }
                   }
@@ -210,8 +212,40 @@
                       color: white;
                     }
                   }
-                }
-              }
+								}
+								ul.dx-treeview-node-container {
+									li.dx-treeview-node {
+										.dx-item {
+											.dx-item-content {
+												padding: 0px 30px;
+												.dx-icon {
+													color: white;
+												}	
+											}
+											&.dx-state-hover {
+												.dx-item-content {
+													padding: 0px 30px;
+													.dx-icon {
+														color: rgb(49, 48, 48);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+							.dx-treeview-node[aria-level="2"] {
+								.dx-treeview-item {
+									.dx-treeview-item-content {
+										padding: 0px 30px;
+										font-weight: 500;
+										font-size: $base-font-size*.7;
+									}
+								}
+							}
+							.dx-treeview-toggle-item-visibility {
+								color: white;
+							}
             }
           }
         }
@@ -255,9 +289,14 @@
 		padding-bottom: 0px;
 	}
 	.dx-field-value {
+    min-height: 40px;
+		width: 80%;
+		padding: 0px 10px;
+  }
+  .dx-field-value-static {
+    min-height: 40px;
 		width: 80%;
 		padding: 10px;
-
 	}
 }
 .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
@@ -309,7 +348,9 @@
 .dx-state-disabled.dx-widget {
   opacity: .7;
 }
-
+.dx-texteditor.dx-editor-filled {
+  background-color: rgb(31, 255, 31);
+}
 //****************************************** Display Only Fieldset Fields **************************************//
 .form {
   
@@ -330,7 +371,7 @@
         width: 100%;
         padding-left: 25px;
         padding-top: 10px;
-        padding-bottom: 10px;
+        padding-bottom: 3px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 
       }
@@ -377,6 +418,22 @@
     margin-bottom: 15px;
   }
 }
+#sub-navbar {
+	.dx-tabs-wrapper {
+		.dx-tab {
+			padding: 10px 10px 0px 10px;
+			&.dx-tab-selected::before {
+				position: absolute;
+				bottom: 0;
+				height: 0px;
+				left: 0;
+				right: 0;
+				background-color: #ff5722;
+			}
+		}
+	}
+}
+
   
 //****************************************** Validation & Error Messages **************************************/
 .dx-invalid-message > .dx-overlay-content {

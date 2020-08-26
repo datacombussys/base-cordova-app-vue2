@@ -2,13 +2,17 @@
 	<div>
 
 		<template>
-			<displayFieldsComponent :formData="formData"/>
+			<displayFieldsComponent 
+				:formData="formData" 
+				:formSettings="accountSettings"/>
 		</template>
 		<template>
 			<DxValidationSummary id="summary"/>
 		</template>
 
-		<template>
+		<!-- Companies -->
+		<template v-if="!accountSettings.type === 'company'">
+			<!-- Account Details -->
 			<div class="dx-fieldset">
 				<div class="dx-fieldset-header">Profile Details</div>
 				<div class="field-row">
@@ -171,9 +175,7 @@
 					</div>
 				</div>
 			</div>
-		</template>
-
-		<template>
+			<!-- Primary Contact -->
 			<div class="dx-fieldset">
 				<div class="dx-fieldset-header">Primary Contact</div>
 				<div class="field-row">
@@ -258,7 +260,6 @@
 											pattern="^[a-zA-Z0-9,. ]+$"
 											message="Address 2 should not contain special characters"
 										/>
-										<DxRequiredRule message="Address is required"/>
 									</DxValidator>
 								</DxTextBox>
 							</div>
@@ -337,8 +338,6 @@
 							</div>
 						</div>
 					</div>
-
-
 					<div class="cols">
 						<div class="dx-field">
 							<div class="dx-field-label">Phone</div>
@@ -373,7 +372,427 @@
 			</div>
 		</template>
 
+		<!-- SalesOffice -->
+		<template v-if="accountSettings.type === 'sales-office'">
+			<!-- Account Details -->
+			<div class="dx-fieldset">
+				<div class="dx-fieldset-header">Account Details</div>
+				<div class="field-row">
 
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Sales Office Name</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.salesoffice_name">
+									<DxValidator>
+										<DxPatternRule
+											pattern="^[a-zA-Z0-9 ]+$"
+											message="The name should not contain special characters"
+										/>
+										<DxRequiredRule message="DBA name is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>		
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Address</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.primary_mailing_address">
+									<DxValidator>
+										<DxPatternRule
+											pattern="^[a-zA-Z0-9,. ]+$"
+											message="Address should not contain special characters"
+										/>
+										<DxRequiredRule message="Address is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Address 2</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.primary_mailing_address2">
+									<DxValidator>
+										<DxPatternRule
+											pattern="^[a-zA-Z0-9,. ]+$"
+											message="Address 2 should not contain special characters"
+										/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">City</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.primary_mailing_city">
+									<DxValidator>
+										<DxRequiredRule message="City is required"/>
+										<DxPatternRule
+											pattern="^[A-z0-9]*((-|\s)*[A-z0-9])*$"
+											message="City should not contain special characters"
+										/>
+										
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">State</div>
+							<div class="dx-field-value">
+								<DxTextBox  
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.primary_mailing_state">
+									<DxValidator>
+										<DxRequiredRule message="State is required"/>
+										<DxPatternRule
+											pattern="^[A-Za-z]{2}$"
+											message="2 Letter State abbreviation"
+										/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Zip Code</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									mask="00000" 
+									:value.sync="formData.primary_mailing_zip">
+									<DxValidator>
+										<DxRequiredRule message="Zip code is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Country</div>
+							<div id="drop-down-menu" class="dx-field-value">
+								<DxDropDownBox
+									:disabled="!accountSettings.editProfile"
+									:data-source="countries"
+									:value.sync="country"
+									placeholder="Select a value..."
+									@value-changed="primaryDropdownChange($event)"
+								>
+									<DxList
+										:data-source="countries"
+										:height="400"
+										:selected-items.sync="country"
+										selection-mode="single"
+									/>
+								</DxDropDownBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Phone</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:mask-rules="phoneRules"
+									mask="+1 (X00) 000-0000"
+									:value.sync="formData.primary_phone">
+									<DxValidator>
+										<DxRequiredRule message="Phone is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Fax</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:mask-rules="phoneRules"
+									mask="+1 (X00) 000-0000"
+									:value.sync="formData.primary_fax">
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="w-full">
+						<div class="dx-field">
+							<div class="dx-field-label">Description</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.description">
+									<DxValidator>
+										<DxRequiredRule message="Website is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Closure Date</div>
+							<div class="dx-field-value">
+								<DxDateBox
+									:disabled="!accountSettings.editProfile"
+									type="date"
+									:value="formData.closure_date"
+									@value-changed="closeDateChanged"
+								/>
+							</div>
+						</div>
+					</div>
+					<div class="w-full">
+						<div class="dx-field">
+							<div class="dx-field-label">Closure Reason</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.closure_reason">
+									<DxValidator>
+										<DxRequiredRule message="Website is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+
+		<!-- Warehouse -->
+		<template v-if="accountSettings.type === 'warehouse'">
+			<!-- Account Details -->
+			<div class="dx-fieldset">
+				<div class="dx-fieldset-header">Account Details</div>
+				<div class="field-row">
+
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Warehouse Name</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.warehouse_name">
+									<DxValidator>
+										<DxPatternRule
+											pattern="^[a-zA-Z0-9 ]+$"
+											message="The name should not contain special characters"
+										/>
+										<DxRequiredRule message="DBA name is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>		
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Address</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.primary_mailing_address">
+									<DxValidator>
+										<DxPatternRule
+											pattern="^[a-zA-Z0-9,. ]+$"
+											message="Address should not contain special characters"
+										/>
+										<DxRequiredRule message="Address is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Address 2</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.primary_mailing_address2">
+									<DxValidator>
+										<DxPatternRule
+											pattern="^[a-zA-Z0-9,. ]+$"
+											message="Address 2 should not contain special characters"
+										/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">City</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.primary_mailing_city">
+									<DxValidator>
+										<DxRequiredRule message="City is required"/>
+										<DxPatternRule
+											pattern="^[A-z0-9]*((-|\s)*[A-z0-9])*$"
+											message="City should not contain special characters"
+										/>
+										
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">State</div>
+							<div class="dx-field-value">
+								<DxTextBox  
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.primary_mailing_state">
+									<DxValidator>
+										<DxRequiredRule message="State is required"/>
+										<DxPatternRule
+											pattern="^[A-Za-z]{2}$"
+											message="2 Letter State abbreviation"
+										/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Zip Code</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									mask="00000" 
+									:value.sync="formData.primary_mailing_zip">
+									<DxValidator>
+										<DxRequiredRule message="Zip code is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Country</div>
+							<div id="drop-down-menu" class="dx-field-value">
+								<DxDropDownBox
+									:disabled="!accountSettings.editProfile"
+									:data-source="countries"
+									:value.sync="country"
+									placeholder="Select a value..."
+									@value-changed="primaryDropdownChange($event)"
+								>
+									<DxList
+										:data-source="countries"
+										:height="400"
+										:selected-items.sync="country"
+										selection-mode="single"
+									/>
+								</DxDropDownBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Phone</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:mask-rules="phoneRules"
+									mask="+1 (X00) 000-0000"
+									:value.sync="formData.primary_phone">
+									<DxValidator>
+										<DxRequiredRule message="Phone is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Fax</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:mask-rules="phoneRules"
+									mask="+1 (X00) 000-0000"
+									:value.sync="formData.primary_fax">
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="w-full">
+						<div class="dx-field">
+							<div class="dx-field-label">Description</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.description">
+									<DxValidator>
+										<DxRequiredRule message="Website is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+					<div class="cols">
+						<div class="dx-field">
+							<div class="dx-field-label">Closure Date</div>
+							<div class="dx-field-value">
+								<DxDateBox
+									:disabled="!accountSettings.editProfile"
+									type="date"
+									:value="formData.closure_date"
+									@value-changed="closeDateChanged"
+								/>
+							</div>
+						</div>
+					</div>
+					<div class="w-full">
+						<div class="dx-field">
+							<div class="dx-field-label">Closure Reason</div>
+							<div class="dx-field-value">
+								<DxTextBox 
+									:disabled="!accountSettings.editProfile"
+									:value.sync="formData.closure_reason">
+									<DxValidator>
+										<DxRequiredRule message="Website is required"/>
+									</DxValidator>
+								</DxTextBox>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</template>
+
+
+
+			
+
+
+<!-- 
 		<template>
 			<div class="w-full">
 				<DxButton
@@ -381,7 +800,7 @@
 					text="Test Button"
 					@click="testingMethod" />
 			</div>
-		</template>
+		</template> -->
  
 
 	</div>
@@ -481,10 +900,13 @@ export default {
 		closeDateChanged(e) {
 			// console.log('closeDateChanged e', e)
 			let newDate = e.value
-			// console.log('neewData', newDate)
-			let ISODate = newDate.toISOString()
-			let djangoTime = ISODate.split('T')[0]
-			this.formData.closure_date = djangoTime
+			if(newDate) {
+				// console.log('neewData', newDate)
+				let ISODate = newDate.toISOString()
+				let djangoTime = ISODate.split('T')[0]
+				this.formData.closure_date = djangoTime
+			}
+			
 		}
 	},
 	computed: {
@@ -492,9 +914,6 @@ export default {
 	},
 	created() {},
 	mounted() {
-		let container = document.getElementById("drop-down-menu")
-		console.log('container', container)
-
 
 
 	}

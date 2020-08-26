@@ -1,17 +1,7 @@
 <template>
 	<div>
-		<p>Form Wizard</p>
-		<form-wizard :title="formWizard.title" :subtitle="formWizard.subtitle">
-			<tab-content title="Personal details" icon="mdi mdi-check-bold">
-				My first tab content
-			</tab-content>
-			<tab-content title="Additional Info" icon="mdi mdi-check-bold">
-					My second tab content
-			</tab-content>
-			<tab-content title="Last step" icon="mdi mdi-check-bold">
-				Yuhuuu! This seems pretty simple
-			</tab-content>
-		</form-wizard>
+		<p>Human Resources</p>
+
 	</div>
 </template>
 
@@ -32,10 +22,6 @@ export default {
 	},
 	data() {
 		return {
-			formWizard: {
-				title: "My Wizard",
-				subtitle: "Subtitle"
-			}
 		};
 	},
 	methods: {

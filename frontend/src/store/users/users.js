@@ -66,8 +66,6 @@ export const Users = {
 			return new Promise( async (resolve, reject) => {
 				try {
 					let endpoint = 'users-profile/';
-			
-			
 					let type = 'Create New User';
 					let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
 					console.log('POSTUser response', response);
@@ -85,11 +83,18 @@ export const Users = {
 			});
 			
 		},
-		
+		//PATCHDelete PROFILE
+    async PATCHDeleteUserProfile({commit, dispatch, rootState}, payload) {
+			let endpoint = 'users-profile/';
+      let type = 'Delete User Profile';
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, payload, endpoint, type);
+			console.log('PATCHDeleteUserProfile response', response);
+			commit('PATCH_DELETE_USER_PROFILE', payload);
+    },
 		//DELETE Item
 		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
-			let endpoint = 'users/';
-      let type = 'Delete Employee Profile';
+			let endpoint = 'users-profile/';
+      let type = 'Delete User Profile';
 			let response = await apiRoutes.DELETEItem(dispatch, rootState,payload, endpoint, type);
 			console.log('DELETEProfile response', response);
 		},

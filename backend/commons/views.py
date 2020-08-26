@@ -22,3 +22,8 @@ class UOMDimensionViewset(viewsets.ModelViewSet):
 class CommonBarcodeViewset(viewsets.ModelViewSet):
   serializer_class = CommonBarcodeSerializer
   queryset = CommonBarcode.objects.all()
+  filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+  filterset_fields = ['user__id', 'id', 'barcode_type', 'barcode_number']
+  search_fields = ['user__Id', 'id', 'barcode_type', 'barcode_number']
+  ordering_fields = '__all__'
+  ordering = ['id']

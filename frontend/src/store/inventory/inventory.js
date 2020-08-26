@@ -9,8 +9,6 @@ export const Inventory = {
 	state: {
 		inventoryList: [],
 		inventoryProfile: {},
-		selectedInventoryList: [],
-		selectedInventoryProfile: {},
 		categoryList: [],
 		categoryProfile: {},
 		selectedCategoryList: [],
@@ -54,9 +52,7 @@ export const Inventory = {
 		SET_INVENTORY_PROFILE(state, payload) {
 			state.inventoryProfile = payload
 		},
-		SET_SELECTED_INVENTORY_PROFILE(state, payload) {
-			state.selectedInventoryProfile = payload
-		},
+
 		UPDATE_INVENTORY_PROFILE_AND_LIST() {
 			console.log('payload', payload);
       let listIndex = state.inventoryList.findIndex(elem => elem.id === payload.id);
@@ -70,7 +66,7 @@ export const Inventory = {
       state.selectedInventoryList.slice(listIndex, 1);
       state.selectedInventoryList.splice(listIndex, 1, payload);
 			console.log('state.selectedInventoryList', state.selectedInventoryList);
-			state.selectedInventoryProfile = payload
+
 		},
     PATCH_DELETE_INVENTORY_PROFILE(state, payload) {
       console.log('payload', payload);
@@ -111,14 +107,13 @@ export const Inventory = {
 	},
 	actions: {
 		POSTInventory({dispatch}, payload) {
-			return new Promise(async(resolve, reject) => {
+			return new Promise(async (resolve, reject) => {
 				payload.endpoint = 'inventory/';
 				payload.type = 'Create Inventory';
 				payload.mutation = 'PUSH_NEW_INVENTORY'
 				await dispatch("POSTItem",  payload)
 				return resolve()
 			})
-			
 		},
 		GETInventoryList({dispatch}, payload) {
 			return new Promise(async (resolve, reject) => {
@@ -128,41 +123,27 @@ export const Inventory = {
 				await dispatch("GETItemList",  payload)
 				return resolve()
 			})
+		},
+
+		GETInventoryProfile({dispatch}, payload) {
+			return new Promise(async (resolve, reject) => {
+				payload.endpoint = 'inventory/';
+				payload.type = 'Get Inventory Profile';
+				payload.mutation = 'SET_INVENTORY_PROFILE'
+				let response = await dispatch("GETItemProfileById",  payload)
+				console.log('GETInventoryProfile response', response)
+				return resolve(response)
+			})
 			
 		},
-		GETSelectedInventoryList({dispatch}, payload) {
-			payload.endpoint = 'inventory-list/';
-			payload.type = 'Get Inventory List';
-			payload.mutation = 'SET_SELECTED_INVENTORY_LIST'
-			dispatch("GETSelectedItemList",  payload)
-		},
-		GETInventoryProfile({dispatch}, payload) {
-			payload.endpoint = 'inventory/';
-			payload.type = 'Get Inventory Profile';
-			payload.mutation = 'SET_INVENTORY_PROFILE'
-			dispatch("GETItemProfile",  payload)
-		},
-		GETInventorySelectedProfile({dispatch}, payload) {
-			//all selectedMethods need the payload.filterURL from source
-			// Using getObjectQueryFilter in the UniversalMixins.js
-			payload.endpoint = 'inventory/'+ payload.filterURL;
-			payload.type = 'Get Inventory Profile'
-			payload.mutation = 'SET_SELECTED_INVENTORY_PROFILE'
-			dispatch("GETItemSelectedProfile",  payload)
-		},
+
 		PATCHInventoryProfile({dispatch}, payload) {
 			payload.endpoint = 'inventory/';
 			payload.type = 'Update Inventory';
 			payload.mutation = 'UPDATE_INVENTORY_PROFILE_AND_LIST'
 			dispatch("PATCHItemProfile",  payload)
 		},
-		PATCHSelectedInventoryProfile({dispatch}, payload) {
-			payload.endpoint = 'inventory/';
-			payload.type = 'Update Inventory';
-			payload.mutation = 'UPDATE_SELECTED_INVENTORY_PROFILE_AND_LIST'
-			dispatch("PATCHSelectedItemProfile",  payload)
-		},
-		PATCHDeleteProfile({dispatch}, payload) {
+		PATCHDeleteInventoryProfile({dispatch}, payload) {
 			payload.endpoint = 'inventory/';
 			payload.type = 'Delete Inventory';
 			payload.mutation = 'PATCH_DELETE_INVENTORY_PROFILE'
@@ -181,12 +162,12 @@ export const Inventory = {
 			})
 			
 		},
-		GETInvCategories({dispatch}, payload) {
+		GETInvCategoriesByFilter({dispatch}, payload) {
 			return new Promise(async(resolve, reject) => {
 				payload.endpoint = 'inventory-category/';
 				payload.type = 'Get Inventory Categories';
 				payload.mutation = 'SET_CATEGORIES_LIST'
-				await dispatch("GETItemList",  payload)
+				await dispatch("GETFilterList",  payload)
 				return resolve()
 			})
 			
@@ -197,15 +178,17 @@ export const Inventory = {
 			payload.mutation = 'DELETE_INVENTORY_CATEGORY'
 			dispatch("DELETEItemProfile",  payload)
 		},
+		
 		//Inventory Images
-		GETInventoryImagesById({dispatch}, payload) {
-			payload.endpoint = "inventorygallery/?product="
+		GETInventoryImagesByFilter({dispatch}, payload) {
+			payload.endpoint = "inventory-gallery/"
+			payload.filterURL = "?product="
 			payload.type = 'Get Inventory Images';
 			payload.mutation = 'SET_INVENTORY_IMAGES_LIST'
-			dispatch("GETItemOwnProfile",  payload)
+			dispatch("GETFilterList",  payload)
 		},
 		DELETEInventoryImage({dispatch}, payload) {
-			payload.endpoint = "inventorygallery/"
+			payload.endpoint = "inventory-gallery/"
 			payload.type = 'Delete Inventory Image';
 			payload.mutation = 'DELETE_INVENTORY_IMAGE'
 			dispatch("DELETEItemProfile",  payload)
@@ -244,32 +227,24 @@ export const Inventory = {
 			})
 			
 		},
-		//GET Selected Inventory LIST - Get Abbreviated inventory List of selected company by Parent Company Only
-		async GETSelectedItemList({commit, dispatch, rootState}, payload) {
+		//GET List by Filter
+		async GETFilterList({commit, dispatch, rootState}, payload) {
 			//filterURL is passed from the original call
-			let response = await apiRoutes.GETSelectedList(dispatch, rootState, payload, payload.endpoint, payload.type);
-			console.log('GETSelectedItemList response', response);
+			let response = await apiRoutes.GETFilterList(dispatch, rootState, payload, payload.endpoint, payload.type);
+			console.log('GETSelectedFilterList response', response);
 			commit(payload.mutation, response.data);
 		},
      //GET Inventory Profile - Get full details of selected Inventory Item relating to logged in users account
-		 GETItemProfile({commit, dispatch, rootState}, payload) {
+		 GETItemProfileById({commit, dispatch, rootState}, payload) {
 			return new Promise( async (resolve, reject) => {
-				console.log('GETInventoryOwnProfile payload', payload);
-				let response = await apiRoutes.GETOwnProfile(dispatch, rootState, payload, payload.endpoint, payload.type);
-				console.log('GETItemOwnProfile response', response);
-				commit(payload.mutation, response.data[0]);
-				return resolve(response.data[0]);
+				console.log('GETItemProfileById payload', payload);
+				let response = await apiRoutes.GETProfileById(dispatch, rootState, payload, payload.endpoint, payload.type);
+				console.log('GETItemProfileById response', response);
+				commit(payload.mutation, response.data);
+				return resolve(response.data);
 			});
 		},
-    //GET Selected Profile - Get full details of inventory item of selected company by Parent company only
-    async GETItemSelectedProfile({commit, dispatch, rootState}, payload) {
-      return new Promise( async (resolve, reject) => {
-        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState, payload, payload.endpoint, payload.type);
-        console.log('GETItemSelectedProfile response', response);
-        commit(payload.mutation, response.data[0]);
-        return resolve(response.data[0]);
-      });
-		},
+    
 		//PATCH Profile
 		//This endpoint only updates items of itmes relating to user account only
     async PATCHItemProfile({commit, dispatch, rootState}, payload) {
@@ -308,9 +283,6 @@ export const Inventory = {
 		GET_INVENTORY_LIST_LENGTH(state) {
 			return state.inventoryList.length;
 		},
-    GET_OWN_INVENTORY_PROFILE(state) {
-      return state.inventoryProfile;
-    },
     GET_SELECTED_INVENTORY_PROFILE(state) {
       return state.selectedInventoryProfile;
     },

@@ -225,16 +225,16 @@ if(this.invCategory.name) {}
 
 //Primary ClearForm Option //Option 1
 clearFormData() {
-console.log("clearFormData this.invForm", this.invForm)
-for (let key in this.invForm) {
-console.log('key', this.invForm[key]);
-if(this.invForm[key] === true || this.invForm[key] === false) {
-// console.log('TF key', key);
-this.invForm[key] = false;
-} else {
-this.invForm[key] = null;
-}
-}
+	console.log("clearFormData this.invForm", this.invForm)
+	for (let key in this.invForm) {
+		console.log('key', this.invForm[key]);
+		if(this.invForm[key] === true || this.invForm[key] === false) {
+			// console.log('TF key', key);
+			this.invForm[key] = false;
+			} else {
+			this.invForm[key] = null;
+		}
+	}
 }
 
 //Simple Promise Function
@@ -295,7 +295,7 @@ return acc + parseFloat(obj.list_price);
 
 <div v-if="!DataFeed.showCharts ? 'hidden' : ''">Please load a chart from the side menu</div>
 
-************\*\*************PYTHON**********\***********
+************\*\************* PYTHON **********\***********
 
 Avoid Circular Reference in Kodels
 industry = models.ForeignKey('commons.Industry', on_delete=models.DO_NOTHING, blank=True, null=True)
@@ -336,7 +336,7 @@ import store from './store';
 then use...
 var history = store.state.DataFeed.djangoSymbolHistory;
 
-**********************************************Date Conversion *****************************************************
+********************************************** Date Conversion *****************************************************
 
             ---------------------- Convert from Javascript to Django Readable ------------------------------
 let today = new Date();     // Date Wed Jun 24 2020 14:39:37 GMT-0700 (Mountain Standard Time)
@@ -418,7 +418,10 @@ let merged = {...obj1, ...obj2};
 
 #     return data
 
-
+**************************** Error Codes ********************************
+console.log("Error Logging In", error) - Basic with no access to data
+console.log("Error Logging In", error.response) - Has all necessary data
+console.log("Error Logging In", error.message) - 
 
 
 

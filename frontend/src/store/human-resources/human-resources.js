@@ -30,7 +30,7 @@ export const Notifications = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				axios.post("/django/benefits/", form).then(response => {
@@ -58,7 +58,7 @@ export const Notifications = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				var url = platForm.url;
@@ -90,7 +90,7 @@ export const Notifications = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					console.log("PATCHBenefits error", error);
 					return reject(error);
 				}
@@ -105,7 +105,7 @@ export const Notifications = {
 					}
 				}).catch(error => {
 					error.type = "Update Benefits";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});
@@ -121,7 +121,7 @@ export const Notifications = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					console.log("DELETEBenefits error", error);
 					return reject(error);
 				}
@@ -136,7 +136,7 @@ export const Notifications = {
 					}
 				}).catch(error => {
 					error.type = "Delete Benefits";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});

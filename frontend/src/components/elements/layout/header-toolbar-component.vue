@@ -12,6 +12,7 @@
           styling-mode="text"
           @click="toggleMenuFunc"
           slot-scope="_"
+          :focusStateEnabled="false"
         />
         <!-- eslint-enable -->
       </dx-item>

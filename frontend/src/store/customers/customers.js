@@ -70,7 +70,7 @@ export const Customers = {
 				console.log('GETCustomerOwnProfile payload', payload);
 				let endpoint = 'customer/?user__id=';
 				let type = 'Get Customer Profile';
-				let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
+				let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
 				console.log('GETCustomerOwnProfile response', response);
 				commit('SET_CUSTOMER_PROFILE', response.data[0]);
 				commit('SET_PLATFORM_INFO', response.data[0]);
@@ -97,19 +97,19 @@ export const Customers = {
 			commit('UPDATE_CUSTOMER_PROFILE', response.data);
 		},
 		//PATCHDelete PROFILE
-		async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+		async PATCHDeleteCustomerProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'customer/';
 			let type = 'Delete Customer Profile';
 			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
-			console.log('PATCHDeleteProfile response', response);
+			console.log('PATCHDeleteCustomerProfile response', response);
 			commit('PATCH_DELETE_CUSTOMER_PROFILE', payload);
 		},
 		//DELETE Item
-		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
+		async DELETECustomerProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'customer/';
 			let type = 'Delete Customer Profile';
 			let response = await apiRoutes.DELETEItem(dispatch, rootState,payload, endpoint, type);
-			console.log('DELETEProfile response', response);
+			console.log('DELETECustomerProfile response', response);
 		},
 
 	},

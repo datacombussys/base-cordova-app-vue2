@@ -1,21 +1,23 @@
 
 class EmployeeIDs:
-  def __init__(self):
-    self.employeeID = employeeID
+	def newEmployeeID(self, **kwargs):
+		print("newEmployeeID kwargs", kwargs)
+		employee_no = kwargs.get("employee_number", None)
+		
+		if not employee_no:
+			return "E-1000000"
+		else:
+			last_employee_id_no = kwargs['last_account_number']
+			print("last_employee_id_no", last_employee_id_no)
+			#Parse to String
+			prefix, str_account_number = last_employee_id_no.split("-", 10)
+			int_account_number = int(str_account_number)
+			int_account_number += 1
+			#Combine and return
+			concatenated_no = prefix + "-" + str(int_account_number)
+			print("concatenated_no", concatenated_no)
 
-  def newEmployeeID(self, **kwargs):
-    print("newEmployeeID kwargs", kwargs)
-    if not kwargs['employee_number']:
-      return "100000"
-    else:
-      last_employee_no = kwargs['employee_number']
-      print("last_employee_no", last_employee_no)
-      if type(last_employee_no) is int:
-        last_employee_no += 1
-        str_last_employee_number = str(last_employee_no)
-        return str_last_employee_number
-      else:
-        int_last_employee_no = int(last_employee_no)
-        int_last_employee_no += 1
-        str_last_employee_number = str(int_last_employee_no)
-        return str_last_employee_number
+			return concatenated_no
+
+
+ 

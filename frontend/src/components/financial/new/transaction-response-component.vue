@@ -1,7 +1,7 @@
 <template>
 	<div class="container py-0">
 		<v-overlay
-			:absolute="absolute"
+			:absolute="true"
 			:value="transResponsePopup"
 		>
 		<v-sheet
@@ -104,7 +104,6 @@ export default {
 	},
 	data() {
 		return {
-			absolute: true,
 			isSuccess: true,
 			isDeclined: false,
 			isFraud: false,

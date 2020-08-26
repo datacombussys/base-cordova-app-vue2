@@ -25,7 +25,7 @@ export const Invoices = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				axios.post("/django/invoices/", form).then(response => {
@@ -38,7 +38,7 @@ export const Invoices = {
 					}
 				}).catch(error => {
 					error.type = "Add Invoice";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});
@@ -53,7 +53,7 @@ export const Invoices = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				axios.post("/django/receipts/", form).then(response => {
@@ -66,7 +66,7 @@ export const Invoices = {
 					}
 				}).catch(error => {
 					error.type = "Add Receipt";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});
@@ -81,7 +81,7 @@ export const Invoices = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				console.log("GETInvoices", payload);
@@ -99,7 +99,7 @@ export const Invoices = {
 					}
 				}).catch(error => {
 					error.type = "Retrieve Invoices";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});
@@ -112,7 +112,7 @@ export const Invoices = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				console.log("GETReceipts", payload);
@@ -130,7 +130,7 @@ export const Invoices = {
 					}
 				}).catch(error => {
 					error.type = "Retrieve Receipts";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});

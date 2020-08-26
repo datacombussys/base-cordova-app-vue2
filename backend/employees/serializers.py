@@ -12,6 +12,8 @@ from vendors.models import Vendor
 from salesoffices.models import SalesOffice
 from warehouses.models import Warehouse
 from commons2.models import Department
+from commons.models import CommonBarcode
+from commons.serializers import CommonBarcodeSerializer
 from partners.serializers import PartnerSerializer, PartnerListSerializer
 from datacom.serializers import DatacomSerializer, DatacomListSerializer
 from companies.serializers import CompanySerializer, CompanyListSerializer
@@ -54,6 +56,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
     employee_docs = serializers.PrimaryKeyRelatedField(queryset=EmployeeDocuments.objects.all(), required=False, allow_null=True)
     benefits_obj = BenefitsSerializer(read_only=True, source='benefits')
     benefits = serializers.PrimaryKeyRelatedField(queryset=Benefits.objects.all(), required=False, allow_null=True)
+    barcode_obj = CommonBarcodeSerializer(read_only=True, source='barcode')
+    barcode = serializers.PrimaryKeyRelatedField(queryset=CommonBarcode.objects.all(), required=False, allow_null=True)
     
     class Meta:
         model = Employee

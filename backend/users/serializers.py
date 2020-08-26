@@ -13,7 +13,7 @@ from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
 from users.models import User, UserGroup, UserPermission
 from commons.base64 import Base64ImageField
-from .models import User, UserBarcode
+from .models import User
 
 class ContentTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,15 +56,7 @@ class ExtendedGroupSerializer(serializers.ModelSerializer):
             return data
 
 
-class UserBarcodeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserBarcode
-        fields = ('__all__')
-
 class UserSerializer(serializers.ModelSerializer):
-    barcode_obj = UserBarcodeSerializer(read_only=True, source='barcode')
-    barcode = serializers.PrimaryKeyRelatedField(queryset=UserBarcode.objects.all(), required=False, allow_null=True)
-        
     profile_img = Base64ImageField( max_length=None,
                                     use_url=True,
                                     required=False,

@@ -154,23 +154,24 @@ export const Errors = {
 	},
 	actions: {
 		updateNotification({ dispatch, commit }, payload) {
+			console.log('updateNotification')
 			if (payload.status === 200) {
 				console.log("The updateNotification action had a status of 200 OK:", payload);
-				commit("UPDATE_NOTIFICATIONS", `Successful operation from ${payload.type}`);
+				commit("UPDATE_NOTIFICATIONS", {color: 'success', msg: `Successful operation from ${payload.type}`});
 			}
 			if (payload.status === 201) {
 				console.log("The updateNotification action had a status of 201 Created:", payload);
-				commit("UPDATE_NOTIFICATIONS", `The ${payload.type} was successfully created.`);
+				commit("UPDATE_NOTIFICATIONS", {color: 'success', msg: `The ${payload.type} was successfully created.`});
 			}
 			if (payload.status === 202) {
 				console.log("The updateNotification action had a status of 201 Updated:", payload);
-				commit("UPDATE_NOTIFICATIONS", `The ${payload.type} was successfully Updated.`);
+				commit("UPDATE_NOTIFICATIONS", {color: 'success', msg: `The ${payload.type} was successfully Updated.`});
 			}
 			if (payload.status === 400) {
 				console.log("The updateNotification action had a status of 400 Bad Request:", payload);
 				commit(
 					"UPDATE_NOTIFICATIONS",
-					`The submission to ${payload.type} did not meet the server requirements. ${payload.data.non_field_errors}`
+					{color: 'error', msg: `The submission to ${payload.type} did not meet the server requirements. ${payload.data.non_field_errors}`}
 				);
 				//Datacom Errors
 				if (payload.type === "Create New Datacom") {
@@ -228,7 +229,7 @@ export const Errors = {
 				console.log("The updateNotification action had a status of 401 unauthorized:", payload);
 				commit(
 					"UPDATE_NOTIFICATIONS",
-					`You are unauthorized to perform this action. ${payload.type} Please contact your administrator`
+					{color: 'warning', msg:`You are unauthorized to perform this action. ${payload.type} Please contact your administrator`}
 				);
 			}
 
@@ -241,7 +242,7 @@ export const Errors = {
 				console.log("The updateNotification action had a status of 403 forbidden:", payload);
 				commit(
 					"UPDATE_NOTIFICATIONS",
-					`The request to ${payload.type} is a forbidden. Please contact your administrator.`
+					{color: 'warning', msg:`The request to ${payload.type} is a forbidden. Please contact your administrator.`}
 				);
 			}
 			//Login Errors
@@ -251,7 +252,7 @@ export const Errors = {
 			//Employee Errors
 			if (payload.status === 404) {
 				console.log("The updateNotification action had a status of 404 Not Found:", payload);
-				commit("UPDATE_NOTIFICATIONS", `The request to ${payload.type} was not found. Please try differently.`);
+				commit("UPDATE_NOTIFICATIONS", {color: 'info', msg:`The request to ${payload.type} was not found. Please try differently.`});
 			}
 			if (payload.status === 500) {
 				console.log(
@@ -260,7 +261,7 @@ export const Errors = {
 				);
 				commit(
 					"UPDATE_NOTIFICATIONS",
-					"There was an internal server error. Please try again later or contact support."
+					{color: 'error', msg:"There was an internal server error. Please try again later or contact support."}
 				);
 			}
 			//Login Errors
@@ -273,26 +274,26 @@ export const Errors = {
 				console.log("The updateNotification action had a status of 500 Bad Gateway Request:", payload);
 				commit(
 					"UPDATE_NOTIFICATIONS",
-					`The server address to: ${payload.type} is not working. Please contact support.`
+					{color: 'warning', msg:`The server address to: ${payload.type} is not working. Please contact support.`}
 				);
 			}
 			if (payload.status === 503) {
 				console.log("The updateNotification action had a status of 500 Service Unavailable:", payload);
 				commit(
 					"UPDATE_NOTIFICATIONS",
-					`The service: ${payload.type} is offline or unavailable. Please try again later.`
+					{color: 'info', msg:`The service: ${payload.type} is offline or unavailable. Please try again later.`}
 				);
 			}
 			if (payload.status === 504) {
 				console.log("The updateNotification action had a status of 500 Gateway Timeout:", payload);
 				commit(
 					"UPDATE_NOTIFICATIONS",
-					`The server gateway to:  ${payload.type} is not responding. Please try again later.`
+					{color: 'info', msg:`The server gateway to:  ${payload.type} is not responding. Please try again later.`}
 				);
 			}
 			if (payload.status === 2000) {
 				console.log("Custom error Handled. User Not logged in trying to execute a Vuex action:", payload);
-				commit("UPDATE_NOTIFICATIONS", `You must be logged in:  ${payload.type}.`);
+				commit("UPDATE_NOTIFICATIONS", {color: 'info', msg:`You must be logged in:  ${payload.type}.`});
 			}
 		}
 	},

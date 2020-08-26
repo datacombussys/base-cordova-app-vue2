@@ -1,3 +1,5 @@
+const path = require('path')
+
 module.exports = {
   "lintOnSave": false,
   "runtimeCompiler": true,
@@ -12,7 +14,8 @@ module.exports = {
   },
   "devServer": {
     "port": 9000,
-    "open": false,
+		"open": false,
+		"disableHostCheck": true,
     "overlay": {
       "warnings": false,
       "errors": true
@@ -36,5 +39,16 @@ module.exports = {
   },
   "transpileDependencies": [
     "vuetify"
-  ]
+  ],
+  chainWebpack: config => {
+    config.plugin('copy').tap(args => {
+      const copyCordova = {
+        from: path.resolve(__dirname, 'src-cordova/config.xml'),
+        to: args[0][0].to
+      }
+
+      args[0].push(copyCordova)
+      return args
+    })
+  },
 }

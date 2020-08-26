@@ -1,15 +1,24 @@
 import Vue from 'vue'
 import App from './App.vue'
 import store from './store'
+window.$ = window.jQuery = require('jquery');
 
 // Import App Custom Styles
 import vuetify from './plugins/vuetify';
+import VuetifyDialog from 'vuetify-dialog'
+import 'vuetify-dialog/dist/vuetify-dialog.css'
+Vue.use(VuetifyDialog, {
+  context: {
+    vuetify
+  }
+})
 
 //DevExorcess Themes and CSS
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.material.orange.light.css';
 import './assets/themes/devexpress/generated/theme.base.css';
-
+import 'devextreme/dist/js/dx.all.js'
+import 'devextreme/integration/jquery';
 
 //Vue Material Framework - Use as component basis
 // import { MdButton, MdContent, MdTabs } from 'vue-material/dist/components'
@@ -20,17 +29,14 @@ import './assets/themes/devexpress/generated/theme.base.css';
 // Vue.use(MdTabs)
 
 //Datacom App Info Init
-import appInfo from "./app-info";
+import appInfo from "@/js/app-info";
 
 //Axios
-import VueAxios from 'vue-axios'
-import axios from 'axios'
-Vue.use(VueAxios, axios)
+require("@/js/axios")
 
 //Import Vue-router
 import router from './routes'
-
-window.$ = window.jQuery = require('jquery');
+require("@/js/subscribers");
 
 // MaterialDesignIcons.com
 // <i class="mdi mdi-cart mdi-40"></i>
@@ -93,6 +99,17 @@ Vue.use(VueLodash, { lodash: lodash })
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 Vue.component("vue-cropper", VueCropper);
+
+//Vue Field Mask
+import VueTheMask from 'vue-the-mask'
+Vue.use(VueTheMask)
+//Usage
+// '#': {pattern: /\d/},
+// 'X': {pattern: /[0-9a-zA-Z]/},
+// 'S': {pattern: /[a-zA-Z]/},
+// 'A': {pattern: /[a-zA-Z]/, transform: v => v.toLocaleUpperCase()},
+// 'a': {pattern: /[a-zA-Z]/, transform: v => v.toLocaleLowerCase()},
+// '!': {escape: true}
 
 
 import "@/assets/icons/icons.css"

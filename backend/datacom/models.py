@@ -3,7 +3,7 @@ from django.utils import timezone
 # from project.settings import base
 from django.core.validators import RegexValidator
 
-from companies.helper_functions import CompanyIDs
+from commons.helper import CompanyIDs
 
 from datacom.common_models import CommonCompanyBase
 from project.settings import base
@@ -12,62 +12,63 @@ from humanresources.models import CompanyDocuments
 
 # Datacom SuperCompany Model Manager
 class DatacomManager(models.Manager):
-  def create_datacom(self, **kwargs):
-    if not kwargs['dba_name']:
-      raise ValueError("You must enter a valid business name")
-    if not kwargs['legal_name']:
-      raise ValueError("You must enter a valid legal business name")
+	def create_datacom(self, **kwargs):
+		if not kwargs['dba_name']:
+			raise ValueError("You must enter a valid business name")
+		if not kwargs['legal_name']:
+			raise ValueError("You must enter a valid legal business name")
 
-    print("Datacom kwargs", kwargs)
+		print("Datacom kwargs", kwargs)
 
-    datacomObj = Datacom.objects.all().order_by('id').last()
-    if datacomObj:
-      kwargs['account_number'] = datacomObj.account_number
-      print("datacomObj.account_number", datacomObj.account_number)
-      print('datacomObj.__dict__', datacomObj.__dict__)
-    if not datacomObj:
-      kwargs['account_number'] = 0
+		datacomObj = Datacom.objects.all().order_by('id').last()
+		if datacomObj:
+			kwargs['last_account_number'] = datacomObj.account_number
+			print("datacomObj.last_account_number", kwargs['last_account_number'])
+			print('datacomObj.__dict__', datacomObj.__dict__)
+		if not datacomObj:
+			kwargs['last_account_number'] = None
 
-    kwargs['is_datacom'] = True
-    print('Modified creat_datacom kwargs', kwargs)
+		kwargs['is_datacom'] = True
+		print('Modified creat_datacom kwargs', kwargs)
 
-    newDatacomID = CompanyIDs.newCompanyID(self, **kwargs)
-    print('newDatacomID', newDatacomID)
+		newDatacomID = CompanyIDs.newCompanyID(self, **kwargs)
+		del kwargs['last_account_number']
 
-    primary_contacts_var = kwargs['primary_contacts']
-    billing_contacts_var = kwargs['billing_contacts']
-    technical_contacts_var = kwargs['technical_contacts']
-    shipping_contacts_var = kwargs['shipping_contacts']
+		primary_contacts_var = kwargs['primary_contacts']
+		billing_contacts_var = kwargs['billing_contacts']
+		technical_contacts_var = kwargs['technical_contacts']
+		shipping_contacts_var = kwargs['shipping_contacts']
 
-    del kwargs['primary_contacts']
-    del kwargs['billing_contacts']
-    del kwargs['technical_contacts']
-    del kwargs['shipping_contacts']
-    
-    datacom = self.model(**kwargs)
-    print('datacom', datacom)
-    datacom.is_active = True
-    datacom.account_number = newDatacomID
+		del kwargs['primary_contacts']
+		del kwargs['billing_contacts']
+		del kwargs['technical_contacts']
+		del kwargs['shipping_contacts']
+		
+		datacom = self.model(**kwargs)
+		print('datacom', datacom)
+		datacom.is_active = True
+		datacom.account_number = newDatacomID
+		kwargs['account_number'] = newDatacomID
 
-    datacom.save(using=self._db)
-    print('datacom', datacom.id)
+		datacom.save(using=self._db)
+		print('datacom', datacom.id)
 
-    if primary_contacts_var:
-      datacom.primary_contacts.set(primary_contacts_var)
-    if billing_contacts_var:
-      datacom.billing_contacts.set(billing_contacts_var)
-    if technical_contacts_var:
-      datacom.technical_contacts.set(technical_contacts_var)
-    if shipping_contacts_var:
-      datacom.shipping_contacts.set(shipping_contacts_var)
-      
-    barcode = CommonBarcode.objects.create_barcode(datacom.id, **kwargs)
-    print('Datacom barcode', barcode)
-    datacom.barcode = barcode
+		if primary_contacts_var:
+			datacom.primary_contacts.set(primary_contacts_var)
+		if billing_contacts_var:
+			datacom.billing_contacts.set(billing_contacts_var)
+		if technical_contacts_var:
+			datacom.technical_contacts.set(technical_contacts_var)
+		if shipping_contacts_var:
+			datacom.shipping_contacts.set(shipping_contacts_var)
+			
+		barcode = CommonBarcode.objects.create_barcode(**kwargs)
+		print('Datacom barcode', barcode)
+		datacom.barcode = barcode
 
-    datacom.save(using=self._db)
+		datacom.save(using=self._db)
 
-    return datacom
+		return datacom
 
 # Datacom Model SuperCompany
 class Datacom(CommonCompanyBase):

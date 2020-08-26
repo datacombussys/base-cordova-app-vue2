@@ -121,7 +121,7 @@ export const Locale = {
         return response
       }).catch(error => {
           error.type = "Retrieve Country List";
-          dispatch('updateNotification', error);
+          dispatch("updateNotification", error.response);
       })
     },
     getStates({ dispatch, commit }, payload) {
@@ -141,7 +141,7 @@ export const Locale = {
         return response
       }).catch(error => {
           error.type = "Retrieve State List";
-          dispatch('updateNotification', error);
+          dispatch("updateNotification", error.response);
       })
     },
     getCities({ dispatch, commit }, payload) {
@@ -165,7 +165,7 @@ export const Locale = {
         return response
       }).catch(error => {
           error.type = "Retrieve City List";
-          dispatch('updateNotification', error);
+          dispatch("updateNotification", error.response);
       });
     },
     //Shared Popup Components
@@ -181,7 +181,7 @@ export const Locale = {
         return response
       }).catch(error => {
           error.type = "Retrieve Country List";
-          dispatch('updateNotification', error);
+          dispatch("updateNotification", error.response);
       })
     },
     getSharedStates({ dispatch, commit }, payload) {
@@ -195,7 +195,7 @@ export const Locale = {
         return response
       }).catch(error => {
           error.type = "Retrieve State List";
-          dispatch('updateNotification', error);
+          dispatch("updateNotification", error.response);
       })
     },
     getSharedCities({ dispatch, commit }, payload) {
@@ -213,7 +213,7 @@ export const Locale = {
         return response
       }).catch(error => {
           error.type = "Retrieve City List";
-          dispatch('updateNotification', error);
+          dispatch("updateNotification", error.response);
       });
     },
 

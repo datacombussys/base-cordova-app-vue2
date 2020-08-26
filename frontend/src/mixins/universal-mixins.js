@@ -72,6 +72,7 @@ export const UniversalMixins = {
         }
       });
     },
+    //This method modifies the filterURL based on the form that was passed in
     getObjectQueryFilter(form) {
       console.log('getObjectQueryFilter form', form);
       return new Promise(async (resolve, reject) => {
@@ -97,7 +98,7 @@ export const UniversalMixins = {
         } else {
           return reject({error: "No Matching companies"})
         }
-      });
+      })
 
     }
     // setUserPlatformPUT(form) {

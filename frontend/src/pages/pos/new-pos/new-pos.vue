@@ -63,8 +63,11 @@
                 type="pos"
                 :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="testButton($event)"
+                @click="openSheetOpenTill = true"
               />
+							<openTillComponent 
+								:openSheetOpenTill="openSheetOpenTill" 
+								@closeTillSheet="closeTillSheet"/>
             </div>
             <div class="col-25p px-1">
               <DxButton
@@ -589,6 +592,7 @@ import { DxScrollView } from 'devextreme-vue/scroll-view';
 
 //Components
 import calculatorComponent from "@/pages/pos/new-pos/components/calculator-component.vue";
+import openTillComponent from "@/pages/pos/new-pos/components/open-till-component.vue";
 
 export default {
   name: "retailPOS",
@@ -602,7 +606,8 @@ export default {
     MultipaneResizer,
     DxButton,
     alert,
-    calculatorComponent
+		calculatorComponent,
+		openTillComponent
   },
   props: {
      keyboardClass: {
@@ -647,6 +652,9 @@ export default {
 				DiscountpopupOpened: false,
 				activeStepDiscount: 0,
 			},
+			// Popups and Sheets
+			openSheetOpenTill: false,
+
 			//Calculate Settings
 			showCalc: true,
 			calc: {
@@ -808,7 +816,10 @@ export default {
 			this.resetView();
 			this.orderForm.isReturn = true;
 		},
-
+		closeTillSheet(e) {
+			console.log("closeTillSheet e", e);
+			this.openSheetOpenTill = false
+		},
 		//Ticket
 		addItemToTill(id) {
 			console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);

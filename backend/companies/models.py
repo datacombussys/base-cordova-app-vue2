@@ -9,68 +9,68 @@ from partners.models import Partner
 from commons.models import Industry, CommonBarcode
 from humanresources.models import CompanyDocuments
 
-from companies.helper_functions import CompanyIDs
-
-
+from commons.helper import CompanyIDs
 
 # Company / Merchant Model Manager
 class CompanyManager(models.Manager):
-  '''Create a company instance'''
+	'''Create a company instance'''
 
-  def create_company(self, **kwargs):
-    if not kwargs['dba_name']:
-      raise ValueError("You must enter a valid business name")
-    if not kwargs['legal_name']:
-      raise ValueError("You must enter a valid legal business name")
+	def create_company(self, **kwargs):
+		if not kwargs['dba_name']:
+			raise ValueError("You must enter a valid business name")
+		if not kwargs['legal_name']:
+			raise ValueError("You must enter a valid legal business name")
 
-    print("Company kwargs", kwargs)
+		print("Company kwargs", kwargs)
 
-    companyObj = Company.objects.all().order_by('id').last()
-    if companyObj:
-      kwargs['account_number'] = companyObj.account_number
-      print("companyObj.account_number", companyObj.account_number)
-      print('companyObj.__dict__', companyObj.__dict__)
-    if not companyObj:
-      kwargs['account_number'] = 0
+		companyObj = Company.objects.all().order_by('id').last()
+		if companyObj:
+			kwargs['last_account_number'] = companyObj.account_number
+			print("companyObj.account_number", kwargs['last_account_number'])
+			print('companyObj.__dict__', companyObj.__dict__)
+		if not companyObj:
+			kwargs['last_account_number'] = None
 
-    kwargs['is_merchant'] = True
-    print('Modified creat_company kwargs', kwargs)
+		kwargs['is_merchant'] = True
+		print('Modified creat_company kwargs', kwargs)
 
-    newCompanyID = CompanyIDs.newCompanyID(self, **kwargs)
-    print('newCompanyID', newCompanyID)
+		newCompanyID = CompanyIDs.newCompanyID(self, **kwargs)
+		print('newCompanyID', newCompanyID)
+		del kwargs['last_account_number']
 
-    primary_contacts_var = kwargs['primary_contacts']
-    billing_contacts_var = kwargs['billing_contacts']
-    technical_contacts_var = kwargs['technical_contacts']
-    shipping_contacts_var = kwargs['shipping_contacts']
-    
-    del kwargs['primary_contacts']
-    del kwargs['billing_contacts']
-    del kwargs['technical_contacts']
-    del kwargs['shipping_contacts']
-    
-    company = self.model(**kwargs)
-    company.is_active = True
-    company.account_number = newCompanyID
+		primary_contacts_var = kwargs['primary_contacts']
+		billing_contacts_var = kwargs['billing_contacts']
+		technical_contacts_var = kwargs['technical_contacts']
+		shipping_contacts_var = kwargs['shipping_contacts']
+		
+		del kwargs['primary_contacts']
+		del kwargs['billing_contacts']
+		del kwargs['technical_contacts']
+		del kwargs['shipping_contacts']
+		
+		company = self.model(**kwargs)
+		company.is_active = True
+		company.account_number = newCompanyID
+		kwargs['account_number'] = newCompanyID
 
-    company.save(using=self._db)
+		company.save(using=self._db)
 
-    if primary_contacts_var:
-      company.primary_contacts.set(primary_contacts_var)
-    if billing_contacts_var:
-      company.billing_contacts.set(billing_contacts_var)
-    if technical_contacts_var:
-      company.technical_contacts.set(technical_contacts_var)
-    if shipping_contacts_var:
-      company.shipping_contacts.set(shipping_contacts_var)
+		if primary_contacts_var:
+			company.primary_contacts.set(primary_contacts_var)
+		if billing_contacts_var:
+			company.billing_contacts.set(billing_contacts_var)
+		if technical_contacts_var:
+			company.technical_contacts.set(technical_contacts_var)
+		if shipping_contacts_var:
+			company.shipping_contacts.set(shipping_contacts_var)
 
-    barcode = CommonBarcode.objects.create_barcode(company.id, **kwargs)
-    print('Company barcode', barcode)
-    company.barcode = barcode
+		barcode = CommonBarcode.objects.create_barcode(**kwargs)
+		print('Company barcode', barcode)
+		company.barcode = barcode
 
-    company.save(using=self._db)
+		company.save(using=self._db)
 
-    return company
+		return company
 
 # Company / Merchant Model
 class Company(CommonCompanyBase):

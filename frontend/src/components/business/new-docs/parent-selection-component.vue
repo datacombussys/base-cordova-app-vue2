@@ -6,7 +6,6 @@
 				class="mx-auto custom-card"
 			>
 				<v-list-item>
-					<v-list-item-avatar color="grey"></v-list-item-avatar>
 					<v-list-item-content>
 						<span class="headline">Select Parent Organization</span>
 					</v-list-item-content>
@@ -15,8 +14,8 @@
 				<v-card-text>
 					<div class="container">
 						<div class="title">Affiliated Company</div>
-						<div class="row" v-if="moduleInfo.level >= 1 && Auth.authLevel === 1">
-							<div class="col-50p">
+						<div class="row mt-4" v-if="moduleInfo.level >= 1 && Auth.authLevel === 1">
+							<div class="col-50p justify-center">
 								<p class="subtitle">Datacom</p>
 								<DxSwitch 
 									id="datacom" 
@@ -24,92 +23,116 @@
 									:value="accountSettings.accountPlatform.is_datacom" 
 									@value-changed="companyTypeToggle"/>
 							</div>
-							<div class="col-50p">
+							<div class="col-50p items-center">
 								<p class="subtitle text-center">Name</p>
-								<div class="flex">
-									<span class="mdi mdi-domain mdi-35 mr-4"></span>
-									<DxDropDownBox
-										v-if="Auth.authLevel === 1"
-										:disabled="accountSettings.accountPlatform.is_datacom === false"
-										:data-source="GET_DATACOM_LIST"
-										:value.sync="selectedDatacom"
-										placeholder="Select a value..."
-										display-expr="dba_name"
-										@value-changed="datacomDropdownSelection($event)"
-									>
-										<DxList
+								<div class="row">
+									<div class="col-2">
+										<span class="mdi mdi-domain mdi-35 mr-4"></span>
+									</div>
+									<div id="dxContainer" class="col-10">
+										<DxDropDownBox
+											id="datacomBox"
+											v-if="Auth.authLevel === 1"
+											:disabled="accountSettings.accountPlatform.is_datacom === false"
+											@initialized="datacomDropdown"
 											:data-source="GET_DATACOM_LIST"
-											:height="400"
-											:selected-items.sync="selectedDatacom"
-											selection-mode="single"
-											display-expr="dba_name"> 
-										</DxList>
-									</DxDropDownBox>
+											:value.sync="selectedDatacom"
+											placeholder="Select a value..."
+											display-expr="dba_name"
+										>
+											<DxList
+												:data-source="GET_DATACOM_LIST"
+												:height="400"
+												:selected-items.sync="selectedDatacom"
+												selection-mode="single"
+												display-expr="dba_name"
+												@selectionChanged="datacomDropdownSelection"
+												> 
+											</DxList>
+										</DxDropDownBox>
+									</div>
+
 								</div>
 							</div>
 						</div>
-						<div class="row" v-if="moduleInfo.level >= 2 && Auth.authLevel === 1">
+						<div class="row mt-4" v-if="moduleInfo.level >= 2 && Auth.authLevel === 1">
 							<div class="col-50p">
 								<p class="subtitle">Partner</p>
 								<DxSwitch 
 								id="partner" 
-								:disabled="GET_PARTNER_LIST.length === 0"
+								:disabled="GET_PARTNER_LIST.length === 0 || !accountSettings.editProfile"
 								:value="accountSettings.accountPlatform.is_partner" 
 								@value-changed="companyTypeToggle" />
 								
 							</div>
-							<div class="col-50p">
-								<div class="flex">
+							<div class="col-50p items-center">
+								<div class="row">
+									<div class="col-2">
 									<fa-icon :icon="['fa', 'handshake']" class="mdi-30 mr-4"></fa-icon>
-									<DxDropDownBox
-										:disabled="accountSettings.accountPlatform.is_partner === false"
-										:data-source="GET_PARTNER_LIST"
-										:value.sync="selectedPartner"
-										placeholder="Select a value..."
-										@value-changed="partnerDropdownSelection($event)"
-										display-expr="dba_name">
-										<DxList
+									</div>
+									<div class="col-10">
+										<DxDropDownBox
+											:disabled="accountSettings.accountPlatform.is_partner === false"
+											@initialized="partnerDropdown"
 											:data-source="GET_PARTNER_LIST"
-											:height="400"
-											:selected-items-keys.sync="selectedPartner"
-											selection-mode="single"
-											display-expr="dba_name" />
-									</DxDropDownBox>
+											:value.sync="selectedPartner"
+											placeholder="Select a value..."
+											display-expr="dba_name">
+											<DxList
+												:data-source="GET_PARTNER_LIST"
+												:height="400"
+												:selected-items.sync="selectedPartner"
+												selection-mode="single"
+												display-expr="dba_name" 
+												@selectionChanged="partnerSelection" />
+												
+										</DxDropDownBox>
+									</div>
+									
 								</div>
 							</div>
 						</div>
-						<div class="row">
+						<div class="row mt-4" v-if="moduleInfo.level >= 3 && Auth.authLevel === 1">
 							<div class="col-50p">
 								<p class="subtitle">Merchant</p>
 								<DxSwitch 
 								id="merchant" 
-								:disabled="GET_MERCHANT_LIST.length === 0"
+								:disabled="GET_MERCHANT_LIST.length === 0 || !accountSettings.editProfile"
 								:value="accountSettings.accountPlatform.is_merchant" 
 								@value-changed="companyTypeToggle" />
 							</div>
-							<div class="col-50p">
-								<div class="flex">
+							<div class="col-50p items-center">
+								<div class="row">
+									<div class="col-2">
 									<span class="mdi mdi-storefront-outline mdi-35 mr-4"></span>
-									<DxDropDownBox
-										:disabled="accountSettings.accountPlatform.is_merchant === false"
-										:data-source="datacomList"
-										:value.sync="selectedMerchant"
-										placeholder="Select a value..."
-										@value-changed="merchantDropdownSelection($event)"
-										display-expr="dba_name">
-										<DxList
-											:data-source="datacomList"
-											:height="400"
-											:selected-items.sync="selectedMerchant"
-											selection-mode="single"
-											display-expr="dba_name" />
-									</DxDropDownBox>
+									</div>
+									<div class="col-10">
+										<DxDropDownBox
+											:disabled="accountSettings.accountPlatform.is_merchant === false"
+											@initialized="merchantDropdown"
+											:data-source="GET_MERCHANT_LIST"
+											:value.sync="selectedMerchant"
+											placeholder="Select a value..."
+											display-expr="dba_name">
+											<DxList
+												:data-source="GET_MERCHANT_LIST"
+												:height="400"
+												:selected-items.sync="selectedMerchant"
+												selection-mode="single"
+												display-expr="dba_name"
+												@selectionChanged="merchantDropdownSelection" />
+												
+										</DxDropDownBox>
+									</div>
+									
 								</div>
 							</div>
 						</div>
 
 							<div class="row">
-								<DxButton text="Click me" @click="testingMethod"/>
+								<dxButton text="Click me" @click="testingMethod"/>
+							</div>
+							<div id="btnContainer" class="row">
 							</div>
 
 						
@@ -128,7 +151,9 @@ import { mapGetters } from "vuex";
 import DxDropDownBox from 'devextreme-vue/drop-down-box';
 import DxList from 'devextreme-vue/list';
 import { DxSwitch } from 'devextreme-vue/switch';
-import DxButton from 'devextreme-vue/button';
+import dxButton from 'devextreme-vue/button';
+import Button from 'devextreme/ui/button';
+
 
 //Mixins
 import { FormMixins } from "@/mixins/form-mixins.js"
@@ -144,7 +169,7 @@ export default {
 		DxSwitch,
 		DxDropDownBox,
 		DxList,
-		DxButton
+		dxButton
 	},
 	props: {
 		moduleInfo: {
@@ -164,8 +189,11 @@ export default {
 		}
 	},
 	data() {
-		return {
-			//Popup
+		return {	
+			//Initialized Data
+			datacomDropdowninstance: null,
+			partnerDropdowninstance: null,
+			merchantDropdowninstance: null,
 
 			//Form
 			selectedDatacom: [],
@@ -191,10 +219,17 @@ export default {
 	// *************************************** Methods *****************************************//
 	methods: {
 		testingMethod(e) {
-			console.log("this.selectedDatacom", this.selectedDatacom);
-			console.log('datacomName', this.datacomName)
+
 		},
-		
+		datacomDropdown(e) {
+			this.datacomDropdowninstance = e.component
+		},
+		partnerDropdown(e) {
+			this.partnerDropdowninstance = e.component
+		},
+		merchantDropdown(e) {
+			this.merchantDropdowninstance = e.component
+		},
 		resetCompanyToggles(name) {
 			this.accountSettings.accountPlatform.is_datacom = name === "datacom";
 			this.accountSettings.accountPlatform.is_partner = name === "partner";
@@ -252,23 +287,38 @@ export default {
 			});
 		},
 		datacomDropdownSelection(e) {
-			console.log("dxDropdownSelection")
+			console.log("datacomDropdownSelection")
+			console.log("datacomDropdown", this.datacomDropdowninstance)
 			console.log("e", e)
-			this.accountSettings.accountPlatform.company_name = e.value[0].dba_name
-			e.component.close()
+			if(e) {
+				this.accountSettings.accountPlatform.company_name = e.addedItems[0].dba_name
+				this.datacomDropdowninstance.close()
+				this.selectedPartner = []
+				this.selectedMerchant = []
+			}
 		},
-		partnerDropdownSelection(e) {
-			console.log("dxDropdownSelection")
+		partnerSelection(e) {
+			console.log("partnerSelection")
+			console.log("partnerDropdown", this.partnerDropdowninstance)
 			console.log("e", e)
-			this.accountSettings.accountPlatform.company_name = e.value[0].dba_name
-			e.component.close()
+			if(e) {
+				this.accountSettings.accountPlatform.company_name = e.addedItems[0].dba_name
+				this.partnerDropdowninstance.close()
+				this.selectedDatacom = []
+				this.selectedMerchant = []
+			}
 		},
 		merchantDropdownSelection(e) {
-			console.log("dxDropdownSelection")
+			console.log("merchantDropdownSelection")
+			console.log("merchantDropdowninstance", this.merchantDropdowninstance)
 			console.log("e", e)
-			this.accountSettings.accountPlatform.company_name = e.value[0].dba_name
-			e.component.close()
+			if(e) {
+				this.accountSettings.accountPlatform.company_name = e.addedItems[0].dba_name
+				this.merchantDropdowninstance.close()
+				this.selectedMerchant = []
+			}
 		}
+			
 
 	},
 	computed: {
@@ -276,7 +326,14 @@ export default {
 		...mapGetters(["GET_DATACOM_LIST", "GET_PARTNER_LIST", "GET_MERCHANT_LIST", "GET_VENDOR_LIST"]),
 	},
 	created() {},
-	mounted() {}
+	mounted() {
+		// $("#btnContainer").dxButton({
+		// 	text: "Click me!",
+		// 	onClick: function () {
+		// 			alert("Hello world!");
+		// 	}
+		// });
+	}
 };
 </script>
 

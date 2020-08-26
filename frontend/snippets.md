@@ -115,6 +115,18 @@ ref="profileForm"
 let profileRef = this.$refs['profileForm'].instance
 profileRef.focus()
 
+
+******************** Dynamically Create Elements with JQuery  ************************* 
+$(function () {
+	let comp = $("#btnContainer").dxButton({
+		text: "Click me!",
+		onClick: function () {
+				alert("Hello world!");
+		}
+	});
+	console.log('comp', comp)
+});
+
 ********************  Validation Rules *************************
 <DxRequiredRule message="Email is required"/>
 <DxEmailRule message="Email is invalid"/>
@@ -270,9 +282,29 @@ EventBus.$on('EVENT_NAME', val => {
 	</div>
 </div>
 
+******************** programatic Dialogs  ************************* 
+Vue.prototype.$dialog.confirm({
+	position: 'bottom-left',
+	text: 'Do you really want to exit?',
+	title: 'Warning'
+});
 
-
-
+******************** Vuetify Textfield Rules and Mask  ************************* 
+<v-text-field
+:rules="passwordRules"
+:mask="mask"
+</v-text-field>
+data: {
+	mask: '#,###,###', - Numbers
+	numberMask: 'XXXX', - letters
+	passwordRules: [ 
+    v => !!v || 'Password is required', 
+    v => (v && v.length >= 5) || 'Password must have 5+ characters',
+    v => /(?=.*[A-Z])/.test(v) || 'Must have one uppercase character', 
+    v => /(?=.*\d)/.test(v) || 'Must have one number', 
+    v => /([!@$%])/.test(v) || 'Must have one special character [!@#$%]' 
+	]
+}
 
 
 

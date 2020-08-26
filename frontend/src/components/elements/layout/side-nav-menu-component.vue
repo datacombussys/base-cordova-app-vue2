@@ -7,7 +7,7 @@
     <div class="menu-container">
       <dx-tree-view
         :ref="treeViewRef"
-        :items="menuItems"
+        :items="mainMenu"
         key-expr="path"
         selection-mode="single"
         :focus-state-enabled="false"
@@ -26,10 +26,18 @@ import { sizes } from '@/utils/media-query';
 //Routes
 import { Main } from '@/routes/app-navigation';
 import { Datacom } from '@/routes/app-navigation';
+import { Partner } from '@/routes/app-navigation';
+import { Merchant } from '@/routes/app-navigation';
+import { SalesOffice } from '@/routes/app-navigation';
+import { Warehouse } from '@/routes/app-navigation';
+import { Employee } from '@/routes/app-navigation';
+import { Customer } from '@/routes/app-navigation';
+import { Inventory } from '@/routes/app-navigation';
 
 const treeViewRef = "treeViewRef";
 const isLargeScreen = sizes()['screen-large'];
 
+var menu = Main.map((item) => ({ ...item, expanded: isLargeScreen }));
 
 export default {
   name: "sideNavMenuComponent",
@@ -41,7 +49,8 @@ export default {
   },
   data() {
     return {
-      treeViewRef,
+			treeViewRef,
+			mainMenu: menu
     };
   },
   methods: {
@@ -70,20 +79,7 @@ export default {
     }
   },
   computed: {
-    menuItems() {
-      var menu = new Array();
-      const route = this.$route.name
-      if(route == "home") {
-        menu = Main.map((item) => ({ ...item, expanded: isLargeScreen }));
-      }
-      else if(route == "test-page") {
-        menu = Datacom.map((item) => ({ ...item, expanded: isLargeScreen }));
-      } else {
-        menu = Main.map((item) => ({ ...item, expanded: isLargeScreen }));
-      }
 
-      return menu
-    }
   },
   mounted() {
     this.treeView = this.$refs[treeViewRef] && this.$refs[treeViewRef].instance;

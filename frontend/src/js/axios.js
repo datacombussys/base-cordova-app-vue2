@@ -1,26 +1,11 @@
 // Import Vue
 import Vue from "vue";
-import axios from "../../node_modules/axios/lib/axios";
+import axios from "axios";
 import VueAxios from "vue-axios";
 Vue.use(VueAxios, axios);
 
-// import store from 'vuex';
-// console.log('store.Store', store.Store);
+console.log("Process", process)
+console.log("Process.env", process.env)
+console.log("axios.defaults.baseURL", axios.defaults.baseURL)
 
-
-// export function GET(axiosObject) {
-//   axios.get("/django/" + axiosObject.childDomain + "/" + axiosObject.url).then(response => {
-//     if (response.status === 200) {
-//       // commit(axiosObject.setCommit, response.data);
-//       response.type = axiosObject.responseType;
-//       store.Store.dispatch('updateNotification', response);
-//       return "Axios Call was Successful"
-//     }
-//   }).catch(error => {
-//     error.type = axiosObject.responseType;
-//     console.log('error', error);
-//     // dispatch('updateNotification', error);
-//   });
-// }
-  
-
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'

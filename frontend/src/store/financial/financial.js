@@ -3,8 +3,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
 
-//Import and Use Axios
-import axios from "axios"
+import apiRoutes from '@/js/api-routes';
 
 export const Financial = {
 	namespace: true,
@@ -14,86 +13,44 @@ export const Financial = {
 			{id: 2, name: "California", rate: "22.3%"},
 			{id: 2, name: "Texas", rate: "8.9%"}
 		],
-		//Place the Profile in the array and parse on the table [0]
-		salesTaxProfile: {}
 	},
 	mutations: {
-		SET_SALES_TAX_PROFILE(state, payload) {
-			if(payload.length === 0 || payload == null) {
-				return
-			} else {
-				state.salesTaxProfile = payload[0];
-			}
+		PUSH_NEW_SALES_TAX(state, payload) {
+			state.salesTaxList.push(payload)
+		},
+		SET_SALES_TAX_LIST(state, payload) {
+			state.salesTaxList = payload
 		}
 	},
 	actions: {
-		POSTSalesTax({ commit, dispatch, rootState }, form) {
-			console.log('POSTSalesTax form', form);
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-				axios.post("/django/sales-tax/", form).then(response => {
-					if (response.status === 201) {
-						response.type = "Add Sales Tax";
-						commit('SET_SALES_TAX_PROFILE', response.data);
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Add Sales Tax";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		//Create Methods
+    async POSTSalesTax({commit, dispatch, rootState}, payload) {
+			let endpoint = 'sales-tax/';
+      let type = 'Create Sales Tax';
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+			console.log('POSTSalesTax response', response);
+			commit('PUSH_NEW_SALES_TAX', response);
 		},
-		//GET Methods
-		GETSalesTaxes({ dispatch, commit, rootState }, payload) {
-			var platForm = rootState.Auth.platformInfo;
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("GETSalesTaxes error", error);
-					return reject(error);
-				}
-				console.log("GETSalesTaxes", payload);
-				var url = platForm.url;
-				if (payload != undefined) {
-					url = payload.url;
-				}
-				axios.get("/django/sales-tax/" + url).then(response => {
-					if (response.status === 200) {
-						commit('SET_SALES_TAX_PROFILE', response.data);
-						response.type = "Retrieve Sales Tax";
-						// dispatch('updateNotification', response);
-
-						return resolve();
-					}
-				}).catch(error => {
-					error.type = "Retrieve Sales Tax";
-					dispatch('updateNotification', error);
-
-				});
-			});
+		//GET List Methods
+    async GETSalesTaxList({commit, dispatch, rootState}, payload) {
+			let endpoint = 'sales-tax/';
+      let type = 'Get Partner List';
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
+			console.log('GETPartnerList response', response);
+			commit('SET_SALES_TAX_LIST', response.data);
 		},
 	},
+
 	getters: {
 		HAS_SALES_TAX_PROFILE(state) {
-			if(Object.keys(state.salesTaxProfile).length === 0 || state.salesTaxProfile == null) {
+			if(state.salesTaxListlength === 0) {
 				return false
 			}
 			return true
 		},
+		GET_SALES_TAX_LIST(state) {
+			return state.salesTaxList
+		}
 	}
-};
+
+}

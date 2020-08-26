@@ -93,6 +93,7 @@ export default new Vuex.Store({
 			console.log("updateLoginNotifications Message Payload in store.js:", payload);
 		},
 		NOTIFICATION_MESSAGES(state, payload) {
+			console.log('NOTIFICATION_MESSAGES, payload', payload)
 			state.notificationMesasages = payload;
 		}
 	},

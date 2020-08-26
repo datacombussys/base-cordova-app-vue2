@@ -3,14 +3,14 @@ import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
 
-//Import and Use Axios
-
 
 export const Notifications = {
 	namespace: true,
 	state: {
 		notificationList: [],
-		isLoadPanelVisible: false
+		isLoadPanelVisible: false,
+		spinner: false,
+		showSnackbar: false,
 
 	},
 	mutations: {
@@ -43,7 +43,7 @@ export const Notifications = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				axios.post("/django/notifications/", form).then(response => {
@@ -71,7 +71,7 @@ export const Notifications = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				var url = platForm.url;
@@ -103,7 +103,7 @@ export const Notifications = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					console.log("PATCHAttendanceSettings error", error);
 					return reject(error);
 				}
@@ -118,7 +118,7 @@ export const Notifications = {
 					}
 				}).catch(error => {
 					error.type = "Update Notifications";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});
@@ -133,7 +133,7 @@ export const Notifications = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					console.log("DELETEBusinessHours error", error);
 					return reject(error);
 				}
@@ -148,7 +148,7 @@ export const Notifications = {
 					}
 				}).catch(error => {
 					error.type = "Delete Notification";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});

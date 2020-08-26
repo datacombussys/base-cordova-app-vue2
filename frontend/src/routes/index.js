@@ -28,6 +28,9 @@ import Datacom from "@/pages/datacom/datacom"
 import Partner from "@/pages/partners/partner"
 import Merchant from "@/pages/merchants/merchant"
 import Employee from "@/pages/employees/employee"
+import Customer from "@/pages/customers/customer"
+import SalesOffice from "@/pages/sales-offices/sales-office"
+import Warehouse from "@/pages/warehouses/warehouse"
 import HelpDesk from "@/pages/help-desk/help-desk"
 
 import RetailPOS from "@/pages/pos/new-pos/new-pos"
@@ -135,15 +138,6 @@ export default new Router({
       }
     },
     {
-      path: "/help-desk",
-      name: "help-desk",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: HelpDesk
-      }
-    },
-    {
       path: "/employee",
       name: "employee",
       meta: { requiresAuth: true },
@@ -152,8 +146,40 @@ export default new Router({
         content: Employee
       }
     },
-
-
+		{
+      path: "/customer",
+      name: "customer",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: Customer
+      }
+    },
+		{
+      path: "/help-desk",
+      name: "help-desk",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: HelpDesk
+      }
+    },{
+      path: "/sales-office",
+      name: "sales-office",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: SalesOffice
+      }
+    },{
+      path: "/warehouse",
+      name: "warehouse",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: Warehouse
+      }
+    },
     {
       path: "/display-data",
       name: "display-data",

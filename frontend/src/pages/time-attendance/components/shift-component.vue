@@ -409,7 +409,7 @@
 												<f7-button fill @click="testButton">Test</f7-button>
 											</f7-col>
 											<f7-col width="25">
-												<f7-button fill popup-close @click="addShift">Save</f7-button>
+												<f7-button fill popup-close @click="POSTShift">Save</f7-button>
 											</f7-col>
 										</f7-row>
 										<f7-row class="margin-top padding-top">
@@ -499,17 +499,17 @@ export default {
 		// 	var response = await this.setUserPlatformGET();
 		// 	console.log("response", response);
 		// 	response.url += 'is_active=false';
-		// 	let returnData = await this.$store.dispatch("addShift", response);
+		// 	let returnData = await this.$store.dispatch("POSTShift", response);
 		// 	console.log("returnData", returnData);
 		// },
-		async addShift() {
+		async POSTShift() {
 			console.log("this.newShiftForm", this.newShiftForm);
 			var newShiftForm = JSON.parse(JSON.stringify(this.newShiftForm));
 			console.log("newShiftForm", newShiftForm);
 
 			let platformForm = await this.setUserPlatformPOST(newShiftForm);
 			console.log("platformForm", platformForm);
-			let response = await this.$store.dispatch("addShift", platformForm);
+			let response = await this.$store.dispatch("POSTShift", platformForm);
 			console.log("response", response);
 
 			this.resetForm();

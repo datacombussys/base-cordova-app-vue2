@@ -9,6 +9,7 @@ export const Partners = {
   state: {
     partnerList: [],
     partnerProfile: {},
+    partnerFilterList: [],
     selectedPartnerProfile: {},
   },
   mutations: {
@@ -18,11 +19,14 @@ export const Partners = {
     PUSH_NEW_PARTNER(state, payload) {
       state.partnerList.push(payload);
     },
-    SET_OWN_PARTNER_PROFILE(state, payload) {
+    SET_PARTNER_PROFILE(state, payload) {
       state.partnerProfile = payload;
     },
     SET_SELECTED_PARTNER_PROFILE(state, payload) {
       state.selectedPartnerProfile = payload;
+    },
+    SET_PARTNER_FILTERED_LIST(state, payload) {
+      this.partnerFilterList = payload
     },
     UPDATE_PARTNER_PROFILE() {
       console.log('payload', payload);
@@ -41,11 +45,19 @@ export const Partners = {
   actions: {
     //Create Methods
     async POSTPartner({commit, dispatch, rootState}, payload) {
-			let endpoint = 'partner/';
-      let type = 'Create New Partner';
-			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
-			console.log('POSTPartner response', response);
-			commit('PUSH_NEW_PARTNER', response);
+			return new Promise( async (resolve, reject) => {
+				try {
+					let endpoint = 'partner/';
+					let type = 'Create New Partner';
+					let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+					console.log('POSTPartner response', response);
+					commit('PUSH_NEW_PARTNER', response);
+
+					return resolve(response)
+				} catch(error) {
+					return reject(response)
+				}
+			})
     },
     //GET Partner LIST
     async GETPartnerList({commit, dispatch, rootState}, payload) {
@@ -55,25 +67,36 @@ export const Partners = {
 			console.log('GETPartnerList response', response);
 			commit('SET_PARTNER_LIST', response.data);
     },
-    //GET Own Partner Profile
-    async GETPartnerOwnProfile({commit, dispatch, rootState}, payload) {
+    //GET Own Partner Profile by Id
+    async GETPartnerProfileById({commit, dispatch, rootState}, payload) {
 			let endpoint = 'partner/';
       let type = 'Get Partner Profile';
-      let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
+      let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
       console.log('GETPartnerOwnProfile response', response);
-      commit('SET_OWN_PARTNER_PROFILE', response.data);
+      commit('SET_PARTNER_PROFILE', response.data);
     },
-    //GET Selected Profile
-    async GETPartnerSelectedProfile({commit, dispatch, rootState}, payload) {
+    //GET Selected Profile by Id
+    async GETSelectedPartnerProfileById({commit, dispatch, rootState}, payload) {
       return new Promise( async (resolve, reject) => {
         let endpoint = 'partner/';
         let type = 'Get Partner Profile';
-        let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
-        console.log('GETPartnerSelectedProfile response', response);
+        let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
+        console.log('GETSelectedPartnerProfileById response', response);
         commit('SET_SELECTED_PARTNER_PROFILE', response.data);
         
         return resolve(response.data);
-
+      });
+    },
+    //GET Selected Profile by Filter
+    async GETFilteredPartnerList({commit, dispatch, rootState}, payload) {
+      return new Promise( async (resolve, reject) => {
+        let endpoint = 'partner/';
+        let type = 'Get Partner List';
+        let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
+        console.log('GETSelectedPartnerProfileById response', response);
+        commit('SET_PARTNER_FILTERED_LIST', response.data);
+        
+        return resolve(response.data);
       });
     },
     //PATCH Profile
@@ -85,11 +108,11 @@ export const Partners = {
 			commit('UPDATE_PARTNER_PROFILE', response.data);
     },
     //PATCHDelete PROFILE
-    async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+    async PATCHDeletePartnerProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'partner/';
       let type = 'Delete Partner Profile';
 			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
-			console.log('PATCHPartnerProfile response', response);
+			console.log('PATCHDeletePartnerProfile response', response);
 			commit('PATCH_DELETE_PARTNER_PROFILE', payload);
     },
   },
@@ -102,7 +125,7 @@ export const Partners = {
       console.log("partnerList from getter", state.partnerList);
       return state.partnerList;
     },
-    GET_OWN_PARTNER_PROFILE(state) {
+    GET_PARTNER_PROFILE(state) {
       return state.partnerProfile;
     },
     GET_SELECTED_PARTNER_PROFILE(state) {

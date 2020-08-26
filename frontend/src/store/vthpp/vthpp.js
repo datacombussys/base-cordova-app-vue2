@@ -207,7 +207,7 @@ export const VTHPP = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch("updateNotification", error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				axios
@@ -237,7 +237,7 @@ export const VTHPP = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch("updateNotification", error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				axios
@@ -266,7 +266,7 @@ export const VTHPP = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch("updateNotification", error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				var url = "";
@@ -299,7 +299,7 @@ export const VTHPP = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch("updateNotification", error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				var url = "";

@@ -147,7 +147,7 @@ export default {
   flex-grow: 1;
 }
 .menu-container {
-	background:  linear-gradient(90deg, #131212, rgb(36, 34, 34));
+	background:  linear-gradient(90deg, #131212, rgb(40, 40, 40));
 }
 //Dont place any scroillable css here. Plce it in the dx-styles.scss
 

@@ -60,11 +60,11 @@ export const Merchants = {
 	},
 	actions: {
 		//Create Methods
-		async POSTCompany({commit, dispatch, rootState}, payload) {
+		async POSTMerchant({commit, dispatch, rootState}, payload) {
 			let endpoint = 'merchant/';
 			let type = 'Create New Company';
 			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
-			console.log('POSTCompany response', response);
+			console.log('POSTMerchant response', response);
 			commit('PUSH_NEW_MERCHANT', response);
 		},
 		//GET Company LIST
@@ -79,7 +79,7 @@ export const Merchants = {
 		async GETCompanyOwnProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'merchant/';
 			let type = 'Get Company Profile';
-			let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
+			let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
 			console.log('GETCompanyOwnProfile response', response);
 			commit('SET_OWN_MERCHANT_PROFILE', response.data);
 		},
@@ -106,11 +106,11 @@ export const Merchants = {
 			commit('UPDATE_MERCHANT_PROFILE', response.data);
 		},
 		//PATCHDelete PROFILE
-		async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+		async PATCHDeleteMerchantProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'merchant/';
 			let type = 'Delete Company Profile';
 			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
-			console.log('PATCHCompanyProfile response', response);
+			console.log('PATCHDeleteMerchantProfile response', response);
 			commit('PATCH_DELETE_MERCHANT_PROFILE', payload);
 		},
 
@@ -125,7 +125,7 @@ export const Merchants = {
 		GET_MERCHANT_LIST_LENGTH(state) {
 			return state.merchantList.length;
 		},
-		GET_OWN_MERCHANT_PROFILE(state) {
+		GET_MERCHANT_PROFILE(state) {
       return state.merchantProfile;
     },
     GET_SELECTED_MERCHANT_PROFILE(state) {

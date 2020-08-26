@@ -4,7 +4,7 @@ from uuid import uuid4
 from django.utils import timezone
 from django.core.validators import RegexValidator
 
-from companies.helper_functions import CompanyIDs
+from commons.helper import CompanyIDs
 
 from datacom.common_models import CommonCompanyBase
 from commons.models import CommonBarcode

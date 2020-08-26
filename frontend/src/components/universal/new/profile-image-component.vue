@@ -33,7 +33,7 @@
 					<v-stepper-content step="1">
 						<v-card
 							class="mb-4 profile-image-cards"
-							color="grey lighten-1"
+							color="grey lighten-3"
 						>
 							<div class="row" v-if="uploadMessage">
 								<div class="message danger">
@@ -42,14 +42,10 @@
 									</div>
 								</div>
 							</div>
-							<v-alert
-			
-								outlined
-								type="error"
-							>
-								I'm a dense alert with the <strong>outlined</strong> prop and a <strong>type</strong> of error
+							<v-alert type="error" v-if="!profileData.id">
+								Please select an item to edit
 							</v-alert>
-							<div>
+							<div v-else>
 								<form enctype="multipart/form-data">
 									<div class="row">
 										<div class="col-12 flex justify-center">
@@ -94,7 +90,7 @@
 									</div>
 								</form>
 							</div>
-							<div class="row">
+							<!-- <div class="row">
 								<DxButton
 									:width="150"
 									class="ml-4"
@@ -104,7 +100,7 @@
 									:focusStateEnabled="false"
 									@click="testingMethod">
 								</DxButton>
-							</div>
+							</div> -->
 						</v-card>
 						<div class="row justify-end">
 							<div class="col-4 text-center">
@@ -124,9 +120,9 @@
 					<v-stepper-content step="2">
 						<v-card
 							class="mb-4 profile-image-cards"
-							color="grey lighten-1"
+							color="grey lighten-3 p-3"
 						>
-						<div class="cropper-content">
+						<div class="cropper-content items-center">
 							<section class="cropper-area">
 								<div class="img-cropper">
 									<vue-cropper
@@ -218,16 +214,19 @@
 
 <script>
 import { mapState } from "vuex";
+import axios from 'axios';
 
 import DxButtonGroup from 'devextreme-vue/button-group';
 import DxButton from 'devextreme-vue/button';
+import { confirm, custom, alert } from 'devextreme/ui/dialog';
 
 export default {
 	name: "profileImageComponent",
 	mixins: [],
 	components: {
 		DxButtonGroup,
-		DxButton
+		DxButton,
+		alert
 	},
 	props: {
 		openImageSheet: {
@@ -250,7 +249,6 @@ export default {
 			progress: 0,
 			file: "",
 			fileURL: "",
-			files: [],
 			error: false,
 			uploading: false,
 			uploadMessage: "",
@@ -264,11 +262,25 @@ export default {
 			isStepsClickable: false,
 			isProfileSuccess: false,
 
+			//Android and IPS Camera Capture
+			imageFile: null,
+			cameraSettings: {
+				quality: 80,
+				destinationType: Camera.DestinationType.FILE_URI,
+				sourceType: Camera.PictureSourceType.CAMERA,
+				mediaType: Camera.MediaType.PICTURE,
+				encodingType: Camera.EncodingType.JPEG,
+				cameraDirection: Camera.Direction.BACK,
+				targetWidth: 300,
+				targetHeight: 300
+			},
+			isMobile: false,
+
 
 			//CroppieJS
 			imgSrc: 'https://dummyimage.com/720x350/242424/fff',
       cropImg: '',
-			data: null,
+			imgData: null,
 			//Button Data
 			buttons: [
 				{
@@ -337,6 +349,12 @@ export default {
 	methods: {
 		testingMethod(e) {
 			console.log("this.file", this.file);
+			console.log("this.fileURL", this.fileURL);
+			console.log("this.files", this.files);
+			console.log("this.cropImg", this.cropImg);
+			console.log("this.imgData", this.imgData);
+			console.log("this.$refs", this.$refs); 
+			
 		},
 		closeSheet(e) {
 			console.log("Close Sheet")
@@ -350,41 +368,43 @@ export default {
 		},
 		selectImageButton(e) {
 			console.log("selectImageButton, e", e)
-			if(e.itemData === "zoom-in") {
+			if(e.itemData.shortCode === "zoom-in") {
 				this.zoom(0.2)
 			}
-			if(e.itemData === "zoom-out") {
+			if(e.itemData.shortCode === "zoom-out") {
 				this.zoom(-0.2)
 			}
-			if(e.itemData === "move-left") {
+			if(e.itemData.shortCode === "move-left") {
 				this.move(-10, 0)
 			}
-			if(e.itemData === "move-right") {
+			if(e.itemData.shortCode === "move-right") {
 				this.move(10, 0)
 			}
-			if(e.itemData === "move-up") {
+			if(e.itemData.shortCode === "move-up") {
 				this.move(0, -10)
 			}
-			if(e.itemData === "move-down") {
+			if(e.itemData.shortCode === "move-down") {
 				this.move(0, 10)
 			}
 
-			if(e.itemData === "rotate-left") {
+			if(e.itemData.shortCode === "rotate-left") {
 				this.rotate(-90)
 			}
-			if(e.itemData === "rotate-right") {
+			if(e.itemData.shortCode === "rotate-right") {
 				this.rotate(90)
 			}
 
-			if(e.itemData === "flip-horiz") {
-				this.flipX
+			if(e.itemData.shortCode === "flip-horiz") {
+				this.flipX()
 			}
-			if(e.itemData === "flip-vert") {
-				this.flipY
+			if(e.itemData.shortCode === "flip-vert") {
+				this.flipY()
 			}
 			
-
 		},
+		// selectMobileImage(image) {
+
+		// },
 		selectFile(e) {
 			//Get image URL and send to bind method
 			console.log("Event", e);
@@ -394,6 +414,7 @@ export default {
 			reader.readAsDataURL(newImageFile);
 			reader.onload = (e) => {
 				this.fileURL = e.target.result;
+				console.log("this.FileURL", this.fileURL)
 				// rebuild cropperjs with the updated source
 				this.$refs.cropper.replace(e.target.result);
 			};
@@ -413,30 +434,40 @@ export default {
 		},
 
 		sendFile() {
-			this.profileData.profile_img = this.cropped;
+			this.profileData.profile_img = this.cropImg;
 			console.log("this.profileData", this.profileData);
-			var formdata = this.profileData;
+			var formdata = JSON.parse(JSON.stringify(this.profileData))
 			console.log("formdata", formdata);
 			var endpoint = this.profileImageSettings.url;
 			console.log("endpoint", endpoint);
 		
 			try {
-				axios.patch("/django/" + endpoint + formdata.id + "/", this.profileData).then((response) => {
+				axios.patch("/django/" + endpoint + formdata.id + "/", formdata).then((response) => {
 					console.log(`${this.profileImageSettings.module} Image PATCH response`, response);
 					// this.$store.dispatch("GETPartnerList");
 					response.type = this.profileImageSettings.module + "Profile Image";
 					this.$store.dispatch("updateNotification", response);
 					this.$store.commit(this.profileImageSettings.mutation, response.data);
+					if(response.status === 200) {
+						this.$nextTick(function() {
+							alert("Successfully Uploaded", "Success")
+						})
+					}
 				});
 				// this.uploadMessage = "File has been uploaded";
 				this.file = "";
 				this.cropped = "";
 				this.fileURL = "";
 				this.activeStep = 0;
+				this.closeSheet()
 			} catch (err) {
 				if(err.response) {
 					this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
 					console.log("Error Uploading", err.response.data.error);
+					this.$nextTick(function() {
+							alert("Error Uploading: "+ err.response.data.error, "Error")
+						})
+					this.closeSheet()
 				} else {
 					this.uploadMessage = `There was an error uploading ${err.data}`;
 					console.log("Error Uploading", err);
@@ -450,6 +481,22 @@ export default {
 				this.error = true;
 			}
 		},
+		setMobile() {
+			this.step = 2
+		},
+		//Capture Image on Android and IOS
+		captureImage() {
+			console.log("Camera Button Clicked")
+			navigator.camera.getPicture(imageURI => {
+				console.log("Camera getPicture")
+				this.imgSrc = imageURI;
+				this.$refs.cropper.replace(imageURI);
+				// this.selectMobileImage(imageURI)
+
+			}, error => {
+				 alert('Failed because: ' + error);
+			}, this.cameraSettings)
+		},
 
 		//CroppieJS Settings
 		cropImage() {
@@ -457,24 +504,27 @@ export default {
       this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
     },
     flipX() {
-      const dom = this.$refs.flipX;
-      let scale = dom.getAttribute('data-scale');
-      scale = scale ? -scale : -1;
+      const dom = this.$refs.cropper;
+      let scale = dom.getData('data-scale');
+      scale = scale ? -scale.scaleX : -1;
       this.$refs.cropper.scaleX(scale);
-      dom.setAttribute('data-scale', scale);
+      dom.setData('data-scale', scale);
     },
     flipY() {
-      const dom = this.$refs.flipY;
-      let scale = dom.getAttribute('data-scale');
-      scale = scale ? -scale : -1;
+			console.log("this.$refs", this.$refs);
+			const dom = this.$refs.cropper;
+			console.log("dom", dom);
+			let scale = this.$refs.cropper.getData('data-scale');
+			console.log("scale", scale);
+      scale = scale ? -scale.scaleY : -1;
       this.$refs.cropper.scaleY(scale);
-      dom.setAttribute('data-scale', scale);
+      dom.setData('data-scale', scale);
     },
     getCropBoxData() {
-      this.data = JSON.stringify(this.$refs.cropper.getCropBoxData(), null, 4);
+      this.imgDdata = JSON.stringify(this.$refs.cropper.getCropBoxData(), null, 4);
     },
     getData() {
-      this.data = JSON.stringify(this.$refs.cropper.getData(), null, 4);
+      this.imgDdata = JSON.stringify(this.$refs.cropper.getData(), null, 4);
     },
     move(offsetX, offsetY) {
       this.$refs.cropper.move(offsetX, offsetY);
@@ -486,12 +536,12 @@ export default {
       this.$refs.cropper.rotate(deg);
     },
     setCropBoxData() {
-      if (!this.data) return;
-      this.$refs.cropper.setCropBoxData(JSON.parse(this.data));
+      if (!this.imgDdata) return;
+      this.$refs.cropper.setCropBoxData(JSON.parse(this.imgDdata));
     },
     setData() {
-      if (!this.data) return;
-      this.$refs.cropper.setData(JSON.parse(this.data));
+      if (!this.imgDdata) return;
+      this.$refs.cropper.setData(JSON.parse(this.imgDdata));
     },
     setImage(e) {
       const file = e.target.files[0];
@@ -530,7 +580,6 @@ export default {
 
 <style scoped lang="scss" scoped>
 .profile-image-cards {
-	background: rgb(223, 223, 223);
 	height: calc(90vh - 265px);
 }
 

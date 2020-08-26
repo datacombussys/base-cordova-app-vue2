@@ -3,7 +3,7 @@
 		<div class="headline">Employees</div>
 		<template>
 			<DxDataGrid
-				:data-source="GET_EMPLOYEE_LIST"
+				:data-source="GET_SELECTED_EMPLOYEE_LIST"
 				:remote-operations="false"
 				:allow-column-reordering="true"
 				:row-alternation-enabled="true"
@@ -129,10 +129,11 @@ export default {
 	methods: {
 		testingMethod(e) {
 			console.log('e', e);
-		}
+		},
+
 	},
 	computed: {
-		...mapGetters(["GET_EMPLOYEE_LIST"])
+		...mapGetters(["GET_EMPLOYEE_LIST", "GET_EMPLOYEE_LIST_LENGTH", "GET_SELECTED_EMPLOYEE_LIST", "GET_SELECTED_EMPLOYEE_LIST_LENGTH"])
 	},
 	created() {},
 	mounted() {}

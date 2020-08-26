@@ -1,4 +1,4 @@
-import axios from "axios"
+import apiRoutes from '@/js/api-routes';
 
 import Days from './business-hours/days';
 import Holidays from './business-hours/holidays';
@@ -184,477 +184,132 @@ export const Attendance = {
 		}
 	},
 	actions: {
-		POSTAttendanceSettings({ commit, dispatch, rootState }, form) {
-			console.log('POSTAttendanceSettings form', form);
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-				axios.post("/django/attendance-settings/", form).then(response => {
-					if (response.status === 201) {
-						response.type = "Add Attendance Settings";
-						commit('SET_ATTENDANCE_SETTINGS_PROFILE', response.data);
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Add Attendance Settings";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		//Create Methods
+    async POSTAttendanceSettings({commit, dispatch, rootState}, payload) {
+			let endpoint = 'attendance-settings/';
+      let type = 'Create New Attendance Setting';
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+			console.log('POSTAttendanceSettings response', response);
+			commit('SET_ATTENDANCE_SETTINGS_PROFILE', response);
 		},
-		addPayrollCycle({ commit, dispatch, rootState }, form) {
-			console.log('addPayrollCycle form', form);
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-				axios.post("/django/pay-cycles/", form).then(response => {
-					if (response.status === 201) {
-						response.type = "Add Payroll Cycle";
-						commit('PUSH_PAYROLL_CYCLE_LIST', response.data);
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Add Payroll Cycle";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		async POSTPayrollCycle({commit, dispatch, rootState}, payload) {
+			let endpoint = 'pay-cycles/';
+      let type = 'Create Payroll Cycle';
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+			console.log('POSTPayrollCycle response', response);
+			commit('PUSH_PAYROLL_CYCLE_LIST', response);
 		},
-		addPayrollCycleRecurrence({ commit, dispatch, rootState }, form) {
-			console.log('addPayrollCycleRecurrence form', form);
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-				axios.post("/django/pay-cycle-recurrence/", form).then(response => {
-					if (response.status === 201) {
-						console.log('response', response);
-						response.type = "Add Payroll Cycle Recurrence";
-						commit('PUSH_PAYROLL_CYCLE_LIST', response.data);
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Add Payroll Cycle Recurrence";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		async POSTPayCycleRecurrence({commit, dispatch, rootState}, payload) {
+			let endpoint = 'pay-cycle-recurrence/';
+      let type = 'Create New Payroll Cycle Recurrence Rule';
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+			console.log('POSTPayCycleRecurrence response', response);
+			commit('PUSH_PAYROLL_CYCLE_LIST', response);
 		},
-		addShift({ commit, dispatch, rootState }, form) {
-			console.log('addShift form', form);
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-				axios.post("/django/shifts/", form).then(response => {
-					if (response.status === 201) {
-						console.log('response', response);
-						response.type = "Add Shift";
-						commit('PUSH_SHIFT_LIST', response.data);
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Add Shift";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		async POSTShift({commit, dispatch, rootState}, payload) {
+			let endpoint = 'shifts/';
+      let type = 'Create New Shift';
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+			console.log('POSTShift response', response);
+			commit('PUSH_SHIFT_LIST', response);
 		},
-		POSTBusinessHours({ commit, dispatch, rootState }, form) {
-			console.log('POSTBusinessHours form', form);
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-				axios.post("/django/operating-hours/", form).then(response => {
-					if (response.status === 201) {
-						console.log('response', response);
-						response.type = "Add Operating Hours";
-						dispatch('GETBusinessHours');
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Add Operating Hours";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		async POSTBusinessHours({commit, dispatch, rootState}, payload) {
+			let endpoint = 'operating-hours/';
+      let type = 'Create Business Hours';
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+			console.log('POSTBusinessHours response', response);
+			dispatch('GETBusinessHours');
 		},
-		addHoliday({ commit, dispatch, rootState }, form) {
-			console.log('addHoliday form', form);
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					return reject(error);
-				}
-				axios.post("/django/holidays/", form).then(response => {
-					if (response.status === 201) {
-						response.type = "Add Holiday";
-						dispatch('getHolidays');
-						// commit('PUSH_HOLIDAY_LIST', response.data);
-						dispatch('updateNotification', response);
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					console.log('error', error);
-					console.log('error', error.response);
-					if(error) {
-						error.response.type = "Add Holiday";
-						dispatch('updateNotification', error);
-						if(error.response.status === 500) {
-							if(error.response.data.slice(0,200).includes("value violates unique constraint")) {
-								f7.dialog.alert("Name is already taken").open();
-							}
-						}
-					}
-					return resolve(error);
-				});
-			}).catch(error => {
-				console.log('error', error);
-				return error;
-			});
+		async POSTHoliday({commit, dispatch, rootState}, payload) {
+			let endpoint = 'holidays/';
+      let type = 'Create Company Holiday';
+			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+			console.log('POSTHoliday response', response);
+			dispatch('GETHolidays');
 		},
-		//GET Methods
-		GETAttendanceSettings({ dispatch, commit, rootState }, payload) {
-			var platForm = rootState.Auth.platformInfo;
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("GETAttendanceSettings error", error);
-					return reject(error);
-				}
-				console.log("GETAttendanceSettings", payload);
-				var url = platForm.url;
-				if (payload != undefined) {
-					url = payload.url;
-				}
-				axios.get("/django/attendance-settings/" + url).then(response => {
-					if (response.status === 200) {
-						commit('SET_ATTENDANCE_SETTINGS_PROFILE', response.data);
-						response.type = "Retrieve Attendance Setting";
-						// dispatch('updateNotification', response);
+		
+		
 
-						return resolve();
-					}
-				}).catch(error => {
-					error.type = "Retrieve Attendance Setting";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			});
+    //GET List Methods
+    async GETAttendanceSettings({commit, dispatch, rootState}, payload) {
+			let endpoint = 'attendance-settings/';
+      let type = 'Get Attendance Settings';
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
+			console.log('GETAttendanceSettings response', response);
+			commit('SET_ATTENDANCE_SETTINGS_PROFILE', response.data);
 		},
-		getCompanyShifts({ dispatch, commit, rootState }, payload) {
-			var platForm = rootState.Auth.platformInfo;
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("getCompanyShifts error", error);
-					return reject(error);
-				}
-				console.log("getCompanyShifts", payload);
-				var url = platForm.url;
-				if (payload != undefined) {
-					url = payload.url;
-				}
-				console.log("getCompanyShifts");
-				axios.get("/django/shifts/" + url).then(response => {
-					if (response.status === 200) {
-						commit('SET_SHIFT_LIST', response.data);
-						response.type = "Retrieve Company Shifts";
-						// dispatch('updateNotification', response);
-					}
-				}).catch(error => {
-					error.type = "Retrieve Company Shifts";
-					dispatch('updateNotification', error);
-
-				});
-			});
+		async GETCompanyShifts({commit, dispatch, rootState}, payload) {
+			let endpoint = 'shifts/';
+      let type = 'Get Company Shifts';
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
+			console.log('GETCompanyShifts response', response);
+			commit('SET_SHIFT_LIST', response.data);
 		},
-		async GETBusinessHours({ dispatch, commit, rootState }, payload) {
-			//When making a GET request from another Action, I need to pass it through the Universal Mixin First
-			var platForm = rootState.Auth.platformInfo;
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("GETBusinessHours error", error);
-					return reject(error);
-				}
-				console.log("GETBusinessHours", payload);
-				var url = platForm.url;
-				if (payload != undefined) {
-					url = payload.url;
-				}
-				axios.get("/django/operating-hours/" + url).then(response => {
-					if (response.status === 200) {
-						commit('SET_HOURS_OPERATION_PROFILE', response.data);
-						response.type = "Retrieve Hours of Operation";
-						// dispatch('updateNotification', response);
-						return resolve(response.data[0])
-					}
-				}).catch(error => {
-					error.type = "Retrieve Hours of Operation";
-					dispatch('updateNotification', error);
-
-				});
-			});
+		async GETBusinessHours({commit, dispatch, rootState}, payload) {
+			let endpoint = 'operating-hours/';
+      let type = 'Get Business Hours';
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
+			console.log('GETBusinessHours response', response);
+			commit('SET_HOURS_OPERATION_PROFILE', response.data);
 		},
-		getHolidays({ dispatch, commit, rootState }, payload) {
-			var platForm = rootState.Auth.platformInfo;
-			return new Promise((resolve, reject) => {
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("getHolidays error", error);
-					return reject(error);
-				}
-				console.log("getHolidays", payload);
-				var url = platForm.url;
-				if (payload != undefined) {
-					url = payload.url;
-				}
-				axios.get("/django/holidays/" + url).then(response => {
-					if (response.status === 200) {
-						commit('SET_HOLIDAY_LIST', response.data);
-						response.type = "Retrieve Holidays";
-						// dispatch('updateNotification', response);
-						return resolve(response.data[0])
-					}
-				}).catch(error => {
-					error.type = "Retrieve Holidays";
-					dispatch('updateNotification', error);
-
-				});
-			});
+		async GETHolidays({commit, dispatch, rootState}, payload) {
+			let endpoint = 'holidays/';
+      let type = 'Get Company Holidays';
+			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
+			console.log('GETHolidays response', response);
+			commit('SET_HOLIDAY_LIST', response.data);
 		},
-		//Updating Models
-		PATCHAttendanceSettings({ dispatch, commit, rootState }, form) {
-			return new Promise((resolve, reject) => {
-				console.log("PATCH Attendance Settings", form);
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("PATCHAttendanceSettings error", error);
-					return reject(error);
-				}
-				axios.patch("/django/attendance-settings/" + form.id + "/", form).then(response => {
-					console.log("PATCH Attendance Settings", response);
-					if (response.status === 200) {
-						response.type = "Update Attendance Settings";
-						dispatch('updateNotification', response);
-						dispatch('GETAttendanceSettings');
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Update Attendance Settings";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+    //GET Selected Profile by Id
+			//Not implemented yet
+			
+		//GET Selected Profile by Filter
+			//Not implemented yet
+   
+    //PATCH Profile
+    async PATCHAttendanceSettings({commit, dispatch, rootState}, payload) {
+			let endpoint = 'attendance-settings/';
+      let type = 'Update Attendance Settings';
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
+			console.log('PATCHAttendanceSettings response', response);
+			dispatch('GETAttendanceSettings');
 		},
-		PATCHBusinessHours({ dispatch, commit, rootState }, form) {
-			return new Promise((resolve, reject) => {
-				console.log("PATCH Hours Of Operation", form);
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("PATCHBusinessHours error", error);
-					return reject(error);
-				}
-				axios.patch("/django/operating-hours/" + form.id + "/", form).then(response => {
-					console.log("PATCH Hours of Operation", response);
-					if (response.status === 200) {
-						response.type = "Update Hours of Operation";
-						dispatch('updateNotification', response);
-						dispatch('GETBusinessHours');
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Update Hours of Operation";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		async PATCHBusinessHours({commit, dispatch, rootState}, payload) {
+			let endpoint = 'operating-hours/';
+      let type = 'Update Business Hours';
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
+			console.log('PATCHBusinessHours response', response);
+			dispatch('GETBusinessHours');
 		},
-		PATCHHolidays({ dispatch, commit, rootState }, form) {
-			return new Promise((resolve, reject) => {
-				console.log("PATCH Hours Of Operation", form);
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("PATCHHolidays error", error);
-					return reject(error);
-				}
-				axios.patch("/django/holidays/" + form.id + "/", form).then(response => {
-					console.log("PATCH Holidays", response);
-					if (response.status === 200) {
-						response.type = "Update Holidays";
-						dispatch('updateNotification', response);
-						getHolidays
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Update Holidays";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		async PATCHHolidays({commit, dispatch, rootState}, payload) {
+			let endpoint = 'holidays/';
+      let type = 'Update Company Holidays';
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
+			console.log('PATCHHolidays response', response);
+			dispatch('GETHolidays');
 		},
-		//Delete Methods
-		DELETEBusinessHours({ dispatch, commit, rootState }, form) {
-			return new Promise((resolve, reject) => {
-				console.log("DELETE Hours Of Operation", form);
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("DELETEBusinessHours error", error);
-					return reject(error);
-				}
-				axios.delete("/django/operating-hours/" + form.id).then(response => {
-					console.log("DELETE Hours of Operation", response);
-					if (response.status === 204) {
-						response.type = "Delete Hours of Operation";
-						dispatch('updateNotification', response);
-						dispatch('GETBusinessHours');
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Delete Hours of Operation";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		async PATCHAttendanceSettings({commit, dispatch, rootState}, payload) {
+			let endpoint = 'attendance-settings/';
+      let type = 'Update Attendance Settings';
+			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
+			console.log('PATCHAttendanceSettings response', response);
+			dispatch('GETAttendanceSettings');
 		},
-		DELETEShift({ dispatch, commit, rootState }, form) {
-			return new Promise((resolve, reject) => {
-				console.log("DELETE Shift", form);
-				if (!rootState.Auth.isAuthenticated) {
-					let error = {};
-					error.type = "Login Required";
-					error.status = 2000;
-					dispatch('updateNotification', error);
-					console.log("DELETEBusinessHours error", error);
-					return reject(error);
-				}
-				axios.delete("/django/shifts/" + form.id).then(response => {
-					console.log("DELETE Shift", response);
-					if (response.status === 204) {
-						response.type = "Delete Shift";
-						dispatch('updateNotification', response);
-						dispatch('GETBusinessHours');
-
-						return resolve(response.data);
-					}
-				}).catch(error => {
-					error.type = "Delete Shift";
-					dispatch('updateNotification', error);
-
-					return resolve(error);
-				});
-			}).catch(error => {
-				return error;
-			});
+		
+    //PATCHDelete Profile Methods
+    async PATCHDeleteBusinessHours({commit, dispatch, rootState}, payload) {
+			let endpoint = 'operating-hours/';
+      let type = 'Delete Business Hours';
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
+			console.log('PATCHBusinessHours response', response);
+			dispatch('GETBusinessHours');
 		},
-		// testAction({ dispatch, commit, rootState }, payload) {
-		// 	console.log("testAction input", payload);
-		// 	const axiosObject = {
-		// 		childDomain: "operating-hours",
-		// 		url: "?datacom__1=1",
-		// 		setCommit: 'SET_HOURS_OPERATION_LIST',
-		// 		responseType: "Retrieve Hours of Operation"
-		// 	};
-		// 	GET(axiosObject)
-		// 	.then(res => {
-		// 		console.log("Attendance response from GET import", res);
-		// 		return res;
-		// 	});
-		// }
+		async PATCHDeleteShift({commit, dispatch, rootState}, payload) {
+			let endpoint = 'shifts/';
+      let type = 'Delete Company Shift';
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
+			console.log('PATCHShift response', response);
+			console.log('GETCompanyShifts');
+    },
 
 	},
 	getters: {

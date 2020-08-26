@@ -43,7 +43,7 @@ class PartnerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partner
         read_only_fields = ['id']
-        fields = ['id', 'date_added', 'account_number', 'dba_name', 'domain', 'is_active', 'profile_img', 'acct_closure_date']
+        fields = ['id', 'date_added', 'account_number', 'dba_name', 'domain', 'is_active', 'profile_img', 'closure_date']
 
 class PartnerPrimaryContactSerializer(serializers.ModelSerializer):
     primary_contacts_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')

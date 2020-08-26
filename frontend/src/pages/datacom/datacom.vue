@@ -11,7 +11,7 @@
 							class="mx-auto custom-card"
 						>
 							<v-card-title>
-								<div class="title">Datacom</div>
+								<div class="title">{{ datacomForm.dba_name }}</div>
 								<div class="row justify-between">
 									<div class="col-50">
 										<div class="subtitle">Super User</div>
@@ -40,7 +40,7 @@
 										</v-menu>
 										<profileImageComponent 
 										ref="profileImageComponent"
-										:openImageSheet="openImageSheet" S
+										:openImageSheet="openImageSheet"
 										@closeSheet="closeSheet"
 										:profileImageSettings="profileImageSettings"
 										:profileData="datacomForm" />
@@ -49,22 +49,42 @@
 							</v-card-title>
 
 							<v-card-text>
-								<div class=" flex justify-center items-center">
-									<img src="@/static/BusinessLogo170x170.png"
-										style="width:170px;height:170px;"
-										alt="Please load company profile">
+								<div v-if="!datacomForm.id" class="flex justify-center items-center">
+									<img
+										class="mt-3 disabled"
+										src="@/static/BusinessLogo170x170.png"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
 								</div>
-								<div class="mt-4">
+								<div v-else class="flex justify-center items-center">
+									<img class="mt-3" v-if="datacomForm.profile_img" 
+										:src="datacomForm.profile_img"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+									<img class="mt-3" v-else src="@/static/BusinessLogo170x170.png"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+								</div>
+
+								<div class="mt-4" v-if="datacomForm.barcode_obj">
 									<div class="mt-4 business-barcode text-center">
-										D-13343645
+										{{ datacomForm.barcode_obj.barcode_number }}
 									</div>
-									<p class="text-center">D-13343645</p>
+									<p class="text-center">{{ datacomForm.barcode_obj.barcode_number }}</p>
 								</div>	
+								<div class="mt-4" v-else>
+									<div class="mt-4 business-barcode text-center">
+										1234567890
+									</div>
+									<p class="text-center">1234567890</p>
+								</div>
 							</v-card-text>
 						</v-card>
 					</template>
 				</div>
+				<!-- End Profile Card -->
 
+				<!-- Button Block -->
 				<div class="small-block">
 					<v-card>
 						<v-card-text>
@@ -81,7 +101,7 @@
 										text="Save Company"
 										width="100%"
 										:split-button="true"
-										@button-click="createCompanyandClose"
+										@button-click="createCompanyAndClose"
 										@item-click="createCompanyChoices"
 										:items="saveCompanyItems"
 										key-expr="id"
@@ -99,19 +119,16 @@
 										width="100%"
 										type="warning"
 										text="Test"
-										@click="testMethod" />
+										@click="testMethod"
+										:focusStateEnabled="false" />
 								</div>
 							</div>
-							
 						</v-card-text>
 					</v-card>
-					
 				</div>
 
 			</div>
 			<div class="right-col">
-
-
 				<!-- Header Card -->
 				<div class="small-block">
 					<v-card class="rounded-md">
@@ -119,7 +136,7 @@
 								<div class="title">Quicklinks</div>
 						</v-card-title>
 
-						<v-card-text class="flex w-full spacing">
+						<v-card-text class="flex w-full spacing mt-4">
 							<div class="m-4">
 								<div class="mdi mdi-account-lock mdi-60 text-datacom mb-3"></div>
 								<div class="mt-4 text-center">Permissions</div>
@@ -150,7 +167,7 @@
 							
 							<v-card-text class="flex w-full spacing">
 								<div id="tabContainer">
-									<DxTabPanel :show-nav-buttons="true">
+									<DxTabPanel :show-nav-buttons="true" :selected-index.sync="selectedTabIndex">
 										<DxItem title="Profile" icon="mdi mdi-account-box">
 											<template #default>
 												<profileComponent 
@@ -182,11 +199,6 @@
 												<paymentMethodsComponent :formData="datacomForm"></paymentMethodsComponent>
 											</template>
 										</DxItem>
-										<DxItem title="Reporting" icon="mdi mdi-newspaper-variant-outline">
-											<template #default>
-												<reportingComponent :formData="datacomForm"></reportingComponent>
-											</template>
-										</DxItem>
 										<DxItem title="Employees" icon="mdi mdi-account-group">
 											<template #default>
 												<employeesComponent :formData="datacomForm"></employeesComponent>
@@ -196,7 +208,9 @@
 											<template #default>
 												<databaseComponent 
 													:databaseSettings="databaseSettings"
-													:databaseData="databaseData">
+													:databaseData="databaseData"
+													@editProfile="editProfileFromChild"
+													@deleteProfile="deleteProfileFromChild">
 												</databaseComponent>
 											</template>
 										</DxItem>
@@ -237,6 +251,8 @@ import { DxLoadPanel } from 'devextreme-vue/load-panel';
 import DxCheckBox from 'devextreme-vue/check-box';
 import DxTabPanel, { DxItem } from 'devextreme-vue/tab-panel';
 
+import Vuetify, { VDialog } from 'vuetify/lib'
+
 
 //Components
 import profileComponent from "@/components/business/new-docs/profile-component"
@@ -244,15 +260,17 @@ import contactsComponent from "@/components/business/new-docs/contacts-component
 import locationsComponent from "@/components/business/new-docs/locations-component"
 import shippingLocationsComponent from "@/components/business/new-docs/shipping-component"
 import paymentMethodsComponent from "@/components/business/new-docs/payment-component"
-import reportingComponent from "@/components/business/new-docs/reporting-component"
 import employeesComponent from "@/components/business/new-docs/employees-component"
 import databaseComponent from "@/components/business/new-docs/database-component"
 import profileImageComponent from "@/components/universal/new/profile-image-component"
 
+//Mixins
+import { UniversalMixins } from "@/mixins/universal-mixins"
+
 export default {
   name: "datacomProfile",
 	mixins: [
-
+		UniversalMixins
   ],
   components: {
 		profileComponent,
@@ -261,7 +279,6 @@ export default {
 		shippingLocationsComponent,
 		paymentMethodsComponent,
 		profileImageComponent,
-		reportingComponent,
 		employeesComponent,
 		databaseComponent,
 		DxScrollView,
@@ -273,8 +290,6 @@ export default {
 		alert,
 		DxItem,
 		DxTabPanel,
-
-
 	},
 
 
@@ -286,6 +301,7 @@ export default {
 			windowWidth: window.innerWidth,
 			windowHeight: window.innerHeight,
 			isLoadPanelVisible: false,
+
 			saveCompanyItems: [
 				"Create and New" ,
 				"Create and Edit",
@@ -317,13 +333,14 @@ export default {
 				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
 			profileMenu: [
-        { title: 'Profile Image' },
+				{ title: 'Upload Image' },
+				{ title: 'Take Photo' }
       ],
 			accountSettings: {
 				showPasswordReset: false,
-				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
+				type: "company",
 				accountPlatform: {
 					company_name: null,
 					is_datacom: true,
@@ -334,22 +351,24 @@ export default {
 			},
 			//Database Compoennt Data
 			databaseSettings: {
-				title: "Employee Database",
+				title: "Datacom Database",
 				header1: "Id",
-				header2: "Name",
-				header3: "Number",
-				header4: "Position",
-				header5: "Mobile",
-				header6: "Status",
+				header2: "Image",
+				header3: "Date Added",
+				header4: "Name",
+				header5: "Domain",
+				header6: "Account #",
+				header7: "Status",
 				col1: "id",
-				col2: "user_obj.full_name",
-				col3: "employee_number",
-				col4: "position",
-				col5: "user_obj.mobile_phone",
-				col6: "user_obj.is_active"
+				col2: "profile_img",
+				col3: "date_added",
+				col4: "dba_name",
+				col5: "domain",
+				col6: "account_number",
+				col7: "is_active"
 			},
 			databaseData: {
-				tableId: "employeeDbTable",
+				tableId: "datacomDbTable",
 				list: new Array()
 			},
 
@@ -366,6 +385,7 @@ export default {
 				id: null,
 				account_number: null,
 				barcode: null,
+				barcode_obj: null,
 				profile_img: null,
 				logo: null,
 				date_added: null,
@@ -394,7 +414,7 @@ export default {
 				primary_mailing_city: null,
 				primary_mailing_state: null,
 				primary_mailing_zip: null,
-				primary_mailing_country: null,
+				primary_mailing_country: "United States",
 				primary_phone: null,
 				primary_fax: null,
 				primary_email: null,
@@ -431,22 +451,18 @@ export default {
 	//******************************************** Methods ***********************************************//
   methods: {
     testMethod(e) {
-			console.log('this.datacomForm', this.datacomForm)
-			// console.log('this.accountSettings.editProfile', this.accountSettings.editProfile)
-			// this.accountSettings.editProfile = !this.accountSettings.editProfile
-			// console.log('this.GET_DATACOM_LIST', this.GET_DATACOM_LIST)
-			console.log('$', $)
-			let elem = $('loader')
-			console.log('elem', elem)
-			// this.Notifications.isLoadPanelVisible = true
+			// console.log('this.datacomForm', this.datacomForm)
+			// console.log('this.Datacom.datacomList', this.Datacom.datacomList)
+			// console.log("this.GET_DATACOM_PROFILE", this.GET_DATACOM_PROFILE)
+			console.log('Vuetify', Vuetify)
+			console.log('VDialog', VDialog)	
+			let sb = new VDialog({text: "Hello There", timeout: 2000})
+			console.log('sb', sb)	
+			this.$dialog.notify.error("Test", {
+        position: 'bottom-left',
+        timeout: 5000
+      });
 
-		},
-		testMethodMain(e) {
-			console.log("testMethodMain e", e);
-			console.log("Test Button Clicked");
-		},
-		captureEvent(e) {
-			console.log("captured Event e", e)
 		},
 		closeSheet(e) {
 			console.log("closeSheet e", e)
@@ -454,10 +470,18 @@ export default {
 		},
 		clickProfileMenu(e) {
 			console.log("clickProfileMenu e", e)
-			if(e.target.innerText === 'Profile Image') {
-				this. openImageSheet = true
+			if(e.target.innerText === 'Upload Image') {
+				this.openImageSheet = true
 			}
-		}	,
+			if(e.target.innerText === 'Take Photo') {
+				console.log("Open Camera for photo")
+				//Open Sheet
+				this.openImageSheet = true
+				//Execute Camera
+				this.$refs.profileImageComponent.captureImage()
+				this.$refs.profileImageComponent.setMobile()
+			}
+		},
 		showEditProfile() {
 			this.accountSettings.editProfile = true
 			this.hideUpdateItemButtons = true
@@ -471,23 +495,18 @@ export default {
 			this.accountSettings.hideSaveItem = true;
 		},
 		newItemButton() {
-			//Show/Hide Edit Fields and buttons
+			//Show/Hide Edit Fields and buttons			
 			this.clearFormData();
-			console.log("this.clearFormData")
 			this.accountSettings.editProfile = true
-			console.log("this.accountSettings.editProfile")
 			this.hideCreateItem = !this.hideCreateItem
-			console.log("this.hideCreateItem")
 			this.hideUpdateItemButtons = false
-			console.log("this.hideUpdateItemButtons")
 			this.accountSettings.hideSaveItem = false
-			console.log("this.accountSettings.hideSaveItem")
-			this.selectedTabIndex = 2
-			console.log("this.selectedTabIndex")
+			this.selectedTabIndex = 0
 		},
 		clearandResetButton() {
 			this.clearFormData()
 			this.resetViewtoHome()
+			
 		},
 		resetViewtoHome() {
 			this.accountSettings.editProfile = false
@@ -495,43 +514,49 @@ export default {
 			this.hideCreateItem = false
 			this.accountSettings.hideSaveItem = true
 			this.selectedTabIndex = 0
+			this.isLoadPanelVisible = false
 		},
 		createCompanyChoices(e) {
 			console.log('e', e)
-			//Find out if tryin to crete nre company and edit or create nrew company and NEW
+			if(e.itemData === "Create and New") {
+				this.createCompanyAndNew()
+			} else if(e.itemData === "Create and Edit") {
+				this.createCompanyAndEdit()
+			} else if(e.itemData === "Create and Close") {
+				this.createCompanyAndClose()
+			}
 		},
 		//Create Company and Edit Current Company
-		async createCompanyandEdit() {
+		async createCompanyAndEdit() {
 			this.$store.commit("RESET_ERRORS");
 			let createCompanyRes = await this.createCompany();
 			//Populate Fields with Created Instance
 			this.editDatacomById(createCompanyRes.id);
-			console.log("createCompanyandEdit All Done", createCompanyRes);
+			console.log("createCompanyAndEdit All Done", createCompanyRes);
 		},
-
 		//Create Company and Clear form for entering a new company
-		async createCompanyandNew() {
+		async createCompanyAndNew() {
 			this.$store.commit("RESET_ERRORS");
 			await this.createCompany();
 			//Clear Form and Reset to Starting Editing Position
-			console.log("createCompanyandNew All Done");
+			console.log("createCompanyAndNew All Done");
 			this.newItemButton();
 		},
 		//Create Company and Clear form for Viewing Data
-		async createCompanyandClose() {
+		async createCompanyAndClose() {
 			try {
 				this.isLoadPanelVisible = true;
-				console.log("createCompanyandClose")
+				console.log("createCompanyAndClose")
 				this.$store.commit("RESET_ERRORS");
 				let createCompanyRes = await this.createCompany();
 				//Clear Form and Reset to Starting Viewing Position
-				console.log("createCompanyandClose All Done", createCompanyRes);
+				console.log("createCompanyAndClose All Done", createCompanyRes);
 				await this.clearFormData();
 				this.resetViewtoHome();
 
 			} catch (error) {
-				alert("<p>The submission had errors. Please try again.</p>", "Error");
-				this.isLoadPanelVisible = false;
+				this.submissionError()
+				this.isLoadPanelVisible = false
 			}
 		},
 		createCompany() {
@@ -540,7 +565,9 @@ export default {
 				console.log("promise");
 
 				try {
-					console.log("try");
+					console.log("createCompany try");
+
+					this.isLoadPanelVisible = true;
 				
 					console.log("createDatacom, this.datacomForm", this.datacomForm);
 					var newDatacomForm = JSON.parse(JSON.stringify(this.datacomForm));
@@ -549,9 +576,11 @@ export default {
 					var companyResponse = await this.$store.dispatch("POSTDatacom", newDatacomForm);
 					console.log("companyResponse", companyResponse);
 
+					this.isLoadPanelVisible = false;
+
 					return resolve(companyResponse);
 				} catch (error) {
-					console.error("Promise Response Error creating Company", error);
+					console.error("Promise Response Error creating Datacom", error);
 					return reject(error);
 				}
 			});
@@ -577,128 +606,88 @@ export default {
 			this.datacomForm.is_datacom = true;
 			this.datacomForm.is_active = true;
 			this.datacomForm.primary_contacts= [];
-			this.datacomForm.	billing_contacts= [];
+			this.datacomForm.billing_contacts= [];
 			this.datacomForm.technical_contacts= [];
 			this.datacomForm.shipping_contacts= [];
 		},
+		//Capture Edit by Child DataGrid Component
+		editProfileFromChild(e) {
+			console.log('editProfileFromChild e', e);
+			this.editDatacomById(e)
+		},
+		deleteProfileFromChild(e) {
+			console.log('deleteProfileFromChild e', e);
+			this.deleteDatacom(e)
+		},
 		// Populate Fields for editing in browser
-		async editDatacom() {
-			this.clearFormData();
-			this.activeTab = 1;
-			if (this.checkedRows.length != 0) {
-				this.$refs.employeeDatabaseRef.clearData();
-				console.log("this.checkedRows != 0", this.checkedRows);
-				var rowID = this.checkedRows.slice(-1)[0].id;
+		async editDatacomById(companyID) {
+			console.log("editDatacom companyID", companyID);
+			try {
+				this.clearFormData();
+				this.selectedTabIndex = 1;
 
-				var getSelectedDatacomObj = await this.$store.dispatch("GETDatacomSelectedProfile", {id: rowID});
+				// Get User ID and object and map to fields from database table
+				var getSelectedDatacomObj = await this.$store.dispatch("GETDatacomProfileById", {id: companyID});
 				console.group('getSelectedDatacomObj', getSelectedDatacomObj);
 
 				for (let key in this.datacomForm) {
 					this.datacomForm[key] = this.GET_SELECTED_DATACOM_PROFILE[key];
 				}
-				this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
-				//get employee List for specified company
-				let response = await this.getObjectQueryFilter(getSelectedDatacomObj);
-				console.log('editDatacom response', response);
-				this.$store.dispatch("GETSelectedEmployeeList", {id: response.id, filterURL: response.filterURL});
-				console.log('this.$refs', this.$refs);
-				this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
-			} 
-			this.showEditProfile();
-		},
-		async editDatacomById(companyID) {
-			console.log("editDatacom");
-			this.clearFormData();
-			this.activeTab = 0;
-			//2) Get User ID and object and map to fields from database table
-			var getSelectedDatacomObj = await this.$store.dispatch("GETDatacomSelectedProfile", {id: companyID});
-			console.group('getSelectedDatacomObj', getSelectedDatacomObj);
-
-			for (let key in this.datacomForm) {
-				this.datacomForm[key] = this.GET_SELECTED_DATACOM_PROFILE[key];
+			
+				this.resetViewtoHome();
+				this.showEditProfile();
+			} catch(error) {
+				console.error("editDatacomById error", error)
 			}
-			this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
-			this.showEditProfile();
 		},
 		//Load Datacom On itnitial render
-		async loadDatacomProfile() {
-			for (let key in this.datacomForm) {
-				this.datacomForm[key] = this.GET_DATACOM_PROFILE[key];
+		async loadLoggedInProfile() {
+			try {
+				if(Object.keys(this.GET_DATACOM_PROFILE).length != 0) {
+					for (let key in this.datacomForm) {
+						this.datacomForm[key] = this.GET_DATACOM_PROFILE[key];
+					}
+					let response = await this.getObjectQueryFilter(this.GET_DATACOM_PROFILE);
+					console.log('editDatacom response', response);
+					this.$store.dispatch("GETEmployeeFilterList", {id: response.id, filterURL: response.filterURL});
+					this.resetViewtoHome();
+				}	
 			}
-			this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.datacomForm.description;
-
-			let response = await this.getObjectQueryFilter(this.GET_DATACOM_PROFILE);
-			console.log('editDatacom response', response);
-			this.$store.dispatch("GETSelectedEmployeeList", {id: response.id, filterURL: response.filterURL});
-			console.log('this.$refs', this.$refs);
-			this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
-			this.resetViewtoHome();
+				catch(error) {
+					console.error("There was an error", error)
+				}
 		},
 		//Make the PUT request to update datebase instance from updated form Data
 		async updateDatacomPATCH() {
-			this.syncWithMixin();
-			let newDatacomForm = await this.setUserPlatformPOST();
-			newDatacomForm.description = this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML;
-			delete newDatacomForm.profile_img;
-			console.log("updateCompanyPATCH newDatacomForm", newDatacomForm);
-			this.$store.dispatch("PATCHDatacomProfile", newDatacomForm);
+			this.$store.dispatch("PATCHDatacomProfile", this.datacomForm);
 			this.resetViewtoHome();
 		},
 		//Set inventory item to inactive instead of deleting instance
-		async deleteDatacom() {
-			// Is item Selected in table?
-			if (this.checkedRows[0].id) {
-				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexID = this.GET_DATACOM_LIST.findIndex((elem) => {
-					return elem.id == rowID;
-				});
-				console.log("deleteDatacom findIndexID", findIndexID);
-				if (this.GET_DATACOM_LIST.length === 0) {
-					this.$store.commit("updateNotification", "There are no items available");
-				}
-				if (this.GET_DATACOM_LIST.length != 0) {
-					let companyItem = this.GET_DATACOM_LIST[findIndexID];
-					console.log("deleteDatacom != 0 companyItem", companyItem);
-					for (let key in this.datacomForm) {
-						this.datacomForm[key] = companyItem[key];
-					}
-					//Set Variables to make account inactive
-					delete this.datacomForm.profile_img;
-					this.datacomForm.is_active = false;
-					const date = Date.now();
-					const newDate = new Date(date);
-					console.log("newDate", newDate.toISOString());
-					this.datacomForm.acct_closure_date = newDate;
-					try {
-						await this.$store.dispatch("deleteDatacom", this.datacomForm).then((response) => {
-							console.log("response from deleteDatacom method", response);
-							this.clearFormData();
-						});
-					} catch (error) {
-						console.error("Promise Response Error", error);
-					}
-				}
-			} else {
-				this.$store.commit("updateNotification", "You must select an item first");
-			}
-			this.resetViewtoHome();
-		},
-		//Callback function from Child Component
-		syncWithMixin(payload) {
-			console.log("Must emit informaiotn from child component to parent");
-			console.log('syncWithMixin payload', payload);
-			return new Promise((resolve, reject) => {
-				this.datacomForm.primary_mailing_country = payload.primary_country_name;
-				this.datacomForm.primary_mailing_state = payload.primary_state_name;
-				this.datacomForm.billing_country = payload.billing_country_name;
-				this.datacomForm.billing_state = payload.billing_state_name;
-				this.datacomForm.shipping_country = payload.shipping_country_name;
-				this.datacomForm.shipping_state = payload.shipping_state_name;
-				console.log('this.datacomForm', this.datacomForm);
-				console.log('this.localeCities', this.localeCities);
+		async deleteDatacom(id) {
+			console.log('deleteDatacom id', id);
+			try {
+				let object = this.GET_DATACOM_LIST.find(elem => elem.id === id)
+				console.log('deleteDatacom object', object);
+				//Set Variables to make account inactive
+				object.is_active = false;
+				const date = Date.now();
+				const newDate = new Date(date)
+				const isoDate = newDate.toISOString()
+				const dateOnly = isoDate.split("T")[0]
+				console.log("newDate", newDate);
+				console.log("newDate", newDate.toISOString());
+				object.closure_date = dateOnly;
 
-				return resolve(payload.primary_state_name);
-			});
+				await this.$store.dispatch("deleteDatacom", object).then((response) => {
+					console.log("response from deleteDatacom method", response);
+					this.clearFormData();
+				});
+			} catch (error) {
+				console.error("Promise Response Error", error);
+			}
+
+			await this.clearFormData();
+			this.resetViewtoHome();
 		},
 		deleteChip() {
 			console.log("deleting Chip");
@@ -722,51 +711,28 @@ export default {
 						console.log(dialogResult.buttonText);
 				});
 			})
-	
+		},
+		submissionError() {
+			this.$nextTick(function() {
+				alert("<p>The submission had errors. Please try again.</p>", "Error")
+			})
 		}
 
   },
   computed: {
-		...mapState(["Notifications"]),
-		...mapGetters(["GET_DATACOM_LIST"]),
-		scrollHeight() {
-			if(this.windowWidth > 640) {
-				let footerPercent = this.windowHeight * .19
-				return this.windowHeight - footerPercent
-			} 
-			return "100%"
-		},
-		tabWidth() {
-			if(this.windowWidth <= 850) {
-				return 400
-			} else if(this.windowWidth > 850 && this.windowWidth <=1280) {
-				return 600
-			}
-			return "100%"
-		}
+		...mapState(["Notifications", "Datacom"]),
+		...mapGetters(["GET_DATACOM_LIST", "GET_DATACOM_PROFILE", "GET_SELECTED_DATACOM_PROFILE"]),
     
   },
   watch: {
 
   },
   mounted() {
-		window.addEventListener('resize', () => {
-      this.windowWidth = window.innerWidth
-      console.log("Window width is:", this.windowWidth);
-		})
-		window.addEventListener('resize', () => {
-      this.windowHeight = window.innerHeight
-      console.log("Window height is:", this.windowHeight);
-		})
-
-
-
-		
-		
     
   },
   created() {
-
+		this.databaseData.list = this.GET_DATACOM_LIST
+		this.loadLoggedInProfile()
   },
 
     

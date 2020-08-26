@@ -7,7 +7,7 @@ from django.contrib import auth
 from django.contrib.contenttypes.models import ContentType
 
 from project.settings import base
-
+from commons.models import Industry, CommonBarcode
 from employees.helper_functions import EmployeeIDs
 from companies.models import Company
 from partners.models import Partner
@@ -29,47 +29,63 @@ class Position(models.Model):
 
 # Employee Model Manager
 class EmployeeManager(models.Manager):
-  '''User is created first in Vue and then passed ID to create Employee here '''
-  userModel = auth.get_user_model()
+	'''User is created first in Vue and then passed ID to create Employee here '''
+	userModel = auth.get_user_model()
 
-  def create_employee(self, **kwargs):
-    '''Create Employee using email address as login id'''
-    print("Employee kwargs", kwargs)
+	def create_employee(self, **kwargs):
+		'''Create Employee using email address as login id'''
+		print("Employee kwargs", kwargs)
 
-    modules_managed_var = kwargs['modules_managed']
-    del kwargs['modules_managed']
+		modules_managed_var = kwargs['modules_managed']
+		del kwargs['modules_managed']
 
-    employee = self.model(**kwargs)
-    eeObj = Employee.objects.all().order_by('id').last()
-    if eeObj:
-      kwargs['employee_number'] = eeObj.employee_number
-      print("eeObj.employee_number", eeObj.employee_number)
-      print('eeObj.__dict__', eeObj.__dict__)
-    if not eeObj:
-      kwargs['employee_number'] = 0
+		employee = self.model(**kwargs)
 
-    print('else kwargs', kwargs)
-    newEmployeeID = EmployeeIDs.newEmployeeID(self, **kwargs)
-    print('newEmployeeID', newEmployeeID)
-    employee.employee_number = newEmployeeID
-    print("employee", employee)
-    employee.save(using=self._db)
+		eeObj = None
+		datacomId = kwargs.get("datacom", None)
+		partnerId = kwargs.get("partner", None)
+		merchantId = kwargs.get("merchant", None)
 
-    if modules_managed_var:
-      employee.modules_managed.set(modules_managed_var)
+		if datacomId:
+			eeObj = Employee.objects.filter(datacom_id = kwargs['datacom']).order_by('id').last()
+		if partnerId:
+			eeObj = Employee.objects.filter(partner_id = kwargs['partner']).order_by('id').last()
+		if merchantId:
+			eeObj = Employee.objects.filter(merchant_id = kwargs['merchant']).order_by('id').last()
 
-    employee.save()
+		if eeObj:
+			kwargs['last_employee_number'] = eeObj.employee_number
+			print("eeObj.last_employee_number", kwargs['last_employee_number'])
+			print('eeObj.__dict__', eeObj.__dict__)
+		if not eeObj:
+			del kwargs['employee_number']
 
-    return employee
+		print('else kwargs', kwargs)
+		newEmployeeID = EmployeeIDs.newEmployeeID(self, **kwargs)
+		print('newEmployeeID', newEmployeeID)
+		employee.employee_number = newEmployeeID
+		print("employee", employee)
+		employee.save(using=self._db)
 
-  def create_employee_admin(self, **kwargs):
-    # Create Admin Employee using email address as login id
-    employee = self.create_employee(**kwargs)
-    employee.save(using=self._db)
-    userObj = self.userModel.objects.get(email=kwargs['email'])
-    userObj.is_admin = True
-    userObj.save()
-    return employee
+		if modules_managed_var:
+			employee.modules_managed.set(modules_managed_var)
+
+		barcode = CommonBarcode.objects.create_barcode(**kwargs)
+		print('Employee barcode', barcode)
+		employee.barcode = barcode
+
+		employee.save(using=self._db)
+
+		return employee
+
+	def create_employee_admin(self, **kwargs):
+		# Create Admin Employee using email address as login id
+		employee = self.create_employee(**kwargs)
+		employee.save(using=self._db)
+		userObj = self.userModel.objects.get(email=kwargs['email'])
+		userObj.is_admin = True
+		userObj.save()
+		return employee
   
 # Employee Model
 class Employee(models.Model):

@@ -238,7 +238,7 @@ export default {
 
 				let response = await this.setUserPlatformPOST(this.holidayForm);
 
-				this.$store.dispatch('addHoliday', response).then(res => {
+				this.$store.dispatch('POSTHoliday', response).then(res => {
 					this.clearForm();
 				});
 			}

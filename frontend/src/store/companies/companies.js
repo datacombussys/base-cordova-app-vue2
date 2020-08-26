@@ -79,7 +79,7 @@ export const Companies = {
 		async GETCompanyOwnProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'company/';
 			let type = 'Get Company Profile';
-			let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
+			let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
 			console.log('GETCompanyOwnProfile response', response);
 			commit('SET_OWN_COMPANY_PROFILE', response.data);
 		},
@@ -106,11 +106,11 @@ export const Companies = {
 			commit('UPDATE_COMPANY_PROFILE', response.data);
 		},
 		//PATCHDelete PROFILE
-		async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+		async PATCHDeleteMerchantProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'company/';
 			let type = 'Delete Company Profile';
 			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
-			console.log('PATCHCompanyProfile response', response);
+			console.log('PATCHDeleteMerchantProfile response', response);
 			commit('PATCH_DELETE_COMPANY_PROFILE', payload);
 		},
 

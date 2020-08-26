@@ -7,49 +7,74 @@
 				<div class="small-block">
 					<v-card class="rounded-md">
 						<v-card-title>
-								<div class="title">Outdoor Furniture Sales</div>
-								<div class="subtitle">Merchant</div>
+								<div class="title">{{ merchantForm.dba_name }}</div>
+								<div class="row justify-between">
+									<div class="col-50">
+										<div class="subtitle">Super User</div>
+									</div>
+									<div class="col-50">
+										<v-menu>
+											<template v-slot:activator="{ on, attrs }">
+												<v-btn 
+													small 
+													icon
+													v-bind="attrs"
+													v-on="on">
+													<v-icon>mdi-dots-vertical</v-icon>
+												</v-btn>
+											</template>
 
-							<v-spacer></v-spacer>
-
-								<v-menu bottom left>
-									<template v-slot:activator="{ on, attrs }">
-										<v-btn
-											dark
-											icon
-											v-bind="attrs"
-											v-on="on"
-										>
-										<p>Icon here</p>
-											<v-icon>mdi-dots-vertical</v-icon>
-										</v-btn>
-									</template>
-
-									<v-list>
-										<v-list-item
-											v-for="(item, i) in profileMenu"
-											:key="i"
-											@click=""
-										>
-											<v-list-item-title>{{ item.title }}</v-list-item-title>
-										</v-list-item>
-									</v-list>
-								</v-menu>
-						</v-card-title>
-
-						<v-card-text class="flex flex-col w-full">
-							<div>
-								<img src="@/static/BusinessLogo170x170.png"
-									style="width:170px;height:170px;"
-									alt="Please load company profile">
-							</div>
-							<div class="mt-4">
-								<div class="mt-4 business-barcode">
-									M-13343645
+											<v-list>
+												<v-list-item
+													v-for="(item, i) in profileMenu"
+													:key="i"
+													@click="clickProfileMenu"
+												>
+													<v-list-item-title>{{ item.title }}</v-list-item-title>
+												</v-list-item>
+											</v-list>
+										</v-menu>
+										<profileImageComponent 
+										ref="profileImageComponent"
+										:openImageSheet="openImageSheet"
+										@closeSheet="closeSheet"
+										:profileImageSettings="profileImageSettings"
+										:profileData="merchantForm" />
+									</div>
 								</div>
-								<p class="text-center">M-13343645</p>
-							</div>									
-						</v-card-text>
+							</v-card-title>
+
+						<v-card-text>
+								<div v-if="!merchantForm.id" class="flex justify-center items-center">
+									<img
+										class="mt-3 disabled"
+										src="@/static/BusinessLogo170x170.png"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+								</div>
+								<div v-else class="flex justify-center items-center">
+									<img class="mt-3" v-if="merchantForm.profile_img" 
+										:src="merchantForm.profile_img"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+									<img class="mt-3" v-else src="@/static/BusinessLogo170x170.png"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+								</div>
+
+								<div class="mt-4" v-if="merchantForm.barcode_obj">
+									<div class="mt-4 business-barcode text-center">
+										{{ merchantForm.barcode_obj.barcode_number }}
+									</div>
+									<p class="text-center">{{ merchantForm.barcode_obj.barcode_number }}</p>
+								</div>	
+								<div class="mt-4" v-else>
+									<div class="mt-4 business-barcode text-center">
+										1234567890
+									</div>
+									<p class="text-center">1234567890</p>
+								</div>
+							</v-card-text>
 					</v-card>
 				</div>
 
@@ -61,12 +86,12 @@
 									<DxButton
 										width="100%"
 										type="success"
-										text="Add New Company"
+										text="Add New Merchant"
 										@click="newItemButton" />
 								</div>
 								<div v-show="!accountSettings.hideSaveItem" class="mt-4 w-full">
 									<dx-drop-down-button
-										text="Save Company"
+										text="Save Merchant"
 										width="100%"
 										:split-button="true"
 										@button-click="createCompanyandClose"
@@ -101,114 +126,118 @@
 				
 			</div>
 			<div class="right-col">
+				<!-- Header Card -->
+				<div class="small-block">
+					<v-card class="rounded-md">
+						<v-card-title>
+								<div class="title">Quicklinks</div>
+						</v-card-title>
 
-
-						<!-- Header Card -->
-						<div class="small-block">
-							<v-card class="rounded-md">
-								<v-card-title>
-										<div class="title">Quicklinks</div>
-								</v-card-title>
-
-								<v-card-text class="flex w-full spacing">
-									<div class="m-4">
-										<div class="mdi mdi-account-lock mdi-60px mb-3">
-										</div>
-										<div class="mt-4 text-center">Permissions</div>
-									</div>
-									<div class="m-4">
-										<div class="mdi mdi-account-cash-outline mdi-60px mb-3">
-										</div>
-										<div class="mt-4 text-center">Subscription</div>
-									</div>
-									<div class="m-4">
-										<div class="mdi mdi-cogs mdi-60px mb-3">
-										</div>
-										<div class="mt-4 text-center">Setup / Admin</div>
-									</div>
-									<div class="m-4">
-										<div class="mdi mdi-lifebuoy mdi-60px mb-3">
-										</div>
-										<div class="mt-4 text-center">Support</div>
-									</div>
-										
-								</v-card-text>
-							</v-card>
-						</div>
-						
-						<!-- Devextreme Tabs -->
-						<template>
-							<div class="small-block">
-								<v-card class="rounded-md">
-									
-									<v-card-text class="flex w-full spacing">
-										<div id="tabContainer">
-											<DxTabPanel :show-nav-buttons="true">
-												<DxItem title="Profile" icon="mdi mdi-account-box">
-													<template #default>
-														<profileComponent 
-															:formData="merchantForm" 
-															:accountSettings="accountSettings">
-														</profileComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Contacts" icon="mdi mdi-contacts">
-													<template #default>
-														<contactsComponent :formData="merchantForm" :accountSettings="accountSettings"></contactsComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Locations" icon="mdi mdi-account-box-multiple-outline">
-													<template #default>
-														<locationsComponent :formData="merchantForm"></locationsComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Shipping" icon="mdi mdi-truck-delivery-outline">
-													<template #default>
-														<shippingLocationsComponent :formData="merchantForm"></shippingLocationsComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Payment" icon="mdi mdi-credit-card-outline">
-													<template #default>
-														<paymentMethodsComponent :formData="merchantForm"></paymentMethodsComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Reporting" icon="mdi mdi-newspaper-variant-outline">
-													<template #default>
-														<reportingComponent :formData="merchantForm"></reportingComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Employees" icon="mdi mdi-account-group">
-													<template #default>
-														<employeesComponent :formData="merchantForm"></employeesComponent>
-													</template>
-												</DxItem>
-												<DxItem title="Database" icon="mdi mdi-database">
-													<template #default>
-														<databaseComponent 
-															:databaseSettings="databaseSettings"
-															:databaseData="databaseData">
-														</databaseComponent>
-													</template>
-												</DxItem>
-											</DxTabPanel>
-										</div>
-										
-							
-
-											
-	
-											
-									</v-card-text>
-								</v-card>
+						<v-card-text class="flex w-full spacing mt-6">
+							<div class="m-4">
+								<div class="mdi mdi-account-lock mdi-60 text-datacom mb-3"></div>
+								<div class="mt-4 text-center">Permissions</div>
 							</div>
-						</template>
+							<div class="m-4">
+								<div class="mdi mdi-account-cash-outline mdi-60 text-datacom mb-3"></div>
+								<div class="mt-4 text-center">Subscription</div>
+							</div>
+							<div class="m-4">
+								<div class="mdi mdi-cogs mdi-60 text-datacom mb-3"></div>
+								<div class="mt-4 text-center">Setup / Admin</div>
+							</div>
+							<div class="m-4">
+								<div class="mdi mdi-lifebuoy mdi-60 text-datacom mb-3"></div>
+								<div class="mt-4 text-center">Support</div>
+							</div>
+								
+						</v-card-text>
+					</v-card>
+				</div>
+				
+				<!-- Devextreme Tabs -->
+				<template>
+					<div class="small-block">
+						<v-card class="rounded-md">
+							
+							<v-card-text class="flex w-full spacing">
+								<div id="tabContainer">
+									<DxTabPanel :show-nav-buttons="true" :selected-index.sync="selectedTabIndex">
+										<DxItem title="Parent" icon="mdi mdi-domain">
+											<template #default>
+												<parentSelectionComponent 
+													:formData="merchantForm" 
+													:accountSettings="accountSettings"
+													:moduleInfo="moduleInfo">
+												</parentSelectionComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Profile" icon="mdi mdi-account-box">
+											<template #default>
+												<profileComponent 
+													:formData="merchantForm" 
+													:accountSettings="accountSettings">
+												</profileComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Contacts" icon="mdi mdi-contacts">
+											<template #default>
+												<contactsComponent :formData="merchantForm" :accountSettings="accountSettings"></contactsComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Locations" icon="mdi mdi-account-box-multiple-outline">
+											<template #default>
+												<locationsComponent :formData="merchantForm"></locationsComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Shipping" icon="mdi mdi-truck-delivery-outline">
+											<template #default>
+												<shippingLocationsComponent :formData="merchantForm"></shippingLocationsComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Payment" icon="mdi mdi-credit-card-outline">
+											<template #default>
+												<paymentMethodsComponent :formData="merchantForm"></paymentMethodsComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Reporting" icon="mdi mdi-newspaper-variant-outline">
+											<template #default>
+												<reportingComponent :formData="merchantForm"></reportingComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Employees" icon="mdi mdi-account-group">
+											<template #default>
+												<employeesComponent :formData="merchantForm"></employeesComponent>
+											</template>
+										</DxItem>
+										<DxItem title="Database" icon="mdi mdi-database">
+											<template #default>
+												<databaseComponent 
+													:databaseSettings="databaseSettings"
+													:databaseData="databaseData"
+													@editProfile="editProfileFromChild"
+													@deleteProfile="deleteProfileFromChild">
+												</databaseComponent>
+											</template>
+										</DxItem>
+									</DxTabPanel>
+								</div>
+									
+							</v-card-text>
+						</v-card>
+					</div>
+				</template>
 
 			</div>
 			<!-- Dx Scroller -->
 			<!-- Loader Panel -->
 			<DxLoadPanel
-				:close-on-outside-click="true"
+				:close-on-outside-click="false"
 				:visible.sync="isLoadPanelVisible"
+				:show-indicator="true"
+				:show-pane="true"
+				:shading="true"
+				shading-color="rgba(0,0,0,0.4)"
 			/>
 		
 		</div>
@@ -218,7 +247,9 @@
 <script>
 import Vue from 'vue'
 import { mapGetters } from "vuex"
+import { mapState } from "vuex"
 import devices from "devextreme/core/devices";
+
 //DevExpress
 import { DxScrollView } from 'devextreme-vue/scroll-view'
 import DxButton from "devextreme-vue/button"
@@ -235,25 +266,32 @@ import profileComponent from "@/components/business/new-docs/profile-component"
 import contactsComponent from "@/components/business/new-docs/contacts-component"
 import locationsComponent from "@/components/business/new-docs/locations-component"
 import shippingLocationsComponent from "@/components/business/new-docs/shipping-component"
+import parentSelectionComponent from "@/components/business/new-docs/parent-selection-component"
 import paymentMethodsComponent from "@/components/business/new-docs/payment-component"
 import reportingComponent from "@/components/business/new-docs/reporting-component"
 import employeesComponent from "@/components/business/new-docs/employees-component"
 import databaseComponent from "@/components/business/new-docs/database-component"
+import profileImageComponent from "@/components/universal/new/profile-image-component"
+
+//Mixins
+import { UniversalMixins } from "@/mixins/universal-mixins"
 
 export default {
   name: "merchantProfile",
 	mixins: [
-
+		UniversalMixins
   ],
   components: {
 		profileComponent,
 		contactsComponent,
 		locationsComponent,
+		parentSelectionComponent,
 		shippingLocationsComponent,
 		paymentMethodsComponent,
 		reportingComponent,
 		employeesComponent,
 		databaseComponent,
+		profileImageComponent,
 		DxScrollView,
 		DxButton,
 		DxDropDownButton,
@@ -272,10 +310,11 @@ export default {
   data() {
     return {
 			//Main Seettings
-			platformLevel: 1,
+			platformLevel: 3,
 			windowWidth: window.innerWidth,
 			windowHeight: window.innerHeight,
 			isLoadPanelVisible: false,
+
 			saveCompanyItems: [
 				"Create and New" ,
 				"Create and Edit",
@@ -287,9 +326,9 @@ export default {
 				title: "Profile Details"
 			},
 			moduleInfo: {
-				name: "Datacom",
+				name: "Merchant",
 				type: "profile",
-				level: 1
+				level: 3
 			},
 			primaryContactSettings: {
 				type: "primary"
@@ -303,17 +342,18 @@ export default {
 			//Edit Profile Image
 			profileImageSettings: {
 				url: 'datacom/',
-				module: 'Datacom',
+				module: 'Merchant',
 				mutation: 'UPDATE_PROFILE_IMAGE'
 			},
 			profileMenu: [
-        { title: 'Profile Image' },
+        { title: 'Upload Image' },
+				{ title: 'Take Photo' }
       ],
 			accountSettings: {
 				showPasswordReset: false,
-				activeTab: 0,
 				editProfile: false,
 				hideSaveItem: true,
+				type: "company",
 				accountPlatform: {
 					company_name: null,
 					is_datacom: false,
@@ -324,22 +364,24 @@ export default {
 			},
 			//Database Compoennt Data
 			databaseSettings: {
-				title: "Employee Database",
+				title: "Merchant Database",
 				header1: "Id",
-				header2: "Name",
-				header3: "Number",
-				header4: "Position",
-				header5: "Mobile",
-				header6: "Status",
+				header2: "Image",
+				header3: "Date Added",
+				header4: "Name",
+				header5: "Domain",
+				header6: "Account #",
+				header7: "Status",
 				col1: "id",
-				col2: "user_obj.full_name",
-				col3: "employee_number",
-				col4: "position",
-				col5: "user_obj.mobile_phone",
-				col6: "user_obj.is_active"
+				col2: "profile_img",
+				col3: "date_added",
+				col4: "dba_name",
+				col5: "domain",
+				col6: "account_number",
+				col7: "is_active"
 			},
 			databaseData: {
-				tableId: "employeeDbTable",
+				tableId: "merchantDbTable",
 				list: new Array()
 			},
 
@@ -347,6 +389,7 @@ export default {
 			hideUpdateItemButtons: false,
 			hideCreateItem: false,
 			selectedTabIndex: 0,
+			openImageSheet: false,
 
 			//Form Data
 			merchantForm: {
@@ -354,6 +397,7 @@ export default {
 				id: null,
 				account_number: null,
 				barcode: null,
+				barcode_obj: null,
 				profile_img: null,
 				logo: null,
 				date_added: null,
@@ -422,18 +466,27 @@ export default {
 			console.log('this.merchantForm', this.merchantForm)
 			// console.log('this.accountSettings.editProfile', this.accountSettings.editProfile)
 			// this.accountSettings.editProfile = !this.accountSettings.editProfile
-			console.log('this.GET_DATACOM_LIST', this.GET_DATACOM_LIST)
+			console.log('this.Auth.authLevel', this.Auth.authLevel)
+			console.log("GET_DATACOM_LIST", this.GET_DATACOM_LIST)
+
 		},
-		testMethodMain(e) {
-			console.log("testMethodMain e", e);
-			console.log("Test Button Clicked");
+		closeSheet(e) {
+			console.log("closeSheet e", e)
+			this.openImageSheet = e
 		},
-		captureEvent(e) {
-			console.log("captured Event e", e)
-		},
-		//Profil Image Funciton placeholder
-		editImage() {
-			// edit profile image
+		clickProfileMenu(e) {
+			console.log("clickProfileMenu e", e)
+			if(e.target.innerText === 'Upload Image') {
+				this.openImageSheet = true
+			}
+			if(e.target.innerText === 'Take Photo') {
+				console.log("Open Camera for photo")
+				//Open Sheet
+				this.openImageSheet = true
+				//Execute Camera
+				this.$refs.profileImageComponent.captureImage()
+				this.$refs.profileImageComponent.setMobile()
+			}
 		},
 		showEditProfile() {
 			this.accountSettings.editProfile = true
@@ -450,17 +503,11 @@ export default {
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearFormData();
-			console.log("this.clearFormData")
 			this.accountSettings.editProfile = true
-			console.log("this.accountSettings.editProfile")
 			this.hideCreateItem = !this.hideCreateItem
-			console.log("this.hideCreateItem")
 			this.hideUpdateItemButtons = false
-			console.log("this.hideUpdateItemButtons")
 			this.accountSettings.hideSaveItem = false
-			console.log("this.accountSettings.hideSaveItem")
-			this.selectedTabIndex = 2
-			console.log("this.selectedTabIndex")
+			this.selectedTabIndex = 0
 		},
 		clearandResetButton() {
 			this.clearFormData()
@@ -472,17 +519,24 @@ export default {
 			this.hideCreateItem = false
 			this.accountSettings.hideSaveItem = true
 			this.selectedTabIndex = 0
+			this.isLoadPanelVisible = false
 		},
 		createCompanyChoices(e) {
 			console.log('e', e)
-			//Find out if tryin to crete nre company and edit or create nrew company and NEW
+			if(e.itemData === "Create and New") {
+				this.createCompanyAndNew()
+			} else if(e.itemData === "Create and Edit") {
+				this.createCompanyAndEdit()
+			} else if(e.itemData === "Create and Close") {
+				this.createCompanyAndClose()
+			}
 		},
 		//Create Company and Edit Current Company
 		async createCompanyandEdit() {
 			this.$store.commit("RESET_ERRORS");
 			let createCompanyRes = await this.createCompany();
 			//Populate Fields with Created Instance
-			this.editDatacomById(createCompanyRes.id);
+			this.editMerchantById(createCompanyRes.id);
 			console.log("createCompanyandEdit All Done", createCompanyRes);
 		},
 
@@ -497,15 +551,16 @@ export default {
 		//Create Company and Clear form for Viewing Data
 		async createCompanyandClose() {
 			console.log("createCompanyandClose")
-			// this.$store.commit("RESET_ERRORS");
-			let createCompanyRes = await this.createCompany();
-			//Clear Form and Reset to Starting Viewing Position
-			console.log("createCompanyandClose All Done", createCompanyRes);
-			if(createCompanyRes != undefined) {
+			try {
+				// this.$store.commit("RESET_ERRORS");
+				let createCompanyRes = await this.createCompany();
+				//Clear Form and Reset to Starting Viewing Position
+				console.log("createCompanyandClose All Done", createCompanyRes);
 				await this.clearFormData();
 				this.resetViewtoHome();
-			} else {
-				alert("<p>The submission had errors. Please try again.</p>", "Error");
+			} catch(error) {
+				this.submissionError()
+				this.isLoadPanelVisible = false
 			}
 		},
 		createCompany() {
@@ -518,11 +573,11 @@ export default {
 				
 					this.isLoadPanelVisible = true;
 
-					console.log("createDatacom, this.merchantForm", this.merchantForm);
-					var newDatacomForm = JSON.parse(JSON.stringify(this.merchantForm));
-					console.log("newDatacomForm", newDatacomForm);
+					console.log("createMerchant, this.merchantForm", this.merchantForm);
+					var newMerchantForm = JSON.parse(JSON.stringify(this.merchantForm));
+					console.log("newMerchantForm", newMerchantForm);
 
-					var companyResponse = await this.$store.dispatch("POSTDatacom", newDatacomForm);
+					var companyResponse = await this.$store.dispatch("POSTMerchant", newMerchantForm);
 					console.log("companyResponse", companyResponse);
 
 					this.isLoadPanelVisible = false;
@@ -535,9 +590,9 @@ export default {
 			});
 			
 		},
-		refreshDatacom() {
-			console.log("GETDatacomList");
-			this.$store.dispatch("GETDatacomList");
+		refreshMerchant() {
+			console.log("GETMerchantList");
+			this.$store.dispatch("GETMerchantList");
 		},
 		//Clear Form Data
 		clearFormData() {
@@ -551,132 +606,93 @@ export default {
 					this.merchantForm[key] = null;
 				}
 			}
-			//Reset Datacom Variables
-			this.merchantForm.is_datacom = true;
+			//Reset Merchant Variables
+			this.merchantForm.is_merchant = true;
 			this.merchantForm.is_active = true;
 			this.merchantForm.primary_contacts= [];
-			this.merchantForm.	billing_contacts= [];
+			this.merchantForm.billing_contacts= [];
 			this.merchantForm.technical_contacts= [];
 			this.merchantForm.shipping_contacts= [];
 		},
-		// Populate Fields for editing in browser
-		async editDatacom() {
-			this.clearFormData();
-			this.activeTab = 1;
-			if (this.checkedRows.length != 0) {
-				this.$refs.employeeDatabaseRef.clearData();
-				console.log("this.checkedRows != 0", this.checkedRows);
-				var rowID = this.checkedRows.slice(-1)[0].id;
+		//Capture Edit by Child DataGrid Component
+		editProfileFromChild(e) {
+			console.log('editProfileFromChild e', e);
+			this.editDatacomById(e)
+		},
+		deleteProfileFromChild(e) {
+			console.log('deleteProfileFromChild e', e);
+			this.deleteDatacom(e)
+		},
+		async editMerchantById(companyID) {
+			console.log("editMerchant");
+			try {
+				this.clearFormData();
+				this.selectedTabIndex = 0;
 
-				var getSelectedDatacomObj = await this.$store.dispatch("GETDatacomSelectedProfile", {id: rowID});
-				console.group('getSelectedDatacomObj', getSelectedDatacomObj);
+				//Get User ID and object and map to fields from database table
+				var getSelectedMerchantObj = await this.$store.dispatch("GETMerchantSelectedProfile", {id: companyID});
+				console.group('getSelectedMerchantObj', getSelectedMerchantObj);
 
 				for (let key in this.merchantForm) {
-					this.merchantForm[key] = this.GET_SELECTED_DATACOM_PROFILE[key];
+					this.merchantForm[key] = this.GET_SELECTED_MERCHANT_PROFILE[key];
 				}
-				this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.merchantForm.description;
-				//get employee List for specified company
-				let response = await this.getObjectQueryFilter(getSelectedDatacomObj);
-				console.log('editDatacom response', response);
-				this.$store.dispatch("GETSelectedEmployeeList", {id: response.id, filterURL: response.filterURL});
-				console.log('this.$refs', this.$refs);
-				this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
-			} 
-			this.showEditProfile();
-		},
-		async editDatacomById(companyID) {
-			console.log("editDatacom");
-			this.clearFormData();
-			this.activeTab = 0;
-			//2) Get User ID and object and map to fields from database table
-			var getSelectedDatacomObj = await this.$store.dispatch("GETDatacomSelectedProfile", {id: companyID});
-			console.group('getSelectedDatacomObj', getSelectedDatacomObj);
-
-			for (let key in this.merchantForm) {
-				this.merchantForm[key] = this.GET_SELECTED_DATACOM_PROFILE[key];
+				this.showEditProfile();
+			} catch(error) {
+				console.error("editMerchantById error", error)
 			}
-			this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.merchantForm.description;
-			this.showEditProfile();
 		},
-		//Load Datacom On itnitial render
-		async loadDatacomProfile() {
-			for (let key in this.merchantForm) {
-				this.merchantForm[key] = this.GET_DATACOM_PROFILE[key];
+		//Load Merchant On itnitial render
+		async loadLoggedInProfile() {
+			try {
+				if(Object.keys(this.GET_MERCHANT_PROFILE).length != 0) {
+					for (let key in this.merchantForm) {
+						this.merchantForm[key] = this.GET_MERCHANT_PROFILE[key];
+					}
+					let response = await this.getObjectQueryFilter(this.GET_MERCHANT_PROFILE);
+					console.log('editMerchant response', response);
+					this.$store.dispatch("GETEmployeeFilterList", {id: response.id, filterURL: response.filterURL});
+					console.log('this.$refs', this.$refs);
+					this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
+					this.resetViewtoHome();
+				}
+				
+			} catch(error) {
+				console.error("There was an error", error)
 			}
-			this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML = this.merchantForm.description;
-
-			let response = await this.getObjectQueryFilter(this.GET_DATACOM_PROFILE);
-			console.log('editDatacom response', response);
-			this.$store.dispatch("GETSelectedEmployeeList", {id: response.id, filterURL: response.filterURL});
-			console.log('this.$refs', this.$refs);
-			this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
-			this.resetViewtoHome();
 		},
 		//Make the PUT request to update datebase instance from updated form Data
-		async updateDatacomPATCH() {
-			this.syncWithMixin();
-			let newDatacomForm = await this.setUserPlatformPOST();
-			newDatacomForm.description = this.$refs.datacomDescription.f7TextEditor.contentEl.innerHTML;
-			delete newDatacomForm.profile_img;
-			console.log("updateCompanyPATCH newDatacomForm", newDatacomForm);
-			this.$store.dispatch("PATCHDatacomProfile", newDatacomForm);
+		async updateMerchantPATCH() {
+			let newMerchantForm = await this.setUserPlatformPOST();
+			console.log("updateCompanyPATCH newMerchantForm", newMerchantForm);
+			this.$store.dispatch("PATCHMerchantProfile", newMerchantForm);
 			this.resetViewtoHome();
 		},
 		//Set inventory item to inactive instead of deleting instance
-		async deleteDatacom() {
-			// Is item Selected in table?
-			if (this.checkedRows[0].id) {
-				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexID = this.GET_DATACOM_LIST.findIndex((elem) => {
-					return elem.id == rowID;
-				});
-				console.log("deleteDatacom findIndexID", findIndexID);
-				if (this.GET_DATACOM_LIST.length === 0) {
-					this.$store.commit("updateNotification", "There are no items available");
-				}
-				if (this.GET_DATACOM_LIST.length != 0) {
-					let companyItem = this.GET_DATACOM_LIST[findIndexID];
-					console.log("deleteDatacom != 0 companyItem", companyItem);
-					for (let key in this.merchantForm) {
-						this.merchantForm[key] = companyItem[key];
-					}
-					//Set Variables to make account inactive
-					delete this.merchantForm.profile_img;
-					this.merchantForm.is_active = false;
-					const date = Date.now();
-					const newDate = new Date(date);
-					console.log("newDate", newDate.toISOString());
-					this.merchantForm.acct_closure_date = newDate;
-					try {
-						await this.$store.dispatch("deleteDatacom", this.merchantForm).then((response) => {
-							console.log("response from deleteDatacom method", response);
-							this.clearFormData();
-						});
-					} catch (error) {
-						console.error("Promise Response Error", error);
-					}
-				}
-			} else {
-				this.$store.commit("updateNotification", "You must select an item first");
-			}
-			this.resetViewtoHome();
-		},
-		//Callback function from Child Component
-		syncWithMixin(payload) {
-			console.log("Must emit informaiotn from child component to parent");
-			console.log('syncWithMixin payload', payload);
-			return new Promise((resolve, reject) => {
-				this.merchantForm.primary_mailing_country = payload.primary_country_name;
-				this.merchantForm.primary_mailing_state = payload.primary_state_name;
-				this.merchantForm.billing_country = payload.billing_country_name;
-				this.merchantForm.billing_state = payload.billing_state_name;
-				this.merchantForm.shipping_country = payload.shipping_country_name;
-				this.merchantForm.shipping_state = payload.shipping_state_name;
-				console.log('this.merchantForm', this.merchantForm);
-				console.log('this.localeCities', this.localeCities);
+		async deleteMerchant(id) {
+			console.log('deleteMerchant id', id);
+			try {
+				let object = this.GET_PARTNER_LIST.find(elem => elem.id === id)
+				console.log('deleteMerchant object', object);
+				//Set Variables to make account inactive
+				object.is_active = false;
+				const date = Date.now();
+				const newDate = new Date(date)
+				const isoDate = newDate.toISOString()
+				const dateOnly = isoDate.split("T")[0]
+				console.log("newDate", newDate);
+				console.log("newDate", newDate.toISOString());
+				object.closure_date = dateOnly;
 
-				return resolve(payload.primary_state_name);
-			});
+				await this.$store.dispatch("PATCHDeleteMerchantProfile", object).then((response) => {
+					console.log("response from deleteMerchant method", response);
+					this.clearFormData();
+				});
+			} catch (error) {
+				console.error("Promise Response Error", error);
+			}
+
+			await this.clearFormData();
+			this.resetViewtoHome();
 		},
 		deleteChip() {
 			console.log("deleting Chip");
@@ -705,45 +721,20 @@ export default {
 
   },
   computed: {
-		...mapGetters(["GET_DATACOM_LIST"]),
-		scrollHeight() {
-			if(this.windowWidth > 640) {
-				let footerPercent = this.windowHeight * .19
-				return this.windowHeight - footerPercent
-			} 
-			return "100%"
-		},
-		tabWidth() {
-			if(this.windowWidth <= 850) {
-				return 400
-			} else if(this.windowWidth > 850 && this.windowWidth <=1280) {
-				return 600
-			}
-			return "100%"
-		}
+		...mapGetters(["GET_MERCHANT_LIST", "GET_MERCHANT_PROFILE", "GET_SELECTED_MERCHANT_PROFILE", "GET_DATACOM_LIST"]),
+		...mapState(["Auth"]),
     
   },
   watch: {
 
   },
   mounted() {
-		window.addEventListener('resize', () => {
-      this.windowWidth = window.innerWidth
-      console.log("Window width is:", this.windowWidth);
-		})
-		window.addEventListener('resize', () => {
-      this.windowHeight = window.innerHeight
-      console.log("Window height is:", this.windowHeight);
-		})
 
 
-
-		
-		
-    
   },
   created() {
-
+		this.databaseData.list = this.GET_MERCHANT_LIST
+		this.loadLoggedInProfile()
   },
 
     

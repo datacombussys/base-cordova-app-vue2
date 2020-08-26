@@ -49,12 +49,16 @@ export const Warehouses = {
 			commit('PUSH_NEW_WAREHOUSE', response.data);
 		},
 		//GET Partner LIST
-		async GETWarehouseList({commit, dispatch, rootState}, payload) {
-			let endpoint = 'warehouse-list/';
-			let type = 'Get Warehouse List';
-			let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
-			console.log('GETWarehouseList response', response);
-			commit('SET_WAREHOUSE_LIST', response.data);
+		GETWarehouseList({commit, dispatch, rootState}, payload) {
+			return new Promise(async (resolve, reject) => {
+				let endpoint = 'warehouse-list/';
+				let type = 'Get Warehouse List';
+				let response = await apiRoutes.GETList(dispatch, rootState,payload, endpoint, type);
+				console.log('GETWarehouseList response', response);
+				commit('SET_WAREHOUSE_LIST', response.data);
+				return resolve();
+			})
+			
 		},
 		async GETSelectedWarehouseList({commit, dispatch, rootState}, payload) {
 			//filterURL is passed from the original call
@@ -70,7 +74,7 @@ export const Warehouses = {
 				console.log('GETWarehouseOwnProfile payload', payload);
 				let endpoint = 'warehouse/?user__id=';
 				let type = 'Get Warehouse Profile';
-				let response = await apiRoutes.GETOwnProfile(dispatch, rootState,payload, endpoint, type);
+				let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
 				console.log('GETWarehouseOwnProfile response', response);
 				commit('SET_WAREHOUSE_PROFILE', response.data[0]);
 				commit('SET_PLATFORM_INFO', response.data[0]);
@@ -97,15 +101,15 @@ export const Warehouses = {
 			commit('UPDATE_WAREHOUSE_PROFILE', response.data);
 		},
 		//PATCHDelete PROFILE
-		async PATCHDeleteProfile({commit, dispatch, rootState}, payload) {
+		async PATCHDeleteWarehouseProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'warehouse/';
 			let type = 'Delete Warehouse Profile';
 			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
-			console.log('PATCHDeleteProfile response', response);
+			console.log('PATCHDeleteWarehouseProfile response', response);
 			commit('PATCH_DELETE_WAREHOUSE_PROFILE', payload);
 		},
 		//DELETE Item
-		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
+		async DELETEWarehouseProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'warehouse/';
 			let type = 'Delete Warehouse Profile';
 			let response = await apiRoutes.DELETEItem(dispatch, rootState,payload, endpoint, type);
@@ -119,13 +123,10 @@ export const Warehouses = {
 		GET_WAREHOUSEGET_WAREHOUSE_LIST_LENGTH(state) {
 			return state.warehouseList.length;
 		},
-		GET_SELECTED_WAREHOUSE_PROFILE(state) {
-			return state.warehouseList.length
-		},
 		GET_WAREHOUSE_EMPLOYEE_IDS(state) {
 			return state.warehouseList.employees;
 		},
-		GET_OWN_WAREHOUSE_PROFILE(state) {
+		GET_WAREHOUSE_PROFILE(state) {
       return state.warehouseProfile;
     },
 		GET_SELECTED_WAREHOUSE_PROFILE(state) {

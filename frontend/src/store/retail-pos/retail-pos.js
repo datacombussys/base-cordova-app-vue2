@@ -34,7 +34,7 @@ export const RetailPOS = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					return reject(error);
 				}
 				axios.post("/django/open-till/", form).then(response => {
@@ -47,7 +47,7 @@ export const RetailPOS = {
 					}
 				}).catch(error => {
 					error.type = "Open Till";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});
@@ -63,7 +63,7 @@ export const RetailPOS = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					console.log("GETTillHistory error", error);
 					return reject(error);
 				}
@@ -82,7 +82,7 @@ export const RetailPOS = {
 					}
 				}).catch(error => {
 					error.type = "Retrieve Till History";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});
@@ -96,7 +96,7 @@ export const RetailPOS = {
 					let error = {};
 					error.type = "Login Required";
 					error.status = 2000;
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 					console.log("PATCHCloseTill error", error);
 					return reject(error);
 				}
@@ -111,7 +111,7 @@ export const RetailPOS = {
 					}
 				}).catch(error => {
 					error.type = "Close Till";
-					dispatch('updateNotification', error);
+					dispatch("updateNotification", error.response);
 
 					return resolve(error);
 				});

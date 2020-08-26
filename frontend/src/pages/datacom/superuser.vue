@@ -1427,7 +1427,7 @@ export default {
 				//get employee List for specified company
 				let response = await this.getObjectQueryFilter(getSelectedDatacomObj);
 				console.log('editDatacom response', response);
-				this.$store.dispatch("GETSelectedEmployeeList", {id: response.id, filterURL: response.filterURL});
+				this.$store.dispatch("GETEmployeeFilterList", {id: response.id, filterURL: response.filterURL});
 				console.log('this.$refs', this.$refs);
 				this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
 			} 
@@ -1456,7 +1456,7 @@ export default {
 
 			let response = await this.getObjectQueryFilter(this.GET_DATACOM_PROFILE);
 			console.log('editDatacom response', response);
-			this.$store.dispatch("GETSelectedEmployeeList", {id: response.id, filterURL: response.filterURL});
+			this.$store.dispatch("GETEmployeeFilterList", {id: response.id, filterURL: response.filterURL});
 			console.log('this.$refs', this.$refs);
 			this.$refs.employeeDatabaseRef.mountSelectedEmployeeList();
 			this.resetViewtoHome();

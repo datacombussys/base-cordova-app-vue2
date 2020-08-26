@@ -495,7 +495,7 @@ export default {
       console.log("newPayrollCycleForm", newPayrollCycleForm);
 
       let platformForm = await this.setUserPlatformPOST(newPayrollCycleForm);
-      let response = await this.$store.dispatch("addPayrollCycle", platformForm);
+      let response = await this.$store.dispatch("POSTPayrollCycle", platformForm);
       console.log("response", response);
 
       //2) Create Recurrence Foreign Key and Attach to Cycle
@@ -512,7 +512,7 @@ export default {
       recurrence.rrule = this.recurrenceForm.RULE;
       recurrence.start_date = response.start_date;
       recurrence.end_date = response.end_date;
-      this.$store.dispatch("addPayrollCycleRecurrence", recurrence);
+      this.$store.dispatch("POSTPayrollCycleRecurrence", recurrence);
 
     },
     deleteCycle() {

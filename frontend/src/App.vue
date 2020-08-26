@@ -14,16 +14,58 @@
           </div>
           <template #footer>
             <the-footer />
+
+						<!--Spinner and Poaders --><
+						<v-overlay :value="Notifications.isLoadPanelVisible">
+							<div class="row">
+								<v-card
+									color="blue-grey darken-4"
+									class="mx-auto"
+									max-width="250"
+								>
+									<v-container style="height: 150px;">
+										<v-row
+											class="fill-height"
+											align-content="center"
+											justify="center"
+										>
+											<v-col cols="6">
+												<v-progress-linear
+													color="deep-orange darken-1"
+													indeterminate
+													rounded
+													height="6"
+												></v-progress-linear>
+											</v-col>
+											<v-col
+												class="subtitle-1 text-center"
+												cols="12"
+											>
+												Please wait while we load your data...
+											</v-col>
+										</v-row>
+									</v-container>
+								</v-card>
+							</div>
+						</v-overlay>
+
+						
             <div class="loader">
-            <DxLoadPanel
-              :close-on-outside-click="false"
-              :visible.sync="Notifications.isLoadPanelVisible"
-              :show-indicator="true"
-              :show-pane="true"
-              :shading="true"
-              shading-color="rgba(0,0,0,0.4)"
-            />
+							<DxLoadPanel
+								:close-on-outside-click="false"
+								:visible.sync="Notifications.spinner"
+								:show-indicator="true"
+								:show-pane="true"
+								:shading="true"
+								shading-color="rgba(0,0,0,0.4)"
+							/>
             </div>
+						<div class="snackbar">
+							<v-snackbar v-model="Notifications.showSnackbar">
+								{{message}}
+								<v-btn color="accent" @click.native="Notifications.showSnackbar = false">Close</v-btn>
+							</v-snackbar>
+						</div>
           </template>
         </router-view>
         <router-view
@@ -46,6 +88,7 @@
 <script>
 import {mapState} from 'vuex';
 import { DxLoadPanel } from 'devextreme-vue/load-panel';
+import { confirm, custom, alert } from 'devextreme/ui/dialog';
 
 //Event Bus
 import {bus} from '@/services/event-bus'
@@ -82,7 +125,7 @@ export default {
         //Main Seettings
         platformLevel: 1,
         windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
+				windowHeight: window.innerHeight,
         
         //DevExorcess
         Init: "Christ Jesus",
@@ -94,7 +137,10 @@ export default {
           return window.innerHeight *.85;
         }, 
 
-        menuVisible: false,
+				menuVisible: false,
+				
+				//Snackbar
+      	message: 'My snackbar message'
      
       }
     },
@@ -127,6 +173,7 @@ export default {
         document.addEventListener("pause", onPause, false);
         document.addEventListener("resume", onResume, false);
         document.addEventListener("menubutton", onMenuKeyDown, false);
+        screen.orientation.lock('landscape')
         // Add similar listeners for other events
 
         subscribe(this.screenSizeChanged);
@@ -137,6 +184,7 @@ export default {
         this.$store.dispatch("initTimeZone");
         this.$store.dispatch("initTime");
         this.$store.dispatch("initDate");
+        this.$store.dispatch("setDevice")
       
       }
       let onPause = () => {

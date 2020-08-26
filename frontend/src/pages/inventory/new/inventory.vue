@@ -32,26 +32,50 @@
 												<v-list-item
 													v-for="(item, i) in profileMenu"
 													:key="i"
+													@click="clickProfileMenu"
 												>
 													<v-list-item-title>{{ item.title }}</v-list-item-title>
 												</v-list-item>
 											</v-list>
 										</v-menu>
+										<profileImageComponent 
+											ref="profileImageComponent"
+											:openImageSheet="inventorySettings.openImageSheet"
+											@closeSheet="closeSheet"
+											:profileImageSettings="profileImageSettings"
+											:profileData="inventoryForm" />
 									</div>
 								</div>
 							</v-card-title>
 
 							<v-card-text class="mt-4">
-								<div class=" flex justify-center items-center">
-									<img src="@/static/Databoxx-BoxLogo-175x196.png"
-										style="width:130px;height:130px;"
-										alt="Please load company profile">
+								<div v-if="!inventoryForm.id" class="flex justify-center items-center">
+									<img
+										class="mt-3 disabled"
+										src="@/static/Databoxx-BoxLogo-175x196.png"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
 								</div>
-								<div class="mt-6">
+								<div v-else class="flex justify-center items-center">
+									<img class="mt-3" v-if="inventoryForm.profile_img" 
+										:src="inventoryForm.profile_img"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+									<img class="mt-3" v-else src="@/static/Databoxx-BoxLogo-175x196.png"
+										style="width:150px;height:150px;"
+										alt="Please load profile">
+								</div>
+								<div class="mt-4" v-if="inventoryForm.barcode_obj">
 									<div class="mt-4 business-barcode text-center">
-										D-13343645
+										{{ inventoryForm.barcode_obj.barcode_number }}
 									</div>
-									<p class="text-center">D-13343645</p>
+									<p class="text-center">{{ inventoryForm.barcode_obj.barcode_number }}</p>
+								</div>	
+								<div class="mt-4" v-else>
+									<div class="mt-4 business-barcode text-center">
+										1234567890
+									</div>
+									<p class="text-center">1234567890</p>
 								</div>	
 							</v-card-text>
 						</v-card>
@@ -98,6 +122,7 @@
 										width="100%"
 										type="warning"
 										text="Test"
+										:focusStateEnabled="false",
 										@click="testMethod" />
 								</div>
 							</div>
@@ -195,7 +220,9 @@
 											<template #default>
 												<databaseComponent 
 													:databaseSettings="databaseSettings"
-													:databaseData="databaseData">
+													:databaseData="databaseData"
+													@editProfile="editProfileFromChild"
+													@deleteProfile="deleteProfileFromChild">
 												</databaseComponent>
 											</template>
 										</DxItem>
@@ -243,7 +270,7 @@ import inventorySalesComponent from "./components/inventory-sales-component"
 import inventoryHistoryComponent from "./components/inventory-history-component"
 import inventoryImagesGalleryComponent from "./components/inventory-images-gallery-component"
 import inventoryFinanceComponent from "./components/inventory-finance-component"
-
+import profileImageComponent from "@/components/universal/new/profile-image-component"
 import databaseComponent from "@/components/business/new-docs/database-component"
 
 //Mixins
@@ -261,6 +288,7 @@ export default {
 		inventoryHistoryComponent,
 		inventoryImagesGalleryComponent,
 		inventoryFinanceComponent,
+		profileImageComponent,
 		databaseComponent,
 		DxScrollView,
 		DxButton,
@@ -327,22 +355,27 @@ export default {
 				hideUpdateItemButtons: false,
 				hideCreateItem: false,
 				hideSaveItem: true,	
+				openImageSheet: false,
+				type: "inventory",
+
 			},
 			//Database Compoennt Data
 			databaseSettings: {
 				title: "Inventory Database",
 				header1: "Id",
-				header2: "Name",
-				header3: "Number",
-				header4: "Position",
-				header5: "Mobile",
-				header6: "Status",
+				header2: "Image",
+				header3: "Name",
+				header4: "List",
+				header5: "Category",
+				header6: "Barcode",
+				header7: "Status",
 				col1: "id",
 				col2: "profile_img",
-				col3: "date_added",
-				col4: "name",
+				col3: "name",
+				col4: "list_price",
 				col5: "category",
-				col6: "is_active"
+				col6: "barcode.barcode_number",
+				col7: "is_active"
 			},
 			databaseData: {
 				tableId: "inventoryTable",
@@ -360,6 +393,7 @@ export default {
 				warehouse_loc: null,
 				category: null,
 				barcode: null,
+				barcode_obj: null,
 				id: null,
 				name: null,
 				global_id: null,
@@ -414,6 +448,9 @@ export default {
   methods: {
     testMethod(e) {
 			console.log('this.Inventory.categoryList', this.Inventory.categoryList)
+			console.log('this.GET_INVENTORY_LIST', this.GET_INVENTORY_LIST)
+			console.log('this.inventoryForm', this.inventoryForm)
+			
 		},
 		showEditProfile() {
 			this.inventorySettings.editProfile = true;
@@ -457,9 +494,29 @@ export default {
 			this.inventorySettings.hideSaveItem = true;
 			this.selectedIndex = 0;
 			this.$store.commit("RESET_ERRORS");
+			this.isLoadPanelVisible = false
 		},
 		createItemChoices(e) {
 			console.log('e', e)
+		},
+		closeSheet(e) {
+			console.log("closeSheet e", e)
+			this.inventorySettings.openImageSheet = e
+		},
+		//Capture Edit by Child DataGrid Component
+		editProfileFromChild(e) {
+			console.log('editProfileFromChild e', e);
+			this.editInventoryById(e)
+		},
+		deleteProfileFromChild(e) {
+			console.log('deleteProfileFromChild e', e);
+			this.DELETEInventoryItem(e)
+		},
+		clickProfileMenu(e) {
+			console.log("clickProfileMenu e", e)
+			if(e.target.innerText === 'Profile Image') {
+				this.inventorySettings.openImageSheet = true
+			}
 		},
 		async createItemandNew() {
 			this.$store.commit("RESET_ERRORS");
@@ -477,7 +534,7 @@ export default {
 			let reponse = await this.createInventory();
 			console.log("reponse", reponse);
 			//Populate Fields with Created Instance
-			await this.editInventoryItem(reponse.id);
+			await this.editInventoryById(reponse.id);
 			this.showEditProfile();
 			console.log("createInventoryandEdit All Done", reponse);
 		},
@@ -548,61 +605,41 @@ export default {
 		async refreshInventory() {
 			await this.$store.dispatch("GETInventoryList");
 		},
-		// Populate Fields for editing in Browser
-		editInventoryItem(invID) {
-			return new Promise((resolve, reject) => {
-				try {
-					console.log("editInventoryItem invID", invID);
-					this.clearFormData();
-					//Get Inventory Item object and map to fields
-					var inventoryListID = null;
-					if (this.checkedRows.length != 0) {
-						var rowID = this.checkedRows.slice(-1)[0].id;
-						var findIndexID = this.Inventory.inventoryList.findIndex((elem) => {
-							return elem.id == rowID;
-						});
-						console.log("editInventoryItem findIndexID", findIndexID);
-						inventoryListID = findIndexID;
-						console.log("IF inventoryListID", inventoryListID);
-					} else {
-						//Findindex based on ID being passed into the function
-						console.log("else editInventoryItem2 invID2", invID);
-						console.log("else this.Inventory.inventoryList", this.Inventory.inventoryList);
-						var findObj = this.Inventory.inventoryList.findIndex((item) => item.id == invID);
-						inventoryListID = findObj;
-						console.log("Else inventoryListID", inventoryListID);
-					}
-					if (this.Inventory.inventoryList === 0) {
-						//Is there a list of Inventory items to lookup?
-						return "There are no inventory items available";
-					}
-					if (this.Inventory.inventoryList.length != 0) {
-						console.log("editInventoryItem Inventory.inventoryList", this.Inventory.inventoryList);
-						console.log("Available List inventoryListID", inventoryListID);
 
-						var InventoryItem = this.Inventory.inventoryList[inventoryListID];
-						console.log("editInventory InventoryItem", InventoryItem);
-						for (let key in this.inventoryForm) {
-							this.inventoryForm[key] = InventoryItem[key];
-						}
+		// Populate Fields for editing in Browser
+		editInventoryById(invID) {
+			return new Promise(async (resolve, reject) => {
+				console.log("editInventoryById invID", invID);
+				try {
+					this.clearFormData();
+					this.activeTab = 0;
+
+					//2) Get User ID and object and map to fields from database table
+					var getSelectedInvObj = await this.$store.dispatch("GETInventoryProfile", {id: invID});
+					console.group('getSelectedInvObj', getSelectedInvObj);
+
+					for (let key in this.inventoryForm) {
+						this.inventoryForm[key] = this.GET_INVENTORY_PROFILE[key];
 					}
-					this.getInventoryImages();
+
+					this.getInventoryImages(invID);
 					//Switch View to Edit Mode
 					this.resetViewtoHome();
 					this.showEditProfile();
-					return resolve("editInventoryItem Completed");
-				} catch (error) {
+					return resolve("editInventoryById Completed");
+				} catch(error) {
+					console.log("Caught error", error)
 					return reject(error);
-				}
+				}			
 			});
 		},
 		//Get images including Barcode
-		async getInventoryImages() {
+		async getInventoryImages(invID) {
 			//I need to reconfigure this to only get the images for the selected Inventory Item
 			try {
 				//Get Inventory Gallery Images for ID
-				console.log("Get Inv Gallery Imgs this.inventoryForm", this.inventoryForm);
-				this.$store.dispatch("GETInventoryImagesById", this.inventoryForm);
+				console.log("Get Inv Gallery Imgs this.inventoryForm", {id: invID});
+				this.$store.dispatch("GETInventoryImagesByFilter", {id: invID});
 
 			} catch (error) {
 				console.log("getInventoryImages Try Catch error", error);
@@ -640,41 +677,23 @@ export default {
 			//I may have to refresh the database Inventory items
 		},
 		//Set inventory item to inactive instead of deleting instance
-		async DELETEInventoryItem() {
-			console.log("DELETEInventoryItem Start");
-			this.$store.commit("RESET_ERRORS");
-			// Item MUST be selected from table - No other way to delete
-			if (this.checkedRows.length >= 2) {
-				//Only Select one item Not more than that
-				this.$store.commit("updateNotification", "You must select an item first");
-			}
-			if (this.checkedRows.length === 0) {
-				// None have been selected
-				this.$store.commit("updateNotification", "You must select an item first");
-			} else {
-				var inventoryListID = null;
-				var rowID = this.checkedRows.slice(-1)[0].id;
-				var findIndexID = this.Inventory.inventoryList.findIndex((elem) => {
-					return elem.id == rowID;
-				});
-				console.log("DELETEInventoryItem findIndexID", findIndexID);
-				inventoryListID = findIndexID;
+		async DELETEInventoryItem(item) {
+			console.log('DELETEInventoryItem id', id);
+			try {
+				let object = this.GET_INVENTORY_LIST.find(elem => elem.id === item)
+				console.log('deleteInventory object', object);
+				//Set Variables to make account inactive
+				delete object.profile_img;
+				object.is_active = false;
 
-				if (this.Inventory.inventoryList.length === 0) {
-					this.$store.commit("updateNotification", "There are no items available");
-				}
-				//Populate current fields with the one in the Store
-				if (this.Inventory.inventoryList.length != 0) {
-					let InventoryItem = this.Inventory.inventoryList[inventoryListID];
-					console.log("DELETEInventoryitem len===1 InventoryItem", InventoryItem);
-					for (let key in this.inventoryForm) {
-						this.inventoryForm[key] = InventoryItem[key];
-					}
-					//Set to inactive
-					this.inventoryForm.is_active = false;
-					await this.$store.dispatch("DELETEInventoryItem", this.inventoryForm);
-				}
+				await this.$store.dispatch("PATCHDeleteInventoryProfile", object).then((response) => {
+					console.log("response from PATCHDeleteInventoryProfile method", response);
+					this.clearFormData();
+				});
+			} catch (error) {
+				console.error("Promise Response Error", error);
 			}
+			
 			await this.clearFormData();
 			this.resetViewtoHome();
 		},
@@ -700,7 +719,7 @@ export default {
   },
   computed: {
 		...mapState(["Auth", "Inventory", "Orders", "Merchants", "Errors", "Static", "Users"]),
-		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST"]),
+		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST", "GET_INVENTORY_PROFILE"]),
 		...mapGetters(["GET_DATACOM_ERRORS_LIST", "GET_DATACOM_ERROR_HANDLE"]),
 		errorData() {
 			return this.GET_DATACOM_ERRORS_LIST
@@ -721,7 +740,7 @@ export default {
     
   },
   created() {
-
+		this.databaseData.list = this.GET_INVENTORY_LIST
   },
 
     

@@ -82,7 +82,7 @@ class CompanyListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         read_only_fields = ['id']
-        fields = ['id', 'date_added', 'account_number', 'domain', 'dba_name', 'is_active', 'acct_closure_date', 'profile_img']
+        fields = ['id', 'date_added', 'account_number', 'domain', 'dba_name', 'is_active', 'closure_date', 'profile_img']
 
 class CompanyPrimaryContactSerializer(serializers.ModelSerializer):
     primary_contact_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')

@@ -56,7 +56,6 @@ from users.views import (UserProfileViewset,
                         UserListViewset, 
                         UserLoginAPIView, 
                         UserLogOutAPIView, 
-                        UserBarcodeViewSet, 
                         AlternativeLoginAPIView, 
                         ChangePasswordAPI,
                         ManagerBarcodeApprovalAPIView, 
@@ -205,8 +204,6 @@ router.register(r'django/uom-dimension', UOMDimensionViewset)
 
 router.register(r'django/users-profile', UserProfileViewset, basename="users-profile")
 router.register(r'django/users-list', UserListViewset, basename="users-list")
-
-router.register(r'django/user-barcodes', UserBarcodeViewSet)
 
 router.register(r'django/vendor', VendorViewset, basename="vendor")
 router.register(r'django/vendor-list', VendorListViewset, basename="vendor-list")

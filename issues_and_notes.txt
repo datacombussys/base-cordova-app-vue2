@@ -13,11 +13,8 @@ recall same function and pop item off the stack
 
 I am using a CDN to import Mustache. I want to download it and serve it from my server in case of situatiotn of going offline
 
-How to properly use the debugger tool for Chrome. I have it installed and working.
 
 AWS Upload custom File Directory. Django Storages
-
-How is the best way to create payroll cycles that are indefinite in time?  Like recurring events with no end date. Use 2 models?
 
 When I create a credit card, The returned object does not include the modified fields. How do I return all fields from Django-rest?
 
@@ -30,8 +27,6 @@ But Partners can use the same name. It is between 2 relationships and not 3 or 4
 
 How do I create a stack for the notifications?
 
-I am having issues with the reactivity of Vuex. the state is not updating in the Parent pages (Partner)
-
 I have a questions on Django permissions. When I add a permission to a user, it allows a user to perform that particular funciton. 
 Which means that it was disabled before? How do permissions grant access when access was already accessible?
 
@@ -39,11 +34,12 @@ let PROD = process.env.NODE_ENV === 'production';
 I have keditor up and running. Need to configure Database. Install Axios? Set up a Store, etc...
 Help me get it setup
 
-Ingenico terminals require Windows and .NET
 
-Show me how to programatically add components (dialog, alert, custom, etc) form Devexpress to a .js page
+How would I ensure that only the content for a company witht the domain "datacom" shows up if the URL contains "datacom"
 
-Set up diffrent nav menu links depending on page route.  see app-naviagation.js for more info
+
+
+Employee Password Regex Checkmarks not responsive
 
 I need to change to uplaod path to Amazon AWS for employees to /employee/name.
 I need to figure out how to delete the files from Amazon AWS using a CRON job. What script do I need to write

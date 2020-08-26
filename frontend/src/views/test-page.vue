@@ -1,88 +1,98 @@
 <template>
   <div>
-		<div class="container">
-			<div class="row">
-				<div class="col-6">
-					<p>Device Platform: {{ platform }}</p>
-					<p>Network Type: {{ networkType }}</p>
-					<p>Is Online: {{ isOnline }}</p>
-					
-				</div>
-				<div class="col-6">
-					<div class="title">
-						Icon Material Icons
-					</div>
-					<i class="mdi mdi-cart mdi-40"></i>
-					<i class="dx-icon-email" style="font-size: 50px;"></i>
-
-				</div>
+		<div>
+			<h1>Testing Page</h1>
+		</div>
+		<div class="row">
+			<div class="col-6">
+				<v-btn
+					class="m-3"
+					depressed
+					color="primary"
+					@click="setConfig">
+					Converge Set
+				</v-btn>
+				<v-btn
+					class="m-3"
+					depressed
+					color="primary"
+					@click="getConfig">
+					Converge Get
+				</v-btn>
+			</div>
+			<div class="col-6">
+				<p>
+					Set Response: {{ setResponse }}
+				</p>
+				<p>
+					Get Response: {{ getResponse }}
+				</p>
+				
 			</div>
 		</div>
 
-		<DxButton
-        text="Test"
-        @click="testButton" />
+			
   </div>
 </template>
 
 <script>
-import DxButton from "devextreme-vue/button";
+import axios from 'axios';
 
 export default {
-  mixins: [
 
-  ],
-  components: {
-		DxButton
-  },
-  props: {
-
-  },
   data() {
-
     return {
+			setDeviceConfiguration: {
+				"method" : "setDeviceConnectionConfiguration",
+				"requestId" : "1253881538",
+				"targetType" : "api",
+				"parameters" : {
+					"connectionCriteria" : {
+						"providerTypes" : ["INGENICO_RBA_UPP", "STAR"],
+						"connectionTypes" : ["USB", "IP"],
+						"deviceTypes" : ["CARD_READER", "PRINTER"],
+						"inetAddress" : {
+							"host" : "192.168.1.137",
+							"port" : 12000,
+							"encryptionScheme" : "NONE"/"TLS_12"
+						}
+					}
+				}
+			},
+			getDeviceConnection: {
+				"method" : "getDeviceConnectionConfiguration",
+				"requestId" : "1253881539",
+				"targetType" : "api"
+			},
+			setResponse: null,
+			getResponse: null
+			
+
 		}
 	},
 	methods: {
-		testButton() {
-			
+		setConfig() {
+			axios.post("https://localhost:9790/rest/command", this.setDeviceConfiguration).then(response => {
+				console.log('response', response)
+			})
+		},
+		getConfig() {
+			axios.post("https://localhost:9790/rest/command", this.getDeviceConnection).then(response => {
+				console.log('response', response)
+			})
 		}
+		
 	},
 	computed: {
-		platform() {
-			return device.platform
-		},
-		networkType() {
-			var networkState = navigator.connection.type;
 
-			var states = {};
-			states[Connection.UNKNOWN]  = 'Unknown connection';
-			states[Connection.ETHERNET] = 'Ethernet connection';
-			states[Connection.WIFI]     = 'WiFi connection';
-			states[Connection.CELL_2G]  = 'Cell 2G connection';
-			states[Connection.CELL_3G]  = 'Cell 3G connection';
-			states[Connection.CELL_4G]  = 'Cell 4G connection';
-			states[Connection.CELL]     = 'Cell generic connection';
-			states[Connection.NONE]     = 'No network connection';
-
-			console.log('states[networkState]', states[networkState])
-
-			return states[networkState]
-		},
-		isOnline() {
-			//Fire event when offline
-			// document.addEventListener("offline", yourCallbackFunction, false);
-
-			//Fire event when online
-			// document.addEventListener("online", yourCallbackFunction, false);
-
-			return navigator.onLine
-		}
+		
+		
 	}
 
 };
 </script>
 
 <style lang="scss">
+
 
 </style>

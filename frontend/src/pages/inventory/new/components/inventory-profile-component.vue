@@ -4,7 +4,9 @@
 			<DxValidationSummary id="summary"/>
 		</template>
 		<template>
-			<inventoryDisaplayFieldsComponent :formData="formData"/>
+			<displayFieldsComponent 
+			:formData="formData"
+			:formSettings="inventorySettings"/>
 		</template>
 
 		<!-- Product Details -->
@@ -404,7 +406,7 @@ import DxScrollView from 'devextreme-vue/scroll-view';
 import { FormMixins } from "@/mixins/form-mixins"
 import { UniversalMixins } from "@/mixins/universal-mixins"
 //Compoennts
-import inventoryDisaplayFieldsComponent from "./inventory-display-fields-component"
+import displayFieldsComponent from "@/components/business/new-docs/display-fields-component"
 
 export default {
 	name: "inventoryProfileComponent",
@@ -413,7 +415,7 @@ export default {
 		UniversalMixins
 	],
 	components: {
-		inventoryDisaplayFieldsComponent,
+		displayFieldsComponent,
 		DxTextBox,
     DxButton,
     DxValidator,

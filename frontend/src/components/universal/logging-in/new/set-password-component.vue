@@ -13,7 +13,7 @@
 							<tr>
 								<td>
 									<div class="row">
-										<div class="col-10p p-4">
+										<div class="col-10p">
 											<div class="mdi mdi-check-bold mdi-24px" :class="minOneLetter ? 'text-green': 'text-red'"></div>
 										</div>	
 										<div class="col-90p">
@@ -110,6 +110,7 @@
 						<div class="dx-field-label">PIN</div>
 							<div class="dx-field-value">
 								<DxTextBox
+									mode="password"
 									:disabled="!accountSettings.editProfile"
 									:value.sync="loginForm.user.pin">
 									<DxValidator>
@@ -131,7 +132,6 @@
 									<DxTextBox
 										:disabled="!accountSettings.editProfile"
 										:value.sync="loginForm.user.password"
-										@key-up="calcValidPassword($event)"
 										mode="password"
 									>
 										<DxValidator>
@@ -233,12 +233,12 @@ export default {
 		return {
 			//Form Settings
 			confirmPassword: null,
-			minOneLetter: false,
-			minOneNumber: false,
-			minOneCharacter: false,
-			minSixChars: false,
-			cantUseName: false,
-			cantUseCommon: false,
+			// minOneLetter: false,
+			// minOneNumber: false,
+			// minOneCharacter: false,
+			// minSixChars: false,
+			// cantUseName: false,
+			// cantUseCommon: false,
 
 		};
 	},
@@ -291,74 +291,79 @@ export default {
 			}
 
 		}
+
+		
 	
 	},
 	computed: {
 		...mapState([]),
-		// minOneLetter() {
-			
-		// 	return false;
-		// },
-		// minOneNumber() {
-		// 	
-		// 	return false;
-		// },
-		// minOneCharacter() {
-		// 	console.log('minOneCharacter');
-		// 	var minOneChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-		// 	if(this.loginForm.user.password) {
-		// 		if(this.loginForm.user.password.match(minOneChar)) {
-		// 			return true;
-		// 		}
-		// 	}
-		// 	return false;
-		// },
-		// minSixChars() {
-		// 	console.log('minSixChars');
-		// 	var minSixChar = /.{6,}$/;
-		// 	if(this.loginForm.user.password) {
-		// 		if(this.loginForm.user.password.match(minSixChar)) {
-		// 			return true;
-		// 		}
-		// 	}
-		// 	return false;
-		// },
-		// cantUseName() {
-		// 	console.log('cantUseName');
-		// 	if(this.loginForm.user.first_name) {
-		// 		var firstname = this.loginForm.user.first_name.toLowerCase();
-		// 	}
-		// 	if(this.loginForm.user.last_name) {
-		// 		var lastname = this.loginForm.user.last_name.toLowerCase();
-		// 	}
-		// 	if(this.loginForm.user.email) {
-		// 		var email = this.loginForm.user.email.toLowerCase();
-		// 	}
-		// 	var words = [firstname, lastname, email];
-		// 	if(this.loginForm.user.password) {
-		// 		var password = this.loginForm.user.password.toLowerCase();
-		// 		for(let key in words) {
-		// 			if(password.includes(words[key])) {
-		// 				return false
-		// 			} 
-		// 		}
-		// 	}
-		// 	return true;
-		// },
-		// cantUseCommon() {
-		// 	console.log('cantUseCommon');
-		// 	var words = ['password', '12345'];
+		minOneLetter() {
+			var minimumOneLetter = /[a-zA-z]/;
+			let res = minimumOneLetter.test(this.loginForm.user.password)
+			return res;
+		},
+		minOneNumber() {
+			var minOneNum = /[0-9]/
+			let res = minOneNum.test(this.loginForm.user.password)
+			return res;
+		},
+		minOneCharacter() {
+			console.log('minOneCharacter');
+			var minOneChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+			let res = minOneChar.test(this.loginForm.user.password)
+			// if(this.loginForm.user.password) {
+			// 	if(this.loginForm.user.password.match(minOneChar)) {
+			// 		return true;
+			// 	}
+			// }
+			return res;
+		},
+		minSixChars() {
+			console.log('minSixChars');
+			var minSixChar = /.{6,}$/;
+			if(this.loginForm.user.password) {
+				if(this.loginForm.user.password.match(minSixChar)) {
+					return true;
+				}
+			}
+			return false;
+		},
+		cantUseName() {
+			console.log('cantUseName');
+			if(this.loginForm.user.first_name) {
+				var firstname = this.loginForm.user.first_name.toLowerCase();
+			}
+			if(this.loginForm.user.last_name) {
+				var lastname = this.loginForm.user.last_name.toLowerCase();
+			}
+			if(this.loginForm.user.email) {
+				var email = this.loginForm.user.email.toLowerCase();
+			}
+			var words = [firstname, lastname, email];
+			if(this.loginForm.user.password) {
+				var password = this.loginForm.user.password.toLowerCase();
+				for(let key in words) {
+					if(password.includes(words[key])) {
+						return false
+					} 
+				}
+			}
+			return true;
+		},
+		cantUseCommon() {
+			console.log('cantUseCommon');
+			var words = ['password', '12345'];
 
-		// 	if(this.loginForm.user.password) {
-		// 		var password = this.loginForm.user.password.toLowerCase();
-		// 		for(let key in words) {
-		// 			if(password.includes(words[key])) {
-		// 				return false
-		// 			} 
-		// 		}
-		// 	}
-		// 	return true;
-		// },
+			if(this.loginForm.user.password) {
+				var password = this.loginForm.user.password.toLowerCase();
+				for(let key in words) {
+					if(password.includes(words[key])) {
+						return false
+					} 
+				}
+			}
+			return true;
+		},
 		
 	},
 	watch: {

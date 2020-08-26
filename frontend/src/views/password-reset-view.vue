@@ -96,25 +96,19 @@ export default {
     sendEmail(e) {
 			let validate = e.validationGroup.validate();
 			if (validate.isValid) {
-				this.$nextTick(function() {
-					let result = alert("An email hgas been sent to " + this.email, "Email Sent")
-					this.$router.push('/login-form')
-					// e.validationGroup.reset()
-				})
-        return;
-      }
-			
-			
-			
-		},
-    forgotPW() {
-			this.$store.commit('RESET_ERRORS');
-			if(!this.loginData.username) {
-				this.$store.commit('SET_FORGOT_PW_ERRORS', "You must enter your email address first");
-			} else{
+				this.$store.commit('NOTIFICATION_MESSAGES', {title: "Success", text: "Please check your email"});
 				this.$store.dispatch('passwordResetEmail', this.loginData.username);
-				this.$store.commit('NOTIFICATION_MESSAGES', "Please check your email");
+
+				// this.$nextTick(function() {
+				// 	let result = alert("An email hgas been sent to " + this.email, "Email Sent")
+				// 	this.$router.push('/login-form')
+				// 	// e.validationGroup.reset()
+				// })
+        return;
+      } else {
+				this.$store.commit('SET_FORGOT_PW_ERRORS', "You must enter your email address first");
 			}
+			
 		},
 		emailComparison() {
       return this.email;
