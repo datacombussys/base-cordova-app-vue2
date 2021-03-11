@@ -31,8 +31,9 @@ class MainUserManager(BaseUserManager):
 			raise ValueError("Users must have a valid password")
 		print('CreateUser kwargs', kwargs)
 
-		groups_var = kwargs['groups']
-		del kwargs['groups']
+		groups_var = kwargs.get('groups', None)
+		if groups_var:
+			del kwargs['groups']
 
 		user = self.model(**kwargs)
 		user.full_name = self.make_full_name(kwargs['first_name'], kwargs['last_name'])
@@ -76,9 +77,8 @@ class User(CommonUserBase):
 								blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
 	fax 				= models.CharField(max_length=10, null=True, 
 								blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
-	
 	class Meta:
-		ordering = ['last_name', 'first_name', 'date_added']
+		ordering = ['id', 'last_name', 'first_name', 'date_added']
 	
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -90,7 +90,6 @@ class User(CommonUserBase):
 
 	def get_fullname(self):
 		return str(self.full_name)
-
 
 class UserGroup(Group):
 # Inherits with name, and ID

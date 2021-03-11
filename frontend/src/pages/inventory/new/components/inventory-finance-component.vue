@@ -9,14 +9,23 @@
 						<div class="dx-field">
 							<div class="dx-field-label">Purchase Price</div>
 							<div class="flex dx-field-value justify-center">
-								<DxNumberBox
+								<v-text-field
+									color="orange darken-4"
+									:step="0.01"
+									prefix="$"
+									type="number"
+									placeholder="5.00"
+									:disabled="!inventorySettings.editProfile"
+									v-model="formData.purchase_price"
+								></v-text-field>
+								<!-- <DxNumberBox
 									placeholder="$ 50.00"
 									format="$ #,##0.##"
 									:disabled="!inventorySettings.editProfile"
 									:value.sync="formData.purchase_price"
 									:step="0.01"
 									:show-spin-buttons="true"
-								/>
+								/> -->
 							</div>
 						</div>
 					</div>
@@ -24,14 +33,23 @@
 						<div class="dx-field">
 							<div class="dx-field-label">List Price</div>
 							<div class="flex dx-field-value justify-center">
-								<DxNumberBox
+								<v-text-field
+									color="orange darken-4"
+									:step="0.01"
+									prefix="$"
+									type="number"
+									placeholder="15.00"
+									:disabled="!inventorySettings.editProfile"
+									v-model="formData.list_price"
+								></v-text-field>
+								<!-- <DxNumberBox
 									placeholder="$ 100.00"
 									format="$ #,##0.##"
 									:disabled="!inventorySettings.editProfile"
 									:value.sync="formData.list_price"
 									:step="0.01"
 									:show-spin-buttons="true"
-								/>
+								/> -->
 							</div>
 							<p class="margin-text">Retail Margin: 45%</p>
 						</div>
@@ -40,14 +58,23 @@
 						<div class="dx-field">
 							<div class="dx-field-label">Whosesale Price</div>
 							<div class="flex dx-field-value justify-center">
-								<DxNumberBox
+								<v-text-field
+									color="orange darken-4"
+									:step="0.01"
+									prefix="$"
+									type="number"
+									placeholder="10.00"
+									:disabled="!inventorySettings.editProfile"
+									v-model="formData.wholesale_price"
+								></v-text-field>
+								<!-- <DxNumberBox
 									placeholder="$ 75.00"
 									format="$ #,##0.##"
 									:disabled="!inventorySettings.editProfile"
 									:value.sync="formData.wholesale_price"
 									:step="0.01"
 									:show-spin-buttons="true"
-								/>
+								/> -->
 							</div>
 							<p class="margin-text">Wholesale Margin: 45%</p>
 						</div>

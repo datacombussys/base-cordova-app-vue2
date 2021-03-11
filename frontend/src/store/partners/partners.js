@@ -33,7 +33,8 @@ export const Partners = {
       let listIndex = state.partnerList.findIndex(elem => elem.id === payload.id);
       state.partnerList.slice(listIndex, 1);
       state.partnerList.splice(listIndex, 1, payload);
-      console.log('state.partnerList', state.partnerList);
+			console.log('state.partnerList', state.partnerList);
+			state.partnerProfile = payload
     },
     PATCH_DELETE_PARTNER_PROFILE(state, payload) {
       console.log('payload', payload);
@@ -57,7 +58,10 @@ export const Partners = {
 				} catch(error) {
 					return reject(response)
 				}
-			})
+			}).catch(error => {
+        console.error("POSTPartner Promise error.response", error);
+        return error;
+			});
     },
     //GET Partner LIST
     async GETPartnerList({commit, dispatch, rootState}, payload) {

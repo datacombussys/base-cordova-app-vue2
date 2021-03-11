@@ -1,5 +1,10 @@
 <template>
   <div class="pos-page">
+
+		<transactionResponseComponent 
+			:transResponsePopup="transResponsePopup"
+			@closeTransResponsePopup="closeTransResponsePopup" />
+
     <!-- First Row -->
     <div class="top-row">
       <div class="row1-col1">
@@ -26,7 +31,7 @@
             <DxButton
               text="Sale"
               type="pos"
-              :focusStateEnabled="false"
+              :focusStateEnabled="true"
               styling-mode="contained"
               @click="initSale($event)"
             />
@@ -35,7 +40,7 @@
             <DxButton
               text="Return"
               type="pos"
-              :focusStateEnabled="false"
+              :focusStateEnabled="true"
               styling-mode="contained"
               @click="initReturn($event)"
             />
@@ -44,7 +49,7 @@
             <DxButton
               text="Void"
               type="pos"
-              :focusStateEnabled="false"
+              :focusStateEnabled="true"
               styling-mode="contained"
               @click="initVoid($event)"
             />
@@ -67,7 +72,8 @@
               />
 							<openTillComponent 
 								:openSheetOpenTill="openSheetOpenTill" 
-								@closeTillSheet="closeTillSheet"/>
+								@closeTillSheet="closeOpenTillSheet"
+								@total-open="openTillAmount" />
             </div>
             <div class="col-25p px-1">
               <DxButton
@@ -75,8 +81,11 @@
                 type="pos"
                 :focusStateEnabled="false"
                 styling-mode="contained"
-                @click="testButton($event)"
+                @click="openSheetCloseTill = true"
               />
+							<closeTillComponent 
+								:openSheetCloseTill="openSheetCloseTill" 
+								@closeTillSheet="closeCloseTillSheet"/>
             </div>
             <div class="col-25p px-1">
               <DxButton
@@ -168,10 +177,23 @@
       <multipane class="vertical-panes" layout="vertical">
         <div class="pane px-2" :style="{ minWidth: '100px', width: '33%', maxWidth: '1500px'  }">
           <v-row>
-            <v-col sm="12" class="pl-6">
-               <input type="text" class="w-full" v-model="barcodeInput" placeholder="Barcode Number"/>
+						<v-col sm="2" class="p-0">
+							<div class="row my-2 rounded p-1 items-center">
+								<v-btn 
+									link
+									icon
+								 @click="showBarcodeInput = !showBarcodeInput">
+							
+									<div class="mdi mdi-swap-horizontal-bold mdi-25"></div>
+								</v-btn>
+								
+							</div>
+						</v-col>
+            <v-col v-show="!showBarcodeInput" sm="10" class="p-0 flex items-center">
+               <input id="barcodeInputField" type="text" class="w-full" v-model="barcodeInput" placeholder="Barcode Number"/>
             </v-col>
-            <v-col sm="12" class="p-0 w-full">
+						
+            <v-col v-show="showBarcodeInput" sm="10" class="p-0 mt-2 w-full">
               <v-text-field
                 placeholder="Search"
                 prepend-inner-icon="mdi-magnify"
@@ -187,14 +209,21 @@
             <DxScrollView
               id="scrollview"
               ref="inventoryScrollView"
-              height="75vh"
+              height="100%"
+							width="100%"
               :scroll-by-content="true"
               :scroll-by-thumb="true"
               show-scrollbar="always"
               :bounce-enabled="true"
             >
             <div class="inventory-row">
+							<div 
+								class="text-center" 
+								v-if="GET_INVENTORY_LIST.length === 0">
+									There are no items to show
+								</div>
               <div class="inventory-div">
+								
                 <div
                   v-for="item in GET_INVENTORY_LIST"
                   :key="item.id"
@@ -226,9 +255,10 @@
               show-scrollbar="always"
               :bounce-enabled="false"
             >
-              <div class="row bg-gray-800 text-white my-2 rounded p-1">
-                <span class="mdi mdi-swap-horizontal-bold mdi-20 pr-4"></span><p>View Order</p> 
-              </div>
+							<div class="row bg-gray-800 text-white my-2 rounded p-1 items-center">
+								<span class="mdi mdi-swap-horizontal-bold mdi-20 pr-4"></span>
+								<span>View Order</span> 
+							</div>
               <div class="row">
                 <calculator-component :calcData="calc"></calculator-component>  
               </div>
@@ -253,7 +283,7 @@
                     type="success"
                     class="w-full"
                     styling-mode="contained"
-                    @click="testButton($event)"
+                    @click="creditCardSale"
                   />
                 </div>
                 <div class="col-33p px-2 items-center">
@@ -334,7 +364,7 @@
                     type="danger"
                     class="w-full"
                     styling-mode="contained"
-                    @click="testButton($event)"
+                    @click="saveTillToStore($event)"
                   />
                 </div>
               </div>
@@ -342,9 +372,16 @@
             </DxScrollView>
           </div>
         </div>
-        <multipane-resizer class="resixer"></multipane-resizer>
+        <multipane-resizer></multipane-resizer>
         <div class="pane p-1" :style="{ minWidth: '50px', width: '33%' }" style="flex-grow: 1;">
           <div class="container p-0">
+						<creditCardPaymentComponent 
+							ref="creditCardPmtRef"
+							:grandTotal="grandTotal"
+							:paymentForm="orderForm"
+							:openedCCDrawer="openedCCDrawer"
+							@closeCCDrawer="closeCCDrawer" />
+
             <div class="row bg-gray-700 text-white py-2 justify-between">
               <div class="col-10p text-center">
                 Qty
@@ -375,7 +412,7 @@
                 <div class="container p-0 pl-1 w-full">
                   <div class="d-list">
                     <div class="d-list-item" 
-                      v-for="(item, index) in sharedData.allItemsInTill"
+                      v-for="(item, index) in orderForm.allItemsInTill"
                       :key="item.id">
                       <div class="row justify-evenly" 
                         :class="selectedItem.id === item.id ? 'edit-item' : ''"
@@ -583,6 +620,7 @@
 <script>
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
+import { bus } from '@/services/event-bus';
 
 import DxResizable from 'devextreme-vue/resizable';
 import { Multipane, MultipaneResizer } from 'vue-multipane';
@@ -593,6 +631,9 @@ import { DxScrollView } from 'devextreme-vue/scroll-view';
 //Components
 import calculatorComponent from "@/pages/pos/new-pos/components/calculator-component.vue";
 import openTillComponent from "@/pages/pos/new-pos/components/open-till-component.vue";
+import closeTillComponent from "@/pages/pos/new-pos/components/close-till-component.vue";
+import creditCardPaymentComponent from "@/pages/pos/new-pos/components/credit-card-payment-component.vue";
+import transactionResponseComponent from "@/components/financial/new/transaction-response-component.vue";
 
 export default {
   name: "retailPOS",
@@ -607,7 +648,10 @@ export default {
     DxButton,
     alert,
 		calculatorComponent,
-		openTillComponent
+		openTillComponent,
+		closeTillComponent,
+		creditCardPaymentComponent,
+		transactionResponseComponent
   },
   props: {
      keyboardClass: {
@@ -637,7 +681,6 @@ export default {
 				CCpopupOpened: false,
 				CashpopupOpened: false,
 				GiftpopupOpened: false,
-				allItemsInTill: [],
       },
 
       //Transaction Completion Popup
@@ -654,6 +697,9 @@ export default {
 			},
 			// Popups and Sheets
 			openSheetOpenTill: false,
+			openSheetCloseTill: false,
+			openedCCDrawer: false,
+			transResponsePopup: false,
 
 			//Calculate Settings
 			showCalc: true,
@@ -665,7 +711,8 @@ export default {
       //Main Settings
       switchColors: {
         checked: ' #0BB804', unchecked: '#F03A00', disabled: '#0BB804'
-      },
+			},
+			showBarcodeInput: false,
       barcodeInput: null,
       searchWords: null,
 
@@ -689,11 +736,14 @@ export default {
 				discounts: 0,
 				total_price: 0
 			},
-			selectedOrder: {},
       
       //Order Form
 			orderForm: {
 				id: null,
+				orderNumber: 0,
+				orderID: null,
+				salesOffice: null,
+				orderStatus: null,
 				customer: null,
 				onHold: false,
 				isSale: false,
@@ -702,6 +752,7 @@ export default {
 				isEdit: false,
 				isDiscounted: false,
 				isRefund: false,
+				isTillOpen: false,
 				isSplitCheck: false,
 				splitWays: 1,
 				date: null,
@@ -721,10 +772,6 @@ export default {
 					coupons: null,
 					giftCards: null
 				},
-				orderNumber: 0,
-				qtyItems: 0,
-				subtotal: 0,
-				totalDiscounts: 0,
 				//Error Data
 				errorData: {
 					type: "Authorization Unsuccessful",
@@ -734,9 +781,15 @@ export default {
 					status: 400
 				},
 				//Totals
+				qtyItems: 0,
+				subtotal: 0,
+				totalDiscounts: 0,
 				gratuity: 0,
 				tax: 0,
 				total: 0,
+				allItemsInTill: [],
+				openTillAmount: null,
+				closeTillAmount: null,
       },
       
       //Input Selectors
@@ -744,29 +797,38 @@ export default {
 				"pos-login": "this.$refs.barcodeInput.$el.querySelector('input').focus()",
 				CashPayment: "this.$refs.barcodeInput.$el.querySelector('input').focus()"
 			},
+			barcodeInterval: null,
     
     }
   },
   //***************************************Methods ********************************************** */
   methods: {
     testButton(e) {
-      console.log("testButton e", e)
-      console.log("Common.isOnline", this.Common.isOnline)
+      console.log("this.orderForm", this.orderForm)
+			console.log("this.RETURN_TILL_LIST", this.RETURN_TILL_LIST)
+			var barcodeSearch = document.getElementById("barcodeInputField")
+			barcodeSearch.focus()
+
       
     },
     toggleNavBar() {
       this.$emit('navigated')
-    },
+		},
+		closeCCDrawer(evt) {
+			console.log("closeCCDrawer evt", evt)
+			this.openedCCDrawer = false
+		},
     filterResults(e) {
       console.log("filterResults e", e)
-      //Filter the active list of inventory being displayed
+			//Filter the active list of inventory being displayed
+			this.clearBarcodeFocusInterval()
       return this.postList.filter(post => {
         return post.title.toLowerCase().includes(this.searchWords.toLowerCase())
       })
     },
     //Reset View
 		resetView() {
-			this.sharedData.allItemsInTill = [];
+			this.orderForm.allItemsInTill = [];
 			this.orderForm.isSale = false;
 			this.orderForm.isVoid = false;
 			this.orderForm.isReturn = false;
@@ -776,55 +838,141 @@ export default {
 			this.orderForm.totalDiscounts = 0;
 			this.orderForm.total = 0;
 		},
-		//Initiate Sale
-		initSale() {
-			if(this.orderForm.isReturn) {
-				this.$f7.dialog.confirm("Do you want to cancel the current return?", "Order Change", () => {
-					//User clicked OK
-					console.log("User clicked OK");
-					this.resetView();
-					this.orderForm.isSale = true;
-				}, () => {
-					//User clicked Cancel
-					console.log("User clicked Cancel");
-					return
-				}).open();
+		initializePOS(id, SO) {
+			console.log("initializePOS id", id)
+			console.log("initializePOS SO", SO)
+			var POSObj = this.$store.getters.RETURN_TILL_LIST.find(elem => elem.id === id)
+			console.log("POSObj", POSObj)
+			if(POSObj != undefined) {
+				//map variables to local form
+				for(let i in this.orderForm) {
+					this.orderForm[i] = POSObj[i]
+				}
+			} else {
+				this.$nextTick(function() {
+					// alert("New Store Created", "Success");
+					this.orderForm.orderID = id
+					this.orderForm.salesOffice = SO
+					this.$store.commit("PUSH_NEW_TILL", this.orderForm)
+				})
+				if(!this.isTillOpen) {
+					this.openSheetOpenTill = true
+				}
+				console.log('this.orderForm', this.orderForm)
 			}
-			this.resetView();
-			this.orderForm.isSale = true;
-			
+		},
+		saveTillToStore(evt) {
+			console.log("saveTillToStore evt", evt)
+			try {
+				//Find object in store current Index, delete it and replace it woth this one in the same position
+				let tillIndex = this.RetailPOS.tillList.findIndex(elem => elem.id === this.orderForm.id)
+				console.log("tillIndex", tillIndex)
+				if(tillIndex >= 0) {
+					console.log("this.RetailPOS.tillList", this.RetailPOS.tillList)
+					this.$store.commit("SAVE_TILL", {id: tillIndex, data: this.orderForm})
+					console.log("this.RetailPOS.tillList", this.RetailPOS.tillList)
+				}			
+
+				this.$nextTick(function() {
+					alert("Saved", "Success");
+				})
+				console.log('RETURN_TILL_LIST', this.RETURN_TILL_LIST)
+			} catch(error) {
+				console.error("There was an error saving till")
+			}
+		},
+		//Initiate Sale
+		initSale(e) {
+			console.log('initSale e', e)
+			let startSale = () => {
+				console.log('startSale')
+				this.resetView();
+				this.orderForm.isSale = true;
+				e.element[0].classList.add("dx-state-focused")
+			}
+			if(this.orderForm.isReturn) {
+				this.$nextTick(function() {
+					let comfirmDialog = confirm("Do you want to cancel the current return?", "Change Order");
+					comfirmDialog.then((dialogResult) => {
+						console.log("dialogResult", dialogResult);
+						console.log("dialogResult.buttonText", dialogResult.buttonText);
+						if(dialogResult) {
+							console.log("User clicked OK");
+							startSale()
+						} else {
+							console.log("User clicked Cancel");
+							return
+						}
+					});
+				})
+		
+			} else {
+				startSale()
+				if(!this.orderForm.openTillAmount) {
+					this.$nextTick(function() {
+						alert("You must first enter the opening drawer amounts", "Error");
+					})
+				}
+				
+			}			
 		},
 		//Initiate Void
-		initVoid() {
+		initVoid(e) {
+			console.log('initVoid e', e)
 			this.resetView();
 			this.orderForm.isVoid = true;
 		},
 		//Initiate Return
-		initReturn() {
-			if(this.orderForm.isSale) {
-				this.$f7.dialog.confirm("Do you want to cancel the current sale?", "Order Change", () => {
-					//User clicked OK
-					console.log("User clicked OK");
-					this.resetView();
-					this.orderForm.isReturn = true;
-				}, () => {
-					//User clicked Cancel
-					console.log("User clicked Cancel");
-					return
-				}).open();
+		initReturn(e) {
+			console.log('initReturn e', e)
+			let startReturn = () => {
+				console.log('startReturn')
+				this.resetView();
+				this.orderForm.isReturn = true;
+				e.element[0].classList.add("dx-state-focused")
 			}
-			this.resetView();
-			this.orderForm.isReturn = true;
+			
+			if(this.orderForm.isSale) {
+				this.$nextTick(() => {
+					let comfirmDialog = confirm("Do you want to cancel the current sale?", "Change Order");
+					comfirmDialog.then((dialogResult) => {
+						console.log("dialogResult", dialogResult);
+						console.log("dialogResult.buttonText", dialogResult.buttonText);
+						if(dialogResult) {
+							console.log("User clicked OK");
+							startReturn()
+						} else {
+							console.log("User clicked Cancel");
+							return
+						}
+					});
+				});
+			} else {
+				startReturn()
+			}
 		},
-		closeTillSheet(e) {
-			console.log("closeTillSheet e", e);
+		closeOpenTillSheet(e) {
+			console.log("closeOpenTillSheet e", e);
 			this.openSheetOpenTill = false
 		},
-		//Ticket
+		closeCloseTillSheet(e) {
+			console.log("closeCloseTillSheet e", e);
+			this.openSheetCloseTill = false
+		},
+		openTillAmount(e) {
+			console.log("openTillAmount e", e);
+			this.orderForm.openTillAmount = e
+			console.log("this.orderForm.openTillAmount", this.orderForm.openTillAmount);
+		},
+		closeTransResponsePopup(e) {
+			console.log("closeTransResponsePopup e", e);
+			this.transResponsePopup = e
+		},
+		//,Ticket
 		addItemToTill(id) {
-			console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);
+			console.log("this.orderForm.allItemsInTill", this.orderForm.allItemsInTill);
 			//Find item in Ticket
-			var findTillItem = this.sharedData.allItemsInTill.find((elem) => {
+			var findTillItem = this.orderForm.allItemsInTill.find((elem) => {
 				return elem.id == id;
 			});
 			console.log("findTillItem", findTillItem);
@@ -837,7 +985,7 @@ export default {
 				//Add Item Attributes
 				invObj.qty = 1;
 				invObj.is_discounted = false;
-				this.sharedData.allItemsInTill.push(invObj);
+				this.orderForm.allItemsInTill.push(invObj);
         this.calculateTotals();
         
 			} else {
@@ -853,27 +1001,27 @@ export default {
 		deleteItemFromTill(e) {
 			console.log("e", e);
 			console.log("deleteItemFromTill");
-			this.sharedData.allItemsInTill.splice(e, 1);
+			this.orderForm.allItemsInTill.splice(e, 1);
 			this.calculateTotals();
 		},
 		calculateTotals() {
 			//Reduce the tax rate from each item and add them up
 			var taxRatePercent = 9.75;
 
-			this.orderForm.subtotal = this.sharedData.allItemsInTill.reduce((acc, obj) => {
+			this.orderForm.subtotal = this.orderForm.allItemsInTill.reduce((acc, obj) => {
 				return acc + parseFloat(obj.list_price) * parseFloat(obj.qty);
 			}, 0);
 			console.log("this.orderForm.subtotal", this.orderForm.subtotal);
 
-			this.orderForm.tax = this.sharedData.allItemsInTill.reduce((acc, obj) => {
+			this.orderForm.tax = this.orderForm.allItemsInTill.reduce((acc, obj) => {
 				return acc + (parseFloat(obj.list_price) * parseFloat(obj.qty) * taxRatePercent) / 100;
 			}, 0);
 			console.log("this.orderForm.tax", this.orderForm.tax);
 			//Calculate Total Discounts
-			// console.log("Object.keys(this.sharedData.allItemsInTill[0].discounted_price", Object.keys(this.sharedData.allItemsInTill[0].discounted_price));
-			if (this.sharedData.allItemsInTill.length != 0) {
-				if (this.sharedData.allItemsInTill[0].discount != undefined) {
-					var sumDiscount = this.sharedData.allItemsInTill.reduce((acc, obj) => {
+			// console.log("Object.keys(this.orderForm.allItemsInTill[0].discounted_price", Object.keys(this.orderForm.allItemsInTill[0].discounted_price));
+			if (this.orderForm.allItemsInTill.length != 0) {
+				if (this.orderForm.allItemsInTill[0].discount != undefined) {
+					var sumDiscount = this.orderForm.allItemsInTill.reduce((acc, obj) => {
 						return acc + obj.discount;
 					}, 0);
 					console.log("sumDiscount", sumDiscount);
@@ -897,9 +1045,9 @@ export default {
 			} else {
         this.selectedItem.id = itemId;
 
-        console.log("this.sharedData.allItemsInTill", this.sharedData.allItemsInTill);
+        console.log("this.orderForm.allItemsInTill", this.orderForm.allItemsInTill);
         //Find item in Ticket
-        var findOrderItem = this.sharedData.allItemsInTill.find((elem) => elem.id === itemId);
+        var findOrderItem = this.orderForm.allItemsInTill.find((elem) => elem.id === itemId);
         console.log("findOrderItem", findOrderItem);
         
         //Populate SelectedItem Object
@@ -936,15 +1084,35 @@ export default {
 			//Find object in array
 			var id = this.selectedItem.id;
 			console.log("this.selectedItem.id", this.selectedItem.id);
-			var findTillItem = this.sharedData.allItemsInTill.find((elem) => {
+			var findTillItem = this.orderForm.allItemsInTill.find((elem) => {
 				return elem.id == id;
 			});
 			findTillItem.qty = this.calc.value;
-			console.log("Orde qty has been updated", this.sharedData.allItemsInTill);
+			console.log("Orde qty has been updated", this.orderForm.allItemsInTill);
 			this.selectedItem.id = null;
 			this.calc.value = 0;
 		},
-    
+		creditCardSale() {
+			console.log("creditCardSale clicked")
+			this.clearBarcodeFocusInterval()
+			this.openedCCDrawer = true
+			this.$refs.creditCardPmtRef.focusChange()
+			
+		},
+    //Input Focus
+		clearBarcodeFocusInterval() {
+			console.log('clearBarcodeFocusInterval');
+			clearInterval(this.barcodeInterval);
+		},
+		startBarcodeFocusTimer() {
+			var barcodeSearch = document.getElementById("barcodeInputField")
+			console.log('barcodeSearch', barcodeSearch)
+			this.barcodeInterval = setInterval(() => {
+					barcodeSearch.focus();
+					// console.log("this", this);
+			}, 2000);
+		},
+		
     //LogOut
 		logout() {
 			this.$store.dispatch("signOut");
@@ -953,22 +1121,13 @@ export default {
 			console.log(credentials);
 			this.$store.dispatch("signIn", credentials);
 		},
-		clearBarcodeInterval() {
-			console.log('clearBarcodeInterval');
-			clearInterval(this.barcodeInterval);
-		},
-		startTimer() {
-			this.barcodeInterval = setInterval(() => {
-					this.$refs.barcodeInput.$el.querySelector('input').focus();
-					// console.log("this", this);			
-			}, 2000);
-    },
+		
 
 
   },
   computed: {
-    ...mapState(["Auth", "Users", "Inventory", "Orders", "Static", "Errors", "Common"]),
-		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST", "GET_INV_CATEGORY_LIST_LENGTH"]),
+    ...mapState(["Auth", "Users", "Inventory", "Orders", "Static", "Errors", "Common", "RetailPOS"]),
+		...mapGetters(["GET_INVENTORY_LIST", "GET_INV_CATEGORY_LIST", "GET_INV_CATEGORY_LIST_LENGTH", "RETURN_TILL_LIST"]),
     categoryItems() {
 			var filtered = this.Inventory.inventoryList.filter((elem) => elem.category != null);
 			var answer = filtered.filter((elem) => elem.category.name === this.Inventory.selectedCategory);
@@ -980,18 +1139,23 @@ export default {
 				parseFloat(this.orderForm.tax) - parseFloat(this.orderForm.totalDiscounts);
 			console.log("newTotal", newTotal);
 
-			return newTotal;
+			return Number(newTotal.toFixed(2));
 		},
   },
   watch: {
 
   },
   mounted() {
-
+		this.startBarcodeFocusTimer()
     
   },
   created() {
-
+		console.log("this.$route", this.$route)
+		let id = this.$route.params.id
+		console.log("id", id)
+		let SO = this.$route.params.SO
+		console.log("SO", SO)
+		this.initializePOS(id, SO)
   },
 
     
@@ -1102,30 +1266,30 @@ export default {
       cursor: pointer;
       width: 150px;
       height: 6em;
-      background: white;
       font-weight: 300;
       margin-bottom: 5px;
-      background: rgb(47, 47, 47);
+      background: rgb(235, 235, 235);
 
-      .inventory-img {
-        display: flex;
-        background: rgb(235, 235, 235);
-        height: 75%;
-        text-align: center;
-        justify-content: center;
-        img {
-          height: 75px;
-          border-radius: 50%;
-          box-shadow: 5px 5px 10px rgb(34, 33, 33);
-        }
-      }
+			.inventory-img {
+				z-index: 10;
+				display: flex;
+				height: 75%;
+				text-align: center;
+				justify-content: center;
+				img {
+					height: 100%;
+					border-radius: 50%;
+					box-shadow: 5px 5px 10px rgb(34, 33, 33);
+				}
+			}
       .inventory-title {
+				z-index: 50;
         box-shadow: 0px 7px 10px rgb(34, 33, 33);
         text-align: center;
         font-weight: 600;
-        color: black;
         height: 25%;
-        color: white;
+				color: rgb(255, 255, 255);
+				background: rgb(47, 47, 47);
       }
     }
   }

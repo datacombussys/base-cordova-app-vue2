@@ -15,18 +15,18 @@ export const Emails = {
 
 	},
 	actions: {
-    passwordResetEmail({ dispatch, commit }, payload) {
+		passwordResetEmail({ dispatch, commit }, payload) {
 			console.log("Users email addres for password reset", payload);
-      axios.post('/node/email/', payload)
+			axios.post('/node/email/', payload)
 				.then(response => {
 					console.log("passwordResetEmail to Node - response:", response);
-          response.type = "Password Reset Email";
+					response.type = "Password Reset Email";
 					// dispatch('updateNotification', response);
 				}).catch(error => {
 					error.response.type = "Password Reset Email";
 					dispatch('updateNotification', error.response);
 				});
-    }
+		}
 
 
   },

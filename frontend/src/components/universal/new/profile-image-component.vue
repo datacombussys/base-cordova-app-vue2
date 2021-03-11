@@ -5,7 +5,7 @@
 				<div class="header">
 					Add Profile Image
 				</div>
-				<div class="button">
+				<div class="close-button">
 					<a href="#" @click="closeSheet">
 						<fa-layer class="mdi-35">
 							<fa-icon :icon="['fas', 'circle']" style="color:#F75403;"></fa-icon>

@@ -26,13 +26,20 @@
 							<div class="col-50p items-center">
 								<p class="subtitle text-center">Name</p>
 								<div class="row">
-									<div class="col-2">
+									<div class="col-2 flex items-center">
 										<span class="mdi mdi-domain mdi-35 mr-4"></span>
 									</div>
 									<div id="dxContainer" class="col-10">
-										<DxDropDownBox
+										 <v-select
+										 	@change="datacomDropdownSelection"
+											:items="GET_DATACOM_LIST"
+											item-value="dba_name"
+											item-text="dba_name"
 											id="datacomBox"
-											v-if="Auth.authLevel === 1"
+											:disabled="accountSettings.accountPlatform.is_datacom === false"
+										></v-select>
+										<!-- <DxDropDownBox
+											id="datacomBox"
 											:disabled="accountSettings.accountPlatform.is_datacom === false"
 											@initialized="datacomDropdown"
 											:data-source="GET_DATACOM_LIST"
@@ -49,7 +56,7 @@
 												@selectionChanged="datacomDropdownSelection"
 												> 
 											</DxList>
-										</DxDropDownBox>
+										</DxDropDownBox> -->
 									</div>
 
 								</div>
@@ -67,11 +74,19 @@
 							</div>
 							<div class="col-50p items-center">
 								<div class="row">
-									<div class="col-2">
+									<div class="col-2 flex items-center">
 									<fa-icon :icon="['fa', 'handshake']" class="mdi-30 mr-4"></fa-icon>
 									</div>
 									<div class="col-10">
-										<DxDropDownBox
+										<v-select
+											@change="partnerSelection"
+											:items="GET_PARTNER_LIST"
+											item-value="dba_name"
+											item-text="dba_name"
+											id="partnerBox"
+											:disabled="accountSettings.accountPlatform.is_partner === false"
+										></v-select>
+										<!-- <DxDropDownBox
 											:disabled="accountSettings.accountPlatform.is_partner === false"
 											@initialized="partnerDropdown"
 											:data-source="GET_PARTNER_LIST"
@@ -85,14 +100,13 @@
 												selection-mode="single"
 												display-expr="dba_name" 
 												@selectionChanged="partnerSelection" />
-												
-										</DxDropDownBox>
+										</DxDropDownBox> -->
 									</div>
 									
 								</div>
 							</div>
 						</div>
-						<div class="row mt-4" v-if="moduleInfo.level >= 3 && Auth.authLevel === 1">
+						<div class="row mt-4" v-if="moduleInfo.level >= 3 && Auth.authLevel <= 2">
 							<div class="col-50p">
 								<p class="subtitle">Merchant</p>
 								<DxSwitch 
@@ -103,11 +117,20 @@
 							</div>
 							<div class="col-50p items-center">
 								<div class="row">
-									<div class="col-2">
+									<div class="col-2 flex items-center">
 									<span class="mdi mdi-storefront-outline mdi-35 mr-4"></span>
 									</div>
 									<div class="col-10">
-										<DxDropDownBox
+										<v-select
+											@change="merchantDropdownSelection"
+											:items="GET_MERCHANT_LIST"
+											item-value="dba_name"
+											item-text="dba_name"
+											id="merchantBox"
+											:disabled="accountSettings.accountPlatform.is_merchant === false"
+										></v-select>
+
+										<!-- <DxDropDownBox
 											:disabled="accountSettings.accountPlatform.is_merchant === false"
 											@initialized="merchantDropdown"
 											:data-source="GET_MERCHANT_LIST"
@@ -121,8 +144,7 @@
 												selection-mode="single"
 												display-expr="dba_name"
 												@selectionChanged="merchantDropdownSelection" />
-												
-										</DxDropDownBox>
+										</DxDropDownBox> -->
 									</div>
 									
 								</div>
@@ -196,9 +218,9 @@ export default {
 			merchantDropdowninstance: null,
 
 			//Form
-			selectedDatacom: [],
-			selectedPartner: [],
-			selectedMerchant: [],
+			// selectedDatacom: [],
+			// selectedPartner: [],
+			// selectedMerchant: [],
 
 			//Data
 			datacomList: [
@@ -219,7 +241,7 @@ export default {
 	// *************************************** Methods *****************************************//
 	methods: {
 		testingMethod(e) {
-
+			console.log('this.formData', this.formData)
 		},
 		datacomDropdown(e) {
 			this.datacomDropdowninstance = e.component
@@ -237,25 +259,25 @@ export default {
 		},
 		companyTypeToggle(e) {
 			console.log("Toggle e", e);
-			if (e.element.id === "datacom") {
+			if (e.element[0].id === "datacom") {
 				if (e.value) {
-					this.resetCompanyToggles(e.element.id);
+					this.resetCompanyToggles(e.element[0].id);
 				} else {
 					this.accountSettings.accountPlatform.company_name = null;
 					this.accountSettings.accountPlatform.is_datacom = false;
 				}
 			}
-			if (e.element.id === "partner") {
+			if (e.element[0].id === "partner") {
 				if (e.value) {
-					this.resetCompanyToggles(e.element.id);
+					this.resetCompanyToggles(e.element[0].id);
 				} else {
 					this.accountSettings.accountPlatform.company_name = null;
 					this.accountSettings.accountPlatform.is_partner = false;
 				}
 			}
-			if (e.element.id === "merchant") {
+			if (e.element[0].id === "merchant") {
 				if (e.value) {
-					this.resetCompanyToggles(e.element.id);
+					this.resetCompanyToggles(e.element[0].id);
 				} else {
 					this.accountSettings.accountPlatform.company_name = null;
 					this.accountSettings.accountPlatform.is_merchant = false;
@@ -291,10 +313,13 @@ export default {
 			console.log("datacomDropdown", this.datacomDropdowninstance)
 			console.log("e", e)
 			if(e) {
-				this.accountSettings.accountPlatform.company_name = e.addedItems[0].dba_name
-				this.datacomDropdowninstance.close()
-				this.selectedPartner = []
-				this.selectedMerchant = []
+				this.accountSettings.accountPlatform.company_name = e
+				//Find Datacom ID and pass to formData.datacom
+				let datacomObj = this.GET_DATACOM_LIST.find(elem => elem.dba_name === e)
+				console.log('datacomObj', datacomObj)
+				if(datacomObj != undefined) {
+					this.formData.datacom = datacomObj.id
+				}
 			}
 		},
 		partnerSelection(e) {
@@ -302,10 +327,13 @@ export default {
 			console.log("partnerDropdown", this.partnerDropdowninstance)
 			console.log("e", e)
 			if(e) {
-				this.accountSettings.accountPlatform.company_name = e.addedItems[0].dba_name
-				this.partnerDropdowninstance.close()
-				this.selectedDatacom = []
-				this.selectedMerchant = []
+				this.accountSettings.accountPlatform.company_name = e
+				//Find Partner ID and pass to formData.partner
+				let partnerObj = this.GET_PARTNER_LIST.find(elem => elem.dba_name === e)
+				console.log('partnerObj', partnerObj)
+				if(partnerObj != undefined) {
+					this.formData.partner = partnerObj.id
+				}
 			}
 		},
 		merchantDropdownSelection(e) {
@@ -313,27 +341,23 @@ export default {
 			console.log("merchantDropdowninstance", this.merchantDropdowninstance)
 			console.log("e", e)
 			if(e) {
-				this.accountSettings.accountPlatform.company_name = e.addedItems[0].dba_name
-				this.merchantDropdowninstance.close()
-				this.selectedMerchant = []
+				this.accountSettings.accountPlatform.company_name = e
+				//Find Merchant ID and pass to formData.merchant
+				let merchantObj = this.GET_MERCHANT_LIST.find(elem => elem.dba_name === e)
+				console.log('merchantObj', merchantObj)
+				if(merchantObj != undefined) {
+					this.formData.merchant = merchantObj.id
+				}
 			}
 		}
 			
-
 	},
 	computed: {
 		...mapState(["Auth", "Users", "Merchants", "Datacom", "Partners", "Vendors"]),
 		...mapGetters(["GET_DATACOM_LIST", "GET_PARTNER_LIST", "GET_MERCHANT_LIST", "GET_VENDOR_LIST"]),
 	},
 	created() {},
-	mounted() {
-		// $("#btnContainer").dxButton({
-		// 	text: "Click me!",
-		// 	onClick: function () {
-		// 			alert("Hello world!");
-		// 	}
-		// });
-	}
+	mounted() {}
 };
 </script>
 

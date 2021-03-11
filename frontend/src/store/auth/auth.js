@@ -1,4 +1,4 @@
-import router from "@/routes"
+import {router} from "@/routes"
 import axios from "axios"
 
 export const Auth = {
@@ -10,37 +10,36 @@ export const Auth = {
 		userProfile: {},
 		authLevel: 1,
 		userCompanyParent: null,
-		userCompanyName: null,
-		
+		userCompany: null,
 		preLoginPagePath: null,
 		platformInfo: {},
 		webdomain: '',
 	},
 	mutations: {
-		SET_WEBSQL_USER(state, payload) {
-			console.log("SET_WEBSQL_USER", payload);
-			state.user = payload;
-			state.isAuthenticated = true;
-			axios.defaults.headers.common['Authorization'] = "Token " + payload.token;
-		},
-		SET_INDEXEDDB_USER(state, payload) {
-			console.log("SET_INDEXEDDB_USER", payload);
-			state.user = payload;
-			state.isAuthenticated = true;
-			axios.defaults.headers.common['Authorization'] = "Token " + payload.token;
-		},
 		SET_LOGIN_PROFILE(state, payload) {
-				console.log("SET_LOGIN_PROFILE", payload);
-				state.userProfile = payload;
+			console.log("SET_LOGIN_PROFILE payload", payload)
+			if(payload) {
+				state.userProfile = payload.user_obj
+			}
 		},
 		SET_LOGIN_DETAILS(state, payload) {
+			state.user = payload;
+			state.isAuthenticated = true;
 			console.log("SET_LOGIN_DETAILS Payload", payload);
 			localStorage.setItem("user", JSON.stringify(payload));
 			localStorage.setItem("expiration", 604800);
-			state.isAuthenticated = true;
-			state.user = payload;
 
 			axios.defaults.headers.common['Authorization'] = "Token " + payload.token;
+		},
+		FIND_LOGIN_PROFILE(state) {
+			var user = JSON.parse(localStorage.getItem("user"))
+			if(user != null) {
+				state.user = user
+				state.isAuthenticated = true
+			} else {
+				return
+			}
+			
 		},
 		LOGOUT_USER(state, payload) {
 			state.isAuthenticated = false;
@@ -56,7 +55,11 @@ export const Auth = {
 
 		SET_DOMAIN(state, payload) {
 			console.log('SET_DOMAIN payload', payload);
-			state.webdomain = payload;
+			var subdomain = window.location.host
+			var domain = subdomain.split(".mydataboxx.com")[0]
+			var splitDomain = domain.split(".")[0]
+			state.webdomain = splitDomain;
+			
 			console.log('state.domain', state.webdomain);
 		},
 		SET_PLATFORM_INFO(state, payload) {
@@ -67,7 +70,7 @@ export const Auth = {
 					let platform = {id: payload.datacom, platform: "datacom", filterURL: "?datacom__id=" + payload.datacom};
 					state.platformInfo = platform;
 					state.authLevel = 1;
-					state.userCompanyName = payload.datacom.dba_name;
+					state.userCompany = payload.datacom_obj;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         }
@@ -75,8 +78,8 @@ export const Auth = {
 					let platform = {id: payload.partner, platform: "partner", filterURL: "?partner__id=" + payload.partner};
 					state.platformInfo = platform;
 					state.authLevel = 2;
-					state.userCompanyParent = payload.partner.datacom.dba_name;
-					state.userCompanyName = payload.partner.dba_name;
+					state.userCompanyParent = payload.partner.datacom_obj;
+					state.userCompany = payload.partner_obj;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         }
@@ -84,8 +87,8 @@ export const Auth = {
 					let platform = {id: payload.company, platform: "company", filterURL: "?company__id=" + payload.company};
 					state.platformInfo = platform;
 					state.authLevel = 3;
-					state.userCompanyParent = payload.company.partner.dba_name || payload.company.datacom.dba_name;
-					state.userCompanyName = payload.company.dba_name;
+					state.userCompanyParent = payload.company.partner_obj || payload.company.datacom_obj;
+					state.userCompany = payload.company_obj;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         }
@@ -93,8 +96,8 @@ export const Auth = {
 					let platform = {id: payload.vendor, platform: "vendor", filterURL: "?vendor__id=" + payload.vendor};
 					state.platformInfo = platform;
 					state.authLevel = 4;
-					state.userCompanyParent = payload.vendor.company.dba_name || payload.vendor.partner.dba_name || payload.vendor.datacom.dba_name;
-					state.userCompanyName = payload.vendor.dba_name;
+					state.userCompanyParent = payload.vendor.company_obj || payload.vendor.partner_obj || payload.vendor.datacom_obj;
+					state.userCompany = payload.vendor_obj;
 					console.log('SET_PLATFORM_INFO state.platformInfo', state.platformInfo);
 					return resolve();
         } else {
@@ -104,39 +107,51 @@ export const Auth = {
         return error;
       });
 		},
+		SET_WEBSQL_USER(state, payload) {
+			console.log("SET_WEBSQL_USER", payload);
+			state.user = payload;
+			state.isAuthenticated = true;
+			axios.defaults.headers.common['Authorization'] = "Token " + payload.token;
+		},
+		SET_INDEXEDDB_USER(state, payload) {
+			console.log("SET_INDEXEDDB_USER", payload);
+			state.user = payload;
+			state.isAuthenticated = true;
+			axios.defaults.headers.common['Authorization'] = "Token " + payload.token;
+		},
 		
 		
 	},
 	actions: {
-		async setDomain({ dispatch, commit, state }) {				
-			console.log("setDomain action");
-			var subdomain = location.host.split('.mydataboxx')[0];
-			var domain = subdomain.split('.')[0];
-			console.log("subdomain", subdomain);
-			console.log("domain", domain);
-			await commit("SET_DOMAIN", domain);
-
-		},
 		async preFetchProfile({ dispatch, commit, rootState }) {
 			console.log("preFetchProfile request");
 			rootState.Notifications.isLoadPanelVisible = true
-			const user = await dispatch('getIndexedDb');
-			console.log('preFetchProfile from IndexedDb user', user);
+			const user = await dispatch('findUserInStorage');
+			console.log("user", user);
+			// const user = await dispatch('getIndexedDb'); // No Longer using this
+			console.log('preFetchProfile user', user);
 			if(user) {
-				let EEUSerID = await dispatch('GETEmployeeProfileById', user);
-				console.log("EEUSerID", EEUSerID);
-				commit("SET_LOGIN_PROFILE", EEUSerID.user_obj);
-
-				await dispatch('setDomain');
-				await dispatch('loadAllData');
-				await dispatch('loadCompanySpecificData');
-				await dispatch('loadUserSpecificData');
+				let EEUserObj = await dispatch('GETEmployeeProfileById', user);
+				if(EEUserObj) {
+					console.log("EEUserObj", EEUserObj);
+					commit("SET_LOGIN_PROFILE", EEUserObj);
+					commit("SET_DOMAIN", EEUserObj)
+					await dispatch('loadAllData');
+					await dispatch('loadCompanySpecificData');
+					await dispatch('loadUserSpecificData');
+				}
 				rootState.Notifications.isLoadPanelVisible = false
 			} else {
 				await dispatch('loadAllData');
 				rootState.Notifications.isLoadPanelVisible = false
 			}
 			return
+		},
+		findUserInStorage({ dispatch, commit, state }) {
+			return new Promise( async (resolve, reject) => {
+				commit("FIND_LOGIN_PROFILE");
+				return resolve(state.user)
+			})
 		},
 		test({ state, rootState }) {
 			console.log("router", router)
@@ -156,16 +171,16 @@ export const Auth = {
 					rootState.Notifications.isLoadPanelVisible = true
 					console.log("Login response.data", response.data);
 
-					// commit("SET_LOGIN_DETAILS", response.data);	
+					commit("SET_LOGIN_DETAILS", response.data);	
 					response.data['signin'] = true;
-					// let webDBUser = await dispatch('setWebDb', response.data);
-					let indexedUser = await dispatch('setIndexedDb', response.data);
-					console.log("indexedUser", indexedUser);
-					let EEUSerID = await dispatch('GETEmployeeProfileById', {id: response.data.id});
-					console.log("EEUSerID", EEUSerID);
-					commit("SET_LOGIN_PROFILE", EEUSerID.data);
-					
-					await dispatch('setDomain');
+					// let webDBUser = await dispatch('setWebDb', response.data); // No Longer using this
+					// let indexedUser = await dispatch('setIndexedDb', response.data); // No Longer using this
+					// console.log("indexedUser", indexedUser); // No Longer using this
+					let EEUSERObj = await dispatch('GETEmployeeProfileById', {id: response.data.id});
+					console.log("EEUSERObj", EEUSERObj);
+					commit("SET_LOGIN_PROFILE", EEUSERObj);
+					commit("SET_DOMAIN", EEUSERObj)
+
 					await dispatch('loadAllData');
 					await dispatch('loadCompanySpecificData');
 					await dispatch('loadUserSpecificData');
@@ -173,11 +188,19 @@ export const Auth = {
 					//Set Notification
 					response.type = "User Logged In";
 					dispatch('updateNotification', response);
-					if(state.preLoginPagePath === null) {
-						router.push("/home")
-					} else {
-						router.push("/secured", {reloadCurrent : true})
-					}
+					console.group("router", router)
+					console.group("this", this)
+					// console.group("this.$route", this.$route)
+					router.push("/secured").catch(error => {
+						console.error('Logging in Navigation error', error)
+					})
+					// if(state.preLoginPagePath === null) {
+					// 	// window.location.href = "http://" + state.webdomain + ".localhost.mydataboxx.com:9000/home"
+					// 	router.push("/home")
+					// } else {
+					// 	// window.location.href = "http://" + state.webdomain + ".localhost.mydataboxx.com:9000/secured"
+					// 	router.push("/secured", {reloadCurrent : true})
+					// }
 					
 				} 
 			}).then(res => {
@@ -200,7 +223,7 @@ export const Auth = {
 				.then(response => {
 					console.log("posted login request", response.data);
 					commit("SET_LOGIN_PROFILE", response[0].user);
-					// commit("SET_LOGIN_DETAILS", response.data);
+					commit("SET_LOGIN_DETAILS", response.data);
 					console.log("Login response.data", response.data);
 					dispatch('GETEmployeeProfileById', response.data.user_id);
 					//Set Notification
@@ -262,6 +285,29 @@ export const Auth = {
 				.catch(error => {
 					error.type = "Password Reset";
 					dispatch("updateNotification", error.response);
+				});
+			},
+
+			//************************************************  SignOut   *********************************************************/
+
+			signOut({ commit, dispatch, state }) {
+				console.log('state.user', state.user);
+				// const userProfile = JSON.parse(JSON.stringify(state.user));
+				// console.log('userProfile', userProfile);
+				console.log('Signing Out');
+				axios.options("/django/logout/")
+				.then(response => {
+					// window.location.reload()
+					router.push({name: "home", reloadCurrent : true})
+					console.log("signOut response", response);
+					// dispatch('removeIndexedDb', {id: state.user.id});
+					commit('LOGOUT_USER');
+					// Clear User and Employee data in Users module
+					commit('CLEAR_USER_DATA');
+					//Set Notification
+					response.type = "Logout User";
+					dispatch('updateNotification', response);
+					
 				});
 			},
 			//************************************************  Set WebSQL   *********************************************************/
@@ -471,26 +517,6 @@ export const Auth = {
 					}
 				};
 			},
-			//************************************************  SignOut   *********************************************************/
-
-			signOut({ commit, dispatch, state }) {
-				console.log('state.user', state.user);
-				// const userProfile = JSON.parse(JSON.stringify(state.user));
-				// console.log('userProfile', userProfile);
-				console.log('Signing Out');
-				axios.options("/django/logout/")
-				.then(response => {
-					console.log("signOut response", response);
-					dispatch('removeIndexedDb', {id: state.user.id});
-					commit('LOGOUT_USER');
-					// Clear User and Employee data in Users module
-					commit('CLEAR_USER_DATA');
-					//Set Notification
-					response.type = "Logout User";
-					dispatch('updateNotification', response);
-					
-				});
-			},
 			//************************************************  Load Data   *********************************************************/
 			//Load All data first and set Platform Info for the rest of the methods to use
 
@@ -539,16 +565,17 @@ export const Auth = {
 					await dispatch("GETInventoryList", state.platformInfo);
 					await dispatch("GETEmployeeList", state.platformInfo);
 					await dispatch("GETSalesOfficeList", state.platformInfo);
-					await dispatch("GETWarehouseList", state.platformInfo);
-					await dispatch("GETCustomerList", state.platformInfo);
-					await dispatch("GETPositionList", state.platformInfo);
-					await dispatch("GETDepartmentList", state.platformInfo);
-					await dispatch("GETHolidays", state.platformInfo);
-					await dispatch("GETBusinessHours", state.platformInfo);
-					await dispatch("GETAttendanceSettings", state.platformInfo);
-					await dispatch("GETCompanyShifts", state.platformInfo);
-					await dispatch("GETSalesTaxList", state.platformInfo);
-					await dispatch("GETGeneralSettings", state.platformInfo);
+					await dispatch("GETAPIKeyById", state.platformInfo);
+					// await dispatch("GETWarehouseList", state.platformInfo);
+					// await dispatch("GETCustomerList", state.platformInfo);
+					// await dispatch("GETPositionList", state.platformInfo);
+					// await dispatch("GETDepartmentList", state.platformInfo);
+					// await dispatch("GETHolidays", state.platformInfo);
+					// await dispatch("GETBusinessHours", state.platformInfo);
+					// await dispatch("GETAttendanceSettings", state.platformInfo);
+					// await dispatch("GETCompanyShifts", state.platformInfo);
+					// await dispatch("GETSalesTaxList", state.platformInfo);
+					// await dispatch("GETGeneralSettings", state.platformInfo);
 					
 
 					//Not Completed Yet
@@ -568,8 +595,8 @@ export const Auth = {
 				//Get a list of company specific details: departments, employees, postions, hours, etc.
 				return new Promise((resolve, reject) => {
 					console.log('loadUserata rootState', rootState);
-					dispatch("getCreditCardList", state.platformInfo);
-					dispatch("getACHAccountList", state.platformInfo);
+					dispatch("GETCreditCardList", state.platformInfo);
+					dispatch("GETACHAccountList", state.platformInfo);
 					dispatch("GETShippingList", state.platformInfo);
 					dispatch("getNotifications", state.platformInfo);
 

@@ -32,7 +32,8 @@ export const SalesOffices = {
       let listIndex = state.salesOfficeList.findIndex(elem => elem.id === payload.id);
       state.salesOfficeList.slice(listIndex, 1);
       state.salesOfficeList.splice(listIndex, 1, payload);
-      console.log('state.salesOfficeList', state.salesOfficeList);
+			console.log('state.salesOfficeList', state.salesOfficeList);
+			state.salesOfficeProfile = payload
     },
     PATCH_DELETE_SALESOFFICE_PROFILE(state, payload) {
       console.log('payload', payload);
@@ -44,11 +45,35 @@ export const SalesOffices = {
 	actions: {
 		//Create Method
 		async POSTSalesOffice({commit, dispatch, rootState}, payload) {
-			let endpoint = 'sales-office/';
-			let type = 'Create New Sales Office';
-			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
-			console.log('POSTSalesOffice response', response);
-			commit('PUSH_NEW_SALESOFFICE', response.data);
+			return new Promise( async (resolve, reject) => {
+				let endpoint = 'sales-office/';
+				let type = 'Create New Sales Office';
+				let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+				console.log('POSTSalesOffice response', response);
+				if(response.status === 201) {
+					if(rootState.Auth.platformInfo.platform === "datacom") {
+						if(rootState.Auth.userCompany.dba_name === response.data.datacom_obj.dba_name) {
+							commit('PUSH_NEW_SALESOFFICE', response.data);
+							return resolve(response)
+						}
+					} else if(rootState.Auth.platformInfo.platform === "partner") {
+						if(rootState.Auth.userCompany.dba_name === response.data.partner_obj.dba_name) {
+							commit('PUSH_NEW_SALESOFFICE', response.data);
+							return resolve(response)
+						}
+					} else if(rootState.Auth.platformInfo.platform === "company") {
+						if(rootState.Auth.userCompany.dba_name === response.data.company_obj.dba_name) {
+							commit('PUSH_NEW_SALESOFFICE', response.data);
+							return resolve(response)
+						}
+					}
+					
+				} else {
+					return reject(response)
+				}
+			})
+			
+			
 		},
 		//GET Partner LIST
 		GETSalesOfficeList({commit, dispatch, rootState}, payload) {
@@ -57,8 +82,12 @@ export const SalesOffices = {
 				let type = 'Get Sales Office List';
 				let response = await apiRoutes.GETList(dispatch, rootState, payload, endpoint, type);
 				console.log('GETSalesOfficeList response', response);
-				commit('SET_SALESOFFICE_LIST', response.data);
-				return resolve();
+				if(response.status === 200) {
+					commit('SET_SALESOFFICE_LIST', response.data);
+					return resolve();
+				} else {
+					return reject(response)
+				}
 			})
 			
 		},
@@ -66,7 +95,7 @@ export const SalesOffices = {
 			//filterURL is passed from the original call
 			let endpoint = 'salesoffice-list/';
 			let type = 'Get Sales Office List';
-			let response = await apiRoutes.GETSelectedList(dispatch, rootState,payload, endpoint, type);
+			let response = await apiRoutes.GETSelectedList(dispatch, rootState, payload, endpoint, type);
 			console.log('GETSalesOfficeList response', response);
 			commit('SET_SELECTED_SALESOFFICE_LIST', response.data);
 		},
@@ -76,7 +105,7 @@ export const SalesOffices = {
 				console.log('GETSalesOfficeOwnProfile payload', payload);
 				let endpoint = 'sales-office/?user__id=';
 				let type = 'Get Sales Office Profile';
-				let response = await apiRoutes.GETProfileById(dispatch, rootState,payload, endpoint, type);
+				let response = await apiRoutes.GETProfileById(dispatch, rootState, payload, endpoint, type);
 				console.log('GETSalesOfficeOwnProfile response', response);
 				commit('SET_SALESOFFICE_PROFILE', response.data[0]);
 				commit('SET_PLATFORM_INFO', response.data[0]);
@@ -88,7 +117,7 @@ export const SalesOffices = {
 			return new Promise( async (resolve, reject) => {
 				let endpoint = 'sales-office/';
 				let type = 'Get Sales Office Profile';
-				let response = await apiRoutes.GETSelectedProfile(dispatch, rootState,payload, endpoint, type);
+				let response = await apiRoutes.GETProfileById(dispatch, rootState, payload, endpoint, type);
 				console.log('GETSalesOfficeSelectedProfile response', response);
 				commit('SET_SELECTED_SALESOFFICE_PROFILE', response.data);
 				return resolve(response.data)
@@ -98,7 +127,7 @@ export const SalesOffices = {
 		async PATCHSalesOfficeProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'sales-office/';
 			let type = 'Update Sales Office Profile';
-			let response = await apiRoutes.PATCHItem(dispatch, rootState,payload, endpoint, type);
+			let response = await apiRoutes.PATCHItem(dispatch, rootState, payload, endpoint, type);
 			console.log('PATCHSalesOfficeProfile response', response);
 			commit('UPDATE_SALESOFFICE_PROFILE', response.data);
 		},
@@ -106,7 +135,7 @@ export const SalesOffices = {
 		async PATCHDeleteSOProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'sales-office/';
 			let type = 'Delete Sales Office Profile';
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState,payload, endpoint, type);
+			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, payload, endpoint, type);
 			console.log('PATCHDeleteSOProfile response', response);
 			commit('PATCH_DELETE_SALESOFFICE_PROFILE', payload);
 		},
@@ -114,7 +143,7 @@ export const SalesOffices = {
 		async DELETEOfficeProfile({commit, dispatch, rootState}, payload) {
 			let endpoint = 'sales-office/';
 			let type = 'Delete Sales Office Profile';
-			let response = await apiRoutes.DELETEItem(dispatch, rootState,payload, endpoint, type);
+			let response = await apiRoutes.DELETEItem(dispatch, rootState, payload, endpoint, type);
 			console.log('DELETEProfile response', response);
 		},
 	},

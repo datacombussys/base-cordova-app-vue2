@@ -5,8 +5,6 @@
 			<subNavBarComponent />
 		</div> -->
 		<div class="main-container">
-			
-			
 			<!-- Left Column -->
 			<div class="left-col">
 				<div class="small-block">
@@ -57,8 +55,8 @@
 								<div v-if="!customerForm.id" class="flex justify-center items-center">
 									<img
 										class="mt-3 disabled"
-										src="@/static/BusinessLogo170x170.png"
-										style="width:150px;height:150px;"
+										src="@/static/Male-Profile170X150.png"
+										style="width:170px;height:150px;"
 										alt="Please load profile">
 								</div>
 								<div v-else class="flex justify-center items-center">
@@ -66,8 +64,8 @@
 										:src="customerForm.profile_img"
 										style="width:150px;height:150px;"
 										alt="Please load profile">
-									<img class="mt-3" v-else src="@/static/BusinessLogo170x170.png"
-										style="width:150px;height:150px;"
+									<img class="mt-3" v-else src="@/static/Male-Profile170X150.png"
+										style="width:170px;height:150px;"
 										alt="Please load profile">
 								</div>
 
@@ -337,7 +335,7 @@ export default {
 			profileImageSettings: {
 				url: 'customer/',
 				module: 'Customer',
-				mutation: 'UPDATE_PROFILE_IMAGE'
+				mutation: 'UPDATE_CUSTOMER_PROFILE'
 			},
 			profileMenu: [
         { title: 'Upload Image' },
@@ -391,65 +389,49 @@ export default {
 				datacom: null,
 				partner: null,
 				company: null,
-				vendor: null,
-				company: null,
-				department: null,
-				position: null,
-				customer_docs: null,
-				benefits: null,
-				modules_managed: [],
+				barcode: null,
+				barcode_obj: null,
+
 				customer_number: null,
-				salary: null,
-				salary_type: null,
-				customer_type: null,
-				work_phone: null,
-				is_business: false,
-				is_sales_office_ee: false,
-				is_sales_rep: false,
-				is_exempt: false,
-				is_warehouse_ee: false,
-				is_manager: null,
-				is_module_manager: null,
-				reporting_manager: null,
-				hire_date: null,
-				termination_date: null,
-				termination_reason: null,
-				ssn: null,
+				company_name: null,
 				dob: null,
-				org_name: null,
+				ssn: null,
+				resale_id: null,
+				customer_type: null,
+				is_member: null,
+				is_customer: null,
+				is_paid_member: null,
+				subscriptoion_fee: null,
 				profile_img: null,
-				user: {
+				user: null,
+				user_obj: {
 					id: null,
+					username: null,
 					date_added: null,
 					global_id: null,
 					last_login: null,
+					is_active: true,
+					is_admin: false,
+					is_staff: true,
+					is_superuser: false,
+
 					first_name: null,
 					last_name: null,
 					full_name: null,
-					password: null,
+					password: "",
 					verify_pw: null,
 					pin: null,
 					email: null,
-					username: null,
 					mobile_phone: null,
 					fax: null,
 					address: null,
 					address2: null,
 					city: null,
 					state: null,
-					zip: null,
+					zip_code: null,
 					country: null,
 					bio: null,
-					is_active: true,
-					is_admin: false,
-					is_staff: true,
-					is_superuser: false,
-					is_cutomer: false,
-					is_vendor: false,
-					is_sales_rep: false,
-					is_warehouse_ee: false,
-					barcode: null,
-					barcode_obj: null,
+
 					groups: [],
 					permissions: [],
 				}
@@ -462,9 +444,15 @@ export default {
 	//******************************************** Methods ***********************************************//
   methods: {
     testMethod(e) {
-			console.log('this.customerForm.user.password', this.customerForm.user.password)
-			console.log('JQMIGRATE: Migrate is installed, version 3.0.0')
-
+			var domain = this.Auth.platformInfo.platform
+			console.log('domain', domain)
+			console.log('this.Employee.employeeProfile', this.Employees.employeeProfile)
+			console.log('this.Auth.platformInfo', this.Auth.platformInfo)
+			console.log("this.Employees.employeeProfile[domain]", this.Employees.employeeProfile[domain])
+			
+			if(this.Employees.employeeProfile[domain]) {
+				console.log("True!!")
+			}
 		},
 		closeSheet(e) {
 			console.log("closeSheet e", e)
@@ -499,17 +487,11 @@ export default {
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearUserFormData();
-			// console.log("this.clearUserFormData")
 			this.accountSettings.editProfile = true
-			// console.log("this.accountSettings.editProfile")
 			this.hideCreateItem = !this.hideCreateItem
-			// console.log("this.hideCreateItem")
 			this.hideUpdateItemButtons = false
-			// console.log("this.hideUpdateItemButtons")
 			this.accountSettings.hideSaveItem = false
-			// console.log("this.accountSettings.hideSaveItem")
-			this.selectedTabIndex = 2
-			// console.log("this.selectedTabIndex")
+			this.selectedTabIndex = 0
 		},
 		clearandResetButton() {
 			this.clearUserFormData()
@@ -576,10 +558,10 @@ export default {
 			return new Promise(async (resolve, reject) => {
 				var newUserForm = {};
 				try {
-					console.log("Create User this.customerForm.user", this.customerForm.user);
-					let response = await this.$store.dispatch("POSTUser", this.customerForm.user);
+					console.log("Create User this.customerForm.user", this.customerForm.user_obj);
+					let response = await this.$store.dispatch("POSTUser", this.customerForm.user_obj);
 					console.log("User POST response: ", response);
-					this.customerForm.user.barcode = {};
+
 					if (response.status === 200 || response.status === 201) {
 						console.log("Response 201");
 						newUserForm = response.data;
@@ -648,13 +630,10 @@ export default {
 					//Reset User Object to customerForm
 					this.customerForm.user = user;
 
-					this.addToSalesOffice(eeResponse)
-					console.log("after addToSalesOffice");
-
 					return resolve(eeResponse);
 
 				} catch (error) {
-					console.error('error', error).
+					console.error('error', error)
 					console.error('error.message', error.message)
 					console.error('error.response', error.response)
 					error.type = "Create Customer";
@@ -667,31 +646,11 @@ export default {
 			});
 
 		},
-		addToSalesOffice(form) {
-			console.log("addToSalesOffice");
-			//Make submission to add employee to Sales office or Warehouse
-			if(this.GET_SALES_OFFICE_LIST.length != 0) {
-				let idArray = this.GET_SALES_OFFICE_EMPLOYEE_IDS;
-				console.log('idArray', idArray);
-				idArray.push(this.form.data.id);
-
-				if(this.sales_office_id.length != 0) {
-					let eeObj = {
-						id: this.this.sales_office_id,
-						employees: idArray
-					}
-					console.log('eeObj', eeObj);
-					
-					this.$store.dispatch("PATCHSalesOfficeProfile", eeObj);
-				}
-			}
-			return
-		},
 		async editCustomerById(employeeID) {
 			console.log("editCustomerById employeeID", employeeID)
 			this.accountSettings.showPasswordReset = true
 			this.selectedTabIndex = 0
-			this.clearFormData()
+			this.clearUserFormData()
 
 			try {
 				// Get User ID and object and map to fields from database table
@@ -699,7 +658,7 @@ export default {
 				console.group('getSelectedCustomerObj', getSelectedCustomerObj);
 
 				for (let key in this.customerForm) {
-					this.customerForm[key] = this.GET_SELECTED_EMPLOYEE_PROFILE[key];
+					this.customerForm[key] = this.GET_SELECTED_CUSTOMER_PROFILE[key];
 				}
 
 				//Switch View to Edit Mode
@@ -728,23 +687,24 @@ export default {
 			return new Promise((resolve, reject) => {
 				try {
 					console.log("clearUserFormData this.customerForm", this.customerForm);
-					for (let key in this.customerForm.user) {
-						// console.log('key', this.customerForm.user[key]);
-						if (this.customerForm.user[key] === true || this.customerForm.user[key] === false) {
+					for (let key in this.customerForm.user_obj) {
+						// console.log('key', this.customerForm.user_obj[key]);
+						if (this.customerForm.user_obj[key] === true || this.customerForm.user_obj[key] === false) {
 							// console.log('TF key', key);
-							this.customerForm.user[key] = false;
+							this.customerForm.user_obj[key] = false;
 						} else {
-							this.customerForm.user[key] = null;
+							this.customerForm.user_obj[key] = null;
 						}
 					}
 
 					//Reset Variables to Start Position
-					this.customerForm.user.groups = [];
-					this.customerForm.user.permissions = [];
-					this.customerForm.user.is_staff = true;
-					this.customerForm.user.is_active = true;
+					this.customerForm.user_obj.groups = [];
+					this.customerForm.user_obj.permissions = [];
+					this.customerForm.user_obj.is_staff = true;
+					this.customerForm.user_obj.is_active = true;
+					this.customerForm.user_obj.password = "";
 
-					return resolve("ClearUserForms Promise Returned");
+					return resolve(this.clearCustomerFormData())
 				} catch (error) {
 					console.log("Caught error", error);
 					return reject(error);
@@ -753,20 +713,28 @@ export default {
 		},
 		clearCustomerFormData() {
 			console.log("this.customerForm Clear Data", this.customerForm);
-			const user = this.customerForm.user;
-			for (let key in this.customerForm) {
-				console.log("key", this.customerForm[key]);
-				if (this.customerForm[key] === true || this.customerForm[key] === false) {
-					// console.log('TF key', key);
-					this.customerForm[key] = false;
-				} else {
-					this.customerForm[key] = null;
+			return new Promise((resolve, reject) => {
+				try {
+					const user = this.customerForm.user_obj;
+					for (let key in this.customerForm) {
+						console.log("key", this.customerForm[key]);
+						if (this.customerForm[key] === true || this.customerForm[key] === false) {
+							// console.log('TF key', key);
+							this.customerForm[key] = false;
+						} else {
+							this.customerForm[key] = null;
+						}
+					}
+					//Reset Properties
+
+					//Reassign User to Customer
+					this.customerForm.user_obj = user;
+					return resolve()
+
+				} catch(error) {
+					return reject(error);
 				}
-			}
-			//Reset Properties
-			this.customerForm.modules_managed = [];
-			//Reassign User to Customer
-			this.customerForm.user = user;
+			})
 		},
 		//Set User item to inactive instead of deleting instance
 		async deleteCustomer(id) {
@@ -778,7 +746,7 @@ export default {
 
 				await this.$store.dispatch("PATCHDeleteUserProfile", eeObject.user).then((response) => {
 					console.log("response from deleteCustomer method", response);
-					this.clearFormData();
+					this.clearUserFormData();
 				});
 
 			} catch(error) {
@@ -786,6 +754,19 @@ export default {
 			}
 			await this.clearUserFormData();
 			this.resetViewtoHome();
+		},
+		//Load Customer On itnitial render
+		async loadLoggedInProfile() {
+			try {
+				if(Object.keys(this.GET_CUSTOMER_PROFILE).length != 0) {
+					for (let key in this.customerForm) {
+						this.customerForm[key] = this.GET_CUSTOMER_PROFILE[key];
+					}
+					this.resetViewtoHome();
+				}	
+			} catch(error) {
+					console.error("There was an error loading Customer Profile", error)
+				}
 		},
 		//Capture Edit by Child DataGrid Component
 		editProfileFromChild(e) {
@@ -804,8 +785,8 @@ export default {
 
   },
   computed: {
-		...mapState(["Auth", "Users", "Merchants", "Datacom", "Partners", "Vendors", "Customers"]),
-		...mapGetters(["GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST", "GET_SALES_OFFICE_EMPLOYEE_IDS", "GET_CUSTOMER_LIST", "GET_SELECTED_EMPLOYEE_PROFILE"]),
+		...mapState(["Auth", "Users", "Merchants", "Datacom", "Partners", "Vendors", "Customers", "Employees"]),
+		...mapGetters(["GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST", "GET_SALES_OFFICE_EMPLOYEE_IDS", "GET_CUSTOMER_LIST", "GET_CUSTOMER_PROFILE", "GET_SELECTED_CUSTOMER_PROFILE"]),
 		...mapGetters(["GET_USER_ERRORS_LIST", "GET_USER_ERROR_HANDLE", "GET_EMPLOYEE_ERRORS_LIST", "GET_EMPLOYEE_ERROR_HANDLE"]),
 		canSubmitUserForm() {
 			if (this.Auth.isAuthenticated) {
@@ -842,6 +823,7 @@ export default {
   },
   created() {
 		this.databaseData.list = this.GET_CUSTOMER_LIST;
+		this.loadLoggedInProfile()
   },
 
     

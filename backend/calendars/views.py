@@ -23,6 +23,6 @@ class CalendarViewset(viewsets.ModelViewSet):
     queryset = Calendar.objects.all()
     authentication_classes = (TokenAuthentication, )
     # permission_classes = (IsAuthenticated, )
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['start', 'title']
     search_fields = ['start', 'title']

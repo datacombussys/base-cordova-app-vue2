@@ -24,13 +24,14 @@ export const Warehouses = {
     },
     SET_SELECTED_WAREHOUSE_PROFILE(state, payload) {
       state.selectedWarehouseProfile = payload;
-    },
+		},
     UPDATE_WAREHOUSE_PROFILE() {
       console.log('payload', payload);
       let listIndex = state.warehouseList.findIndex(elem => elem.id === payload.id);
       state.warehouseList.slice(listIndex, 1);
       state.warehouseList.splice(listIndex, 1, payload);
-      console.log('state.warehouseList', state.warehouseList);
+			console.log('state.warehouseList', state.warehouseList);
+			state.warehouseProfile = payload
     },
     PATCH_DELETE_WAREHOUSE_PROFILE(state, payload) {
       console.log('payload', payload);
@@ -42,11 +43,32 @@ export const Warehouses = {
 	actions: {
 		//Create Method
 		async POSTWarehouse({commit, dispatch, rootState}, payload) {
-			let endpoint = 'warehouse/';
-			let type = 'Create New Warehouse';
-			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
-			console.log('POSTWarehouse response', response);
-			commit('PUSH_NEW_WAREHOUSE', response.data);
+			return new Promise( async (resolve, reject) => {
+				let endpoint = 'warehouse/';
+				let type = 'Create New Warehouse';
+				let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+				console.log('POSTWarehouse response', response);
+				if(response.status === 201) {
+					if(rootState.Auth.platformInfo.platform === "datacom") {
+						if(rootState.Auth.userCompany.dba_name === response.data.datacom_obj.dba_name) {
+							commit('PUSH_NEW_WAREHOUSE', response.data);
+							return resolve(response)
+						}
+					} else if(rootState.Auth.platformInfo.platform === "partner") {
+						if(rootState.Auth.userCompany.dba_name === response.data.partner_obj.dba_name) {
+							commit('PUSH_NEW_WAREHOUSE', response.data);
+							return resolve(response)
+						}
+					} else if(rootState.Auth.platformInfo.platform === "company") {
+						if(rootState.Auth.userCompany.dba_name === response.data.company_obj.dba_name) {
+							commit('PUSH_NEW_WAREHOUSE', response.data);
+							return resolve(response)
+						}
+					}
+				} else {
+					return reject(response)
+				}
+			})
 		},
 		//GET Partner LIST
 		GETWarehouseList({commit, dispatch, rootState}, payload) {
@@ -58,7 +80,6 @@ export const Warehouses = {
 				commit('SET_WAREHOUSE_LIST', response.data);
 				return resolve();
 			})
-			
 		},
 		async GETSelectedWarehouseList({commit, dispatch, rootState}, payload) {
 			//filterURL is passed from the original call

@@ -11,7 +11,7 @@
 		</template>
 
 		<!-- Companies -->
-		<template v-if="!accountSettings.type === 'company'">
+		<template v-if="accountSettings.type === 'company'">
 			<!-- Account Details -->
 			<div class="dx-fieldset">
 				<div class="dx-fieldset-header">Profile Details</div>

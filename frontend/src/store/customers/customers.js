@@ -30,7 +30,8 @@ export const Customers = {
       let listIndex = state.customerList.findIndex(elem => elem.id === payload.id);
       state.customerList.slice(listIndex, 1);
       state.customerList.splice(listIndex, 1, payload);
-      console.log('state.customerList', state.customerList);
+			console.log('state.customerList', state.customerList);
+			state.customerProfile = payload
     },
     PATCH_DELETE_CUSTOMER_PROFILE(state, payload) {
       console.log('payload', payload);
@@ -42,11 +43,28 @@ export const Customers = {
 	actions: {
 		//Create Method
 		async POSTCustomer({commit, dispatch, rootState}, payload) {
-			let endpoint = 'customer/';
-			let type = 'Create New Customer';
-			let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
-			console.log('POSTCustomer response', response);
-			commit('PUSH_NEW_CUSTOMER', response.data);
+			var domain = rootState.Auth.platformInfo.platform
+			return new Promise( async (resolve, reject) => {
+				try {
+					let endpoint = 'customer/';
+					let type = 'Create New Customer';
+					let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+					console.log('POSTCustomer response', response);
+					if(this.Employees.employeeProfile[domain] === response.data[domain]) {
+						commit('PUSH_NEW_CUSTOMER', response.data);
+						return resolve(response)
+					} else {
+						return reject({error: "This is not your company"})
+					}
+				} catch (error) {
+					console.error("POSTCustomer error.response", error);
+					return reject(response)
+				}
+			}).catch(error => {
+        console.error("POSTCustomer Promise error.response", error);
+        return error;
+			});
+			
 		},
 		//GET Partner LIST
 		async GETCustomerList({commit, dispatch, rootState}, payload) {
@@ -117,7 +135,7 @@ export const Customers = {
     GET_CUSTOMER_LIST(state) {
       return state.customerList;
     },
-    GET_OWN_CUSTOMER_PROFILE(state) {
+    GET_CUSTOMER_PROFILE(state) {
       return state.customerProfile;
     },
     GET_SELECTED_CUSTOMER_PROFILE(state) {

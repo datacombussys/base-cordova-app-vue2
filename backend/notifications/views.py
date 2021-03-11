@@ -8,7 +8,7 @@ from .serializers import NotificationSerializer
 class NotificationViewset(viewsets.ModelViewSet):
   serializer_class = NotificationSerializer
   queryset = Notification.objects.all()
-  filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+  filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
   filterset_fields = ['id', 'sender__id', 'receiver__id', 'approved_declined_by__id',  'leave_request__id', 'mileage_reimbursement__id']
   search_fields = ['id', 'sender__id', 'receiver__id', 'approved_declined_by__id',  'leave_request__id', 'mileage_reimbursement__id']
   ordering_fields = ['date_added']

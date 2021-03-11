@@ -22,7 +22,7 @@
 						</div>
 						<div class="dx-field vertical">
 							<div class="dx-field-label">Global ID</div>
-							<div class="dx-field-value-static">{{ formData.user.global_id }}</div>
+							<div class="dx-field-value-static">{{ formData.user_obj.global_id }}</div>
 						</div>
 						<div class="dx-field vertical">
 							<div class="dx-field-label">Barcode</div>
@@ -30,11 +30,11 @@
 						</div>
 						<div class="dx-field vertical">
 							<div class="dx-field-label">Date Hired</div>
-							<div class="dx-field-value-static">{{ formData.user.hire_date }}</div>
+							<div class="dx-field-value-static">{{ formData.user_obj.hire_date }}</div>
 						</div>
 						<div class="dx-field vertical">
 							<div class="dx-field-label">Is Active</div>
-							<div class="dx-field-value-static">{{ formData.user.is_active }}</div>
+							<div class="dx-field-value-static">{{ formData.user_obj.is_active }}</div>
 						</div>
 						<div class="dx-field vertical">
 							<div class="dx-field-label">Profile Image</div>

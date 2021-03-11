@@ -19,7 +19,7 @@
 							<div class="dx-field-value">
 								<DxTextBox 
 									:disabled="!accountSettings.editProfile"
-									:value.sync="formData.user.first_name">
+									:value.sync="formData.user_obj.first_name">
 									<DxValidator>
 										<DxPatternRule
 											pattern="^[a-zA-Z ]+$"
@@ -37,7 +37,7 @@
 							<div class="dx-field-value">
 								<DxTextBox
 									:disabled="!accountSettings.editProfile"
-									:value.sync="formData.user.last_name">
+									:value.sync="formData.user_obj.last_name">
 									<DxValidator>
 										<DxRequiredRule message="Last Name is required"/>
 										<DxPatternRule
@@ -86,7 +86,7 @@
 									:disabled="!accountSettings.editProfile"
 									:mask-rules="phoneRules"
 									mask="+1 (X00) 000-0000"
-									:value.sync="formData.user.mobile_phone">
+									:value.sync="formData.user_obj.mobile_phone">
 									<DxValidator>
 										<DxRequiredRule message="Mobile Phone is required"/>
 									</DxValidator>
@@ -115,7 +115,7 @@
 									:disabled="!accountSettings.editProfile"
 									:mask-rules="phoneRules"
 									mask="+1 (X00) 000-0000"
-									:value.sync="formData.user.fax">
+									:value.sync="formData.user_obj.fax">
 								</DxTextBox>
 							</div>
 						</div>
@@ -126,7 +126,7 @@
 							<div class="dx-field-value">
 								<DxTextBox 
 									:disabled="!accountSettings.editProfile"
-									:value.sync="formData.user.email">
+									:value.sync="formData.user_obj.email">
 									<DxValidator>
 										<DxRequiredRule message="Email is required"/>
 										<DxEmailRule message="Email is invalid"/>
@@ -156,7 +156,7 @@
 							<div class="dx-field-value">
 								<DxTextBox 
 									:disabled="!accountSettings.editProfile"
-									:value.sync="formData.user.bio">
+									:value.sync="formData.user_obj.bio">
 									<DxValidator>
 										<DxRequiredRule message="Website is required"/>
 									</DxValidator>
@@ -435,7 +435,7 @@ export default {
 			// console.log('neewData', newDate)
 			let ISODate = newDate.toISOString()
 			let djangoTime = ISODate.split('T')[0]
-			this.formData.user.dob = djangoTime
+			this.formData.user_obj.dob = djangoTime
 		}
 	},
 	computed: {

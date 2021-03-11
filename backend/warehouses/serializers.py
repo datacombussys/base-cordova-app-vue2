@@ -63,55 +63,59 @@ class WarehouseSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class WarehouseListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Warehouse
-        read_only_fields = ['id']
-        fields = ['id', 'date_added', 'warehouse_number', 'warehouse_name', 'status', 'is_active', 'profile_img']
+	datacom_obj = DatacomListSerializer(read_only=True, source='datacom')
+	partner_obj = PartnerListSerializer(read_only=True, source='partner')
+	company_obj = CompanyListSerializer(read_only=True, source='company')
+	barcode_obj = CommonBarcodeSerializer(read_only=True, source='barcode')
+	class Meta:
+		model = Warehouse
+		read_only_fields = ['id']
+		fields = ['id', 'datacom_obj', 'partner_obj', 'company_obj', 'barcode_obj', 'date_added', 'warehouse_number', 'warehouse_name', 'status', 'is_active', 'profile_img']
 
 class WarehousePrimaryContactSerializer(serializers.ModelSerializer):
-    primary_contacts_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')
-    primary_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
-    class Meta:
-        model = Warehouse
-        read_only_fields = ['dba_name']
-        fields = ['id', 'dba_name', 'primary_contacts_list', 'primary_contacts']
+	primary_contacts_list = UserListSerializer(many=True, read_only=True, source='primary_contacts')
+	primary_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+	class Meta:
+		model = Warehouse
+		read_only_fields = ['dba_name']
+		fields = ['id', 'dba_name', 'primary_contacts_list', 'primary_contacts']
 
 class WarehouseBillingContactSerializer(serializers.ModelSerializer):
-    billing_contact_list = UserListSerializer(many=True, read_only=True, source='billing_contacts')
-    billing_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
-    class Meta:
-        model = Warehouse
-        read_only_fields = ['dba_name']
-        fields = ['id', 'dba_name', 'billing_contacts_list', 'billing_contacts']
+	billing_contact_list = UserListSerializer(many=True, read_only=True, source='billing_contacts')
+	billing_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+	class Meta:
+		model = Warehouse
+		read_only_fields = ['dba_name']
+		fields = ['id', 'dba_name', 'billing_contacts_list', 'billing_contacts']
 
 class WarehouseTechnicalContactSerializer(serializers.ModelSerializer):
-    technical_contacts_list = UserListSerializer(many=True, read_only=True, source='technical_contacts')
-    technical_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
-    class Meta:
-        model = Warehouse
-        read_only_fields = ['dba_name']
-        fields = ['id', 'dba_name', 'technical_contacts_list', 'technical_contacts']
+	technical_contacts_list = UserListSerializer(many=True, read_only=True, source='technical_contacts')
+	technical_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+	class Meta:
+		model = Warehouse
+		read_only_fields = ['dba_name']
+		fields = ['id', 'dba_name', 'technical_contacts_list', 'technical_contacts']
 
 class WarehouseShippingContactSerializer(serializers.ModelSerializer):
-    shipping_contacts_list = UserListSerializer(many=True, read_only=True, source='shipping_contacts')
-    shipping_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
-    class Meta:
-        model = Warehouse
-        read_only_fields = ['dba_name']
-        fields = ['id', 'dba_name', 'shipping_contacts_list', 'shipping_contacts']
+	shipping_contacts_list = UserListSerializer(many=True, read_only=True, source='shipping_contacts')
+	shipping_contacts = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+	class Meta:
+		model = Warehouse
+		read_only_fields = ['dba_name']
+		fields = ['id', 'dba_name', 'shipping_contacts_list', 'shipping_contacts']
 
 class WarehouseEmployeesSerializer(serializers.ModelSerializer):
-    employees_list = EmployeeListSerializer(many=True, read_only=True, source='employees')
-    employees = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
-    class Meta:
-        model = Warehouse
-        read_only_fields = ['dba_name']
-        fields = ['id', 'dba_name', 'employees_list', 'employees']
+	employees_list = EmployeeListSerializer(many=True, read_only=True, source='employees')
+	employees = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+	class Meta:
+		model = Warehouse
+		read_only_fields = ['dba_name']
+		fields = ['id', 'dba_name', 'employees_list', 'employees']
 
 class WarehouseSalesOfficesSerializer(serializers.ModelSerializer):
-    sales_offices_list = SalesOfficeListSerializer(many=True, read_only=True, source='sales_offices')
-    sales_offices = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
-    class Meta:
-        model = Warehouse
-        read_only_fields = ['dba_name']
-        fields = ['id', 'dba_name', 'sales_offices_list', 'sales_offices']
+	sales_offices_list = SalesOfficeListSerializer(many=True, read_only=True, source='sales_offices')
+	sales_offices = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, allow_null=True)
+	class Meta:
+		model = Warehouse
+		read_only_fields = ['dba_name']
+		fields = ['id', 'dba_name', 'sales_offices_list', 'sales_offices']

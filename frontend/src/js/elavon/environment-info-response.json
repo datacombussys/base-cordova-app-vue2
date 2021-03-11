@@ -1,0 +1,75 @@
+{
+	"environmentInfo": {
+		"data": {
+			"conconInfo": {
+				"name": "converge-connect",
+				"version": "4.1.0.7"
+			},
+			"completed": true,
+			"cwsInfo": {
+				"name": "commerce-web-services",
+				"version": "4.1.0.7"
+			},
+			"comsdkInfo": {
+				"runtimeInformation": [
+					{
+						"name": "os.arch",
+						"value": "x86"
+					},
+					{
+						"name": "os.name",
+						"value": "Windows 10"
+					},
+					{
+						"name": "os.version",
+						"value": "10.0"
+					},
+					{
+						"name": "java.version",
+						"value": "1.8.0_162"
+					},
+					{
+						"name": "java.vendor",
+						"value": "Oracle Corporation"
+					}
+				],
+				"componentVersions": [
+					{
+						"name": "commerce-core",
+						"version": "4.1.0.9"
+					},
+					{
+						"name": "commerce-converge",
+						"version": "4.1.0.9"
+					},
+					{
+						"name": "commerce-desktop-converge",
+						"version": "4.1.0.9"
+					},
+					{
+						"name": "ingenico-rba",
+						"version": "4.1.0.9"
+					},
+					{
+						"name": "ingenico-rba-wrapper",
+						"version": "4.1.0"
+					},
+					{
+						"name": "RBA",
+						"version": "5.22.1 with iConnect 1.2.14-0"
+					},
+					{
+						"name": "StarMicronics Printer",
+						"version": "2.1.0"
+					},
+					{
+						"name": "rdm-check-reader-wrapper",
+						"version": "4.1.0"
+					}
+				]
+			}
+		},
+		"statusDetails": "REQUEST_ACCEPTED",
+		"requestId": "d002edbd-010a-4c51-8407-f14b80c49bf4"
+	}
+}

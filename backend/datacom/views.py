@@ -14,7 +14,7 @@ from .serializers import (DatacomSerializer,
 class DatacomViewset(viewsets.ModelViewSet):
     serializer_class = DatacomSerializer
     queryset = Datacom.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['id', 'domain', 'barcode']
     search_fields = ['id', 'domain', 'barcode']
     ordering_fields = '__all__'

@@ -121,14 +121,11 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener('resize', () => {
-      this.windowWidth = window.innerWidth
-    // console.log("Window width is:", this.windowWidth);
-    });
-    window.addEventListener('resize', () => {
-      this.windowHeight = window.innerHeight
-      // console.log("Window height is:", this.windowHeight);
-    })
+		window.addEventListener('resize', () => {
+			this.windowWidth = window.innerWidth
+			this.windowHeight = window.innerHeight
+		// console.log("Window width is:", this.windowWidth);
+		});
   }
 };
 </script>

@@ -142,6 +142,21 @@ $(function () {
 	:pattern="namePattern"
 	message="Do not use digits in the Name"
 />
+** Validate directly from submit button **
+onLoginClick(e) {
+	let validate = e.validationGroup.validate();
+}
+** Validate Programatically **
+ methods: {
+	validateGroup() {
+		this.validationGroup.validate();
+	}
+},
+computed: {
+	validationGroup: function() {
+		return this.$refs[this.groupRefKey].instance;
+	}
+}
 
 
 ********************  Datebox *************************
@@ -266,13 +281,15 @@ methods: {
 </div>
 
 
-******************** Event Bus  ************************* 
-import {EventBus} from '@/services/event-bus';
-EventBus.$on('EVENT_NAME', val => {
-	//execute stuff here;
-	});
-}
+******************** Event bus  ************************* 
+//Send Event
+import { bus } from '@/services/event-bus';
+bus.$emit("INIT_POS", {id: 24})
 
+//Receive Event in Computed or mounted
+bus.$on('INIT_POS', val => {
+	console.log('val', val)
+});
 ******************** Screen Messages  ************************* 
 <div class="row">
 	<div class="message success">
@@ -288,15 +305,50 @@ Vue.prototype.$dialog.confirm({
 	text: 'Do you really want to exit?',
 	title: 'Warning'
 });
+******************** Regular Dialogs  ************************* 
+import { confirm, custom, alert } from 'devextreme/ui/dialog';
+option1
+this.$nextTick(function() {
+let result = confirm("<i>Are you sure?</i>", "Confirm changes");
+})
+
+option 2
+this.$nextTick(function() {
+	let myDialog = custom({
+		title: "Custom dialog",
+		messageHtml: "<b>Dialog with custom buttons</b>",
+		buttons: [{
+			text: "button 1",
+			onClick: (e) => {
+				return { buttonText: e.component.option("text") }
+			}
+		}]
+	});
+	myDialog.show().then((dialogResult) => {
+			console.log(dialogResult.buttonText);
+	});
+})
+
+alert("Message here", "Error")
+*************************  Vuetify Programmatic Dialogs  ************************* 
+import Vuetify, { VDialog } from 'vuetify/lib'
+
+this.$dialog.notify.error("Test", {
+	position: 'bottom-left',
+	timeout: 5000
+});
+
+
 
 ******************** Vuetify Textfield Rules and Mask  ************************* 
+mask requires v-mask
 <v-text-field
 :rules="passwordRules"
 :mask="mask"
 </v-text-field>
 data: {
 	mask: '#,###,###', - Numbers
-	numberMask: 'XXXX', - letters
+	letterMask: 'XXXX', - letters
 	passwordRules: [ 
     v => !!v || 'Password is required', 
     v => (v && v.length >= 5) || 'Password must have 5+ characters',
@@ -305,8 +357,72 @@ data: {
     v => /([!@$%])/.test(v) || 'Must have one special character [!@#$%]' 
 	]
 }
+<v-text-field
+	label="Card Number"
+	@input="maskTest($event)"
+	:value="parsedCCNumber"
+	v-mask="'#### #### #### ####'"
+></v-text-field>
+methods: {
+	maskTest(evt) {
+		console.log('evt', evt)
+		this.parsedCCNumber = evt
+	}
+}
+
+<v-text-field
+	v-model="userForm.password"
+	:rules="[rules.required, rules.min1Letter, rules.min1Num, rules.min6Chars,]"
+	label="Password"
+	required
+	:type="showPW ? 'text' : 'password'"
+	:append-icon="showPW ? 'mdi-eye' : 'mdi-eye-off'"
+	@click:append="showPW = !showPW"
+	hint="At least 8 characters, Min 1 Letter, Min 1 Number"
+></v-text-field>
+rules: {
+	required: value => !!value || 'Required',
+	min8Chars: v => v.length >= 8 || 'Min 8 characters',
+	min6Chars:	v => /^.{6,}$/.test(v) || 'Min 6 characters',
+	min1Num:	v => /[0-9]+/.test(v) || 'Min 1 number',
+	min1Letter: v => /[a-zA-Z]+/.test(v) || 'Min 1 letter',
+}
+******************** Set data properties to value returned from Vuex getter  ************************* 
+data () {
+  return {
+    itemDetail: null
+  };
+},
+computed: {
+  itemData () {
+    return this.$store.getters.getItemDetail(this.item.id);
+  }
+},
+watch: {
+  itemData (n, o) {
+    this.itemDetail = _.cloneDeep(n);
+  }
+}
+//Vuex Getters
+getters: {
+  getItemDetail: (state, getters) => (id) => {
+    let item = state.openedItems.items.find(i => i.id === id);
+    return item ? item.data : null;
+  }
+}
+
+******************** Python Object is not subscriptable  ************************* 
+
+transastion_type = getToken
+method = data.get('ssl_transaction_type', None)
+print('method', method)
+getattr(Validation, method)(self, **data)
+--> result is Validaiton.getToken(self, **data)
 
 
-
-
-
+******************** Create Datacom Object in Django  *************************
+a = Datacom.objects.create_datacom(primary_mailing_address="1 N Main St", primary_mailing_city="Phoenix", primary_mailing_state="AZ", primary_mailing_zip="85253", primary_mailing_country="USA", primary_first_name="Ian", primary_last_name="Christensen", primary_phone="4804142555", primary_email="ian@ian.com", dba_name="Datacom", legal_name="Datacom Business Systems", domain="datacom", primary_contacts=[], billing_contacts=[], technical_contacts=[], shipping_contacts=[])
+******************** Create User in Django  *************************
+a = User.objects.create_user(email="ian@ian.com", is_superuser=True, first_name="Ian", last_name="Christensen", password="manofGod123", pin="1234")
+******************** Create Employee in Django  *************************
+a = Employee.objects.create_employee(email="ian@ian.com", is_superuser=True, first_name="Ian", last_name="Christensen", password="manofGod123", pin="1234")

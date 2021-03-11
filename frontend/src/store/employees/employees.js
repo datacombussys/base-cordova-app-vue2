@@ -20,11 +20,11 @@ export const Employees = {
     SET_EMPLOYEE_LIST(state, payload) {
       state.employeeList = payload;
 		},
-		PUSH_NEW_EMPLOYEE_TO_LIST(state, payload) {
-			state.employeeList.push(payload)
-		},
     SET_EMPLOYEE_PROFILE(state, payload) {
-      state.employeeProfile = payload;
+			if(payload) {
+				state.employeeProfile = payload;
+			}
+      
     },
     SET_SELECTED_EMPLOYEE_LIST(state, payload) {
 			state.selectedEmployeeList = payload;
@@ -37,28 +37,37 @@ export const Employees = {
       let listIndex = state.employeeList.findIndex(elem => elem.id === payload.id);
       state.employeeList.slice(listIndex, 1);
       state.employeeList.splice(listIndex, 1, payload);
-      console.log('state.employeeList', state.employeeList);
+			console.log('state.employeeList', state.employeeList);
+			state.employeeProfile = payload
     },
     PATCH_DELETE_EMPLOYEE_PROFILE(state, payload) {
       console.log('payload', payload);
       let listIndex = state.employeeList.findIndex(elem => elem.id === payload.id);
       state.employeeList.slice(listIndex, 1);
       console.log('state.employeeList', state.employeeList);
-    }
+		},
+		PUSH_EMPLOYEE_TO_LIST(state, payload) {
+			state.employeeList.push(payload)
+		}
 
   },
   actions: {
 		//POST Employee After POST User
     async POSTEmployee({commit, dispatch, rootState}, payload) {
+			var domain = rootState.Auth.platformInfo.platform
       return new Promise( async (resolve, reject) => {
         try {
           let endpoint = 'employee/';
           let type = 'Create New Employee';
-          let response = await apiRoutes.POSTItem(dispatch, rootState, payload, endpoint, type);
-          console.log('POSTEmployee response', response);
-          commit('PUSH_NEW_EMPLOYEE_TO_LIST', response.data);
-          return resolve(response)
-
+					let response = await apiRoutes.POSTItem(dispatch, rootState, payload, endpoint, type);
+					if(this.Employees.employeeProfile[domain] === response.data[domain]) {
+						console.log('POSTEmployee response', response);
+						commit('PUSH_EMPLOYEE_TO_LIST', response.data);
+						return resolve(response)
+					} else {
+						return reject({error: "This is not your company"})
+					}
+          
         } catch (error) {
           console.error("POSTEmployee error.response", error);
           dispatch('DELETEUserProfile', payload)
@@ -78,9 +87,18 @@ export const Employees = {
         let type = 'Get Employee List';
         let response = await apiRoutes.GETList(dispatch, rootState, payload, endpoint, type);
         console.log('GETEmployeeList response', response);
-        commit('SET_EMPLOYEE_LIST', response.data);
-        return resolve();
-      })
+				commit('SET_EMPLOYEE_LIST', response.data);
+				
+				return resolve();
+				
+      }).catch(error => {
+				console.log('error', error)
+				if (error.response) {
+					console.log('error.response', error.response)
+					dispatch('updateNotification', error.response);
+					return reject(error);
+				}
+			});
 			
     },
     //GET Selected Profile By Id
@@ -90,22 +108,48 @@ export const Employees = {
         let type = 'Get Employee Profile';
         let response = await apiRoutes.GETProfileById(dispatch, rootState, payload, endpoint, type);
         console.log('GETEmployeeSelectedProfile response', response);
-        commit('SET_SELECTED_EMPLOYEE_PROFILE', response.data);
-        return resolve(response.data);
-      });
+				commit('SET_SELECTED_EMPLOYEE_PROFILE', response.data);
+				
+				return resolve(response.data);
+				
+      }).catch(error => {
+				console.log('error', error)
+				if (error.response) {
+					console.log('error.response', error.response)
+					dispatch('updateNotification', error.response);
+					return reject(error);
+				}
+			});
     },
 
     //GET Own Employee Profile by Id
 		 GETEmployeeProfileById({commit, dispatch, rootState}, payload) {
 			return new Promise( async (resolve, reject) => {
-				console.log('GETEmployeeProfileById payload', payload);
-				let endpoint = 'employee/?user__id=';
-				let type = 'Get Employee Profile';
-				let response = await apiRoutes.GETProfileById(dispatch, rootState, payload, endpoint, type);
-				console.log('GETEmployeeProfileById response', response);
-				commit('SET_EMPLOYEE_PROFILE', response.data[0]);
-				commit('SET_PLATFORM_INFO', response.data[0]);
-				return resolve(response.data[0]);
+				try {
+					console.log('GETEmployeeProfileById payload', payload);
+					let endpoint = 'employee/?user__id=';
+					let type = 'Get Employee Profile';
+					let response = await apiRoutes.GETProfileById(dispatch, rootState, payload, endpoint, type);
+					if(response.status === 200) {
+						console.log('GETEmployeeProfileById response', response);
+						commit('SET_EMPLOYEE_PROFILE', response.data[0]);
+						commit('SET_PLATFORM_INFO', response.data[0]);
+						return resolve(response.data[0]);
+					} else {
+						return reject({message: response})
+					}
+					
+				} catch(error) {
+					return reject(error)
+				}
+				
+			}).catch(error => {
+				console.log('error', error)
+				if (error.response) {
+					console.log('error.response', error.response)
+					dispatch('updateNotification', error.response);
+					return reject(error);
+				}
 			});
     },
 		//GET Selected Employee List by FilterURL
@@ -136,28 +180,25 @@ export const Employees = {
 
   },
   getters: {
+		RETURN_EMPLOYEE_PROFILE(state) {
+			return state.employeeProfile
+		},
     GET_EMPLOYEE_LIST(state) {
       return state.employeeList;
 		},
 		GET_EMPLOYEE_LIST_LENGTH(state) {
 			return state.employeeList.length;
 		},
-    GET_OWN_EMPLOYEE_PROFILE(state) {
-      return state.employeeProfile;
-    },
     GET_SELECTED_EMPLOYEE_PROFILE(state) {
       return state.selectedEmployeeProfile;
     },
-    GET_EMPLOYEE_PROFILE(state)   {
-      return state.employeeProfile;
-		},
 		GET_SELECTED_EMPLOYEE_LIST(state) {
 			return state.selectedEmployeeList;
 		},
 		GET_SELECTED_EMPLOYEE_LIST_LENGTH(state) {
 			return state.selectedEmployeeList.length;
 		}
-  }
+	}
 
 }
 

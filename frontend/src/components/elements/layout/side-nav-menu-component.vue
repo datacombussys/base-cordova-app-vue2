@@ -81,13 +81,7 @@ export default {
   computed: {
 
   },
-  mounted() {
-    this.treeView = this.$refs[treeViewRef] && this.$refs[treeViewRef].instance;
-    this.updateSelection();
-    if (this.compactMode) {
-      this.treeView.collapseAll();
-    }
-  },
+ 
   watch: {
     $route() {
       this.updateSelection();
@@ -98,6 +92,13 @@ export default {
       } else {
         this.updateSelection();
       }
+    }
+	},
+	 mounted() {
+    this.treeView = this.$refs[treeViewRef] && this.$refs[treeViewRef].instance;
+    this.updateSelection();
+    if (this.compactMode) {
+      this.treeView.collapseAll();
     }
   },
   

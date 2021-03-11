@@ -334,7 +334,7 @@ export default {
 			profileImageSettings: {
 				url: 'partner/',
 				module: 'Warehouse',
-				mutation: 'UPDATE_PROFILE_IMAGE'
+				mutation: 'UPDATE_WAREHOUSE_PROFILE'
 			},
 			cameraImage: null,
 			cameraSettings: {
@@ -397,34 +397,31 @@ export default {
 			warehouseForm: {
 				//partner Specific
 				id: null,
-				account_number: null,
+				datacom: null,
+				partner: null,
+				company: null,
 				barcode: null,
-				barcode_obj: null,
+
+				warehouse_name: null,
+				warehouse_number: null,
 				profile_img: null,
-				logo: null,
 				date_added: null,
 				global_id: null,
+				description: null,
 				is_active: false,
+				status: null,
 
 				primary_contacts: [],
 				billing_contacts: [],
 				technical_contacts: [],
 				shipping_contacts: [],
-
-				dba_name: null,
-				legal_name: null,
-				domain: null,
-				website: null,
-				tax_id: null,
-				resale_id: null,
-				board_date: null,
-				description: null,
-				closure_date: null,
-				closure_reason: null,
+				sales_offices: [],
+				employees: [],
 
 				primary_first_name: null,
 				primary_last_name: null,
 				primary_mailing_address: null,
+				primary_mailing_address2: null,
 				primary_mailing_city: null,
 				primary_mailing_state: null,
 				primary_mailing_zip: null,
@@ -436,6 +433,7 @@ export default {
 				shipping_first_name: null,
 				shipping_last_name: null,
 				shipping_address: null,
+				shipping_address2: null,
 				shipping_city: null,
 				shipping_state: null,
 				shipping_zip: null,
@@ -447,6 +445,7 @@ export default {
 				billing_first_name: null,
 				billing_last_name: null,
 				billing_address: null,
+				billing_address2: null,
 				billing_city: null,
 				billing_state: null,
 				billing_zip: null,
@@ -454,11 +453,8 @@ export default {
 				billing_phone: null,
 				billing_fax: null,
 				billing_email: null,
-
-				is_partner: true,
-				is_partner: false,
-				is_merchant: false,
-				is_vendor: false,
+				closure_date: null,
+				closure_reason: null,
 			},
     }
 	},
@@ -625,6 +621,8 @@ export default {
 			this.warehouseForm.billing_contacts= [];
 			this.warehouseForm.technical_contacts= [];
 			this.warehouseForm.shipping_contacts= [];
+			this.warehouseForm.sales_offices= [];
+			this.warehouseForm.employees= [];
 		},
 		// Populate Fields for editing in browser
 		async editWarehouseById(companyID) {

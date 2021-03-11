@@ -14,56 +14,63 @@ from employees.models import Employee
 from commons2.models import Shipping
 
 class SalesOfficeManager(models.Manager):
-  def create_sales_office(self, **kwargs):
-    if not kwargs['salesoffice_name']:
-      raise ValueError("You must enter a valid name")
+	def create_sales_office(self, **kwargs):
+		if not kwargs['salesoffice_name']:
+			raise ValueError("You must enter a valid name")
 
-    print("salesoffice kwargs", kwargs)
+		print("salesoffice kwargs", kwargs)
 
-    salesofficeObj = SalesOffice.objects.all().order_by('id').last()
-    if salesofficeObj:
-      kwargs['salesoffice_number'] = salesofficeObj.salesoffice_number
-      print("salesofficeObj.salesoffice_number", salesofficeObj.salesoffice_number)
-      print('salesofficeObj.__dict__', salesofficeObj.__dict__)
-    if not salesofficeObj:
-      kwargs['salesoffice_number'] = 0
+		salesofficeObj = SalesOffice.objects.all().order_by('id').last()
+		if salesofficeObj:
+			kwargs['last_account_number'] = salesofficeObj.salesoffice_number
+			print("salesofficeObj.salesoffice_number", kwargs['last_account_number'])
+			print('salesofficeObj.__dict__', salesofficeObj.__dict__)
+		if not salesofficeObj:
+			kwargs['last_account_number'] = None
 
-    kwargs['is_salesoffice'] = True
-    print('Modified salesoffice kwargs', kwargs)
-    newSOID = CompanyIDs.newCompanyID(self, **kwargs)
+		kwargs['is_salesoffice'] = True
+		print('Modified salesoffice kwargs', kwargs)
+		newSOID = CompanyIDs.newCompanyID(self, **kwargs)
+		del kwargs['last_account_number']
 
-    # primary_contacts_var = kwargs['primary_contacts']
-    # billing_contacts_var = kwargs['billing_contacts']
-    # technical_contacts_var = kwargs['technical_contacts']
-    # shipping_contacts_var = kwargs['shipping_contacts']
+		primary_contacts_var = kwargs.get('primary_contacts', None)
+		billing_contacts_var = kwargs.get('billing_contacts', None)
+		technical_contacts_var = kwargs.get('technical_contacts', None)
+		shipping_contacts_var = kwargs.get('shipping_contacts', None)
+		employees_var = kwargs.get('employees', None)
 
-    # del kwargs['primary_contacts']
-    # del kwargs['billing_contacts']
-    # del kwargs['technical_contacts']
-    # del kwargs['shipping_contacts']
-    
-    salesoffice = self.model(**kwargs)
-    salesoffice.is_active = True
-    salesoffice.salesoffice_number = newSOID
+		del kwargs['primary_contacts']
+		del kwargs['billing_contacts']
+		del kwargs['technical_contacts']
+		del kwargs['shipping_contacts']
+		del kwargs['employees']
+		
+		salesoffice = self.model(**kwargs)
+		salesoffice.is_active = True
+		salesoffice.salesoffice_number = newSOID
+		kwargs['salesoffice_number'] = newSOID
 
-    salesoffice.save(using=self._db)
+		salesoffice.save(using=self._db)
+		print('salesoffice', salesoffice.id)
 
-    # if primary_contacts_var:
-    #   salesoffice.primary_contacts.set(primary_contacts_var)
-    # if billing_contacts_var:
-    #   salesoffice.billing_contacts.set(billing_contacts_var)
-    # if technical_contacts_var:
-    #   salesoffice.technical_contacts.set(technical_contacts_var)
-    # if shipping_contacts_var:
-    #   salesoffice.shipping_contacts.set(shipping_contacts_var)
+		if primary_contacts_var:
+		  salesoffice.primary_contacts.set(primary_contacts_var)
+		if billing_contacts_var:
+		  salesoffice.billing_contacts.set(billing_contacts_var)
+		if technical_contacts_var:
+		  salesoffice.technical_contacts.set(technical_contacts_var)
+		if shipping_contacts_var:
+		  salesoffice.shipping_contacts.set(shipping_contacts_var)
+		if employees_var:
+		  salesoffice.employees.set(employees_var)
 
-    barcode = CommonBarcode.objects.create_barcode(salesoffice.id, **kwargs)
-    print('Sales Office barcode', barcode)
-    salesoffice.barcode = barcode
+		barcode = CommonBarcode.objects.create_barcode(**kwargs)
+		print('Sales Office barcode', barcode)
+		salesoffice.barcode = barcode
 
-    salesoffice.save(using=self._db)
+		salesoffice.save(using=self._db)
 
-    return salesoffice
+		return salesoffice
 
 class SalesOffice(CommonCompanyBase):
 	company                 = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
@@ -95,6 +102,7 @@ class SalesOffice(CommonCompanyBase):
 	primary_email           = models.CharField(max_length=200, blank=True, null=True)
 	shipping_mailing_country = models.CharField(max_length=200, blank=True, null=True)
 	shipping_address 	      = models.CharField(max_length=200, blank=True, null=True)
+	shipping_address2 	     = models.CharField(max_length=200, blank=True, null=True)
 	shipping_city 	  	    = models.CharField(max_length=60, blank=True, null=True)
 	shipping_state 		      = models.CharField(max_length=20, blank=True, null=True)
 	shipping_zip 			      = models.CharField(max_length=5, null=True, 
@@ -107,6 +115,7 @@ class SalesOffice(CommonCompanyBase):
 	shipping_email          = models.CharField(max_length=200, blank=True, null=True)
 	billing_mailing_country = models.CharField(max_length=200, blank=True, null=True)
 	billing_address 	      = models.CharField(max_length=200, blank=True, null=True)
+	billing_address2 	      = models.CharField(max_length=200, blank=True, null=True)
 	billing_city 	  	      = models.CharField(max_length=60, blank=True, null=True)
 	billing_state 		      = models.CharField(max_length=20, blank=True, null=True)
 	billing_zip 			      = models.CharField(max_length=5, null=True, 
@@ -121,6 +130,7 @@ class SalesOffice(CommonCompanyBase):
 	closure_reason          = models.CharField(max_length=250, blank=True, null=True)
 	is_active               = models.BooleanField(default=True)
 	status                  = models.CharField(max_length=200, blank=True, null=True)
+	profile_img 	      		= models.ImageField(max_length=100, upload_to='datacom/', null=True, blank=True)
 
 	objects	= SalesOfficeManager()
 

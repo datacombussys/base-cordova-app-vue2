@@ -564,7 +564,7 @@
 													class="custom-exp"
 													max-length="4"
 												/>
-												<div class="date-plcaeholder">
+												<div class="date-plcaceholder">
 													<span class="pr-1">MM </span><span class="pr-1">/</span> <span>YY</span>
 												</div>
 											</fieldset>
@@ -660,6 +660,7 @@ import DxList from 'devextreme-vue/list';
 
 //Mixins
 import { FormMixins } from "@/mixins/form-mixins"
+
 //components
 import recurringComponent from "@/components/universal/new/recurring-component"
 import contractsComponent from "@/components/financial/new/contracts-component"
@@ -951,7 +952,7 @@ export default {
 	box-shadow: none;
 }
 
-.date-plcaeholder {
+.date-plcaceholder {
 	position: relative;
 	left: 10px;
 	top: -15px;

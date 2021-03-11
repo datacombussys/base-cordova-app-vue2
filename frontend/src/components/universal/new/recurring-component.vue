@@ -1,7 +1,7 @@
 <template>
 	<div class="container py-0">
 		<v-overlay
-			:absolute="absolute"
+			:absolute="true"
 			:value="recurringPopup"
 		>
 		<v-sheet
@@ -14,7 +14,7 @@
 				<div class="header">
 					Recurring
 				</div>
-				<div class="button">
+				<div class="close-button">
 					<a href="#" @click="closePopup">
 						<fa-layer class="mdi-35">
 							<fa-icon :icon="['fas', 'circle']" style="color:#F75403;"></fa-icon>
@@ -372,7 +372,6 @@
 
 				
 	</div>
-
 </template>
 
 <script>
@@ -398,9 +397,8 @@ export default {
 	data() {
 		return {
 			//Main Data 
-			absolute: true,
 
-			//Form Data
+//Form Data
 			isDaily: false,
 			isWeekly: false,
 			isMonthly: false,

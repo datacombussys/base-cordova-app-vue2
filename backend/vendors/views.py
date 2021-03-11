@@ -13,7 +13,7 @@ from .models import Vendor
 class VendorViewset(viewsets.ModelViewSet):
     serializer_class = VendorSerializer
     queryset = Vendor.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['id', 'barcode_id', 'datacom__id', 'partner__id', 'company__id']
     search_fields = ['id', 'barcode_id', 'datacom__id', 'partner__id', 'company__id']
     ordering_fields = '__all__'

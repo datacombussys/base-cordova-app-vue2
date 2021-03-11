@@ -32,7 +32,7 @@ class CompanyDocumentsViewset(viewsets.ModelViewSet):
 class MileageReimbursementViewset(viewsets.ModelViewSet):
 	serializer_class = MileageReimbursementSerializer
 	queryset = MileageReimbursement.objects.all()
-	filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 	filterset_fields = ['date_added', 'status']
 	search_fields = ['date_added', 'status']
 	ordering_fields = ['date_added', 'status']

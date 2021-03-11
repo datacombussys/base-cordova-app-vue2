@@ -91,12 +91,12 @@
 									<DxButton
 										width="100%"
 										type="success"
-										text="Add New Company"
+										text="Add New Office"
 										@click="newItemButton" />
 								</div>
 								<div v-show="!accountSettings.hideSaveItem" class="mt-4 w-full">
 									<dx-drop-down-button
-										text="Save Company"
+										text="Save Office"
 										width="100%"
 										:split-button="true"
 										@button-click="createCompanyandClose"
@@ -335,7 +335,7 @@ export default {
 			profileImageSettings: {
 				url: 'sales-office/',
 				module: 'Sales Office',
-				mutation: 'UPDATE_PROFILE_IMAGE'
+				mutation: 'UPDATE_SALESOFFICE_PROFILE'
 			},
 			cameraImage: null,
 			cameraSettings: {
@@ -372,15 +372,15 @@ export default {
 				header2: "Image",
 				header3: "Date Added",
 				header4: "Name",
-				header5: "Domain",
-				header6: "Account #",
+				header5: "Phone",
+				header6: "Location #",
 				header7: "Status",
 				col1: "id",
 				col2: "profile_img",
 				col3: "date_added",
-				col4: "dba_name",
-				col5: "domain",
-				col6: "account_number",
+				col4: "salesoffice_name",
+				col5: "primary_phone",
+				col6: "salesoffice_number",
 				col7: "is_active"
 			},
 			databaseData: {
@@ -396,70 +396,66 @@ export default {
 
 			//Form Data
 			salesOfficeForm: {
-				//partner Specific
-				id: null,
-				account_number: null,
+				id: 0,
+				datacom: null,
+				partner: null,
+				company: null,
 				barcode: null,
-				barcode_obj: null,
+
+				salesoffice_name: null,
+				salesoffice_number: null,
 				profile_img: null,
-				logo: null,
 				date_added: null,
 				global_id: null,
+				description: null,
 				is_active: false,
+				status: null,
 
+				//Arrays
 				primary_contacts: [],
 				billing_contacts: [],
 				technical_contacts: [],
 				shipping_contacts: [],
+				warehouses: [],
+				employees: [],
 
-				dba_name: null,
-				legal_name: null,
-				domain: null,
-				website: null,
-				tax_id: null,
-				resale_id: null,
-				board_date: null,
-				description: null,
-				closure_date: null,
-				closure_reason: null,
-
-				primary_first_name: null,
-				primary_last_name: null,
 				primary_mailing_address: null,
+				primary_mailing_address2: null,
 				primary_mailing_city: null,
 				primary_mailing_state: null,
 				primary_mailing_zip: null,
 				primary_mailing_country: null,
+				primary_first_name: null,
+				primary_last_name: null,
 				primary_phone: null,
 				primary_fax: null,
 				primary_email: null,
 
-				shipping_first_name: null,
-				shipping_last_name: null,
 				shipping_address: null,
+				shipping_address2: null,
 				shipping_city: null,
 				shipping_state: null,
 				shipping_zip: null,
-				shipping_country: null,
+				shipping_mailing_country: null,
+				shipping_first_name: null,
+				shipping_last_name: null,
 				shipping_phone: null,
 				shipping_fax: null,
 				shipping_email: null,
 
-				billing_first_name: null,
-				billing_last_name: null,
 				billing_address: null,
+				billing_address2: null,
 				billing_city: null,
 				billing_state: null,
 				billing_zip: null,
-				billing_country: null,
+				billing_mailing_country: null,
+				billing_first_name: null,
+				billing_last_name: null,
 				billing_phone: null,
 				billing_fax: null,
 				billing_email: null,
-
-				is_partner: true,
-				is_partner: false,
-				is_merchant: false,
-				is_vendor: false,
+				closure_date: null,
+				closure_reason: null,
 			},
     }
 	},
@@ -467,7 +463,7 @@ export default {
   methods: {
     testMethod(e) {
 			console.log('this.salesOfficeForm', this.salesOfficeForm)
-			console.log('this.Sales Offices.partnerList', this.SalesOffices.partnerList)
+			console.log('this.SalesOffices.salesOfficeList', this.SalesOffices.salesOfficeList)
 		},
 		testMethodMain(e) {
 			console.log("testMethodMain e", e);
@@ -573,7 +569,7 @@ export default {
 				console.log("promise");
 
 				try {
-					console.log("createSales ffice try");
+					console.log("createSalesOffice try");
 				
 					this.isLoadPanelVisible = true;
 
@@ -581,7 +577,7 @@ export default {
 					var newSalesOfficeForm = JSON.parse(JSON.stringify(this.salesOfficeForm));
 					console.log("newSalesOfficeForm", newSalesOfficeForm);
 
-					var partnerResponse = await this.$store.dispatch("POSTSales Office", newSalesOfficeForm);
+					var partnerResponse = await this.$store.dispatch("POSTSalesOffice", newSalesOfficeForm);
 					console.log("partnerResponse", partnerResponse);
 
 					this.isLoadPanelVisible = false;
@@ -596,7 +592,7 @@ export default {
 		},
 		refreshSalesOffice() {
 			console.log("GETSales OfficeList");
-			this.$store.dispatch("GETSales OfficeList");
+			this.$store.dispatch("GETSalesOfficeList");
 		},
 		//Capture Edit by Child DataGrid Component
 		editProfileFromChild(e) {
@@ -626,6 +622,7 @@ export default {
 			this.salesOfficeForm.billing_contacts= [];
 			this.salesOfficeForm.technical_contacts= [];
 			this.salesOfficeForm.shipping_contacts= [];
+			this.salesOfficeForm.employees= [];
 		},
 		// Populate Fields for editing in browser
 		async editSalesOfficeById(companyID) {
@@ -634,7 +631,7 @@ export default {
 				this.clearFormData();
 				this.selectedTabIndex = 1;
 				//2) Get User ID and object and map to fields from database table
-				var getSelectedSalesOfficeObj = await this.$store.dispatch("GETSelectedSales OfficeProfileById", {id: companyID});
+				var getSelectedSalesOfficeObj = await this.$store.dispatch("GETSalesOfficeSelectedProfile", {id: companyID});
 				console.group('getSelectedSalesOfficeObj', getSelectedSalesOfficeObj);
 
 				for (let key in this.salesOfficeForm) {
@@ -668,7 +665,7 @@ export default {
 		async updateSalesOfficePATCH() {
 			let newSalesOfficeForm = await this.setUserPlatformPOST();
 			console.log("updateCompanyPATCH newSalesOfficeForm", newSalesOfficeForm);
-			this.$store.dispatch("PATCHSales OfficeProfile", newSalesOfficeForm);
+			this.$store.dispatch("PATCHSalesOfficeProfile", newSalesOfficeForm);
 			this.resetViewtoHome();
 		},
 		//Set inventory item to inactive instead of deleting instance
@@ -687,7 +684,7 @@ export default {
 				console.log("newDate", newDate.toISOString());
 				object.closure_date = dateOnly;
 
-				await this.$store.dispatch("PATCHDeleteSales OfficeProfile", object).then((response) => {
+				await this.$store.dispatch("PATCHDeleteSalesOfficeProfile", object).then((response) => {
 					console.log("response from deleteSalesOffice method", response);
 					this.clearFormData();
 				});
@@ -730,7 +727,7 @@ export default {
   },
   computed: {
 		...mapGetters(["GET_SALES_OFFICE_LIST", "GET_SALES_OFFICE_PROFILE", "GET_SELECTED_SALES_OFFICE_PROFILE"]),
-		...mapState(["Warehouses", "Sales Offices"]),
+		...mapState(["Warehouses", "SalesOffices"]),
 
     
   },

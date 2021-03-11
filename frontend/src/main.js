@@ -35,7 +35,7 @@ import appInfo from "@/js/app-info";
 require("@/js/axios")
 
 //Import Vue-router
-import router from './routes'
+import {router} from "@/routes"
 require("@/js/subscribers");
 
 // MaterialDesignIcons.com
@@ -95,14 +95,19 @@ Vue.use(VueLodash, { lodash: lodash })
 // const socket = io('http://localhost:9022');
 // Vue.use(VueSocketIOExt, socket, { store });
 
+//Numeric Input
+//https://www.npmjs.com/package/vue-numeric-input
+import VueNumericInput from 'vue-numeric-input';
+Vue.use(VueNumericInput)
+
 //Vue Cropper
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 Vue.component("vue-cropper", VueCropper);
 
 //Vue Field Mask
-import VueTheMask from 'vue-the-mask'
-Vue.use(VueTheMask)
+// import VueTheMask from 'vue-the-mask'
+// Vue.use(VueTheMask)
 //Usage
 // '#': {pattern: /\d/},
 // 'X': {pattern: /[0-9a-zA-Z]/},
@@ -111,6 +116,21 @@ Vue.use(VueTheMask)
 // 'a': {pattern: /[a-zA-Z]/, transform: v => v.toLocaleLowerCase()},
 // '!': {escape: true}
 
+//v-mask
+// import VueMask from 'v-mask'
+// Vue.use(VueMask);
+
+import { VueMaskDirective } from 'v-mask'
+Vue.directive('mask', VueMaskDirective);
+
+import { VueMaskFilter } from 'v-mask'
+Vue.filter('VMask', VueMaskFilter)
+
+{/* <v-text-field
+  v-mask="'###.###.###-##'"
+  :value="currentValue" 
+  @input="handleInput"
+/> */}
 
 import "@/assets/icons/icons.css"
 
@@ -121,7 +141,7 @@ import "./assets/fonts/fonts.css"
 import '../public/styles.css'
 
 //My Custom CSS
-import "@/assets/css/main.css";
+import "./assets/css/main.css";
 import './assets/sass/main.scss'
 import './assets/sass/dx-styles.scss'
 

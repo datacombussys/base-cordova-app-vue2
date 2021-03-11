@@ -342,7 +342,7 @@ export default {
 			profileImageSettings: {
 				url: 'partner/',
 				module: 'Partner',
-				mutation: 'UPDATE_PROFILE_IMAGE'
+				mutation: 'UPDATE_PARTNER_PROFILE'
 			},
 			cameraImage: null,
 			cameraSettings: {
@@ -405,6 +405,7 @@ export default {
 			partnerForm: {
 				//partner Specific
 				id: null,
+				datacom: null,
 				account_number: null,
 				barcode: null,
 				barcode_obj: null,
@@ -475,6 +476,7 @@ export default {
     testMethod(e) {
 			console.log('this.partnerForm', this.partnerForm)
 			console.log('this.Partners.partnerList', this.Partners.partnerList)
+
 		},
 		testMethodMain(e) {
 			console.log("testMethodMain e", e);
@@ -736,8 +738,8 @@ export default {
 
   },
   computed: {
-		...mapGetters(["GET_PARTNER_LIST", "GET_PARTNER_PROFILE", "GET_SELECTED_PARTNER_PROFILE"]),
-		...mapState(["Warehouses", "Partners"]),
+		...mapGetters(["GET_PARTNER_LIST", "GET_PARTNER_PROFILE", "GET_SELECTED_PARTNER_PROFILE", "GET_DATACOM_LIST"]),
+		...mapState(["Warehouses", "Partners", "Datacom"]),
 
     
   },

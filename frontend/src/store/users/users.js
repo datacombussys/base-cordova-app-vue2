@@ -70,7 +70,7 @@ export const Users = {
 					let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
 					console.log('POSTUser response', response);
 
-					commit('PUSH_NEW_USER', response);
+					// commit('PUSH_NEW_USER', response);
 					return resolve(response)
 					
 				} catch (error) {

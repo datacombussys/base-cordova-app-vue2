@@ -35,7 +35,7 @@
 					data-type="string"
 				/>
 					<template #show-image="{ data }">
-            <img :src="data.value" width="50" height="50">
+						<img class="profile-image" :src="data.value" width="50" height="50" border="0">
         	</template>
 				<DxColumn
 					:caption="databaseSettings.header3"
@@ -223,5 +223,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.profile-image {
+	border-radius: 50%;
+	border-width: 0px;
+}
 </style>

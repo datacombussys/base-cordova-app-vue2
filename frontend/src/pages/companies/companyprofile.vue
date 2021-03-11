@@ -1356,7 +1356,7 @@ import { UniversalMixins } from "@/mixins/universal-mixins";
 import navBarComponent from "@/components/universal/navbar-component.vue";
 import creditCardComponent from "../../components/business/creditcard-ach-component.vue";
 import shippingComponent from "../../components/business/shipping-component.vue";
-import setupSheetComponent from "../../components/business/setup-sheet-component.vue";
+import setupSheetComponent from "../../components/business/new-docs/setup/setup-sheet-component.vue";
 import salesOfficesComponent from "../../components/business/salesoffices-database-component.vue";
 import warehouseComponent from "../../components/business/warehouses-database-component.vue";
 import profileCardComponent from "../../components/layout-elements/profile-card-component.vue";

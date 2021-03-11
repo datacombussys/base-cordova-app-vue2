@@ -7,6 +7,8 @@ python3 manage.py makemigrations users
 python3 manage.py migrate users
 python3 manage.py makemigrations commons
 python3 manage.py migrate commons
+python3 manage.py makemigrations humanresources
+python3 manage.py migrate humanresources
 python3 manage.py makemigrations datacom
 python3 manage.py migrate datacom
 python3 manage.py makemigrations partners
@@ -17,8 +19,7 @@ python3 manage.py makemigrations vendors
 python3 manage.py migrate vendors
 python3 manage.py makemigrations commons2
 python3 manage.py migrate commons2
-python3 manage.py makemigrations humanresources
-python3 manage.py migrate humanresources
+
 python3 manage.py makemigrations employees
 python3 manage.py migrate employees
 python3 manage.py makemigrations financial
@@ -43,5 +44,9 @@ python3 manage.py makemigrations vthpp
 python3 manage.py migrate vthpp
 python3 manage.py makemigrations invoices
 python3 manage.py migrate invoices
+python3 manage.py makemigrations notifications
+python3 manage.py migrate notifications
+python3 manage.py makemigrations retailpos
+python3 manage.py migrate retailpos
 python3 manage.py makemigrations
 python3 manage.py migrate

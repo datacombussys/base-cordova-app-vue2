@@ -6,7 +6,7 @@
 					<div class="header">
 						Contracts
 					</div>
-					<div class="button">
+					<div class="close-button">
 						<a href="#" @click="closePopup">
 							<fa-layer class="mdi-35">
 								<fa-icon :icon="['fas', 'circle']" style="color:#F75403;"></fa-icon>
@@ -17,7 +17,6 @@
 				</nav>
 				<div class="frame-container-sheet">
 
-				
 					<DxScrollView
 						id="contractsScroll"
 						ref="contractsScrollWidget"

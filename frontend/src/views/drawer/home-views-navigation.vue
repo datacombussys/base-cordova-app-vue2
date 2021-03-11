@@ -68,7 +68,7 @@
 
 <script>
 import { mapState } from "vuex";
-import {bus} from '@/services/event-bus'
+import { bus } from '@/services/event-bus'
 
 export default {
 	name: "homeViewNavigation",

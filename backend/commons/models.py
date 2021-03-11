@@ -23,8 +23,12 @@ class BarcodeManager(models.Manager):
 	def create_barcode(self, **kwargs):
 		print('create_barcode kwargs', kwargs)
 
-		acct_no = kwargs.get('account_number', "")
-		empl_no = kwargs.get('employee_number', "")
+		acct_no = kwargs.get('account_number', None)
+		empl_no = kwargs.get('employee_number', None)
+		salesOffice_no = kwargs.get('salesoffice_number', None)
+		warehouse_no = kwargs.get('warehouse_number', None)
+		cust_no = kwargs.get('customer_number', None)
+		
 		barcode = None
 
 		if acct_no:
@@ -32,8 +36,21 @@ class BarcodeManager(models.Manager):
 			barcode.save(using=self._db)
 
 		if empl_no:
-			barcode = self.model(barcode_number = kwargs['employee_number'], barcode_type = "code-128", title = kwargs['first_name'] + " " + kwargs['last_name'])
+			barcode = self.model(barcode_number = kwargs['employee_number'], barcode_type = "code-128", title = kwargs['user'].full_name)
 			barcode.save(using=self._db)
+
+		if salesOffice_no:
+			barcode = self.model(barcode_number = kwargs['salesoffice_number'], barcode_type = "code-128", title = kwargs['salesoffice_name'])
+			barcode.save(using=self._db)
+
+		if warehouse_no:
+			barcode = self.model(barcode_number = kwargs['warehouse_number'], barcode_type = "code-128", title = kwargs['warehouse_name'])
+			barcode.save(using=self._db)
+
+		if cust_no:
+			barcode = self.model(barcode_number = kwargs['customer_number'], barcode_type = "code-128", title = kwargs['user'].full_name)
+			barcode.save(using=self._db)
+
 
 		return barcode
 

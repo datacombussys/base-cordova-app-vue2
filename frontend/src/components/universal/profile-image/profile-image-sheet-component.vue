@@ -267,10 +267,7 @@ export default {
 					this.$store.dispatch("updateNotification", response);
 				});
 				// this.uploadMessage = "File has been uploaded";
-				this.file = "";
-				this.cropped = "";
-				this.fileURL = "";
-				this.activeStep = 0;
+				this.resetFields()
 			} catch (err) {
 				if(err.response) {
 					this.uploadMessage = `There was an error uploading ${err.response.data.error}`;
@@ -304,33 +301,7 @@ export default {
 		},
 
 
-		// Croppie JS CALLBACK USAGE
-		crop() {
-			// Here we are getting the result via callback function
-			// and set the result to this.cropped which is being
-			// used to display the result above.
-			let options = {
-				format: "png",
-				circle: true
-			};
-			this.$refs.croppieRefInv.result(options, (output) => {
-				this.cropped = output;
-			});
-		},
-		// Croppie JS EVENT USAGE
-		cropViaEvent() {
-			this.$refs.croppieRefInv.result(options);
-		},
-		result(output) {
-			this.cropped = output;
-		},
-		update(val) {
-			console.log(val);
-		},
-		rotate(rotationAngle) {
-			// Rotates the image
-			this.$refs.croppieRefInv.rotate(rotationAngle);
-		},
+
 
 
 	},

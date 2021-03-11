@@ -61,10 +61,10 @@
                         Inventory
                     </router-link>
                 </div>
-                <div class="text-center text-white px-4 py-2 m-4 h-32 w-32">
-                    <router-link to="retail-pos">
+								<div class="text-center text-white px-4 py-2 m-4 h-32 w-32">
+                    <router-link to="registers">
                         <img src="../assets/icons/datacom-icons/POS.png" alt="" width="110" height="110">
-                        Point Of Sale
+                        Registers
                     </router-link>
                 </div>
                 <div class="text-center text-white px-4 py-2 m-4 h-32 w-32">

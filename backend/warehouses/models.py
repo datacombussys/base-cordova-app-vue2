@@ -97,6 +97,7 @@ class Warehouse(models.Model):
 	primary_email           = models.CharField(max_length=200, blank=True, null=True)
 	shipping_mailing_country = models.CharField(max_length=200, blank=True, null=True)
 	shipping_address 	      = models.CharField(max_length=200, blank=True, null=True)
+	shipping_address2 	    = models.CharField(max_length=200, blank=True, null=True)
 	shipping_city 	  	    = models.CharField(max_length=60, blank=True, null=True)
 	shipping_state 		      = models.CharField(max_length=20, blank=True, null=True)
 	shipping_zip 			      = models.CharField(max_length=5, null=True, 
@@ -111,6 +112,7 @@ class Warehouse(models.Model):
 	closure_reason          = models.CharField(max_length=250, blank=True, null=True)
 	is_active               = models.BooleanField(default=True)
 	status                  = models.CharField(max_length=200, blank=True, null=True)
+	profile_img 	      		= models.ImageField(max_length=100, upload_to='datacom/', null=True, blank=True)
 
 	objects	= WarehouseManager()
 

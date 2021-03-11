@@ -22,4 +22,8 @@ Vue.filter('toLowerCase', function(value) {
   return value.toLowerCase();
 });
 
+Vue.filter('toFloat', function(value) {
+  return parseFloat(value);
+});
+
 //Make a filter to format the Permissions and module code name

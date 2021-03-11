@@ -50,15 +50,15 @@ from customers.views import CustomerViewset, CustomerListViewset
 from employees.views import (EmployeeViewset, 
                             PositionsViewset, 
                             EmployeeListViewset, 
-                            EmployeeModulesManagerViewset, )
+                            EmployeeModulesManagerViewset, 
+														AlternativeLoginAPIView, 
+                        		ManagerBarcodeApprovalAPIView, )
 
 from users.views import (UserProfileViewset, 
                         UserListViewset, 
                         UserLoginAPIView, 
                         UserLogOutAPIView, 
-                        AlternativeLoginAPIView, 
                         ChangePasswordAPI,
-                        ManagerBarcodeApprovalAPIView, 
                         ContentTypeViewSet, 
                         BaseGroupViewSet,
                         ExtendedGroupViewSet,
@@ -95,9 +95,11 @@ from attendance.views import (ShiftViewset,
                             PayCycleRecurrenceView, )
 from calendars.views import CalendarViewset
 from leads.views import LeadViewset
-from vthpp.views import (CardProcessingAccountViewset, 
+from vthpp.views import (CardProcessingAPIKeyViewset, 
                             CreditCardViewset, 
-                            ACHAccountViewset, )
+                            ACHAccountViewset,  
+														TransactionViewset,
+														ElavonView, )
 from invoices.views import InvoiceViewset, ReceiptViewset
 from notifications.views import NotificationViewset
 from humanresources.views import (BenefitsSerializerViewset,
@@ -113,7 +115,7 @@ router.register(r'django/bankacct', ACHAccountViewset)
 router.register(r'django/barcodes', CommonBarcodeViewset)
 router.register(r'django/benefits', BenefitsSerializerViewset)
 router.register(r'django/blogs', BlogViewset)
-router.register(r'django/cardprocessingacct', CardProcessingAccountViewset)
+router.register(r'django/elavon-account', CardProcessingAPIKeyViewset)
 router.register(r'django/calendars', CalendarViewset)
 # router.register(r'django/city', CityViewset)
 router.register(r'django/contenttype', ContentTypeViewSet)
@@ -131,6 +133,12 @@ router.register(r'django/datacom-billing-contacts', DatacomBillingContactViewset
 router.register(r'django/datacom-technical-contacts', DatacomTechnicalContactViewset, basename="datacom-technical-contacts")
 
 router.register(r'django/departments', DepartmentViewset)
+
+# router.register(r'django/elavon', ElavonCCRequestView, basename="elavon")
+# View to only Get transactions
+router.register(r'django/elavon-transactions', TransactionViewset, basename="transactions")
+# router.register(r'django/elavon', ElavonView, basename="elavon")
+
 
 router.register(r'django/employee', EmployeeViewset, basename="employee")
 router.register(r'django/employee-list', EmployeeListViewset, basename="employee-list")
@@ -223,28 +231,31 @@ router.register(r'django/wwarehouse-sales-offices', WarehouseSalesOfficesViewset
 
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+	url(r'^admin/', admin.site.urls),
 
-    #Login & Logout
-    path('django/login/', UserLoginAPIView.as_view(), name='login'),
+	#Login & Logout
+	path('django/login/', UserLoginAPIView.as_view(), name='login'),
 	path('django/logout/', UserLogOutAPIView.as_view(), name='logout'),
-    
+	
 
-    # Auth and Validation Custom Endpoints
-    path('django/alt-login/', AlternativeLoginAPIView.as_view(), name='alt-login'),
-    path('django/pw-reset/', ChangePasswordAPI.as_view(), name='pw-reset'),
-    path('django/manager-auth/', ManagerBarcodeApprovalAPIView.as_view(), name='mgr-auth'),
-    path('django/pay-cycle-recurrence/', PayCycleRecurrenceView.as_view(), name='pay-cycle-recurrence'),
-    
+	# Auth and Validation Custom Endpoints
+	path('django/alt-login/', AlternativeLoginAPIView.as_view(), name='alt-login'),
+	path('django/pw-reset/', ChangePasswordAPI.as_view(), name='pw-reset'),
+	path('django/manager-auth/', ManagerBarcodeApprovalAPIView.as_view(), name='mgr-auth'),
+	path('django/pay-cycle-recurrence/', PayCycleRecurrenceView.as_view(), name='pay-cycle-recurrence'),
 
-    #Registered Router APIView Routes
-    path('', include(router.urls)),
+	# Elavon API Route for CC processing
+	#Post Transaction
+	path('django/elavon/', ElavonView.as_view(), name='elavon-transaction'),
+	
+
+	#Registered Router APIView Routes
+	path('', include(router.urls)),
 
 
-    #API Links
-    url(r'^api/', include((router.urls, 'app_name'),
-                          namespace='instance_name')),
-    url(r'^api/accounts/', include('rest_registration.api.urls')),
-    url(r'^api/auth/',
-        include('rest_framework.urls', namespace='rest_framework')),
+	#API Links
+	url(r'^api/', include((router.urls, 'app_name'),
+												namespace='instance_name')),
+	url(r'^api/accounts/', include('rest_registration.api.urls')),
+	url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

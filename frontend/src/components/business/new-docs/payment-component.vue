@@ -1,7 +1,7 @@
 <template>
 	<div>
 
-		<!--redit Cards -->
+		<!--Credit Cards -->
 		<div class="flex justify-between m-2">
 			<div class="headline">Credit Cards</div>
 			<div>
@@ -38,14 +38,16 @@
 								</div>
 							</div>
 							<div class="row pt-4 justify-end">
-								<div class="col-25p justify-center">
+								<div class="col-3 justify-center">
 									<DxButton
+										width="100%"
 										type="warning raised"
 										text="Edit"
 										@click="testingMethod" />
 								</div>
-								<div class="col-25p justify-center">
+								<div class="col-3 justify-center">
 									<DxButton
+										width="100%"
 										type="success"
 										text="Make Primary"
 										@click="testingMethod" />
@@ -137,31 +139,100 @@
 						:height="425"
 					>
 						<div class="row">
-							<div class="col-50p">
-								<div class="dx-field">
-									<div class="dx-field-label">Card Number</div>
-									<div class="dx-field-value">
-										<v-text-field
-											type="number"
-											filled
+							<div class="headline-6 w-full">
+								Card Details
+								<v-divider></v-divider>
+							</div>
+							<div class="row justify-center">
+								<div class="col-8 px-2">
+									<fieldset class="w-full">
+									<legend class="mx-3 px-2">
+										<span>
+											Card Number
+										</span>	
+									</legend>
+										<DxTextBox
+											styling-mode="filled"
+											:height="50"
 											v-model="creditCardForm.card_number"
-										></v-text-field>
-									</div>
+											class="card-number-field"
+											:mask-rules="cardNumberRules"
+											mask="X000 0000 0000 0000"
+											max-length="16"
+										/>
+									</fieldset>
 								</div>
 							</div>
-							<div class="col-50p">
-								<div class="dx-field">
-									<div class="dx-field-label">Cardholder Name</div>
-									<div class="dx-field-value">
-										<v-text-field
-											type="text"
-											filled
-											v-model="creditCardForm.name_on_card"
-										></v-text-field>
-									</div>
+							<div class="row justify-center">
+								<div class="col-4 p-2">
+									<fieldset class="h-19">
+									<legend class="mx-3 px-2">
+										<span>
+											Expiration Date
+										</span>	
+									</legend>
+										<DxTextBox
+											styling-mode="filled"
+											:height="50"
+											:value.sync="creditCardForm.card_exp_date"
+											@input="creditCardForm.card_exp_date = $event.event.target.value"
+											:mask-rules="expRules"
+											mask="X0/00"
+											class="custom-exp"
+											max-length="4"
+										/>
+										<div class="date-plcaceholder">
+											<span class="pr-1">MM </span><span class="pr-1">/</span> <span>YY</span>
+										</div>
+									</fieldset>
+								</div>
+								<div class="col-4 p-2">
+									<fieldset>
+									<legend class="mx-3 px-2">
+										<span>
+											CVV
+										</span>	
+									</legend>
+										<DxTextBox
+											styling-mode="filled"
+											:height="50"
+											v-model="creditCardForm.card_cvv"
+											placeholder="123"
+											max-length="4"
+											class="cvv-field"
+										/>
+									</fieldset>
 								</div>
 							</div>
 						</div>
+						<div class="headline-6 w-full pt-8">
+							Cardholder Details
+							<v-divider></v-divider>
+						</div>
+						<div class="row">
+							<div class="col-6 p-0">
+								<div class="dx-field">
+									<div class="dx-field-label">First Name</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											v-model="mainData.ssl_first_name"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+							<div class="col-6 p-0">
+								<div class="dx-field">
+									<div class="dx-field-label">Last Name</div>
+									<div class="dx-field-value">
+										<v-text-field
+											type="text"
+											v-model="mainData.last_name"
+										></v-text-field>
+									</div>
+								</div>
+							</div>
+						</div>	
 						<div class="row">
 							<div class="col-50p">
 								<div class="dx-field">
@@ -169,8 +240,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_address"
+											v-model="accountData.ssl_avs_address"
 										></v-text-field>
 									</div>
 								</div>
@@ -181,8 +251,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_address2"
+											v-model="accountData.ssl_address2"
 										></v-text-field>
 									</div>
 								</div>
@@ -195,8 +264,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_city"
+											v-model="accountData.ssl_city"
 										></v-text-field>
 									</div>
 								</div>
@@ -207,8 +275,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_state"
+											v-model="accountData.ssl_state"
 										></v-text-field>
 									</div>
 								</div>
@@ -221,8 +288,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_zip"
+											v-model="accountData.ssl_avs_zip"
 										></v-text-field>
 									</div>
 								</div>
@@ -232,7 +298,7 @@
 									<div class="dx-field-label">Country</div>
 									<div class="dx-field-value">
 										<v-select
-											filled
+											v-model="accountData.ssl_country"
 											:items="countries"
 										></v-select>
 									</div>
@@ -249,11 +315,21 @@
 							<div class="col-25p text-center">
 								<DxButton
 									:width="150"
-									text="Delete"
-									type="danger"
+									text="Test"
+									type="warning"
 									styling-mode="contained"
 									:focusStateEnabled="false"
 									@click="testingMethod">
+								</DxButton>
+							</div>
+							<div class="col-25p text-center">
+								<DxButton
+									:width="150"
+									text="Cancel"
+									type="warning"
+									styling-mode="contained"
+									:focusStateEnabled="false"
+									@click="cancel">
 								</DxButton>
 							</div>
 							<div class="col-25p text-center">
@@ -263,7 +339,7 @@
 									type="success"
 									styling-mode="contained"
 									:focusStateEnabled="false"
-									@click="testingMethod">
+									@click="createCreditCard">
 								</DxButton>
 							</div>
 						</div>
@@ -303,7 +379,6 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="number"
-											filled
 											v-model="creditCardForm.name"
 										></v-text-field>
 									</div>
@@ -315,7 +390,6 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
 											v-model="creditCardForm.name_on_card"
 										></v-text-field>
 									</div>
@@ -329,7 +403,6 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="number"
-											filled
 											v-model="creditCardForm.account_number"
 										></v-text-field>
 									</div>
@@ -341,7 +414,6 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
 											v-model="creditCardForm.name_on_card"
 										></v-text-field>
 									</div>
@@ -355,8 +427,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_address"
+											v-model="creditCardForm.billing_address"
 										></v-text-field>
 									</div>
 								</div>
@@ -367,8 +438,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_address2"
+											v-model="creditCardForm.billing_address2"
 										></v-text-field>
 									</div>
 								</div>
@@ -381,8 +451,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_city"
+											v-model="creditCardForm.billing_city"
 										></v-text-field>
 									</div>
 								</div>
@@ -393,8 +462,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_state"
+											v-model="creditCardForm.billing_state"
 										></v-text-field>
 									</div>
 								</div>
@@ -407,8 +475,7 @@
 									<div class="dx-field-value">
 										<v-text-field
 											type="text"
-											filled
-											v-model="creditCardForm.biling_zip"
+											v-model="creditCardForm.billing_zip"
 										></v-text-field>
 									</div>
 								</div>
@@ -418,7 +485,6 @@
 									<div class="dx-field-label">Country</div>
 									<div class="dx-field-value">
 										<v-select
-											filled
 											:items="countries"
 										></v-select>
 									</div>
@@ -435,11 +501,11 @@
 							<div class="col-25p text-center">
 								<DxButton
 									:width="150"
-									text="Delete"
+									text="Cancel"
 									type="danger"
 									styling-mode="contained"
 									:focusStateEnabled="false"
-									@click="testingMethod">
+									@click="cancel">
 								</DxButton>
 							</div>
 							<div class="col-25p text-center">
@@ -449,7 +515,7 @@
 									type="success"
 									styling-mode="contained"
 									:focusStateEnabled="false"
-									@click="testingMethod">
+									@click="createACHAccount">
 								</DxButton>
 							</div>
 						</div>
@@ -482,13 +548,19 @@ import { DxScrollView } from 'devextreme-vue/scroll-view';
 //Mixins
 import { FormMixins } from "@/mixins/form-mixins.js"
 import { LocaleMixins } from "@/mixins/locale-mixins"
+import { UniversalMixins } from "@/mixins/universal-mixins"
+import { ElavonConvergeMixins } from "@/mixins/credit-card/elavon-converge-mixin"
+
+
 
 
 export default {
 	name: "paymentMethodsComponent",
 	mixins: [
 		FormMixins,
-		LocaleMixins
+		LocaleMixins,
+		UniversalMixins,
+		ElavonConvergeMixins
 	],
 	components: {
 		DxAccordion,
@@ -522,16 +594,19 @@ export default {
 				is_primary: false,
 				is_active: true,
 				is_debit: false,
-				name_on_card: null,
-				card_number: null,
+				name_on_card: "Ian Christensen",
+				first_name: "Ian",
+				last_name: "Christensen",
+				card_number: "4159288888888882",
 				card_number_token: null,
-				card_cvv: null,
-				billing_address: null,
-				billing_address2: null,
-				billing_city: null,
-				billing_state: null,
-				billing_zip: null,
-				card_exp_date: null,
+				card_cvv: "912",
+				billing_address: "1 Main St",
+				billing_address2: "Ste.155",
+				billing_city: "Phoenix",
+				billing_state: "AZ",
+				billing_zip: '85355',
+				billing_country: "United States",
+				card_exp_date: '0125',
 				card_exp_month: null,
 				card_exp_year: null,
 				phone: null,
@@ -624,10 +699,27 @@ export default {
 
 	methods: {
 		testingMethod(e) {
-			console.log('e', e);
+			console.log('this.creditCardForm', this.creditCardForm);
 		},
 		getItemKeys: function(item) {
 			return Object.keys(item);
+		},
+		cancel() {
+			this.popupVisible = false
+		},
+		async createCreditCard() {
+			var newCCForm = JSON.parse(JSON.stringify(this.creditCardForm))
+
+			newCCForm.card_exp_month = this.creditCardForm.card_exp_date.slice(0,2)
+			newCCForm.card_exp_year = "20".concat("", this.creditCardForm.card_exp_date.slice(2,4))
+			newCCForm.card_exp_date = null;
+
+			let form = await this.setUserPlatformPOST(newCCForm)
+			this.$store.dispatch("POSTCreditCard", form)
+		},
+		async createACHAccount() {
+			let form = await this.setUserPlatformPOST(this.achForm)
+			this.$store.dispatch("POSTACHAccount", form)
 		}
 	},
 	computed: {
@@ -639,6 +731,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../assets/sass/variables.scss";
+
 #accordion h1 {
   font-size: 20px;
 }
@@ -690,5 +784,13 @@ export default {
 
 .option {
   margin-top: 10px;
+}
+.date-plcaceholder {
+	position: relative;
+	left: 10px;
+	top: -15px;
+	font-size: $base-font-size *.8;
+	opacity: 0.5;
+	height: 10px;
 }
 </style>

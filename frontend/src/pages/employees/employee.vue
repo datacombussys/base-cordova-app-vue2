@@ -52,8 +52,8 @@
 								<div v-if="!employeeForm.id" class="flex justify-center items-center">
 									<img
 										class="mt-3 disabled"
-										src="@/static/BusinessLogo170x170.png"
-										style="width:150px;height:150px;"
+										src="@/static/Male-Profile170X150.png"
+										style="width:170px;height:150px;"
 										alt="Please load profile">
 								</div>
 								<div v-else class="flex justify-center items-center">
@@ -61,8 +61,8 @@
 										:src="employeeForm.profile_img"
 										style="width:150px;height:150px;"
 										alt="Please load profile">
-									<img class="mt-3" v-else src="@/static/BusinessLogo170x170.png"
-										style="width:150px;height:150px;"
+									<img class="mt-3" v-else src="@/static/Male-Profile170X150.png"
+										style="width:170px;height:150px;"
 										alt="Please load profile">
 								</div>
 
@@ -326,7 +326,7 @@ export default {
 			profileImageSettings: {
 				url: 'employee/',
 				module: 'Employee',
-				mutation: 'UPDATE_PROFILE_IMAGE'
+				mutation: 'UPDATE_EMPLOYEE_PROFILE'
 			},
 			profileMenu: [
         { title: 'Upload Image' },
@@ -381,7 +381,9 @@ export default {
 				partner: null,
 				company: null,
 				vendor: null,
-				company: null,
+				barcode: null,
+				barcode_obj: null,
+
 				department: null,
 				position: null,
 				employee_docs: null,
@@ -407,38 +409,35 @@ export default {
 				dob: null,
 				org_name: null,
 				profile_img: null,
-				user: {
+				user: null,
+				user_obj: {
 					id: null,
+					username: null,
 					date_added: null,
 					global_id: null,
 					last_login: null,
+					is_active: true,
+					is_admin: false,
+					is_staff: true,
+					is_superuser: false,
+
 					first_name: null,
 					last_name: null,
 					full_name: null,
-					password: null,
+					password: "",
 					verify_pw: null,
 					pin: null,
 					email: null,
-					username: null,
 					mobile_phone: null,
 					fax: null,
 					address: null,
 					address2: null,
 					city: null,
 					state: null,
-					zip: null,
+					zip_code: null,
 					country: null,
 					bio: null,
-					is_active: true,
-					is_admin: false,
-					is_staff: true,
-					is_superuser: false,
-					is_cutomer: false,
-					is_vendor: false,
-					is_sales_rep: false,
-					is_warehouse_ee: false,
-					barcode: null,
-					barcode_obj: null,
+
 					groups: [],
 					permissions: [],
 				}
@@ -451,8 +450,11 @@ export default {
 	//******************************************** Methods ***********************************************//
   methods: {
     testMethod(e) {
-			console.log('this.employeeForm.user.password', this.employeeForm.user.password)
-			console.log('JQMIGRATE: Migrate is installed, version 3.0.0')
+			console.log('this.employeeForm', this.employeeForm)
+			console.log('this.employeeForm.user', this.employeeForm.user)
+			console.log("this.Employees.employeeProfile", this.Employees.employeeProfile)
+			console.log("this.Employees.employeeList", this.Employees.employeeList)
+			console.log("this.RETURN_EMPLOYEE_PROFILE", this.RETURN_EMPLOYEE_PROFILE)
 
 		},
 		closeSheet(e) {
@@ -488,17 +490,11 @@ export default {
 		newItemButton() {
 			//Show/Hide Edit Fields and buttons
 			this.clearUserFormData();
-			// console.log("this.clearUserFormData")
 			this.accountSettings.editProfile = true
-			// console.log("this.accountSettings.editProfile")
 			this.hideCreateItem = !this.hideCreateItem
-			// console.log("this.hideCreateItem")
 			this.hideUpdateItemButtons = false
-			// console.log("this.hideUpdateItemButtons")
 			this.accountSettings.hideSaveItem = false
-			// console.log("this.accountSettings.hideSaveItem")
-			this.selectedTabIndex = 2
-			// console.log("this.selectedTabIndex")
+			this.selectedTabIndex = 0
 		},
 		clearandResetButton() {
 			this.clearUserFormData()
@@ -565,10 +561,10 @@ export default {
 			return new Promise(async (resolve, reject) => {
 				var newUserForm = {};
 				try {
-					console.log("Create User this.employeeForm.user", this.employeeForm.user);
-					let response = await this.$store.dispatch("POSTUser", this.employeeForm.user);
+					console.log("Create User this.employeeForm.user", this.employeeForm.user_obj);
+					let response = await this.$store.dispatch("POSTUser", this.employeeForm.user_obj);
 					console.log("User POST response: ", response);
-					this.employeeForm.user.barcode = {};
+
 					if (response.status === 200 || response.status === 201) {
 						console.log("Response 201");
 						newUserForm = response.data;
@@ -637,13 +633,13 @@ export default {
 					//Reset User Object to employeeForm
 					this.employeeForm.user = user;
 
-					this.addToSalesOffice(eeResponse)
-					console.log("after addToSalesOffice");
+					// this.addToSalesOffice(eeResponse)
+					// console.log("after addToSalesOffice");
 
 					return resolve(eeResponse);
 
 				} catch (error) {
-					console.error('error', error).
+					console.error('error', error)
 					console.error('error.message', error.message)
 					console.error('error.response', error.response)
 					error.type = "Create Employee";
@@ -680,7 +676,7 @@ export default {
 			console.log("editEmployeeById employeeID", employeeID)
 			this.accountSettings.showPasswordReset = true
 			this.selectedTabIndex = 0
-			this.clearFormData()
+			this.clearUserFormData()
 
 			try {
 				// Get User ID and object and map to fields from database table
@@ -717,23 +713,23 @@ export default {
 			return new Promise((resolve, reject) => {
 				try {
 					console.log("clearUserFormData this.employeeForm", this.employeeForm);
-					for (let key in this.employeeForm.user) {
-						// console.log('key', this.employeeForm.user[key]);
-						if (this.employeeForm.user[key] === true || this.employeeForm.user[key] === false) {
+					for (let key in this.employeeForm.user_obj) {
+						// console.log('key', this.employeeForm.user_obj[key]);
+						if (this.employeeForm.user_obj[key] === true || this.employeeForm.user_obj[key] === false) {
 							// console.log('TF key', key);
-							this.employeeForm.user[key] = false;
+							this.employeeForm.user_obj[key] = false;
 						} else {
-							this.employeeForm.user[key] = null;
+							this.employeeForm.user_obj[key] = null;
 						}
 					}
 
 					//Reset Variables to Start Position
-					this.employeeForm.user.groups = [];
-					this.employeeForm.user.permissions = [];
-					this.employeeForm.user.is_staff = true;
-					this.employeeForm.user.is_active = true;
+					this.employeeForm.user_obj.groups = [];
+					this.employeeForm.user_obj.permissions = [];
+					this.employeeForm.user_obj.is_staff = true;
+					this.employeeForm.user_obj.is_active = true;
 
-					return resolve("ClearUserForms Promise Returned");
+					return resolve(this.clearEmployeeFormData())
 				} catch (error) {
 					console.log("Caught error", error);
 					return reject(error);
@@ -742,20 +738,28 @@ export default {
 		},
 		clearEmployeeFormData() {
 			console.log("this.employeeForm Clear Data", this.employeeForm);
-			const user = this.employeeForm.user;
-			for (let key in this.employeeForm) {
-				console.log("key", this.employeeForm[key]);
-				if (this.employeeForm[key] === true || this.employeeForm[key] === false) {
-					// console.log('TF key', key);
-					this.employeeForm[key] = false;
-				} else {
-					this.employeeForm[key] = null;
+			return new Promise((resolve, reject) => {
+				try {
+					const user = this.employeeForm.user_obj;
+					for (let key in this.employeeForm) {
+						console.log("key", this.employeeForm[key]);
+						if (this.employeeForm[key] === true || this.employeeForm[key] === false) {
+							// console.log('TF key', key);
+							this.employeeForm[key] = false;
+						} else {
+							this.employeeForm[key] = null;
+						}
+					}
+					//Reset Properties
+					this.employeeForm.modules_managed = [];
+					//Reassign User to Employee
+					this.employeeForm.user_obj = user;
+					return resolve()
+
+				} catch(error) {
+					return reject(error);
 				}
-			}
-			//Reset Properties
-			this.employeeForm.modules_managed = [];
-			//Reassign User to Employee
-			this.employeeForm.user = user;
+			})
 		},
 		//Set User item to inactive instead of deleting instance
 		async deleteEmployee(id) {
@@ -767,7 +771,7 @@ export default {
 
 				await this.$store.dispatch("PATCHDeleteUserProfile", eeObject.user).then((response) => {
 					console.log("response from deleteEmployee method", response);
-					this.clearFormData();
+					this.clearUserFormData();
 				});
 
 			} catch(error) {
@@ -775,6 +779,19 @@ export default {
 			}
 			await this.clearUserFormData();
 			this.resetViewtoHome();
+		},
+		//Load Employee On itnitial render
+		async loadLoggedInProfile() {
+			try {
+				if(Object.keys(this.RETURN_EMPLOYEE_PROFILE).length != 0) {
+					for (let key in this.employeeForm) {
+						this.employeeForm[key] = this.RETURN_EMPLOYEE_PROFILE[key];
+					}
+					this.resetViewtoHome();
+				}	
+			} catch(error) {
+					console.error("There was an error loading Employee Profile", error)
+				}
 		},
 		//Capture Edit by Child DataGrid Component
 		editProfileFromChild(e) {
@@ -794,7 +811,7 @@ export default {
   },
   computed: {
 		...mapState(["Auth", "Users", "Merchants", "Datacom", "Partners", "Vendors", "Employees"]),
-		...mapGetters(["GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST", "GET_SALES_OFFICE_EMPLOYEE_IDS", "GET_EMPLOYEE_LIST", "GET_SELECTED_EMPLOYEE_PROFILE"]),
+		...mapGetters(["GET_SALES_OFFICE_LIST", "GET_WAREHOUSE_LIST", "GET_SALES_OFFICE_EMPLOYEE_IDS", "GET_EMPLOYEE_LIST", "RETURN_EMPLOYEE_PROFILE", "GET_SELECTED_EMPLOYEE_PROFILE"]),
 		...mapGetters(["GET_USER_ERRORS_LIST", "GET_USER_ERROR_HANDLE", "GET_EMPLOYEE_ERRORS_LIST", "GET_EMPLOYEE_ERROR_HANDLE"]),
 		canSubmitUserForm() {
 			if (this.Auth.isAuthenticated) {
@@ -832,6 +849,7 @@ export default {
   },
   created() {
 		this.databaseData.list = this.GET_EMPLOYEE_LIST;
+		this.loadLoggedInProfile()
   },
 
     

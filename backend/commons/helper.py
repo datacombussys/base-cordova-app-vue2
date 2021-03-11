@@ -3,7 +3,7 @@ class CompanyIDs:
 	def newCompanyID(self, **kwargs):
 		print("newCompanyID kwargs", kwargs)
 
-		if kwargs['is_partner']:
+		if kwargs.get('is_partner', None):
 			if not kwargs['last_account_number']:
 				return "P-1000000"
 			else:
@@ -19,7 +19,7 @@ class CompanyIDs:
 
 			return concatenated_no
 
-		if kwargs['is_merchant']:
+		elif kwargs.get('is_merchant', None):
 			if not kwargs['last_account_number']:
 				return "M-1000000"
 			else:
@@ -35,7 +35,7 @@ class CompanyIDs:
 
 			return concatenated_no
 
-		if kwargs['is_datacom']:
+		elif kwargs.get('is_datacom', None):
 			if not kwargs['last_account_number']:
 				return "D-1000000"
 			else:
@@ -53,7 +53,7 @@ class CompanyIDs:
 
 				return concatenated_no
 
-		if kwargs['is_vendor']:
+		if kwargs.get('is_vendor', None):
 			if not kwargs['last_account_number']:
 				return "V-1000000"
 			else:
@@ -70,7 +70,7 @@ class CompanyIDs:
 				return concatenated_no
 
 
-		if kwargs['is_warehouse']:
+		elif kwargs.get('is_warehouse', None):
 			if not kwargs['last_account_number']:
 				return "W-1000000"
 			else:
@@ -87,7 +87,7 @@ class CompanyIDs:
 				return concatenated_no
 
 
-		if kwargs['is_salesoffice']:
+		elif kwargs.get('is_salesoffice', one):
 			if not kwargs['last_account_number']:
 				return "S-1000000"
 			else:
@@ -100,5 +100,6 @@ class CompanyIDs:
 				#Combine and return
 				concatenated_no = prefix + "-" + str(int_account_number)
 				print("concatenated_no", concatenated_no)
+
 
 				return concatenated_no

@@ -2,6 +2,11 @@ https://cdn.materialdesignicons.com/
 <span class="mdi mdi-cart-minus mdi-48"></span>
 <i class="mdi mdi-cart mdi-40"></i>
 
+Cool Button
+	<v-btn fab @click="setupSheetOpened = !setupSheetOpened">
+		<v-icon style="font-size: 45px">mdi-close-circle</v-icon>
+	</v-btn>
+
 //Do not use the fa-iconname only iconName
 <fa-icon :icon="['far', 'address-book']" class="mdi-35"></fa-icon>
 <fa-icon :icon="['fa', 'ambulance']" class="mdi-35"></fa-icon>
@@ -32,6 +37,11 @@ https://fontawesome.com/icons?d=gallery
 	font-family: "FontAwesome";
 	content: '\f057';
 }
+
+https://next.vuetifyjs.com/en/components/icons/
+Vuetify Icons (mdi)
+<v-icon>mdi mdi-close-circle</v-icon>
+
 
 DxtextBox Modes: 'email' | 'password' | 'search' | 'tel' | 'text' | 'url'
 
@@ -135,12 +145,12 @@ v-for="item in items"
 
 ****** Slots ******
 --Parent--
-<template #:button>
-  <f7-row class="display-flex justify-content-center">
-    <f7-col width="50">
+<template v-slot:button>
+  <div class="row">
+    <div wclass="col-6">
       Start Below
-    </f7-col>
-  </f7-row>
+    </div>
+  </div>
 </template>
 --Child--
 <slot name="button"></slot>
@@ -200,7 +210,13 @@ this.$nextTick(function() {
   });
 })
 
-
+********************  Passing data through this.$route.params *************************
+<v-chip
+	link
+	outlined
+	class="p-4"
+	:to="{ name: 'retail-pos', params: { id: till.id }"
+>
 
 Javascript TEMPLATES with Null Undefined, etc... REMOVE NULL AND UNDEFINED FIRST BY filter(),THEN PERFORM FUNCTION ON RESULT
 Empty Object with nested entries --> e.g. --> category.name
@@ -294,6 +310,19 @@ return acc + parseFloat(obj.list_price);
 //Hidden Div tags
 
 <div v-if="!DataFeed.showCharts ? 'hidden' : ''">Please load a chart from the side menu</div>
+
+------------------------------ Vue Reactivity ----------------
+-Objects-
+this.$set(transaction, "ssl_transaction_type", this.mainData.ssl_transaction_type)
+console.log("transaction Object", transaction)
+or 
+this.someObject = Object.assign({}, this.someObject, { a: 1, b: 2 })
+
+
+
+
+
+
 
 ************\*\************* PYTHON **********\***********
 
@@ -408,7 +437,7 @@ let merged = {...obj1, ...obj2};
 
 	return reject(response.message);
 
-****************************Django-Rest To Representaiton() ********************************
+****************************Django-Rest To Representation() ********************************
 
 # def to_representation(self, value):
 #     data = super().to_representation(value)  

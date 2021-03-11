@@ -46,7 +46,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create and Return a new user"""
-        customer = Customer.objects.create(**validated_data)
+        customer = Customer.objects.create_customer(**validated_data)
         print("Customer Created by serializer") 
         
         return customer 
@@ -63,10 +63,11 @@ class CustomerSerializer(serializers.ModelSerializer):
         return instance
 
 
-class SimpleCustomerSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Customer
-        fields = ['id', 'user', 'customer_number', 'customer_type']
+class CustomerListSerializer(serializers.ModelSerializer):
+	user_obj = UserListSerializer(read_only=True, source='user')
+	class Meta:
+		model = Customer
+		read_only_fields = ['id', 'user']
+		fields = ['id', 'customer_number', 'customer_type','user', 'profile_img', 'user_obj']
 
 

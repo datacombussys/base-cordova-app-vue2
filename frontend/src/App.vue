@@ -15,7 +15,7 @@
           <template #footer>
             <the-footer />
 
-						<!--Spinner and Poaders --><
+						<!--Spinner and Preloaders -->
 						<v-overlay :value="Notifications.isLoadPanelVisible">
 							<div class="row">
 								<v-card
@@ -77,8 +77,9 @@
           <div class="main-content">
             <router-view name="pos" class="page-container"/>
           </div>
-    
         </router-view>
+
+				<router-view></router-view>
         
       </div>
     </v-app>
@@ -86,12 +87,12 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
+import { mapState } from 'vuex';
 import { DxLoadPanel } from 'devextreme-vue/load-panel';
 import { confirm, custom, alert } from 'devextreme/ui/dialog';
 
-//Event Bus
-import {bus} from '@/services/event-bus'
+//Event bus
+import { bus } from '@/services/event-bus'
  
 import TheFooter from "@/components/elements/layout/footer-component";
 import { sizes, subscribe, unsubscribe } from "./utils/media-query";
@@ -127,7 +128,7 @@ export default {
         windowWidth: window.innerWidth,
 				windowHeight: window.innerHeight,
         
-        //DevExorcess
+        //DevEx
         Init: "Christ Jesus",
         title: this.$appInfo.title,
         screen: getScreenSizeInfo(),
@@ -140,7 +141,7 @@ export default {
 				menuVisible: false,
 				
 				//Snackbar
-      	message: 'My snackbar message'
+      	message: 'Snackbar message'
      
       }
     },

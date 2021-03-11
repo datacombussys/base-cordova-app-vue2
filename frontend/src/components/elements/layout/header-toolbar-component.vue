@@ -106,11 +106,6 @@ export default {
           icon: "runner",
           onClick: this.onLogoutClick
         },
-        {
-          text: "Login",
-          icon: "mdi mdi-login",
-          onClick: this.onLoginClick
-        }
       ]
     };
   },
@@ -120,19 +115,6 @@ export default {
     },
     onLogoutClick() {
       this.$store.dispatch("signOut")
-      this.$router.push({
-        path: "/login-form",
-        query: { redirect: this.$route.path }
-      });
-    },
-    onLoginClick() {
-      // console.log("this.Auth", this.Auth)
-      // this.$store.dispatch("signIn")
-      this.$router.push({
-        path: "/login-form",
-        query: { redirect: this.$route.path }
-      });
-
     },
 
   },

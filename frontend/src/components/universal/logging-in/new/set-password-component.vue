@@ -17,7 +17,7 @@
 											<div class="mdi mdi-check-bold mdi-24px" :class="minOneLetter ? 'text-green': 'text-red'"></div>
 										</div>	
 										<div class="col-90p">
-											Minimum of One Letter: a, b c, d, e
+											Minimum of One Letter: A, a, B, b, C, c...
 										</div>
 									</div>
 									<div class="row">
@@ -90,18 +90,23 @@
 						<div class="dx-field">
 							<div class="dx-field-label">Email Address</div>
 							<div class="dx-field-value">
-								<DxTextBox 
+								<v-text-field
+										v-model="loginForm.user_obj.email"
+										type="text"
+										color="red"
+									></v-text-field>
+								<!-- <DxTextBox 
 									:disabled="!accountSettings.editProfile"
-									:value.sync="loginForm.user.email">
+									:value.sync="loginForm.user_obj.email">
 									<DxValidator>
 										<DxRequiredRule message="Email is required"/>
 										<DxEmailRule message="Email is invalid"/>
-										<!-- <DxAsyncRule
+										<DxAsyncRule
 											:validation-callback="asyncValidation"
 											message="Email is already registered"
-										/> -->
+										/>
 									</DxValidator>
-								</DxTextBox>
+								</DxTextBox> -->
 							</div>
 						</div>
 					</div>
@@ -109,10 +114,15 @@
 						<div class="dx-field">
 						<div class="dx-field-label">PIN</div>
 							<div class="dx-field-value">
-								<DxTextBox
+								<v-text-field
+										v-model="loginForm.user_obj.pin"
+										type="password"
+										color="red"
+									></v-text-field>
+								<!-- <DxTextBox
 									mode="password"
 									:disabled="!accountSettings.editProfile"
-									:value.sync="loginForm.user.pin">
+									:value.sync="loginForm.user_obj.pin">
 									<DxValidator>
 										<DxRequiredRule message="Last Name is required"/>
 										<DxPatternRule
@@ -120,7 +130,7 @@
 											message="The name should not contain numbers or special characters"
 										/>
 									</DxValidator>
-								</DxTextBox>
+								</DxTextBox> -->
 							</div>
 						</div>
 					</div>
@@ -129,15 +139,20 @@
 							<div class="dx-field">
 								<div class="dx-field-label">Password</div>
 								<div class="dx-field-value">
-									<DxTextBox
+									<v-text-field
+										v-model="loginForm.user_obj.password"
+										type="password"
+										color="red"
+									></v-text-field>
+									<!-- <DxTextBox
 										:disabled="!accountSettings.editProfile"
-										:value.sync="loginForm.user.password"
+										:value.sync="loginForm.user_obj.password"
 										mode="password"
 									>
 										<DxValidator>
 											<DxRequiredRule message="Password is required"/>
 										</DxValidator>
-									</DxTextBox>
+									</DxTextBox> -->
 								</div>
 							</div>
 						</div>
@@ -145,7 +160,13 @@
 							<div class="dx-field">
 								<div class="dx-field-label">Confirm Password</div>
 								<div class="dx-field-value">
-									<DxTextBox 
+									<v-text-field
+										color="red"
+										v-model="confirmPassword"
+										type="password"
+									></v-text-field>
+ 
+									<!-- <DxTextBox 
 										:disabled="!accountSettings.editProfile"
 										:value.sync="confirmPassword"
 										mode="password">
@@ -156,11 +177,22 @@
 												message="Password and Confirm Password do not match"
 											/>
 										</DxValidator>
-									</DxTextBox>
+									</DxTextBox> -->
 								</div>
 							</div>
 						</div>
 					</div>
+					 <v-alert
+						v-if="comparePasswords"
+							text
+							type="error"
+							icon="mdi-information"
+						>
+						Passwords do not match
+					</v-alert>
+					<!-- <div class="row errorField">
+						Passewords do not match
+					</div> -->
 
 				</div>
 			</div>
@@ -248,7 +280,7 @@ export default {
 
 		},
 		passwordComparison() {
-      return this.loginForm.user.password;
+      return this.loginForm.user_obj.password;
 		},
 		
 		asyncValidation() {
@@ -298,21 +330,24 @@ export default {
 	computed: {
 		...mapState([]),
 		minOneLetter() {
-			var minimumOneLetter = /[a-zA-z]/;
-			let res = minimumOneLetter.test(this.loginForm.user.password)
+			console.log("minOneLetter")
+			var minimumOneLetter = /[a-zA-Z]/
+			let res = minimumOneLetter.test(this.loginForm.user_obj.password)
+			console.log("this.loginForm.user_obj.password", this.loginForm.user_obj.password)
+			console.log("minOneLetter res", res)
 			return res;
 		},
 		minOneNumber() {
 			var minOneNum = /[0-9]/
-			let res = minOneNum.test(this.loginForm.user.password)
+			let res = minOneNum.test(this.loginForm.user_obj.password)
 			return res;
 		},
 		minOneCharacter() {
 			console.log('minOneCharacter');
 			var minOneChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-			let res = minOneChar.test(this.loginForm.user.password)
-			// if(this.loginForm.user.password) {
-			// 	if(this.loginForm.user.password.match(minOneChar)) {
+			let res = minOneChar.test(this.loginForm.user_obj.password)
+			// if(this.loginForm.user_obj.password) {
+			// 	if(this.loginForm.user_obj.password.match(minOneChar)) {
 			// 		return true;
 			// 	}
 			// }
@@ -321,8 +356,8 @@ export default {
 		minSixChars() {
 			console.log('minSixChars');
 			var minSixChar = /.{6,}$/;
-			if(this.loginForm.user.password) {
-				if(this.loginForm.user.password.match(minSixChar)) {
+			if(this.loginForm.user_obj.password) {
+				if(this.loginForm.user_obj.password.match(minSixChar)) {
 					return true;
 				}
 			}
@@ -330,18 +365,18 @@ export default {
 		},
 		cantUseName() {
 			console.log('cantUseName');
-			if(this.loginForm.user.first_name) {
-				var firstname = this.loginForm.user.first_name.toLowerCase();
+			if(this.loginForm.user_obj.first_name) {
+				var firstname = this.loginForm.user_obj.first_name.toLowerCase();
 			}
-			if(this.loginForm.user.last_name) {
-				var lastname = this.loginForm.user.last_name.toLowerCase();
+			if(this.loginForm.user_obj.last_name) {
+				var lastname = this.loginForm.user_obj.last_name.toLowerCase();
 			}
-			if(this.loginForm.user.email) {
-				var email = this.loginForm.user.email.toLowerCase();
+			if(this.loginForm.user_obj.email) {
+				var email = this.loginForm.user_obj.email.toLowerCase();
 			}
 			var words = [firstname, lastname, email];
-			if(this.loginForm.user.password) {
-				var password = this.loginForm.user.password.toLowerCase();
+			if(this.loginForm.user_obj.password) {
+				var password = this.loginForm.user_obj.password.toLowerCase();
 				for(let key in words) {
 					if(password.includes(words[key])) {
 						return false
@@ -354,8 +389,8 @@ export default {
 			console.log('cantUseCommon');
 			var words = ['password', '12345'];
 
-			if(this.loginForm.user.password) {
-				var password = this.loginForm.user.password.toLowerCase();
+			if(this.loginForm.user_obj.password) {
+				var password = this.loginForm.user_obj.password.toLowerCase();
 				for(let key in words) {
 					if(password.includes(words[key])) {
 						return false
@@ -364,10 +399,19 @@ export default {
 			}
 			return true;
 		},
+		comparePasswords() {
+			if(this.confirmPassword) {
+				if(this.loginForm.user_obj.password != this.confirmPassword) {
+					return true
+				}
+			}
+			
+			return false
+		}
 		
 	},
 	watch: {
-		// 'loginForm.user.password': {
+		// 'loginForm.user_obj.password': {
 		// 	handler: function (after, before) {
 				 
 		// 	},
@@ -406,4 +450,5 @@ $standard-font: 1.1em;
 		}
 	}
 }
+
 </style>

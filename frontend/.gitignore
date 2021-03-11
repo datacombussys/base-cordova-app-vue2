@@ -25,3 +25,6 @@ pnpm-debug.log*
 /src-cordova/platforms
 /src-cordova/plugins
 /public/cordova.js
+
+#personal files
+snippets.md

@@ -1,16 +1,15 @@
 import Vue from 'vue'
 import store from "@/store";
-import Axios from 'axios';
-
 import VuetifyDialog from 'vuetify-dialog'
-console.log('this', this)
-console.log('VuetifyDialog', VuetifyDialog)
+
+
+// console.log('this', this)
+// console.log('VuetifyDialog', VuetifyDialog)
 
 store.subscribe((mutation) => {
-	console.log("Ustore.subscribe")
-	console.log("store", store)
-	console.log("this", this)
-	console.log("Vue.prototype.$dialog", Vue.prototype.$dialog)
+	// console.log("store.subscribe")
+	// console.log("store", store)
+	// console.log("Vue.prototype.$dialog", Vue.prototype.$dialog)
 	
 	//If Successful Login
 	if (mutation.type === 'UPDATE_LOGIN_NOTIFICATIONS') {
@@ -22,10 +21,9 @@ store.subscribe((mutation) => {
 				
 	} 
 	if (mutation.type === 'UPDATE_NOTIFICATIONS') {
-		console.log("Unsuccessful login subscribers:")
-		console.log("store", store)
-		console.log("this", this)
-		console.log('VuetifyDialog', VuetifyDialog)
+		// console.log("Unsuccessful login subscribers:")
+		// console.log("store", store)
+		// console.log('VuetifyDialog', VuetifyDialog)
 		Vue.prototype.$dialog.notify[mutation.payload.color](mutation.payload.msg, {
 			position: 'bottom-left',
 			timeout: 5000

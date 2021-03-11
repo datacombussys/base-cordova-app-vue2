@@ -1,6 +1,7 @@
 <template>
   <div>  
-    <dx-validation-group>
+    <DxValidationGroup 
+			ref="loginValidationGrpRef">
       <div class="login-header">
         <div class="title">{{ title }}</div>
         <div>Sign In to your account</div>
@@ -54,7 +55,7 @@
       <div class="dx-field mt-5">
         <dx-button type="normal" text="Create an account" width="100%" />
       </div>
-    </dx-validation-group>
+    </DxValidationGroup>
   </div>
 </template>
 
@@ -80,26 +81,41 @@ export default {
     return {
       title: this.$appInfo.title,
       loginData: {
-        username: "ian@datacom.com",
+        username: "ian1@ian.com",
 				password: "manofGod123",
       },
       rememberUser: false
     };
   },
   methods: {
-    onLoginClick(e) {
-      let validate = e.validationGroup.validate();
-      console.log('rememberUser', this.rememberUser)
-      console.log('loginData', this.loginData)
+    onLoginClick() {
+      let validate = this.validateForm();
+      console.log('validate', validate)
+      // console.log('loginData', this.loginData)
       if (validate.isValid) {
         this.$store.dispatch("signIn", this.loginData)
-        // e.validationGroup.reset()
+				// e.validationGroup.reset()
         return;
       }
       
-    },
+		},
+		validateForm() {
+			return this.validateLoginGroup.validate()
+		}
     
-  },
+	},
+	computed: {
+		validateLoginGroup() {
+			return this.$refs.loginValidationGrpRef.instance
+		}
+	},
+	mounted() {
+		document.addEventListener("keyup", event => {
+			if(event.keyCode === 13) {
+				this.onLoginClick()
+			}
+		})
+	}
   
 };
 </script>

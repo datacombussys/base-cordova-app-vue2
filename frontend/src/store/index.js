@@ -9,6 +9,10 @@ import { Statistics } from "./stats/statistics";
 
 import { Common } from "./common/common";
 import { VTHPP } from "./vthpp/vthpp";
+import { Converge } from "./vthpp/converge";
+import { ConvergeSDK } from "./vthpp/convergeSDK";
+import { APIKeys } from "./common/api-keys";
+
 import { RetailPOS } from './retail-pos/retail-pos';
 import { Invoices } from "./financial/invoices";
 import { Receipts } from "./financial/receipts";
@@ -47,12 +51,15 @@ export default new Vuex.Store({
 		Accounting,
 		Admin,
 		Attendance,
+		APIKeys,
 		Auth,
 		Calendar,
 		Chat,
 		Merchants,
 		Common,
 		ContentTypes,
+		Converge,
+		ConvergeSDK,
 		Customers,
 		Datacom,
 		DragNDrop,
@@ -78,7 +85,6 @@ export default new Vuex.Store({
 		Vendors,
 		VTHPP,
 		Warehouses,
-
 
 	},
 	state: {

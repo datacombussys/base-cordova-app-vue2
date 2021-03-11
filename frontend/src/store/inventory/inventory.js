@@ -53,17 +53,15 @@ export const Inventory = {
 			state.inventoryProfile = payload
 		},
 
-		UPDATE_INVENTORY_PROFILE_AND_LIST() {
+		UPDATE_INVENTORY_PROFILE_AND_LIST(state, payload) {
 			console.log('payload', payload);
-      let listIndex = state.inventoryList.findIndex(elem => elem.id === payload.id);
-      state.inventoryList.slice(listIndex, 1);
-      state.inventoryList.splice(listIndex, 1, payload);
+			let listIndex = state.inventoryList.findIndex(elem => elem.id === payload.id);
+			state.inventoryList.splice(listIndex, 1, payload);
 			console.log('state.inventoryList', state.inventoryList);
 			state.inventoryProfile = payload
 		},
 		UPDATE_SELECTED_INVENTORY_PROFILE_AND_LIST() {
 			let listIndex = state.selectedInventoryList.findIndex(elem => elem.id === payload.id);
-      state.selectedInventoryList.slice(listIndex, 1);
       state.selectedInventoryList.splice(listIndex, 1, payload);
 			console.log('state.selectedInventoryList', state.selectedInventoryList);
 
@@ -199,9 +197,14 @@ export const Inventory = {
       return new Promise( async (resolve, reject) => {
         try {
           let response = await apiRoutes.POSTItem(dispatch, rootState, payload, payload.endpoint, payload.type);
-          console.log('POSTInventory response', response);
-          commit(payload.mutation, response.data);
+					console.log('POSTInventory response', response);
+					if(response.status === 201) {
+						commit(payload.mutation, response.data);
           return resolve(response)
+					}
+          else {
+						return reject(response)
+					}
 
         } catch (error) {
           console.error("POSTInventory error.response", error);

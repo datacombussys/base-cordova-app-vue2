@@ -5,7 +5,16 @@
         <div class="image-container">
           <div class="user-image" />
         </div>
-        <div class="user-name">ian@datacom.com</div>
+        <div 
+					v-if="Object.keys(Employees.employeeProfile).length != 0"
+					class="user-name">
+					{{ Employees.employeeProfile.user_obj.full_name }}
+				</div>
+				<div 
+					v-if="Object.keys(Customers.customerProfile).length != 0"
+					class="user_obj-name">
+					{{ Customers.employeeProfile.user.full_name }}
+				</div>
       </div>
 
       <dx-context-menu
@@ -58,7 +67,7 @@ export default {
 
   },
   computed: {
-    ...mapState(["Auth"]),
+    ...mapState(["Auth", "Customers", "Employees"]),
   }
 };
 </script>

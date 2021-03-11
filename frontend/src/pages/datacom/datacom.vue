@@ -39,11 +39,11 @@
 											</v-list>
 										</v-menu>
 										<profileImageComponent 
-										ref="profileImageComponent"
-										:openImageSheet="openImageSheet"
-										@closeSheet="closeSheet"
-										:profileImageSettings="profileImageSettings"
-										:profileData="datacomForm" />
+											ref="profileImageComponent"
+											:openImageSheet="openImageSheet"
+											@closeSheet="closeSheet"
+											:profileImageSettings="profileImageSettings"
+											:profileData="datacomForm" />
 									</div>
 								</div>
 							</v-card-title>
@@ -142,12 +142,20 @@
 								<div class="mt-4 text-center">Permissions</div>
 							</div>
 							<div class="m-4">
-								<div class="mdi mdi-account-cash-outline mdi-60 text-datacom mb-3"></div>
-								<div class="mt-4 text-center">Subscription</div>
+								<router-link to="#" @click.native="openSubscriptionComponent">
+									<div class="mdi mdi-account-cash-outline mdi-60 text-datacom mb-3"></div>
+									<div class="mt-4 text-center">Subscription</div>
+								</router-link>
+								<subscriptionComponent ref="subscriptionComponentRef"/>
 							</div>
 							<div class="m-4">
-								<div class="mdi mdi-cogs mdi-60 text-datacom mb-3"></div>
-								<div class="mt-4 text-center">Setup / Admin</div>
+								<router-link to="#" @click.native="setupSheetOpened = true">
+									<div class="mdi mdi-cogs mdi-60 text-datacom mb-3"></div>
+									<div class="mt-4 text-center">Setup / Admin</div>
+								</router-link>
+								<setupSheetComponent 
+									:setupSheetOpened="setupSheetOpened"
+									@closeSetupSheet ="closeSetupSheet"/>
 							</div>
 							<div class="m-4">
 								<router-link to="/help-desk">
@@ -263,6 +271,8 @@ import paymentMethodsComponent from "@/components/business/new-docs/payment-comp
 import employeesComponent from "@/components/business/new-docs/employees-component"
 import databaseComponent from "@/components/business/new-docs/database-component"
 import profileImageComponent from "@/components/universal/new/profile-image-component"
+import setupSheetComponent from "@/components/business/new-docs/setup/setup-sheet-component"
+import subscriptionComponent from "@/components/business/new-docs/subscription/subscription-component"
 
 //Mixins
 import { UniversalMixins } from "@/mixins/universal-mixins"
@@ -281,6 +291,8 @@ export default {
 		profileImageComponent,
 		employeesComponent,
 		databaseComponent,
+		setupSheetComponent,
+		subscriptionComponent,
 		DxScrollView,
 		DxButton,
 		DxDropDownButton,
@@ -330,7 +342,7 @@ export default {
 			profileImageSettings: {
 				url: 'datacom/',
 				module: 'Datacom',
-				mutation: 'UPDATE_PROFILE_IMAGE'
+				mutation: 'UPDATE_DATACOM_PROFILE'
 			},
 			profileMenu: [
 				{ title: 'Upload Image' },
@@ -349,7 +361,7 @@ export default {
 					is_vendor: false
 				},
 			},
-			//Database Compoennt Data
+			//Database Component Data
 			databaseSettings: {
 				title: "Datacom Database",
 				header1: "Id",
@@ -377,6 +389,7 @@ export default {
 			hideCreateItem: false,
 			selectedTabIndex: 0,
 			openImageSheet: false,
+			setupSheetOpened: false,
 
 			
 			//Form Data
@@ -451,22 +464,20 @@ export default {
 	//******************************************** Methods ***********************************************//
   methods: {
     testMethod(e) {
-			// console.log('this.datacomForm', this.datacomForm)
-			// console.log('this.Datacom.datacomList', this.Datacom.datacomList)
-			// console.log("this.GET_DATACOM_PROFILE", this.GET_DATACOM_PROFILE)
-			console.log('Vuetify', Vuetify)
-			console.log('VDialog', VDialog)	
-			let sb = new VDialog({text: "Hello There", timeout: 2000})
-			console.log('sb', sb)	
-			this.$dialog.notify.error("Test", {
-        position: 'bottom-left',
-        timeout: 5000
-      });
-
+			console.log('this.datacomForm', this.datacomForm)
+			console.log('this.Datacom.datacomList', this.Datacom.datacomList)
+			console.log("this.GET_DATACOM_PROFILE", this.GET_DATACOM_PROFILE)
+		},
+		openSubscriptionComponent() {
+			this.$refs.subscriptionComponentRef.openedSubscriptionSheet = true
 		},
 		closeSheet(e) {
 			console.log("closeSheet e", e)
 			this.openImageSheet = e
+		},
+		closeSetupSheet(e) {
+			console.log("closeSetupSheet e", e)
+			this.setupSheetOpened = e
 		},
 		clickProfileMenu(e) {
 			console.log("clickProfileMenu e", e)
@@ -652,8 +663,7 @@ export default {
 					this.$store.dispatch("GETEmployeeFilterList", {id: response.id, filterURL: response.filterURL});
 					this.resetViewtoHome();
 				}	
-			}
-				catch(error) {
+			} catch(error) {
 					console.error("There was an error", error)
 				}
 		},

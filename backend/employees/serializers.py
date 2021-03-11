@@ -44,7 +44,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all(), required=False, allow_null=True)
     company_obj = CompanyListSerializer(read_only=True, source='company')
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
-    vendor_obj = VendorListSerializer(read_only=True, source='company')
+    vendor_obj = VendorListSerializer(read_only=True, source='vendor')
     vendor = serializers.PrimaryKeyRelatedField(queryset=Vendor.objects.all(), required=False, allow_null=True)
     user_obj = UserListSerializer(read_only=True, source='user')
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
@@ -86,7 +86,7 @@ class EmployeeListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         read_only_fields = ['id', 'user']
-        fields = ['id', 'position', 'salary', 'reporting_manager','hire_date', 'termination_date', 'user', 'profile_img', 'user_obj']
+        fields = ['id', 'position', 'salary', 'employee_number', 'reporting_manager','hire_date', 'termination_date', 'user', 'profile_img', 'user_obj']
 
 class EmployeeModulesManagerSerializer(serializers.ModelSerializer):
     modules_managed_list = ContentTypeSerializer(many=True, read_only=True, source='modules_managed')
@@ -95,3 +95,58 @@ class EmployeeModulesManagerSerializer(serializers.ModelSerializer):
         model = Employee
         read_only_fields = ['employee_number', 'user__id']
         fields = ['id', 'employee_number', 'user__id', 'modules_managed_list', 'modules_managed', 'is_module_manager']
+
+# Taken from User SerializerPage - Need to refactor the following
+class AlternativeLoginSerializer(serializers.Serializer):
+    barcode_number = serializers.CharField(max_length=20)
+    pin = serializers.CharField(max_length=4)    
+        
+    def validate(self, data):
+        barcode_number = data.get('barcode_number', "")
+        pin = data.get('pin', "")
+        if data['barcode_number'] and data['pin']:
+            try:
+                barcode = CommonBarcode.objects.get(barcode_number = data['barcode_number'])
+            except CommonBarcode.DoesNotExist:
+                raise Http404("No Barcode match for the given barcode number.")
+            
+            if barcode.user.pin == data['pin']:
+                data['user'] = barcode.user
+                return data
+            else:
+                msg = "Unable to login User with credentials"
+                raise exceptions.ValidationError(msg)
+        else:
+            msg = "You must provide a barcocde number and PIN"
+            raise exceptions.ValidationError(msg)
+        return data
+
+class ManagerApprovalBarcodeSerializer(serializers.Serializer):
+    barcode_number = serializers.CharField(max_length=20)
+    pin = serializers.CharField(max_length=4)  
+        
+    def validate(self, data):
+        print('Serializer Validate 1')
+        barcode_number = data.get('barcode_number', "")
+        pin = data.get('pin', "")
+        if data['barcode_number'] and data['pin']:
+            try:
+                barcode = CommonBarcode.objects.get(barcode_number = data['barcode_number'])
+            except CommonBarcode.DoesNotExist:
+                raise Http404("No Barcode match for the given barcode number.")
+            
+            if barcode.user.pin == data['pin']:
+                data['user'] = barcode.user
+                print(data['user'])
+                if data['user'].is_admin or data['user'].is_superuser:
+                    return data
+                else:
+                    msg = "You need to have approval from an admin account"
+                    raise exceptions.ValidationError(msg)
+            else:
+                msg = "Unable to  verify manager with provided credentials"
+                raise exceptions.ValidationError(msg)
+        else:
+            msg = "You must provide a barcocde number and PIN"
+            raise exceptions.ValidationError(msg)
+        return data

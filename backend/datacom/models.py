@@ -29,7 +29,7 @@ class DatacomManager(models.Manager):
 			kwargs['last_account_number'] = None
 
 		kwargs['is_datacom'] = True
-		print('Modified creat_datacom kwargs', kwargs)
+		print('Modified create_datacom kwargs', kwargs)
 
 		newDatacomID = CompanyIDs.newCompanyID(self, **kwargs)
 		del kwargs['last_account_number']

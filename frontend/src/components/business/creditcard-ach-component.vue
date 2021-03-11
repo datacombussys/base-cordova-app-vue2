@@ -580,7 +580,7 @@ export default {
 			//Get Company ID
 			let platformForm = await this.setUserPlatformPOST(this.creditCardForm);
 			console.log("platformForm", platformForm);
-			this.$store.dispatch("addCreditCard", platformForm);
+			this.$store.dispatch("POSTCreditCard", platformForm);
 		},
 		makePrimaryCC() {},
 		deleteCreditCard() {},
@@ -589,7 +589,7 @@ export default {
 			this.achForm["datacom"] = this.Users.employeeProfile.datacom.id;
 			this.achForm["url"] = "?datacom__id=" + this.Users.employeeProfile.datacom.id;
 			console.log(" this.achForm", this.achForm);
-			await this.$store.dispatch("addACHAccount", this.achForm);
+			await this.$store.dispatch("POSTACHAccount", this.achForm);
 			this.clearACHForm();
 		},
 		clearACHForm() {

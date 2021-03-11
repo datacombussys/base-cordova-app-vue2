@@ -14,7 +14,7 @@ class SalesTaxViewset(viewsets.ModelViewSet):
     update, partial_update, destroy"""
     serializer_class = SalesTaxSerializer
     queryset = SalesTax.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['id', 'datacom__id', 'partner__id', 'company__id']
     search_fields = ['id',  'datacom__id', 'partner__id', 'company__id']
     ordering_fields = '__all__'

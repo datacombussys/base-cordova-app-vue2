@@ -4,7 +4,6 @@
 .main-content {
   line-height: 1.5;
   height: 100%;
-  min-height: 100%;
   .page-container {
     .main-container {
       min-height: calc(100vh - 150px);
@@ -20,10 +19,9 @@
 .dx-widget {
   font-family: 'Open Sans', sans-serif;
 }
-.small-block {
+.block {
+	padding: 0px 20px;
   margin-top: 15px;
-  padding-left: 10px;
-  padding-right: 10px;
 }
 .content-block {
   padding: 0px 30px;
@@ -34,6 +32,12 @@
     padding-right: 20px;
   }
 }
+.small-block {
+  margin-top: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 
 .responsive-paddings {
   padding: 20px;

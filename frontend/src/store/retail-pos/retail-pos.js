@@ -1,7 +1,4 @@
 
-
-
-
 export const RetailPOS = {
   namespace: true,
   name: "retailPOS",
@@ -14,15 +11,23 @@ export const RetailPOS = {
 		processDeclinedFrequency: [
 			"Daily", "Weekly", "Monthly"
 		],
-		tillHistoryList: [],
+		tillList: [],
 		openTillObject: {},
   },
   mutations: {
-		SET_TILL_HISTORY_LIST(state, payload) {
-			state.tillHistoryList = payload;
+		SET_TILL_LIST(state, payload) {
+			state.tillList = payload;
 		},
-		PUSH_NEW_OPEN_TILL(state, payload) {
-			state.tillHistoryList.push(payload);
+		PUSH_NEW_TILL(state, payload) {
+			console.log('payload', payload)
+			state.tillList.push(payload);
+			console.log('state.tillList', state.tillList)
+		},
+		REMOVE_TILL(state, payload) {
+			state.tillList.slice(payload, 1)
+		},
+		SAVE_TILL(state, payload) {
+			state.tillList.splice(payload.id, 1, payload.data)
 		}
   },
   actions: {
@@ -124,14 +129,14 @@ export const RetailPOS = {
 
   },
   getters: {
-		GET_TILL_HISTORY_LIST() {
-			return state.tillHistoryList;
+		GET_TILL_LIST_LENGTH(state) {
+			return state.tillList.length
 		},
-		GET_TILL_HISTORY_LIST_LENGTH() {
-			return state.tillHistoryList.length;
+		GET_OPEN_TILL_OBJECT(state) {
+			return state.openTillObject
 		},
-		GET_OPEN_TILL_OBJECT() {
-			return state.openTillObject;
+		RETURN_TILL_LIST(state) {
+			return state.tillList
 		}
   }
 };

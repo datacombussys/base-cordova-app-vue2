@@ -143,8 +143,13 @@
 								<div class="mt-4 text-center">Subscription</div>
 							</div>
 							<div class="m-4">
-								<div class="mdi mdi-cogs mdi-60 text-datacom mb-3"></div>
-								<div class="mt-4 text-center">Setup / Admin</div>
+								<router-link to="#" @click="setupSheetOpened = true">
+									<div class="mdi mdi-cogs mdi-60 text-datacom mb-3"></div>
+									<div class="mt-4 text-center">Setup / Admin</div>
+								</router-link>
+								
+								<setupSheetComponent 
+									:setupSheetOpened="setupSheetOpened"/>
 							</div>
 							<div class="m-4">
 								<div class="mdi mdi-lifebuoy mdi-60 text-datacom mb-3"></div>
@@ -272,6 +277,7 @@ import reportingComponent from "@/components/business/new-docs/reporting-compone
 import employeesComponent from "@/components/business/new-docs/employees-component"
 import databaseComponent from "@/components/business/new-docs/database-component"
 import profileImageComponent from "@/components/universal/new/profile-image-component"
+import setupSheetComponent from "@/components/business/new-docs/setup/setup-sheet-component"
 
 //Mixins
 import { UniversalMixins } from "@/mixins/universal-mixins"
@@ -292,6 +298,7 @@ export default {
 		employeesComponent,
 		databaseComponent,
 		profileImageComponent,
+		setupSheetComponent,
 		DxScrollView,
 		DxButton,
 		DxDropDownButton,
@@ -343,7 +350,7 @@ export default {
 			profileImageSettings: {
 				url: 'datacom/',
 				module: 'Merchant',
-				mutation: 'UPDATE_PROFILE_IMAGE'
+				mutation: 'UPDATE_MERCHANT_PROFILE'
 			},
 			profileMenu: [
         { title: 'Upload Image' },
@@ -390,6 +397,7 @@ export default {
 			hideCreateItem: false,
 			selectedTabIndex: 0,
 			openImageSheet: false,
+			setupSheetOpened: false,
 
 			//Form Data
 			merchantForm: {

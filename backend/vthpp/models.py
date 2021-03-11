@@ -1,6 +1,11 @@
 from django.db import models
+from uuid import uuid4
 from django.core.validators import RegexValidator
-from django.contrib.auth.hashers import make_password
+from django.contrib.postgres.fields import JSONField
+from django.db.transaction import TransactionManagementError
+from django.contrib.auth.hashers import make_password, check_password
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, Http404
 
 from datacom.models import Datacom
 from partners.models import Partner
@@ -8,68 +13,204 @@ from companies.models import Company
 from project.settings import base
 from users.models import User
 
-class CardProcessingAccount(models.Model):
-  partner           = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
-  datacom           = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
-  company           = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
-  user              = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-  date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
-  processor_name    = models.CharField(max_length=20, blank=True, null=True)
-  transaction_id    = models.CharField(max_length=100, blank=True, null=True)
-  merchant_id       = models.CharField(max_length=15, null=True, blank=True, validators=[RegexValidator(r'^\d{1,15}$')])
-  pin               = models.CharField(max_length=64, blank=True, null=True)
-  password          = models.CharField(max_length=100, blank=True, null=True)
+from .elavon import Converge
+
+class APIKeyManager(models.Manager):
+	def get_or_none(self, **kwargs):
+		try:
+			return self.get(**kwargs)
+		except ObjectDoesNotExist:
+			return None
+
+	def update_api(self, **kwargs):
+		print("update_api kwargs", kwargs)
+		obj = kwargs.pop('key', False)
+
+		for index, value in kwargs.items():
+			setattr(obj, index, value)
+
+		obj.save(update_fields=kwargs.keys())
+		
+		return obj
+			
+	def create_API_key(self, **kwargs):
+		if not kwargs['processor_name']:
+			raise ValueError("You must enter the name of the processor")
+		if not kwargs['merchant_id']:
+			raise ValueError("You must enter a valid merchant ID")
+		print("create_API_key kwargs", kwargs)
+
+		# Need to find out if company already has active API Key
+		# If not, create new API key
+		# If so, find it and update wit with current values
+
+		datacom = kwargs.get('datacom', None)
+		partner = kwargs.get('partner', None)
+		company = kwargs.get('company', None)
+
+		if datacom:
+			keyObj = CardProcessingAPIKey.objects.get_or_none(datacom_id=kwargs['datacom'])
+			if keyObj:
+				kwargs['key'] = keyObj
+				api = self.update_api(**kwargs)
+				return api
+			else:
+				api = self.model(**kwargs)
+				api.save(using=self._db)
+				return api
+		elif partner:
+			keyObj = CardProcessingAPIKey.objects.get_or_none(partner_id=kwargs['partner'])
+			if keyObj:
+				kwargs['key'] = keyObj
+				api = self.update_api(**kwargs)
+				return api
+			else:
+				api = self.model(**kwargs)
+				api.save(using=self._db)
+				return api
+		elif company:
+			keyObj = CardProcessingAPIKey.objects.get_or_none(company_id=kwargs['company'])
+			if keyObj:
+				kwargs['key'] = keyObj
+				api = self.update_api(**kwargs)
+				return api
+			else:
+				api = self.model(**kwargs)
+				api.save(using=self._db)
+				return api
+
+
+class CardProcessingAPIKey(models.Model):
+	PROCESSOR_OPTIONS=[
+		("Elavon", "Elavon"),
+		("Forte", "Forte"),
+	]
+	partner           = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
+	datacom           = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
+	company           = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
+	user              = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+	date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
+	processor_name    = models.CharField(max_length=20, choices=PROCESSOR_OPTIONS)
+	merchant_id       = models.CharField(max_length=15, validators=[RegexValidator(r'^\d{1,20}$')])
+	pin               = models.CharField(max_length=64, blank=True, null=True)
+	ssl_user_id				= models.CharField(max_length=15, blank=True, null=True)
+	is_demo 					= models.BooleanField(default=True, blank=True, null=True)
+
+	objects = APIKeyManager()
 
 
 class CreditCardManager(models.Manager):
-  def create_credit_card(self, **kwargs):
-    if not kwargs['name_on_card']:
-      raise ValueError("You must enter a name of the person on the credit card")
-    print('Create Credit Card kwargs', kwargs)
-  
-    #Send to Elavon and get Token and store the token
+	def get_or_none(self, **kwargs):
+		try:
+			return self.get(**kwargs)
+		except ObjectDoesNotExist:
+			return None
 
-    creditcard = self.model(**kwargs)
-  
-    creditcard.last4 = kwargs['card_number_token'][-4::]
-    creditcard.card_exp_date = kwargs['card_exp_year'] + "-" + kwargs['card_exp_month'] + "-" + "01"
-    print('kwargs[card_exp_date]', kwargs['card_exp_date'])
+	def create_credit_card(self, **kwargs):
+		if not kwargs['name_on_card']:
+			raise ValueError("You must enter a name of the person on the credit card")
+		print('Create Credit Card kwargs', kwargs)
 
-    creditcard.save(using=self._db)
+		#Submit Credit Card immediately to replace it with a token
 
+		datacom = kwargs.get('datacom', None)
+		partner = kwargs.get('partner', None)
+		company = kwargs.get('company', None)
+		user = kwargs.get('user', None)
+		
+		key = None
+		if datacom:
+			key = CardProcessingAPIKey.objects.get_or_none(processor_name="Elavon", datacom_id=datacom)
+		if partner:
+			key = CardProcessingAPIKey.objects.get_or_none(processor_name="Elavon", partner_id=partner)
+		if company:
+			key = CardProcessingAPIKey.objects.get_or_none(processor_name="Elavon", company_id=company)
+		if user:
+			key = CardProcessingAPIKey.objects.get_or_none(processor_name="Elavon", user_id=user)
 
-    return creditcard
+		converge = Converge(
+			ssl_merchant_id = key.merchant_id,
+			ssl_user_id = key.ssl_user_id,
+			ssl_pin = key.pin,
+			is_demo = key.is_demo,
+		)
+		del kwargs['datacom']
+		del kwargs['partner']
+		del kwargs['company']
+		del kwargs['user']
+
+		# Send to Elavon and get Token and store the token
+		kwargs['transaction_type']= "ccgettoken"
+		card_number_token = converge.request(**kwargs)
+		print(card_number_token)
+
+		# Send to Elavon and get card_brand Mastercard / VISA and card_type Credit / Debit
+		kwargs['transaction_type']= "binlookup"
+		kwargs['ssl_token']= card_number_token['ssl_token']
+		card_type = converge.request(**kwargs)
+
+		creditcard = self.model(**kwargs)
+		creditcard.processor_token = card_number_token
+		if kwargs['card_number'].startswith('4'):
+			creditcard.card_brand = "VISA"
+		if kwargs['card_number'].startswith(str(range(51, 54, 1))):
+			creditcard.card_brand = "MasterCard"
+		if kwargs['card_number'].startswith(str(range(34, 37, 1))):
+			creditcard.card_brand = "American Express"
+		if kwargs['card_number'].startswith("6011") or kwargs['card_number'].startswith("65"):
+			creditcard.card_brand = "Discover"
+		if kwargs['card_number'].startswith(str(range(300, 305, 1))) or kwargs['card_number'].startswith("36") or kwargs['card_number'].startswith("38"):
+			creditcard.card_brand = "Diner Club"
+
+		creditcard.last4 = kwargs['card_number_token'][-4::]
+		creditcard.card_exp_date = kwargs['card_exp_year'] + "-" + kwargs['card_exp_month'] + "-" + "01"
+		print('kwargs[card_exp_date]', kwargs['card_exp_date'])
+
+		# Tokenize Credit Card Number for Datacom Usage
+		creditcard.card_number_token = make_password(kwargs['card_number'], salt=None, hasher='default')
+
+		creditcard.save(using=self._db)
+
+		return creditcard
 
 class CreditCard(models.Model):
-  partner           = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
-  datacom           = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
-  company           = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
-  user              = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-  date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
-  title             = models.CharField(max_length=200, blank=True, null=True)
-  name_on_card      = models.CharField(max_length=255)
-  card_number       = models.CharField(max_length=18, validators=[RegexValidator(r'^\d{1,18}$')])
-  card_number_token = models.CharField(max_length=255, blank=True, null=True)
-  card_cvv          = models.CharField(max_length=3, blank=True, null=True)
-  billing_address   = models.CharField(max_length=255, blank=True)
-  billing_address2  = models.CharField(max_length=255, blank=True, null=True)
-  billing_city      = models.CharField(max_length=50, blank=True, null=True)
-  billing_state     = models.CharField(max_length=20, blank=True, null=True)
-  billing_zip       = models.CharField(max_length=5, null=True, blank=True, validators=[RegexValidator(r'^\d{1,5}$')])
-  billing_country   = models.CharField(max_length=200, blank=True, null=True)
-  card_exp_date     = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
-  card_exp_month    = models.CharField(max_length=2, null=True, blank=True, validators=[RegexValidator(r'^\d{1,2}$')])
-  card_exp_year     = models.CharField(max_length=4, null=True, blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
-  phone             = models.CharField(max_length=10, null=True, 
-									    blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
-  last4             = models.CharField(max_length=4, null=True, 
-									    blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
-  is_primary        = models.BooleanField(default=False)
-  is_active         = models.BooleanField(default=True)
-  is_debit          = models.BooleanField(default=True)
-  card_type         = models.CharField(max_length=100, blank=True, null=True)
+	CARD_BRANDS = [
+		("VS", 'VISA'),
+		("MC", 'MasterCard'),
+		("DS", 'Discover'),
+		("DC", 'Dincer Club'),
+		("AM", 'American Express')
+	]
+	partner           = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
+	datacom           = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
+	company           = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
+	user              = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+	date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
+	name_on_card      = models.CharField(max_length=255)
+	card_number       = models.CharField(max_length=255)
+	card_number_token = models.CharField(max_length=255, blank=True, null=True)
+	processor_token 	= models.CharField(max_length=255, blank=True, null=True)
+	card_cvv          = models.CharField(max_length=3, blank=True, null=True)
+	billing_address   = models.CharField(max_length=255, blank=True, null=True)
+	billing_address2  = models.CharField(max_length=255, blank=True, null=True)
+	billing_city      = models.CharField(max_length=50, blank=True, null=True)
+	billing_state     = models.CharField(max_length=20, blank=True, null=True)
+	billing_zip       = models.CharField(max_length=5, null=True, blank=True, validators=[RegexValidator(r'^\d{1,5}$')])
+	billing_country   = models.CharField(max_length=200, blank=True, null=True)
+	card_exp_date     = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
+	card_exp_month    = models.CharField(max_length=2, null=True, blank=True, validators=[RegexValidator(r'^\d{1,2}$')])
+	card_exp_year     = models.CharField(max_length=4, null=True, blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
+	phone             = models.CharField(max_length=10, null=True, 
+											blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
+	last4             = models.CharField(max_length=4, null=True, 
+											blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
+	is_primary        = models.BooleanField(default=False)
+	is_active         = models.BooleanField(default=True)
+	is_debit          = models.BooleanField(default=True)
+	card_type         = models.CharField(max_length=100, blank=True, null=True)
+	card_brand        = models.CharField(max_length=2, choices=CARD_BRANDS ,blank=True, null=True)
 
-  objects	= CreditCardManager()
+	objects	= CreditCardManager()
 
 class achManager(models.Manager):
   def create_ach_account(self, **kwargs):
@@ -88,6 +229,7 @@ class ACHAccount(models.Model):
   user              = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
   date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
   name_on_account   = models.CharField(max_length=255)
+	#Tokenize
   # account_number    = models.CharField(max_length=18, null=True, blank=True, validators=[RegexValidator(r'^\d{1,18}$')])
   account_number_token = models.CharField(max_length=255, blank=True, null=True)
   routing_number    = models.CharField(max_length=9)
@@ -142,178 +284,128 @@ class ForteACHTransaction(models.Model):
   date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
 
 
-class ElavonCCRequest(models.Model):
-  partner           = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
-  datacom           = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
-  company           = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
-  user              = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-  date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
-  # Request
-  ssl_merchant_id = models.CharField(max_length=15, null=True, blank=True, validators=[RegexValidator(r'^\d{1,15}$')])
-  ssl_user_id = models.CharField(max_length=15, null=True, blank=True)
-  ssl_pin = models.CharField(max_length=64,null=True, blank=True)
-  ssl_transaction_type= models.CharField(max_length=20,null=True, blank=True)
-  ssl_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  # [Card Data]
-  ssl_card_number= models.CharField(max_length=18, null=True, blank=True, validators=[RegexValidator(r'^\d{1,18}$')])
-  ssl_exp_date= models.CharField(max_length=4, null=True, blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
-  ssl_card_present= models.CharField(max_length=1,null=True, blank=True)
-  ssl_track_data= models.CharField(max_length=76,null=True, blank=True)
-  ssl_enc_track_data= models.CharField(max_length=160,null=True, blank=True)
-  ssl_enc_track_data_format= models.CharField(max_length=255,null=True, blank=True)
-  ssl_encrypted_track1_data= models.CharField(max_length=160,null=True, blank=True)
-  ssl_encrypted_track2_data= models.CharField(max_length=160,null=True, blank=True)
-  ssl_ksn= models.CharField(max_length=20,null=True, blank=True)
-  ssl_vm_mobile_source= models.CharField(max_length=255,null=True, blank=True)
-  ssl_vendor_id= models.CharField(max_length=50,null=True, blank=True)
-  ssl_mobile_id= models.CharField(max_length=20,null=True, blank=True)
-  ssl_token= models.CharField(max_length=2,null=True, blank=True)
-  ssl_pos_mode= models.CharField(max_length=2, null=True, blank=True, validators=[RegexValidator(r'^\d{1,2}$')])
-  ssl_entry_mode= models.CharField(max_length=2, null=True, blank=True, validators=[RegexValidator(r'^\d{1,2}$')])
-  # [Doing Business As]
-  ssl_dynamic_dba= models.CharField(max_length=21,null=True, blank=True)
-  # [Tokenization]
-  ssl_get_token= models.CharField(max_length=1,null=True, blank=True)
-  ssl_add_token= models.CharField(max_length=1,null=True, blank=True)
-  # [Tip Processing]
-  ssl_tip_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_server= models.CharField(max_length=8,null=True, blank=True)
-  ssl_shift= models.CharField(max_length=4,null=True, blank=True)
-  # [Card Verification]
-  ssl_cvv2cvc2= models.CharField(max_length=4, null=True, blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
-  ssl_cvv2cvc2_indicator= models.CharField(max_length=1, null=True, blank=True, validators=[RegexValidator(r'^\d{1,1}$')])
-  # [Purchasing Cards]
-  ssl_customer_code= models.CharField(max_length=17,null=True, blank=True)
-  ssl_salestax= models.CharField(max_length=8,null=True, blank=True)
-  ssl_salestax_indicator= models.CharField(max_length=2,null=True, blank=True)
-  # [Invoice Number]
-  ssl_invoice_number= models.CharField(max_length=25,null=True, blank=True)
-  # [Multi-Currency Conversion]
-  ssl_transaction_currency= models.CharField(max_length=3,null=True, blank=True)
-  # [Recurring / Installment Payment]
-  ssl_recurring_flag= models.CharField(max_length=1, null=True, blank=True, validators=[RegexValidator(r'^\d{1,1}$')])
-  ssl_payment_number= models.CharField(max_length=15, null=True, blank=True, validators=[RegexValidator(r'^\d{1,15}$')])
-  ssl_payment_count= models.CharField(max_length=10, null=True, blank=True, validators=[RegexValidator(r'^\d{1,10}$')])
-  # [Travel Data]
-  ssl_departure_Date= models.CharField(max_length=10,null=True, blank=True)
-  ssl_completion_Date= models.CharField(max_length=10,null=True, blank=True)
-  # [Card On File]
-  ssl_merchant_initiated_unscheduled= models.CharField(max_length=1,null=True, blank=True)
-  ssl_oar_data= models.CharField(max_length=60,null=True, blank=True)
-  ssl_ps2000_data= models.CharField(max_length=22,null=True, blank=True)
-  # [Level 3]
-  ssl_level3_indicator= models.CharField(max_length=1,null=True, blank=True)
-  ssl_ship_to_zip= models.CharField(max_length=9,null=True, blank=True)
-  ssl_ship_to_country= models.CharField(max_length=3,null=True, blank=True)
-  ssl_shipping_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_ship_from_postal_code= models.CharField(max_length=9,null=True, blank=True)
-  ssl_discount_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_duty_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_national_tax_indicator= models.CharField(max_length=1,null=True, blank=True)
-  ssl_national_tax_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_order_date= models.CharField(max_length=6, null=True, blank=True, validators=[RegexValidator(r'^\d{1,6}$')])
-  ssl_other_tax= models.CharField(max_length=12, null=True, blank=True, validators=[RegexValidator(r'^\d{1,12}$')])
-  ssl_summary_commodity_code= models.CharField(max_length=4,null=True, blank=True)
-  ssl_merchant_vat_number= models.CharField(max_length=20,null=True, blank=True)
-  ssl_customer_vat_number= models.CharField(max_length=13,null=True, blank=True)
-  ssl_freight_tax_amount= models.CharField(max_length=12, null=True, blank=True, validators=[RegexValidator(r'^\d{1,12}$')])
-  ssl_vat_invoice_number= models.CharField(max_length=15,null=True, blank=True)
-  ssl_tracking_number= models.CharField(max_length=25,null=True, blank=True)
-  ssl_shipping_company= models.CharField(max_length=50,null=True, blank=True)
-  ssl_other_fees= models.CharField(max_length=12, null=True, blank=True, validators=[RegexValidator(r'^\d{1,12}$')])
-  ssl_line_item_description= models.CharField(max_length=35,null=True, blank=True)
-  ssl_line_Item_product_code= models.CharField(max_length=13,null=True, blank=True)
-  ssl_line_Item_commodity_code= models.CharField(max_length=12,null=True, blank=True)
-  ssl_line_Item_quantity= models.CharField(max_length=12, null=True, blank=True, validators=[RegexValidator(r'^\d{1,12}$')])
-  ssl_line_Item_unit_of_measure= models.CharField(max_length=3,null=True, blank=True)
-  ssl_line_Item_unit_cost= models.CharField(max_length=12, null=True, blank=True, validators=[RegexValidator(r'^\d{1,12}$')])
-  ssl_line_Item_discount_indicator= models.CharField(max_length=1,null=True, blank=True)
-  ssl_line_Item_tax_indicator= models.CharField(max_length=1,null=True, blank=True)
-  ssl_line_item_discount_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_line_Item_tax_rate= models.CharField(max_length=4, null=True, blank=True, validators=[RegexValidator(r'^\d{1,4}$')])
-  ssl_line_Item_tax_amount= models.CharField(max_length=12, null=True, blank=True, validators=[RegexValidator(r'^\d{1,12}$')])
-  ssl_line_Item_tax_type= models.CharField(max_length=4,null=True, blank=True)
-  ssl_line_Item_extended_total= models.CharField(max_length=9, null=True, blank=True, validators=[RegexValidator(r'^\d{1,9}$')])
-  ssl_line_Item_total= models.CharField(max_length=12, null=True, blank=True, validators=[RegexValidator(r'^\d{1,12}$')])
-  ssl_line_Item_alternative_tax= models.CharField(max_length=12, null=True, blank=True, validators=[RegexValidator(r'^\d{1,12}$')])
-  # [3D Secure]
-  ssl_eci_ind= models.CharField(max_length=1, null=True, blank=True, validators=[RegexValidator(r'^\d{1,1}$')])
-  ssl_3dsecure_value= models.CharField(max_length=80,null=True, blank=True)
-  ssl_xid= models.CharField(max_length=20,null=True, blank=True)
-  # [MasterPass]
-  ssl_eWallet= models.CharField(max_length=10,null=True, blank=True)
-  ssl_callback_url= models.CharField(max_length=200,null=True, blank=True)
-  ssl_eWallet_shipping= models.CharField(max_length=1,null=True, blank=True)
-  ssl_product_string= models.CharField(max_length=200,null=True, blank=True)
-  # [Apple Pay on the Web]
-  ssl_transaction_source= models.CharField(max_length=20,null=True, blank=True)
-  ssl_applepay_web= models.TextField(null=True, blank=True)
-  ssl_applepay_billing= models.TextField(null=True, blank=True)
-  ssl_applepay_shipping= models.TextField(null=True, blank=True)
-  # [Visa Checkout]
-  ssl_visapayload= models.TextField(null=True, blank=True)
-  # [Optional Fields]
-  ssl_avs_address= models.CharField(max_length=30,null=True, blank=True)
-  ssl_avs_zip= models.CharField(max_length=9,null=True, blank=True)
-  ssl_description= models.CharField(max_length=255,null=True, blank=True)
-  ssl_partial_auth_indicator= models.CharField(max_length=1, null=True, blank=True, validators=[RegexValidator(r'^\d{1,1}$')])
-  # [Healthcare]
-  ssl_healthcare_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_otc_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_prescription_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_clinic_other_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_dental_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_vision_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
-  ssl_transit_amount= models.CharField(max_length=11, null=True, blank=True, validators=[RegexValidator(r'^\d{1,11}$')])
+class CCTransactionManager(models.Manager):
+	def get_or_none(self, **kwargs):
+		try:
+			return self.get(**kwargs)
+		except ObjectDoesNotExist:
+			return None
+
+	def create_transaction(self, **kwargs):
+		print("Start Elavon Transaction kwargs", kwargs)
+
+		datacom = kwargs.get('datacom', None)
+		print('datacom', datacom)
+		partner = kwargs.get('partner', None)
+		company = kwargs.get('company', None)
+
+		key = None
+		if datacom:
+			key = CardProcessingAPIKey.objects.get_or_none(datacom=kwargs['datacom'])
+			del kwargs['datacom']
+		elif partner:
+			key = CardProcessingAPIKey.objects.get_or_none(processor_name="Elavon", partner_id=kwargs['partner'])
+			del kwargs['partner']
+		elif company:
+			key = CardProcessingAPIKey.objects.get_or_none(processor_name="Elavon", company_id=kwargs['company'])
+			del kwargs['company']
+
+		converge = Converge(
+			ssl_merchant_id = key.merchant_id,
+			ssl_user_id = key.ssl_user_id,
+			ssl_pin = key.pin,
+			is_demo = key.is_demo
+		)
+
+		try: 
+			#Find CC Number
+			requestData = kwargs
+			# ccModel = CreditCard.objects.get(card_number=check_password(requestData['ssl_card_number']))
+			# print("ccModel", ccModel)
+
+			#Make Elavon Request
+			convergeSale = converge.request(**requestData)
+			print('convergeSale response', convergeSale)
+			requestData['txn_id'] = convergeSale['ssl_txn_id']
+
+			transactionID = convergeSale.get("ssl_txn_id", None)
+			errorCode = convergeSale.get("errorCode", None)
+			errorMsg = convergeSale.get("errorMessage", None)
+			errorName = convergeSale.get("errorName", None)
+
+			transaction = self.model(datacom=datacom, 
+																partner=partner, 
+																company=company, 
+																success=convergeSale['success'], 
+																result=convergeSale['ssl_result']
+																)
+			transaction.save(using=self._db)
+			print("transaction1", transaction)
+
+			# Log Elavon Response Data
+			setattr(transaction, 'txn_id', transactionID)
+			setattr(transaction, 'approval_code', convergeSale['ssl_approval_code'])
+			setattr(transaction, 'errorCode', errorCode)
+			setattr(transaction, 'errorMessage', errorMsg)
+			setattr(transaction, 'errorName', errorName)
+			setattr(transaction, 'jsonRequest', requestData)
+			setattr(transaction, 'jsonResult', convergeSale)
+
+			print("transaction2", transaction)
+
+			transaction.save(using=self._db)
+
+			return transaction
+
+		except:
+			#I need to handle errors better
+			raise TransactionManagementError("There was an error making the transaction to the database")
+			print('Error')
 
 
-class ElavonCCResponse(models.Model):
-  transaction = models.OneToOneField(ElavonCCRequest, on_delete=models.CASCADE)
-  date_added 		      = models.DateTimeField(verbose_name="date added", auto_now_add=True)
-  # Response
-  ssl_result= models.CharField(max_length=255, blank=True, null=True)
-  ssl_result_message= models.CharField(max_length=255, blank=True, null=True)
-  ssl_txn_id= models.CharField(max_length=255, blank=True, null=True)
-  ssl_txn_time= models.CharField(max_length=255, blank=True, null=True)
-  ssl_approval_code= models.CharField(max_length=255, blank=True, null=True)
-  ssl_amount= models.CharField(max_length=255, blank=True, null=True)
-  ssl_card_number= models.CharField(max_length=255, blank=True, null=True)
-  ssl_card_short_description= models.CharField(max_length=255, blank=True, null=True)
-  ssl_card_type= models.CharField(max_length=255, blank=True, null=True)
-  ssl_promo_list= models.CharField(max_length=255, blank=True, null=True)
-  # [Tokenization]
-  ssl_token= models.CharField(max_length=255, blank=True, null=True)
-  ssl_token_response= models.CharField(max_length=255, blank=True, null=True)
-  ssl_add_token_response= models.CharField(max_length=255, blank=True, null=True)
-  # [Tip Processing]
-  ssl_base_amount= models.CharField(max_length=255, blank=True, null=True)
-  ssl_tip_amount= models.CharField(max_length=255, blank=True, null=True)
-  ssl_server= models.CharField(max_length=255, blank=True, null=True)
-  ssl_shift= models.CharField(max_length=255, blank=True, null=True)
-  # [Address Verification Service]
-  ssl_avs_response= models.CharField(max_length=255, blank=True, null=True)
-  # [Card Verification]
-  ssl_cvv2_response= models.CharField(max_length=255, blank=True, null=True)
-  # [Invoice Number]
-  ssl_invoice_number= models.CharField(max_length=255, blank=True, null=True)
-  # [Multi-Murrency Conversion]
-  ssl_transaction_currency= models.CharField(max_length=255, blank=True, null=True)
-  # [Dynamic Currency Conversion]
-  ssl_txn_currency_code= models.CharField(max_length=255, blank=True, null=True)
-  ssl_markup= models.CharField(max_length=255, blank=True, null=True)
-  ssl_conversion_rate= models.CharField(max_length=255, blank=True, null=True)
-  ssl_cardholder_amount= models.CharField(max_length=255, blank=True, null=True)
-  ssl_cardholder_currency= models.CharField(max_length=255, blank=True, null=True)
-  ssl_cardholder_base_amount= models.CharField(max_length=255, blank=True, null=True)
-  ssl_cardholder_tip_amount= models.CharField(max_length=255, blank=True, null=True)
-  # [Partial Approval]
-  ssl_requested_amount= models.CharField(max_length=255, blank=True, null=True)
-  ssl_balance_due= models.CharField(max_length=255, blank=True, null=True)
-  ssl_account_balance= models.CharField(max_length=255, blank=True, null=True)
-  # [Card On File]
-  ssl_oar_data= models.CharField(max_length=255, blank=True, null=True)
-  ssl_ps2000_data= models.CharField(max_length=255, blank=True, null=True)
-  # [Error]
-  errorCode= models.CharField(max_length=255, blank=True, null=True)
-  errorMessage= models.CharField(max_length=255, blank=True, null=True)
-  errorName= models.CharField(max_length=255, blank=True, null=True)
+class Transaction(models.Model):
+	datacom           = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
+	partner           = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
+	company           = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
+	credit_card 			= models.ForeignKey(CreditCard, on_delete=models.CASCADE, blank=True, null=True)
+	date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
+	txn_id 						= models.CharField(max_length=255, blank=True, null=True)
+	result 						= models.CharField(max_length=2, blank=True, null=True)
+	approval_code			= models.CharField(max_length=255, blank=True, null=True)
+	errorCode    			= models.IntegerField(null=True, blank=True)
+	errorMessage			= models.CharField(max_length=255, blank=True, null=True)
+	errorName					= models.CharField(max_length=255, blank=True, null=True)
+	jsonRequest 			= JSONField(encoder=None, null=True, blank=True)
+	jsonResult 				= JSONField(encoder=None, null=True, blank=True)
+	success 					= models.BooleanField()
+
+	objects	= CCTransactionManager()
+
+class CardManagerManager(models.Manager):
+	def add_card_to_manager(self, *args, **kwargs):
+		result = self.model(**kwargs)
+
+		result.save(using=self._db)
+		
+		return result
+
+class CardManager(models.Model):
+	datacom           = models.ForeignKey(Datacom, on_delete=models.CASCADE, blank=True, null=True)
+	partner           = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
+	company           = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
+	credit_card 			= models.ForeignKey(CreditCard, on_delete=models.CASCADE, blank=True, null=True)
+	date_added 		    = models.DateTimeField(verbose_name="date added", auto_now_add=True)
+	result 						= models.CharField(max_length=2, blank=True, null=True)
+	result_message 		= models.CharField(max_length=255, blank=True, null=True)
+	approval_code 		= models.CharField(max_length=255, blank=True, null=True)
+	token 						= models.CharField(max_length=255, blank=True, null=True)
+	token_response 		= models.CharField(max_length=255, blank=True, null=True)
+	add_token_response= models.CharField(max_length=255, blank=True, null=True)
+	errorCode    			= models.IntegerField(null=True, blank=True)
+	errorMessage			= models.CharField(max_length=255, blank=True, null=True)
+	errorName					= models.CharField(max_length=255, blank=True, null=True)
+	jsonRequest 			= JSONField(encoder=None, null=True, blank=True)
+	jsonResult 				= JSONField(encoder=None, null=True, blank=True)
+
+
+	objects	= CardManagerManager()

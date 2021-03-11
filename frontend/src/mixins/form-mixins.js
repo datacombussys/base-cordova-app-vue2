@@ -14,6 +14,9 @@ export const FormMixins = {
 			expRules: {
 				X: /[0-9]/
 			},
+			cvvRules: {
+				X: /[0-9]/
+			},
 			cardNumberRules: {
 				X: /[0-9]/
 			},
@@ -46,7 +49,8 @@ export const FormMixins = {
   methods: {
  
 
-  },
+
+	},
   mounted() {
 
   },

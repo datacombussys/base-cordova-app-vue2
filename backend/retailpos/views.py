@@ -10,7 +10,7 @@ from .serializers import openAndCloseTillSerializer
 class OpenAndCloseTillViewset(viewsets.ModelViewSet):
     serializer_class = openAndCloseTillSerializer
     queryset = openAndCloseTill.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['date']
     search_fields = ['date']
     ordering_fields = '__all__'

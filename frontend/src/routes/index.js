@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from "@/store/";
 
 // import Home from '@/pages/home'
 // import Template from '@/pages/template'
@@ -13,6 +14,7 @@ import Router from 'vue-router'
 
 
 import Home from "@/views/home-view";
+import Error from "@/views/error-view";
 import TestPage from "@/views/test-page";
 import Profile from "@/views/profile-view";
 import DisplayData from "@/views/display-data-view";
@@ -33,11 +35,12 @@ import SalesOffice from "@/pages/sales-offices/sales-office"
 import Warehouse from "@/pages/warehouses/warehouse"
 import HelpDesk from "@/pages/help-desk/help-desk"
 
-import RetailPOS from "@/pages/pos/new-pos/new-pos"
+import Registers from "@/pages/pos/new-pos/registers"
 import Categories from "@/pages/pos/new-pos/categories-drawer"
 import Inventory from "@/pages/inventory/new/inventory"
 import POSLoginView from "@/views/pos-login-view"
 import VirtualTerminal from "@/pages/vt_hpp/new/virtual-terminal"
+import RetailPOS from "@/pages/pos/new-pos/new-pos"
 
 import Colors from '@/pages/colors'
 import Icons from '@/pages/icons'
@@ -45,48 +48,36 @@ import Icons from '@/pages/icons'
 
 Vue.use(Router)
 
-//Auth Only Routes
-// function checkAuth(to, from, resolve, reject) {
-//   if (store._modules.root.state.Auth.isAuthenticated) {
-//     resolve(to);
-//   } else {
-//     reject();
-//     var router = this;
-//     console.log('router', router);
-//     console.log('to', to);
-//     console.log('from', from);
-//     store._modules.root.state.Auth.preLoginPagePath = to.path;
-//     router.navigate('/login/');
 
-//   }
-// }
 
-export default new Router({
+export var router = new Router({
   // mode:'history',
   routes: [
     {
-      path: '/secured',
-      async(to, from, resolve, reject) {
-        var router = this;
-        if (store._modules.root.state.Auth.isAuthenticated) {
-          router.navigate(store._modules.root.state.Auth.preLoginPagePath);
-          console.log('store._modules.root.state.Auth.preLoginPagePath', store._modules.root.state.Auth.preLoginPagePath);
-          resolve({redirect: store._modules.root.state.Auth.preLoginPagePath});
-          
-        } else {
-          reject({
-            components: {
-              layout: simpleLayout,
-              content: LoginView
-            }
-          });
-        }
-      },
+			path: '/secured',
+			name: 'secured',
+			meta: { requiresAuth: false },
+			beforeEnter: (to, from, next) => {
+				console.log('secured from', from)
+				console.log('secured to', to)
+				console.log('secured this', this)
+				console.log('secured router', router)
+				if(Object.keys(from.query).length != 0) {
+					next({
+						path: from.query.redirect,
+					})
+				} else {
+					next({
+						name: 'home',
+					})
+				}
+				
+      }
     },
     {
       path: "/home",
       name: "home",
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: false },
       components: {
         layout: defaultLayout,
         content: Home
@@ -144,7 +135,7 @@ export default new Router({
       components: {
         layout: defaultLayout,
         content: Employee
-      }
+			},
     },
 		{
       path: "/customer",
@@ -153,7 +144,7 @@ export default new Router({
       components: {
         layout: defaultLayout,
         content: Customer
-      }
+			},
     },
 		{
       path: "/help-desk",
@@ -162,33 +153,27 @@ export default new Router({
       components: {
         layout: defaultLayout,
         content: HelpDesk
-      }
-    },{
+			},
+		},
+		{
       path: "/sales-office",
       name: "sales-office",
       meta: { requiresAuth: true },
       components: {
         layout: defaultLayout,
         content: SalesOffice
-      }
-    },{
+			},
+		},
+		{
       path: "/warehouse",
       name: "warehouse",
       meta: { requiresAuth: true },
       components: {
         layout: defaultLayout,
         content: Warehouse
-      }
+			},
     },
-    {
-      path: "/display-data",
-      name: "display-data",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: DisplayData
-      }
-    },
+    //Login Pages
     {
       path: "/login-form",
       name: "login-form",
@@ -205,7 +190,7 @@ export default new Router({
       components: {
         layout: accessCard,
         content: POSLoginView
-      }
+			},
     },
     {
       path: "/password-reset",
@@ -214,6 +199,49 @@ export default new Router({
       components: {
         layout: simpleLayout,
         content: PasswordReset
+      }
+		},
+		//POS Pages
+		{
+      path: "/registers",
+      name: "registers",
+      components: {
+        layout: defaultLayout,
+        content: Registers,
+      }
+    },
+    {
+      path: "/retail-pos:id",
+      name: "retail-pos",
+      components: {
+        categories: Categories,
+        pos: RetailPOS,
+      }
+    },
+    {
+      path: "/virtual-terminal",
+      name: "virtual-terminal",
+      components: {
+        categories: defaultLayout,
+        pos: VirtualTerminal,
+			},
+    },
+    {
+      path: "/inventory",
+      name: "inventory",
+      components: {
+        layout: defaultLayout,
+        content: Inventory
+			},
+		},
+		//Test Pages
+		{
+      path: "/display-data",
+      name: "display-data",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: DisplayData
       }
     },
     {
@@ -234,30 +262,7 @@ export default new Router({
         content: Icons
       }
     },
-    {
-      path: "/retail-pos",
-      name: "retail-pos",
-      components: {
-        categories: Categories,
-        pos: RetailPOS,
-      }
-    },
-    {
-      path: "/virtual-terminal",
-      name: "virtual-terminal",
-      components: {
-        categories: defaultLayout,
-        pos: VirtualTerminal,
-      }
-    },
-    {
-      path: "/inventory",
-      name: "inventory",
-      components: {
-        layout: defaultLayout,
-        content: Inventory
-      }
-    },
+		//Redirect Pages
     {
       path: "/",
       redirect: "/home"
@@ -269,12 +274,13 @@ export default new Router({
     {
       path: "*",
       redirect: "/home"
-    },
-    
-    // {
-    //   path: 'drawer',
-    //   component: drawerComponent
-    // },
+		},
+		//Error Page
+		{
+			path: "/error",
+			name: "error",
+      component: Error
+		}
     // {
     //   path: '/',
     //   components: {
@@ -285,21 +291,12 @@ export default new Router({
     //     main: false, 
     //     drawer: true }
     // },
-    // {
-    //   path: '/table/',
-    //   component: Table
-    // },
     // //Utility Pages
-
     // {
     //   path: '/fonts/',
     //   component: Fonts
     // },
-    // //Test Pages
-    // {
-    //   path: '/about/',
-    //   component: About
-    // },
+
     // {
     //   path: '/user/:name',
     //   components: {
@@ -307,15 +304,6 @@ export default new Router({
     //     drawer: Template
     //   },
     //   props: true
-    // },
-    // How to set up Navbar for Views
-    // {
-    //   path: '/parent/',
-    //   component: {
-    //     main: Parent,
-    //     left: ParentMenu
-    //   },
-        
     // },
     // {
     //   path: '/user/main/:name',
@@ -332,22 +320,66 @@ export default new Router({
   ]
 });
 
-// router.beforeEach((to, from, next) => {
 
-//   if (to.name === "login-form" && auth.authenticated()) {
-//     next({ name: "home" });
-//   }
 
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     if (!auth.authenticated()) {
-//       next({
-//         name: "login-form",
-//         query: { redirect: to.fullPath }
-//       });
-//     } else {
-//       next();
-//     }
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+	var is_loggedIn = null
+
+	let localStorageUser = JSON.parse(localStorage.getItem("user"))
+	if(localStorageUser != null) {
+		is_loggedIn = true
+	} else {
+		console.log("store._modules.root.state.Auth.isAuthenticated", store._modules.root.state.Auth.isAuthenticated)
+		is_loggedIn = store._modules.root.state.Auth.isAuthenticated
+	}
+	console.log('from', from)
+	console.log('to', to)
+	store._modules.root.state.Auth.preLoginPagePath = to.path;
+	console.log('store._modules.root.state.Auth.preLoginPagePath', store._modules.root.state.Auth.preLoginPagePath)
+	console.log('is_loggedIn', is_loggedIn)
+
+  if(to.name === "login-form" && is_loggedIn) {
+		next({ 
+			name: "secured",
+			query: { redirect: to.query.redirect } 
+		});
+  }
+	
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+		
+		// Check to see if user is logged in
+    if(!is_loggedIn) {
+			// console.group("store._modules.root.state.Auth.isAuthenticated", store._modules.root.state.Auth.isAuthenticated)
+			console.log("NOT LOGED IN YET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+			/* This fixes the issue with routes loading before Vuex updates properly - dispatch the prefetgch profile here. */
+			// store.dispatch("preFetchLogin")
+
+      next({
+        name: "login-form",
+        query: { redirect: to.fullPath }
+      });
+    } else {
+			//Is logged in. Check to see if window.location.host is the same as logged in user company
+			if(store._modules.root.state.Auth.webdomain === store._modules.root.state.Auth.userCompany.domain) {
+				console.log("webdomain equals usercompany Domain")
+				if(Object.keys(to.query).length != 0) {
+					next({ 
+						name: "secured",
+						query: { redirect: to.query.redirect } 
+					});
+				} else {
+					next();
+				}
+			} else {
+				next({
+					name: "error",
+					query: { redirect: from.fullPath }
+				});
+			}
+      
+    }
+  } else {
+    next();
+  }
+})

@@ -1,0 +1,17 @@
+{
+	"data": {
+		"cardReadersSearch": {
+			"error": null,
+			"timeout": 9000,
+			"cardReaders": [
+				"iPP320-25061457"
+			],
+			"completed": true,
+			"commandId": "1",
+			"updateIfNecessary": true,
+			"connect": true
+		}
+	},
+	"statusDetails": "COMMAND_STATUS",
+	"requestId": "2"
+}

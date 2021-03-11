@@ -5,48 +5,42 @@ Need to do: delete files from Django root
 Delete Files in Root  Delete files in AWS s3 
 https://stackoverflow.com/questions/20516570/django-delete-file-from-amazon-s3
 
-How to activate and deactivate Line on floorplan maker to push items into array.
-Line Activation and deactivation not working. drawActiveLine() function. Still cant figure it out.
 
 Bulk Upload map all fields / convert Category name to an ID / Convert Date to UNIX Convert Parent to ID???
 recall same function and pop item off the stack
 
-I am using a CDN to import Mustache. I want to download it and serve it from my server in case of situatiotn of going offline
 
-
-AWS Upload custom File Directory. Django Storages
-
+AWS Upload custom File Directory name of business. Django Storages
+ 
 When I create a credit card, The returned object does not include the modified fields. How do I return all fields from Django-rest?
-
-I need to start going through the documentation for the pinpad integration.
 
 How to submit custom queries to PayCycleRecurrence? -rrule field
 
-The Unique_together variable in Django only makes the fields unique e.g: company and HolidayName. That means that all companies cannot have the same holidayName. 
-But Partners can use the same name. It is between 2 relationships and not 3 or 4.
-
-How do I create a stack for the notifications?
 
 I have a questions on Django permissions. When I add a permission to a user, it allows a user to perform that particular funciton. 
 Which means that it was disabled before? How do permissions grant access when access was already accessible?
 
-let PROD = process.env.NODE_ENV === 'production';
-I have keditor up and running. Need to configure Database. Install Axios? Set up a Store, etc...
-Help me get it setup
 
 
-How would I ensure that only the content for a company witht the domain "datacom" shows up if the URL contains "datacom"
+I need the Open tills to be persistent. I can use Postgres JSON field? 
+
+Navigation Guards not working properly
 
 
+<p>Need to do: finish Employee Profile</p>
+<p>Get Custoemr Profile upa nd running</p>
+<p>Get Credit Card posted to customer profile</p>
+<p>Set up Business Account API Keys</p>
+<p>Run a credit card transaciton for the customer in VT</p>
 
-Employee Password Regex Checkmarks not responsive
+
 
 I need to change to uplaod path to Amazon AWS for employees to /employee/name.
 I need to figure out how to delete the files from Amazon AWS using a CRON job. What script do I need to write
 When I delete an model instance with an image, I need to do a pre delete signal to capture the necessary informaiton of the file to be deleted.
 Delete Request - https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjects.html
 Delete XML Information - https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#deleteObjects-property
-What is pickling?
+
 
 Need to do
 Invoicing Merchants
@@ -60,9 +54,24 @@ allow to set up users as admins for companies. Disable feature for non super-use
 Notes for thought
 Disable things that are not woring Global Verison Number
 Offer Feedback for features and such
-capture informaiotn about where they are Track them
+capture information about where they are Track them
 log info combined with a feedback section for fixing issues.
 Where do i want my feedback button?
 tooltips are good
+
+*************************************** Questionnfor Elavon Jeffrey Bell *********************************************
+Converge
+If I schedule a recurring sale with Elavon, how Do I get the results of the sale? How am I notified? Can I make a API call to find result of Sale?
+How do I process a recurring transaciton? I assume 1) Create token 2) ccaddrecurring sending token
+Why does ccsale have a ssl-recurring-flag?
+I thought i was supposed to use ccrecurringsale instead for transaction outside of the recurring frequency, and addrecurring automatically make the sales transaciton inside the frequency.
+ConvergeSDK
+How do I properly setConfiguration and getConfiguration
+A property in setConfiguraiton is printers: "EPSON". How is this possible if it is not listed int he docs as suooprted? STAR is supported
+
+Should I do recurring Sales in Elavon or handle them myself each month?
+It looks like I can capture card data "On-Demand" then send that data to elavon via Converge. Passing hte track info in the API call instead of ConvergeSDK?
+
+Is CVV required? The docs say that it is not, however, I am unable to make a sucessful API call without ut. Error code 4007
 
 

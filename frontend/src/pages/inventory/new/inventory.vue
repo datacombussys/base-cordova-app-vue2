@@ -172,7 +172,7 @@
 								<div id="tabContainer">
 									<DxTabPanel 
 									:animation-enabled="true"
-									:selectedIndex="selectedIndex" 
+									:selected-index.sync="selectedIndex" 
 									:show-nav-buttons="true">
 										<DxItem title="Profile" icon="mdi mdi-account-box">
 											<template #default>
@@ -344,7 +344,7 @@ export default {
 			profileImageSettings: {
 				url: 'inventory/',
 				module: 'Inventory',
-				mutation: 'UPDATE_PROFILE_IMAGE'
+				mutation: 'UPDATE_INVENTORY_PROFILE_AND_LIST'
 			},
 			profileMenu: [
         { title: 'Profile Image' },

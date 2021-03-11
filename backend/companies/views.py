@@ -25,7 +25,7 @@ from .models import Company
 class CompanyViewset(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['datacom__id', 'partner__id', 'created_by__id', 'id']
     search_fields = ['datacom__id', 'partner__id', 'created_by__id', 'id']
     ordering_fields = '__all__'

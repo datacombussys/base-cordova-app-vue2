@@ -47,7 +47,8 @@ export const Merchants = {
       let listIndex = state.merchantList.findIndex(elem => elem.id === payload.id);
       state.merchantList.slice(listIndex, 1);
       state.merchantList.splice(listIndex, 1, payload);
-      console.log('state.merchantList', state.merchantList);
+			console.log('state.merchantList', state.merchantList);
+			state.merchantProfile = payload
     },
     PATCH_DELETE_MERCHANT_PROFILE(state, payload) {
       console.log('payload', payload);

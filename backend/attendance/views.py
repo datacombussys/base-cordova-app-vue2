@@ -37,7 +37,7 @@ class ShiftViewset(viewsets.ModelViewSet):
     update, partial_update, destroy"""
     serializer_class = ShiftSerializer
     queryset = Shift.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['datacom__id', 'partner__id', 'company__id', 'employees__id', 'name', 'start_time', 'end_time', 'attendance_type']
     search_fields = ['datacom__id', 'partner__id', 'company__id', 'employees__id', 'name', 'start_time', 'end_time', 'attendance_type']
     ordering_fields = '__all__'
@@ -49,7 +49,7 @@ class OperatingHoursViewset(viewsets.ModelViewSet):
     update, partial_update, destroy"""
     serializer_class = OperatingHoursSerializer
     queryset = OperatingHours.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['datacom__id', 'partner__id', 'company__id']
     search_fields = ['datacom__id', 'partner__id', 'company__id']
     ordering_fields = '__all__'
@@ -61,7 +61,7 @@ class BusinessOperatingHoursViewset(viewsets.ModelViewSet):
     update, partial_update, destroy"""
     serializer_class = BusinessOperatingHoursSerializer
     queryset = BusinessOperatingHours.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['datacom__id', 'partner__id', 'company__id']
     search_fields = ['datacom__id', 'partner__id', 'company__id']
     ordering_fields = '__all__'
@@ -73,7 +73,7 @@ class AttendanceSettingsViewset(viewsets.ModelViewSet):
     update, partial_update, destroy"""
     serializer_class = AttendanceSettingsSerializer
     queryset = AttendanceSettings.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['datacom__id', 'partner__id', 'company__id', 'name', 'date_added']
     search_fields = ['datacom__id', 'partner__id', 'company__id', 'name', 'date_added']
     ordering_fields = '__all__'
