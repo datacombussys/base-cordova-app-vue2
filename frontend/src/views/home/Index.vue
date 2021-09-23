@@ -17,11 +17,7 @@
       LoadSections([
         'hero',
 				'theme-features',
-				'parallax-stats',
-				'about-our-product',
-				'timeline',
         'features',
-				'technology-partners',
         'info',
       ]),
     ],
