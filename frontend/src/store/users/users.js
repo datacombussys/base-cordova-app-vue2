@@ -1,111 +1,74 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-import Vue from "vue";
-import Vuex from "vuex";
-Vue.use(Vuex);
+import apiRoutes from '@/js/api-routes'
 
-//Import and Use Axios
-
-
-import apiRoutes from '@/js/api-routes';
+Vue.use(Vuex)
 
 export const Users = {
-	namespace: true,
-	state: {
-		//User and Employee Personal Data
-		userProfile: {},
-		//All Users based on Logged in User
+  namespace: true,
+  name: 'users',
+  state: {
+		userList: []
+  },
+  mutations: {
 
-		//Own Business Employees
-		userList: [],
-		companyFilteredEmployeeList: [],
-
-		//Selected Business Employees
-		selectedUserList: [],
-	},
-	mutations: {
-		SET_USER_PROFILE(state, payload) {
-			state.userProfile = payload;
-		},
-		PUSH_NEW_USER(state, payload) {
-      state.userList.push(payload);
-		},
-		
-
-		SET_USER_LIST(state, payload) {
-			console.log("SET_EMPLOYEE_LIST payload", payload);
-			state.employeeList = payload;
-		},
-		PUSH_NEW_EMPLOYEE(state, payload) {
-			state.employeeList.push(payload);
-		},
-			
-		CLEAR_USER_DATA(state, payload) {
-			state.userProfile = {};
-		},
-		SET_SELECTED_EMPLOYEE_PROFILE(state, payload) {
-      state.selectedPartnerProfile = payload;
-    },
-    UPDATE_EMPLOYEE_PROFILE() {
-      console.log('payload', payload);
-      let listIndex = state.employeeList.findIndex(elem => elem.id === payload.id);
-      state.employeeList.slice(listIndex, 1);
-      state.employeeList.splice(listIndex, 1, payload);
-      console.log('state.employeeList', state.employeeList);
-    },
-    PATCH_DELETE_EMPLOYEE_PROFILE(state, payload) {
-      console.log('payload', payload);
-      let listIndex = state.employeeList.findIndex(elem => elem.id === payload.id);
-      state.employeeList.slice(listIndex, 1);
-      console.log('state.employeeList', state.employeeList);
-    }
-
-	},
-	actions: {
-		//Create Methods
-    async POSTUser({commit, dispatch, rootState}, payload) {
+  },
+  actions: {
+		//POST and CREATE Item
+		async POSTUser({commit, dispatch, rootState}, payload) {
 			return new Promise( async (resolve, reject) => {
 				try {
-					let endpoint = 'users-profile/';
+					let endpoint = 'users/';
 					let type = 'Create New User';
-					let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type);
+					let response = await apiRoutes.POSTItem(dispatch, rootState,payload, endpoint, type)
 					console.log('POSTUser response', response);
-
-					// commit('PUSH_NEW_USER', response);
-					return resolve(response)
-					
+					if(response.status === 201) {
+						console.log("Successful response", response);
+						return resolve(response)
+					} else {
+						return reject(response)
+					}
 				} catch (error) {
-					console.error("POSTUser error.response", error);
 					return reject(response)
-				}
+				}       
 			}).catch(error => {
-				console.error("POSTUser Promise error.response", error);
-        return error;
+				return error;
 			});
-			
-		},
-		//PATCHDelete PROFILE
-    async PATCHDeleteUserProfile({commit, dispatch, rootState}, payload) {
-			let endpoint = 'users-profile/';
-      let type = 'Delete User Profile';
-			let response = await apiRoutes.PATCHDeleteItem(dispatch, rootState, payload, endpoint, type);
-			console.log('PATCHDeleteUserProfile response', response);
-			commit('PATCH_DELETE_USER_PROFILE', payload);
-    },
-		//DELETE Item
-		async DELETEUserProfile({commit, dispatch, rootState}, payload) {
-			let endpoint = 'users-profile/';
-      let type = 'Delete User Profile';
-			let response = await apiRoutes.DELETEItem(dispatch, rootState,payload, endpoint, type);
-			console.log('DELETEProfile response', response);
 		},
 
+    // GET User Profile By Id
+    GETUserProfileById ({ commit, dispatch, rootState }, payload) {
+      console.log('GETUserProfileById')
+      return new Promise(async (resolve, reject) => {
+        try {
+          console.log('GETUserProfileById payload', payload)
+          const endpoint = 'users/'
+          const type = 'Get User Profile'
+          const response = await apiRoutes.GETProfileById(dispatch, rootState, payload, endpoint, type)
+          if (response.status === 200) {
+            console.log('GETUserProfileById response', response)
+            // commit('SET_USER_PROFILE', response.data)
+						return resolve(response.data)
+						
+          } else {
+            return reject({ message: response })
+          }
+        } catch (error) {
+          return reject(error)
+        }
+      }).catch(error => {
+        console.log('error', error)
+        if (error.response) {
+          console.log('error.response', error.response)
+          // dispatch('updateNotification', error.response);
+          return reject(error)
+        }
+      })
+    }
 
-	},
-	getters: {
-		GET_USER_LIST(state) {
-			return state.userList;
-		},
-		
-	}
+  },
+  getters: {
+
+  }
 }
-

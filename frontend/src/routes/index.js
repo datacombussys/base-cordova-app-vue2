@@ -1,385 +1,169 @@
 import Vue from 'vue'
+import VueRouter from 'vue-router'
 import Router from 'vue-router'
-import store from "@/store/";
+import store from '@/store/'
 
-// import Home from '@/pages/home'
-// import Template from '@/pages/template'
-// import Table from '@/pages/table'
-// import drawerComponent from '@/components/elements/layout/drawer-component'
-// import userComponent from "@/pages/user-component.vue"
+//Import NavLinks
+import { main, superuser } from "@/routes/app-navigation"
+console.log('store', store)
 
-// import About from '@/pages/about'
-
-// import HomeViewRoutes from '@/views/drawer/home-views-navigation.vue'
+//Check if Logged in
+store._modules.root.state.Notifications.isLoadPanelVisible = true
 
 
-import Home from "@/views/home-view";
-import Error from "@/views/error-view";
-import TestPage from "@/views/test-page";
-import Profile from "@/views/profile-view";
-import DisplayData from "@/views/display-data-view";
-import defaultLayout from "@/components/elements/layout/side-nav-outer-toolbar-component";
-import simpleLayout from "@/views/single-card-view";
-import accessCard from "@/views/access-card-view";
+//Load User First
+var varMenu = null;
+export const userProfile = async () => {
+	return new Promise(async (resolve, reject) => {
+		var User
+		console.log('store.getters.GET_USER_PROFILE', store.getters.GET_USER_PROFILE)
+		User = await store.dispatch('GETUserProfile')
+		console.log("User", User)
+		console.log('store.getters.GET_USER_PROFILE 2', store.getters.GET_USER_PROFILE)
 
-//Datacom Converted Pages
-import LoginView from "@/views/login-form-view"
-import PasswordReset from "@/views/password-reset-view"
-
-import Datacom from "@/pages/datacom/datacom"
-import Partner from "@/pages/partners/partner"
-import Merchant from "@/pages/merchants/merchant"
-import Employee from "@/pages/employees/employee"
-import Customer from "@/pages/customers/customer"
-import SalesOffice from "@/pages/sales-offices/sales-office"
-import Warehouse from "@/pages/warehouses/warehouse"
-import HelpDesk from "@/pages/help-desk/help-desk"
-
-import Registers from "@/pages/pos/new-pos/registers"
-import Categories from "@/pages/pos/new-pos/categories-drawer"
-import Inventory from "@/pages/inventory/new/inventory"
-import POSLoginView from "@/views/pos-login-view"
-import VirtualTerminal from "@/pages/vt_hpp/new/virtual-terminal"
-import RetailPOS from "@/pages/pos/new-pos/new-pos"
-
-import Colors from '@/pages/colors'
-import Icons from '@/pages/icons'
-// import Fonts from '@/pages/fonts'
-
-Vue.use(Router)
+		return resolve(User)
+	})
+}
 
 
+//Import Components
+import Home from '../views/Home'
+import Login from '../views/login-view'
+import PermissionDenied from '../views/permission-denied'
+import Reset from '../views/password-reset'
+import leftDrawer from '@/components/navigation/left-drawer-component'
 
-export var router = new Router({
-  // mode:'history',
-  routes: [
-    {
+
+//404 Not Found
+import NotFound from "@/views/404"
+
+Vue.use(VueRouter)
+
+export const router = new VueRouter({
+	mode: 'history',
+	base: process.env.BASE_URL,
+	scrollBehavior: (to, from, savedPosition) => {
+		if (to.hash) return { selector: to.hash }
+		if (savedPosition) return savedPosition
+
+		return { x: 0, y: 0 }
+	},
+	routes: [
+		{
+			path: '/',
+			component: () => import('@/layouts/website/Index.vue'),
+			children: [
+				{
+					path: '',
+					name: 'Home',
+					component: () => import('@/views/home/Index.vue'),
+					meta: { src: require('@/assets/static/website/DBS-HERO1800x1000.jpg')}
+				},
+			],
+		},
+		{
+			path: '/login',
+			name: 'Login',
+			component: Login
+		},
+		{
+			path: '/password-reset',
+			name: 'Password Reset',
+			component: Reset
+		},
+		{
+			path: '/denied',
+			name: 'Permission Denied',
+			component: PermissionDenied
+		},
+		{
 			path: '/secured',
-			name: 'secured',
-			meta: { requiresAuth: false },
+			name: 'Secured',
+			component: Login,
 			beforeEnter: (to, from, next) => {
-				console.log('secured from', from)
-				console.log('secured to', to)
-				console.log('secured this', this)
-				console.log('secured router', router)
-				if(Object.keys(from.query).length != 0) {
-					next({
-						path: from.query.redirect,
-					})
-				} else {
-					next({
-						name: 'home',
-					})
-				}
+				console.log("from", from)
+				console.log("to", to)
+				console.log("store", store)
+				console.log("store.getters.GET_USER_PROFILE", store.getters.GET_USER_PROFILE)
 				
-      }
-    },
-    {
-      path: "/home",
-      name: "home",
-      meta: { requiresAuth: false },
-      components: {
-        layout: defaultLayout,
-        content: Home
-      }
-    },
-    {
-      path: "/test-page",
-      name: "test-page",
-      meta: { requiresAuth: false },
-      components: {
-        layout: defaultLayout,
-        content: TestPage
-      }
-    },
-    {
-      path: "/profile",
-      name: "profile",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: Profile
-      }
-    },
-    {
-      path: "/datacom",
-      name: "datacom",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: Datacom
-      }
-    },
-    {
-      path: "/partner",
-      name: "partner",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: Partner
-      }
-    },
-    {
-      path: "/merchant",
-      name: "merchant",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: Merchant
-      }
-    },
-    {
-      path: "/employee",
-      name: "employee",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: Employee
-			},
-    },
-		{
-      path: "/customer",
-      name: "customer",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: Customer
-			},
-    },
-		{
-      path: "/help-desk",
-      name: "help-desk",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: HelpDesk
-			},
-		},
-		{
-      path: "/sales-office",
-      name: "sales-office",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: SalesOffice
-			},
-		},
-		{
-      path: "/warehouse",
-      name: "warehouse",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: Warehouse
-			},
-    },
-    //Login Pages
-    {
-      path: "/login-form",
-      name: "login-form",
-      meta: { requiresAuth: false },
-      components: {
-        layout: simpleLayout,
-        content: LoginView
-      }
-    },
-    {
-      path: "/pos-login",
-      name: "pos-login",
-      meta: { requiresAuth: false },
-      components: {
-        layout: accessCard,
-        content: POSLoginView
-			},
-    },
-    {
-      path: "/password-reset",
-      name: "password-reset",
-      meta: { requiresAuth: false },
-      components: {
-        layout: simpleLayout,
-        content: PasswordReset
-      }
-		},
-		//POS Pages
-		{
-      path: "/registers",
-      name: "registers",
-      components: {
-        layout: defaultLayout,
-        content: Registers,
-      }
-    },
-    {
-      path: "/retail-pos:id",
-      name: "retail-pos",
-      components: {
-        categories: Categories,
-        pos: RetailPOS,
-      }
-    },
-    {
-      path: "/virtual-terminal",
-      name: "virtual-terminal",
-      components: {
-        categories: defaultLayout,
-        pos: VirtualTerminal,
-			},
-    },
-    {
-      path: "/inventory",
-      name: "inventory",
-      components: {
-        layout: defaultLayout,
-        content: Inventory
-			},
-		},
-		//Test Pages
-		{
-      path: "/display-data",
-      name: "display-data",
-      meta: { requiresAuth: true },
-      components: {
-        layout: defaultLayout,
-        content: DisplayData
-      }
-    },
-    {
-      path: '/colors/',
-      name: "colors",
-      meta: { requiresAuth: false },
-      components: {
-        layout: defaultLayout,
-        content: Colors
-      }
-    },
-    {
-      path: "/icons",
-      name: "icons",
-      meta: { requiresAuth: false },
-      components: {
-        layout: defaultLayout,
-        content: Icons
-      }
-    },
-		//Redirect Pages
-    {
-      path: "/",
-      redirect: "/home"
-    },
-    {
-      path: "/recovery",
-      redirect: "/home"
-    },
-    {
-      path: "*",
-      redirect: "/home"
-		},
-		//Error Page
-		{
-			path: "/error",
-			name: "error",
-      component: Error
-		}
-    // {
-    //   path: '/',
-    //   components: {
-    //     main: Home,
-    //     drawer: HomeViewRoutes
-    //   },
-    //   props: { 
-    //     main: false, 
-    //     drawer: true }
-    // },
-    // //Utility Pages
-    // {
-    //   path: '/fonts/',
-    //   component: Fonts
-    // },
-
-    // {
-    //   path: '/user/:name',
-    //   components: {
-    //     main: userComponent,
-    //     drawer: Template
-    //   },
-    //   props: true
-    // },
-    // {
-    //   path: '/user/main/:name',
-    //   component: userComponent,
-    //   props: true
-    // },
-    // {
-    //   path: '/template',
-    //   name: 'template',
-    //   component: {
-    //     main: Template
-    //   }
-    // },
-  ]
-});
-
-
-
-router.beforeEach((to, from, next) => {
-	var is_loggedIn = null
-
-	let localStorageUser = JSON.parse(localStorage.getItem("user"))
-	if(localStorageUser != null) {
-		is_loggedIn = true
-	} else {
-		console.log("store._modules.root.state.Auth.isAuthenticated", store._modules.root.state.Auth.isAuthenticated)
-		is_loggedIn = store._modules.root.state.Auth.isAuthenticated
-	}
-	console.log('from', from)
-	console.log('to', to)
-	store._modules.root.state.Auth.preLoginPagePath = to.path;
-	console.log('store._modules.root.state.Auth.preLoginPagePath', store._modules.root.state.Auth.preLoginPagePath)
-	console.log('is_loggedIn', is_loggedIn)
-
-  if(to.name === "login-form" && is_loggedIn) {
-		next({ 
-			name: "secured",
-			query: { redirect: to.query.redirect } 
-		});
-  }
-	
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-		
-		// Check to see if user is logged in
-    if(!is_loggedIn) {
-			// console.group("store._modules.root.state.Auth.isAuthenticated", store._modules.root.state.Auth.isAuthenticated)
-			console.log("NOT LOGED IN YET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
-			/* This fixes the issue with routes loading before Vuex updates properly - dispatch the prefetgch profile here. */
-			// store.dispatch("preFetchLogin")
-
-      next({
-        name: "login-form",
-        query: { redirect: to.fullPath }
-      });
-    } else {
-			//Is logged in. Check to see if window.location.host is the same as logged in user company
-			if(store._modules.root.state.Auth.webdomain === store._modules.root.state.Auth.userCompany.domain) {
-				console.log("webdomain equals usercompany Domain")
-				if(Object.keys(to.query).length != 0) {
-					next({ 
-						name: "secured",
-						query: { redirect: to.query.redirect } 
-					});
-				} else {
-					next();
-				}
-			} else {
-				next({
-					name: "error",
-					query: { redirect: from.fullPath }
-				});
+				if (from.name === 'Login' && store.getters.GET_USER_PROFILE.is_superuser) next({ name: 'Superuser', replace: true })
+				else if(from.name === 'Login' && store.getters.GET_USER_PROFILE.is_merchant) next({ name: 'Merchant', replace: true })
+				else if(from.name === null) next({ path: from.query.redirect, replace: true })
+				// else	next({name:to.query, replace: true})
+				else next()
 			}
-      
-    }
-  } else {
-    next();
-  }
+		},	
+		// 404
+		{
+			path: '*',
+			name: 'FourOhFour',
+			component: () => import('@/views/404/Index.vue'),
+		},
+	]
 })
+
+//* *****************Route Guards**************************** */
+
+router.beforeEach(async (to, from, next) => {
+	console.log("User checkRoutes2")
+	console.log("to", to)
+	console.log("from", from)
+
+	// const userData = await userProfile()
+	// console.log('userData', userData)
+
+	// if(userData) {
+	// 	if(to.matched.some(record => record.meta.navBar === 'variable')) {
+	// 		if(userData.is_merchant) {
+	// 			to.meta.navBar = JSON.parse(JSON.stringify(merchant))
+	// 		} else {
+	// 			to.meta.navBar = JSON.parse(JSON.stringify(superuser))
+	// 		}
+	// 	}
+	// }
+
+	store._modules.root.state.Notifications.isLoadPanelVisible = false
+
+	if (to.matched.some(record => record.meta.requiresAuth)) {
+		
+		// console.log('store.getters.IS_AUTHENTICATED', store.getters.IS_AUTHENTICATED)
+		// console.log('store.getters.GET_FULL_PROFILE', store.getters.GET_FULL_PROFILE)
+		// const fullProfile = store.getters.GET_FULL_PROFILE
+		// var hasFullProfile = false
+		// if(fullProfile) {
+		// 	hasFullProfile = Object.keys(fullProfile).length != 0
+		// 	console.log('hasFullProfile', hasFullProfile)
+		// }
+		
+		
+		// Load User from Local Storage if not authenticated
+		if(!store.getters.IS_AUTHENTICATED) {
+			console.log("User2", userData)
+
+			if(userData === undefined ||Object.keys(userData).length === 0) {
+
+				next({
+					path: '/login',
+					query: { redirect: to.fullPath }
+				})
+			
+			} else {
+				if(!hasFullProfile) {
+					await store.dispatch('preFetchLogin', userData)
+				}
+				next()
+			} 
+		} else {
+			if(!hasFullProfile) {
+				console.log("TRUE hasFullProfile")
+				await store.dispatch('preFetchLogin', userData)
+			}
+			next()
+		}
+	} else {
+		next() // make sure to always call next()!
+	}
+})
+
+
+

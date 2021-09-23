@@ -12,7 +12,7 @@ from rest_framework import exceptions
 from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
 from users.models import User, UserGroup, UserPermission
-from commons.base64 import Base64ImageField
+from drf_extra_fields.fields import Base64ImageField
 from .models import User
 
 class ContentTypeSerializer(serializers.ModelSerializer):

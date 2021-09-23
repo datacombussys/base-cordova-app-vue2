@@ -1,5 +1,5 @@
 # DataBoxx with DataPOS
-## by Datacom Business Systems
+by Datacom Business Systems
 
 ## Getting started
 
@@ -49,14 +49,12 @@ Change the permissions Loevel of the node_modules folder
 `sudo npm install nodemon`
 `sudo npm install -g cordova`
 `sudo apt-get install yarn`
-`sudo npm install -g framework7-cli`
 `sudo npm install -g npx`
 `sudo npm install -g @vue/cli`
-`sudo pip3 install virtualenv`
 `sudo apt-get install ghostscript`
 restart Ubuntu
 
-### Installing Spatial Database
+### Installing Spatial Database - (Optional)
 Follow the Django Installation instructions. for installation at this link -> Installing PostGIS:
 https://docs.djangoproject.com/en/dev/ref/contrib/gis/
 
@@ -121,11 +119,29 @@ Run the commands from the `/backend` directory
 import to use in Models with the following import statement:
 `from django.contrib.gis.db import models`
 
-## Running the project
-To start the development server run `devserver`. This will start Django and
-Webpack
+# Database
+## Create Initial Database Models
+Make the initial database models by running `source scripts/migratedb.sh` from the root directory.
 
-## Directory structurer
+## Updating the database
+When a model is changed the databse needs to be migrated. To do this run
+`manage.py makemigrations` to stage the changes. This will update files in
+the app and they need to commited. To migrate the data base run,
+`manage.py migrate`.
+
+## Load Database Fixtures
+run the following commands to populate the Database from the `/backend` directory
+`manage.py loaddata holidays`
+`manage.py loaddata days-of-week`
+`manage.py loaddata industries`
+
+# Running the Project
+To start the development server run `develop`. This will start Django, Webpack, and Node
+This project includes cordova, and electron. Therefore, in order to build an electron app for a windows machine, it needs to be installed
+through a windows shell (npm install).
+Therefore, this project is being developed entireley in a Linux system and will be re-installed in a windows shell at the time of deployment.
+
+## Directory structure
 
 ### `env/`
 This is the virtual environment directory for the python aspect of this project.
@@ -156,31 +172,19 @@ This directory holds scripts for helping with the development process.
 When the development environment is activated, the `scripts` directory is
 pre-pended to your path.
 
-## Updating the database
-When a model is changed the databse needs to be migrated. To do this run
-`manage.py makemigrations` to stage the changes. This will update files in
-the app and they need to commited. To migrate the data base run,
-`manage.py migrate`.
-run the following commands to populate the Database from the `/backend` directory
-`manage.py loaddata holidays`
-`manage.py loaddata days-of-week`
-`manage.py loaddata industries`
+### `ops/`
+This is where the automaiton scripts are held for automaticvally deploying to a server.
 
-
-## API documents
+<!-- ## API documents
 This project uses self documenting tools for API references. They can be found
 at while they server is running:
 
-http(s)://{site URL}/api/redoc/
+http(s)://{site URL}/api/redoc/ -->
 
-## Plugins
+# Used Plugins
 
 ### Django Rest framwork
 We are using the Django Rest framwork to set up the RESR API:
 
 https://www.django-rest-framework.org/
 
-### Django-REST-Registration
-User registration REST API, based on django-rest-framework.
-
-https://github.com/apragacz/django-rest-registration

@@ -41,34 +41,12 @@ INSTALLED_APPS = [
     #3rd Party Modules
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_registration',
     'django_extensions',
     'storages',
     'django_filters',
 
     #My Modules
-    'attendance',
-    'blog',
-    'calendars',
-    'commons',
-    'commons2',
-    'companies',
-    'customers',
-    'datacom',
-    'employees',
-    'inventory',
-    'invoices',
-    'leads',
-    'partners',
-    'salesoffices',
     'users',
-    'vendors',
-    'vthpp',
-    'warehouses',
-    'financial',
-    'humanresources',
-    'notifications',
-    'retailpos',
 ]
 
 MIDDLEWARE = [
@@ -172,13 +150,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-REST_REGISTRATION = {
-    'REGISTER_VERIFICATION_ENABLED': False,
-    'RESET_PASSWORD_VERIFICATION_URL': 'https://frontend-url/reset-password/',
-    'REGISTER_EMAIL_VERIFICATION_ENABLED': False,
-    'VERIFICATION_FROM_EMAIL': 'no-reply@example.com',
-}
-
 try:
     from .local_settings import *
 except ImportError:
@@ -190,6 +161,9 @@ except ImportError:
     traceback.print_exc()
 		
 AUTH_USER_MODEL = 'users.User'
+
+#Big Auto Field Django 3.2 and up
+DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
 
 # Media Files including Bafcodes
 MEDIA_ROOT = os.path.join(BASE_DIR, '/media/')

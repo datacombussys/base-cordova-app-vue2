@@ -1,42 +1,41 @@
 import Vue from 'vue'
 import store from "@/store";
-import VuetifyDialog from 'vuetify-dialog'
 
-
+// console.log("store", store)
 // console.log('this', this)
-// console.log('VuetifyDialog', VuetifyDialog)
+// console.log('Vue', Vue)
+// console.log('Vue.prototype', Vue.prototype)
 
 store.subscribe((mutation) => {
 	// console.log("store.subscribe")
 	// console.log("store", store)
-	// console.log("Vue.prototype.$dialog", Vue.prototype.$dialog)
 	
 	//If Successful Login
 	if (mutation.type === 'UPDATE_LOGIN_NOTIFICATIONS') {
 		console.log("state.UPDATE_LOGIN_NOTIFICATIONS has been set to:", mutation);
-		Vue.prototype.$dialog.confirm({
-			text: 'You have logged in',
-			title: 'Success'
-		});
+		store.dispatch()
 				
 	} 
 	if (mutation.type === 'UPDATE_NOTIFICATIONS') {
 		// console.log("Unsuccessful login subscribers:")
 		// console.log("store", store)
-		// console.log('VuetifyDialog', VuetifyDialog)
-		Vue.prototype.$dialog.notify[mutation.payload.color](mutation.payload.msg, {
-			position: 'bottom-left',
-			timeout: 5000
-		});
+		console.log("Vue", Vue)
+
+		store._modules.root.state.Notifications.snackBarStack.push({
+			message:mutation.payload.msg,
+			color:mutation.payload.color,
+			timeout:3000
+		})
 
 	}
-	if (mutation.type === 'NOTIFICATION_MESSAGES') {
+	if (mutation.type === 'NOTIFICATION_POPUP') {
 		console.log("Notification Messages subscribers:")
-		Vue.prototype.$dialog.confirm({
-			title: mutation.payload['title'].charAt(0).toUpperCase() + mutation.payload['title'].slice(1),
-			text: mutation.payload.text
-			
-		});
+
+		store._modules.root.state.Notifications.alert = {
+			title: mutation.payload.title,
+			body: mutation.payload.body,
+		}
+		store._modules.root.state.Notifications.showAlert= true
 
 	}
 });

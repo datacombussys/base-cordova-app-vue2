@@ -4,15 +4,15 @@ SECRET_KEY = "1^!vcfd2mye=i9icw$&3y2gq)$evzh4f!1zu+*7r(le0j5t40="
 # If no data base is defined, a SQLite local DB will be used in dev, and an
 # error will thrown in prod
 
-#     DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': '<db name>',
-#         'USER': '<username>',
-#         'PASSWORD': '<password>',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
+# DATABASES = {
+# 	'default': {
+# 		'ENGINE': 'django.db.backends.postgresql_psycopg2',
+# 		'NAME': '<db name>',
+# 		'USER': '<username>',
+# 		'PASSWORD': '<password>',
+# 		'HOST': '127.0.0.1',
+# 		'PORT': '5432',
+# 	}
 # }
 
 # Its is optional to set up email, but is highly recommended

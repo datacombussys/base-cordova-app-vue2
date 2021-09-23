@@ -5,28 +5,6 @@ const BASE_DIR = __dirname + "/..";
 
 console.log(BASE_DIR);
 
-// function startCMS() {
-//   let child = spawn("npm", ["run", "dev"], {
-//     cwd: BASE_DIR + "/cms"
-//   });
-
-//   console.log("webpack started on port 9030");
-
-//   child.stdout.on("data", function(data) {
-//     console.log(data.toString());
-//   });
-
-//   child.stderr.on("data", function(data) {
-//     console.error(data.toString());
-//   });
-
-//   child.on("exit", function(code) {
-//     console.error("Webpack failed, stopping development server");
-//     console.error("Webpack exited with code: " + code.toString());
-//     process.exit(1);
-//   });
-// }
-
 function nodeServer() {
   let child = spawn("npm", ["run", "start"], {
     cwd: BASE_DIR + "/node"
@@ -97,4 +75,3 @@ function startWebPack() {
 startDjango();
 nodeServer();
 startWebPack();
-// startCMS();

@@ -16,51 +16,79 @@ BRed='\e[1;31m'
 On_Red='\e[41m'
 IRed='\e[0;91m'
 
+## NOTES ##
+# This project must be installed and run from a windows shell due to the electron windows build
+## HOWEVER ##
+# I am builing and running in Linux until ready to deploy, then I will rebuild in a windows shell (npm install)
+
+echo "You must run the following command: source scripts setup.sh -dev"
+sudo service postgresql start
+sudo service cron start
+
+## Determine if Staging or Production based on install command
+## source ops/install.sh -staging or source ops/install.sh
+SERVER_TYPE=$1
+printf "Server install type is: %s\n" "$SERVER_TYPE"
+
 if [ ! -d ./env ]; then
 	printf "Virtual environment not found, creating it\n"
 	sleep 1
-	virtualenv "./env" -p python3
+	python3 -m venv "./env"
+	printf "Activating virtual environment...\n"
+	source "./env/bin/activate"
+
+	pip3 install --upgrade setuptools pip wheel
+
+else
+	printf "Activating virtual environment...\n"
+	source "./env/bin/activate"
 fi
 
-printf "Activating virtual environment...\n"
-source "./env/bin/activate"
+printf "\nInstalling python packages..\n"
+pip install --upgrade -r "./backend/requirements.txt"
 
-# printf "\nInstalling python packages..\n"
-# pip3 install -r "./backend/requirements.txt"
+echo 'installed python packages'
 
-# if [ -d ./frontend ]; then
-# 	printf "\nInstalling frontend's node packages...\n"
-# 	npm --prefix ./frontend/ install ./frontend/
+if [ -d ./frontend ]; then
+	printf "\nInstalling frontend's node packages...\n"
+	sudo npm --prefix ./frontend/ install ./frontend/
 	
-# 	printf "Adding nodeJS modules bin to your path\n"
-# 	export PATH="`pwd`/frontend/node_modules/.bin/:$PATH"
-# 	export NODE_ENV="development"
+	printf "Adding nodeJS modules bin to your path\n"
+	export PATH="`pwd`/frontend/node_modules/.bin/:$PATH"
+
+	if [ "$SERVER_TYPE" == '-dev' ]; then
+		echo "setup.sh SERVER_TYPE -dev is executed"
+		export NODE_ENV="development"
+	else
+		echo "setup.sh SERVER_TYPE -prod is executed"
+		export NODE_ENV="production"
+	fi
+fi
+
+# if [ ! -d ./frontend/dist ]; then
+# 	sudo npm --prefix ./frontend/ run cordova-build-browser
 # fi
 
-# if [ -d ./node ]; then
-# 	printf "\nInstalling Node's node packages...\n"
-# 	npm --prefix ./node/ install ./node/
+echo 'installed frontend modules'
+
+if [ -d ./node ]; then
+	printf "\nInstalling Node's node packages...\n"
+	sudo npm --prefix ./node/ install ./node/
 	
-# 	printf "Adding nodeJS modules bin to your path\n"
-# 	export PATH="`pwd`/node/node_modules/.bin/:$PATH"
-# 	export NODE_ENV="development"
-# fi
+	printf "Adding nodeJS modules bin to your path\n"
+	export PATH="`pwd`/node/node_modules/.bin/:$PATH"
 
-# printf "Adding scripts folder to your path\n"
-# export PATH="`pwd`/scripts/:$PATH"
+	if [ "$SERVER_TYPE" == '-dev' ]; then
+		export NODE_ENV="development"
+	else
+		export NODE_ENV="production"
+	fi
+fi
 
-# if [ -d ./cms ]; then
-# 	printf "\nInstalling CMS node Packages...\n"
-# 	npm --prefix ./cms/ install ./cms/
-	
-# 	printf "Adding nodeJS modules bin to your path\n"
-# 	export PATH="`pwd`/frontend/node_modules/.bin/:$PATH"
-# 	export NODE_ENV="development"
-# fi
+echo 'installed node modules'
 
-#Runserver separateley with this command
-# npm run cordova-browser-serve is run on Windows machine
-python3 ./backend/manage.py runserver 9010
+printf "Adding scripts folder to your path\n"
+export PATH="`pwd`/scripts/:$PATH"
 
 if [ ! -f "./backend/project/settings/local_settings.py" ]; then
 	echo -e "$IRed"
@@ -77,3 +105,4 @@ if [ ! -f "./backend/project/settings/local_settings.py" ]; then
 fi
 
 echo "Done"
+
