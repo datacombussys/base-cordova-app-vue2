@@ -1,17 +1,55 @@
+// Titles and Subtitles
+$title-size: 1.8em;
+$title-family: 'Montserrat', sans-serif;
+$subtitle-size: 1.3em;
+$subtitle-family: 'Montserrat', sans-serif;
 
-$accent: rgb(224, 108, 0);
-$base-text-color: #fff;
-$base-bg: #363640;
-$base-border-color: #515159;
-$base-accent: rgb(199, 49, 3);
-$base-border-radius: 4px;
-$base-header-color: rgba(41, 80, 83, 0.3);
-$base-font-size: 1.15em;
-$success-button: rgb(3, 129, 70);
-$danger-button: rgb(251, 38, 0);
-$warning-button: rgb(243, 207, 1);
-$datcom-button: rgb(21, 129, 161);
-$pos-button: rgb(3, 92, 128);
-$datcom-gradient: linear-gradient(90deg, #013136, #014F56);
-$icon-base-color: rgb(4, 77, 87);
+// Headers and Subheaders
+$header-size: 1.25em;
+$header-family: 'Open Sans', sans-serif;
+$subheader-size: 1.15em;
+$subheader-family: 'Open Sans', sans-serif;
+
+//Fonts
+$font-size: 1.15em;
+$font-family: 'Roboto', sans-serif;
+$line-height: 1.15em;
+
+// Light Colors
+$light: #eeeeee;
+$accent-light: #7c2f00;
+$accent-lighter: #b85212;
+
+
+$primary-dark: #76e6ff;
+$primary-darker: #11b7dd;
+
+$secondary-dark: rgb(255, 232, 149);
+$secondary-darker: rgb(221, 191, 85);
+
+$accent-dark: #ffc19a;
+$accent-darker: #eb8f56;
+
+// Dark Colors
+$dark: #031a25;
+$primary-light: #003149;
+$primary-lighter: #007d99;
+
+$secondary-light: rgb(107, 88, 19);
+$secondary-lighter: #9E852C;
+
+// Greys
+$grey: #97afb9;
+$grey-dark: #6c828b;
+$grey-light: #cedce2;
+$black: #080808;
+$white: #ffffff;
+
+// Others
+$success: green;
+$danger: red;
+$warning: yellow;
+$info: teal;
+
+//Positioning
 $content-vh: calc(100vh - 155px);

@@ -138,8 +138,6 @@ import { mapGetters, mapState } from 'vuex'
 			//Links
       items: [
         'Home',
-				'Contact',
-				'About',
 			],
 			
 			//Menu items
