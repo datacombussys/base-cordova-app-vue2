@@ -81,7 +81,7 @@
           `font-weight-${this.weight}`,
           `mb-${this.space}`,
           `text-${this.align}`,
-          this.theme.isDark && 'white--text',
+          this.theme.isDark && 'black--text',
         ]
 
         return classes

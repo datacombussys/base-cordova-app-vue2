@@ -15,7 +15,7 @@
 
     mixins: [
       LoadSections([
-        'hero',
+        'hero-left-right',
 				'theme-features',
         'features',
         'info',

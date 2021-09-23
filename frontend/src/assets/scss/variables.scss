@@ -17,26 +17,26 @@ $line-height: 1.15em;
 
 // Light Colors
 $light: #eeeeee;
-$accent-light: #7c2f00;
-$accent-lighter: #b85212;
+$accent-darker: #7c2f00;
+$accent-dark: #b85212;
 
 
-$primary-dark: #76e6ff;
-$primary-darker: #11b7dd;
+$primary-lighter: #76e6ff;
+$primary-light: #11b7dd;
 
-$secondary-dark: rgb(255, 232, 149);
-$secondary-darker: rgb(221, 191, 85);
+$secondary-lighter: #ffe895;
+$secondary-light: #ddbf55;
 
-$accent-dark: #ffc19a;
-$accent-darker: #eb8f56;
+$accent-lighter: #ffc19a;
+$accent-light: #eb8f56;
 
 // Dark Colors
 $dark: #031a25;
-$primary-light: #003149;
-$primary-lighter: #007d99;
+$primary-darker: #003149;
+$primary-dark: #007d99;
 
-$secondary-light: rgb(107, 88, 19);
-$secondary-lighter: #9E852C;
+$secondary-darker: #6b5813;
+$secondary-dark: #9E852C;
 
 // Greys
 $grey: #97afb9;
@@ -46,10 +46,10 @@ $black: #080808;
 $white: #ffffff;
 
 // Others
-$success: green;
-$danger: red;
-$warning: yellow;
-$info: teal;
+$success: #00ff00;
+$danger: #ff0000;
+$warning: #ffff00;
+$info: #008080;
 
 //Positioning
 $content-vh: calc(100vh - 155px);

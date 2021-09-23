@@ -43,102 +43,43 @@ View the full documentation at https://tailwindcss.com.
 |
 */
 
-let colors = {
+var colors = {
   'transparent': 'transparent',
 
-  'black': '#22292f',
-  'grey-darkest': '#3d4852',
-  'grey-darker': '#606f7b',
-  'grey-dark': '#8795a1',
-  'grey': '#b8c2cc',
-  'grey-light': '#dae1e7',
-  'grey-lighter': '#f1f5f8',
-  'grey-lightest': '#f8fafc',
-  'white': '#ffffff',
+	'light': '#eeeeee',
+	'accent-darker': '#7c2f00',
+	'accent-dark': '#b85212',
+	
+	'primary-lighter': '#76e6ff',
+	'primary-light': '#11b7dd',
+	
+	'secondary-lighter': '#ffe895',
+	'secondary-light': '#ddbf55',
+	
+	'accent-lighter': '#ffc19a',
+	'accent-light': '#eb8f56',
+	
+	// Dark Colors
+	'dark': '#031a25',
+	'primary-darker': '#003149',
+	'primary-dark': '#007d99',
+	
+	'secondary-darker': '#6b5813',
+	'secondary-dark': '#9E852C',
 
-  'brown-darkest': '#423301',
-  'brown-darker': '#574711',
-  'brown-dark': '#7D6928',
-  'brown': '#9B853D',
-  'brown-light': '#AC995A',
-  'brown-lighter': '#CFBF87',
-  'brown-lightest': '#ECE1BB',
+	// Greys
+	'grey': '#97afb9',
+	'grey-dark': '#6c828b',
+	'grey-light': '#cedce2',
+	'black': '#080808',
+	'white': '#ffffff',
 
-  'gold-darkest': '#BF9401',
-  'gold-darker': '#CBA00E',
-  'gold-dark': '#D3A919',
-  'gold': '#D3AB25',
-  'gold-light': '#E3BA31',
-  'gold-lighter': '#EEC846',
-  'gold-lightest': '#FFDF71',
-
-  'red-darkest': '#490D02',
-  'red-darker': '#6E1504',
-  'red-dark': '#791704',
-  'red': ' #921E07',
-  'red-light': '#BA2406',
-  'red-lighter': '#D82805',
-  'red-lightest': '#F82A01',
-
-  'orange-darkest': '#501903',
-  'orange-darker': '#5F1D02',
-  'orange-dark': '#722304',
-  'orange': '#8A2B04',
-  'orange-light': '#B43705',
-  'orange-lighter': '#DF4608',
-  'orange-lightest': '#F94C06',
-
-  'yellow-darkest': '#544701',
-  'yellow-darker': '#594C02',
-  'yellow-dark': '#746304',
-  'yellow': '#8D7803',
-  'yellow-light': '#B69B06',
-  'yellow-lighter': '#DBBA07',
-  'yellow-lightest': '#FCD603 ',
-
-  'green-darkest': '#013A0F',
-  'green-darker': '#025916',
-  'green-dark': '#02761D',
-  'green': '#038622',
-  'green-light': '#04A62A',
-  'green-lighter': '#04A62A',
-  'green-lightest': '#07EA3C',
-
-  'datacom-darkest': '#013136',
-  'datacom-darker': '#014F56',
-  'datacom-dark': '#026770',
-  'datacom': '#01727D',
-  'datacom-light': '#0393A1',
-  'datacom-lighter': '#03B8CA',
-  'datacom-lightest': '#02DAEF',
-
-  'teal-darkest': '#01362A',
-  'teal-darker': '#025945',
-  'teal-dark': '#02795D',
-  'teal': '#028869',
-  'teal-light': '#03A680',
-  'teal-lighter': '#05CB9D',
-  'teal-lightest': '#09EFB9',
-
-  'blue-darkest': '#012C45',
-  'blue-darker': '#023A5B',
-  'blue-dark': '#024770',
-  'blue': '#015383',
-  'blue-light': '#03659E',
-  'blue-lighter': '#057BBF',
-  'blue-lightest': '#0492E4',
-
-  'pink-darkest': '#37011F',
-  'pink-darker': '#5A0233',
-  'pink-dark': '#710240',
-  'pink': '#86034C',
-  'pink-light': '#AA0461',
-  'pink-lighter': '#D50479',
-  'pink-lightest': '#FD038F',
-
-  'success': '#038146',
-  'warning': '#f3cf01',
-  'danger': '#fb2600',
+	// Others
+	'success': '#00ff00',
+	'danger': '#ff0000',
+	'warning': '#ffff00',
+	'info': '#008080',
+	
 }
 
 module.exports = {
@@ -155,8 +96,12 @@ module.exports = {
   | .error { color: config('colors.red') }
   |
   */
+	theme: {
+		extend: {
+			colors: colors
+		},
+	},
 
-  colors: colors,
 
 
   /*
